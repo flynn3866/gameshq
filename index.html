@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#57524C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="神泣">
+<title>神泣 · 物品栏</title>
+<link rel="icon" type="image/png" sizes="32x32" href="logos/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="logos/favicon-16.png">
+<link rel="apple-touch-icon" href="logos/apple-touch-icon-180.png">
+<link rel="manifest" href="logos/site.webmanifest">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Liu+Jian+Mao+Cao&family=Ma+Shan+Zheng&display=swap">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  background:#57524C;
+  color:#e7e1d2;
+  font-family:"PingFang SC","Microsoft YaHei","Heiti SC",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  user-select:none;
+}
+
+/* ===== 舞台：物品栏所在，与手机边缘留小间隔 ===== */
+.stage{
+  min-height:100%;
+  padding:
+    calc(env(safe-area-inset-top,0px) + 4px)
+    calc(env(safe-area-inset-right,0px) + 10px)
+    calc(env(safe-area-inset-bottom,0px) + 6px)
+    calc(env(safe-area-inset-left,0px) + 10px);
+  max-width:360px;margin:0 auto;   /* 收窄页面：6 列背包凹槽贴近 46px，显示紧凑 */
+}
+/* 属性页单独加宽 50px：窗口约 390px，主页面不受影响 */
+body.show-attrs .stage{max-width:410px;}
+
+/* ===== 物品栏整体窗口：边框 + 紧收外阴影 ===== */
+.window{
+  background:linear-gradient(180deg,#3A352F,#151210);
+  border:1px solid #6D6354;
+  border-radius:8px;
+  box-shadow:0 2px 7px rgba(0,0,0,.5);
+  padding:4px 8px 10px;
+}
+
+/* ===== 顶栏：物品栏（白字） ===== */
+.topbar{
+  display:flex;align-items:center;justify-content:center;
+  height:26px;margin-bottom:2px;position:relative;
+}
+.topbar::before,.topbar::after{content:"";flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,#6D6354,transparent);}
+.topbar h1{
+  position:relative;z-index:1;
+  font-size:17px;font-weight:600;letter-spacing:2px;padding:0 16px;
+  color:#ffffff;text-shadow:0 1px 2px rgba(0,0,0,.9);
+}
+
+/* ===== 面板通用 ===== */
+.panel{border-radius:6px;}
+
+/* ===== 第一部分：装备面板 ===== */
+.equip-panel{
+  background:linear-gradient(180deg,#282A2A,#262320);   /* 装备面板底色 */
+  border:1px solid #5A5550;
+  margin:0 2px 2px;   /* 左右外边距与背包面板一致，内容到窗口边界的间距相等 */
+  padding:7px 8px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.equip{
+  display:grid;grid-template-columns:repeat(4,auto);
+  justify-content:space-between;align-items:center;gap:10px 16px;
+  width:75%;margin:0 auto;   /* 凹槽区占面板宽度 3/4，左右留白加大 */
+}
+.eq-cell{display:flex;}
+.equip .slot{width:48px;height:48px;}
+.equip .slot.small{width:28px;height:28px;}   /* 小槽：约为大槽面积的 1/4（+2px） */
+.slot .hint{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:9px;letter-spacing:1px;color:rgba(232,225,210,.26);
+  pointer-events:none;white-space:nowrap;
+}
+
+/* ===== 第二部分：背包面板（Tab 下缘对齐、顶部向上拉升、各自分隔） ===== */
+.bag-area{
+  position:relative;
+  background:linear-gradient(180deg,
+    transparent 0px, transparent 34px,     /* tab 带透明，面板从 tab 下边线(34px)才开始 */
+    #191818 34px, #191513 100%);           /* 面板底色：tab 头部高于面板 */
+  border-bottom:1px solid #685F55;         /* 左右边线由伪元素绘制，从 tab 下边线开始 */
+  border-radius:0 0 6px 6px;
+  margin:0 2px 5px;        /* 与装备面板间距收紧 */
+  padding:34px 8px 8px;
+}
+.bag-area::before,.bag-area::after{
+  content:"";position:absolute;top:34px;bottom:0;width:1px;background:#685F55;
+}
+.bag-area::before{left:0;}
+.bag-area::after{right:0;}
+.bag-tabs{
+  display:flex;gap:6px;align-items:flex-end;   /* 底部持平，选中向上略抬 */
+  position:absolute;top:0;left:0;right:0;z-index:1;
+}
+.bag-tab{
+  flex:1;height:28px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;color:#8a8375;
+  background:linear-gradient(180deg,#232120,#161413);   /* 未选中 */
+  border:1px solid #685F55;        /* 默认边框与选中同色 */
+  border-radius:5px 5px 0 0;
+  cursor:pointer;
+}
+/* 首/末 Tab 保留左右边线，与外层边框重合只显示一条（tab 边线盖住外层边线） */
+.bag-tab:first-child{border-left:1px solid #685F55;}
+.bag-tab:last-child{border-right:1px solid #685F55;}
+.bag-tab.on:first-child{border-left:1px solid #685F55;}
+.bag-tab.on:last-child{border-right:1px solid #685F55;}
+.bag-tab.on{
+  height:34px;color:#ffffff;font-weight:600;   /* 选中略抬高（比默认高 6px）、底部持平、下部边线隐藏连通凹槽 */
+  background:#191818;
+  border:1px solid #685F55;border-bottom:none;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
+}
+.bag-grid{
+  display:grid;grid-template-columns:repeat(6,1fr);
+  gap:6px;padding-top:10px;   /* 凹槽与 Tab 下缘留出间隔 */
+}
+.bag-grid .slot{width:46px;height:46px;justify-self:center;}   /* 46px 固定，6 等分列内居中，不换行 */
+
+/* ===== 凹槽：空槽 #212020 + 边框 #5E5E5E + 内凹凹陷 ===== */
+.slot{
+  position:relative;
+  border-radius:5px;
+  background:
+    radial-gradient(150% 170% at 50% 30%, #2b2a28 0%, #201f1e 45%, #141312 100%);
+  border:1px solid #5E5E5E;
+  box-shadow:
+    inset 0 4px 7px rgba(0,0,0,.95),
+    inset 1px 0 4px rgba(0,0,0,.7),
+    inset -1px 0 3px rgba(0,0,0,.55),
+    inset 0 -2px 3px rgba(255,255,255,.05),
+    0 1px 1px rgba(0,0,0,.55);
+  cursor:pointer;
+  transition:transform .06s ease;
+}
+.slot::before{
+  content:"";position:absolute;inset:2px;border-radius:4px;
+  border:1px solid rgba(0,0,0,.45);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.5), inset 0 -1px 1px rgba(255,255,255,.03);
+  pointer-events:none;
+}
+.slot:active{transform:translateY(1px);}
+
+/* 已放置物品 */
+.slot .fill{
+  position:absolute;inset:4px;border-radius:4px;pointer-events:none;
+  background:linear-gradient(150deg,rgba(255,255,255,.20),rgba(255,255,255,0) 42%),var(--c);
+  border:1px solid rgba(0,0,0,.55);
+  box-shadow:inset 0 -3px 6px rgba(0,0,0,.45), inset 0 1px 2px rgba(255,255,255,.15);
+}
+.slot .qty{
+  position:absolute;right:4px;bottom:2px;font-size:9px;font-weight:600;color:#fff;
+  text-shadow:0 1px 2px #000;pointer-events:none;
+}
+
+/* ===== 下部：金币 + 分割线 + 按钮 ===== */
+.money{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 4px 0;}
+.money-box{
+  display:flex;align-items:center;justify-content:space-between;gap:6px;
+  padding:4px 10px;border-radius:5px;
+  background:#100F0D;                 /* 金币槽 */
+  border:1px solid #3a352e;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.65);
+}
+.money-box .coin{flex:0 0 auto;width:20px;height:20px;}
+.money-box .coin svg{width:100%;height:100%;filter:drop-shadow(0 0 4px rgba(230,190,80,.3));}
+.money-box .val{font-size:14px;font-weight:400;color:rgb(233,205,140);font-variant-numeric:tabular-nums;letter-spacing:0;}
+.money-box.bound .coin svg{filter:drop-shadow(0 0 4px rgba(120,160,220,.28));}
+.money-box.bound .val{color:rgb(158,186,226);}
+
+.divider{
+  height:1px;margin:5px 6px;
+  background:linear-gradient(90deg,transparent,#6D6354 20%,#6D6354 80%,transparent);
+}
+
+.actions{display:flex;flex-direction:column;gap:5px;margin:0 4px 16px;}   /* 按钮下方留白加大 */
+.act-row{display:flex;gap:6px;justify-content:center;}
+.act-row.c4 .btn{flex:1;max-width:86px;}
+.btn{
+  position:relative;
+  height:30px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;letter-spacing:2px;color:#e7e1d2;
+  background:linear-gradient(180deg,#1d1b19,#121110);
+  border:1px solid #000;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.06),
+    inset 0 -2px 4px rgba(0,0,0,.6),
+    0 2px 5px rgba(0,0,0,.5);
+  cursor:pointer;
+}
+.btn::before{
+  content:"";position:absolute;inset:1px;border-radius:5px;
+  border:1px solid rgba(214,173,90,.18);pointer-events:none;
+}
+.btn:active{
+  transform:translateY(1px);
+  background:linear-gradient(180deg,#141311,#0c0b0a);
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.7);
+}
+
+/* ===== Toast ===== */
+#toast{
+  position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 40px);
+  transform:translateX(-50%) translateY(12px);
+  background:rgba(12,11,10,.94);
+  border:1px solid #6D6354;
+  color:#e7e1d2;font-size:13px;letter-spacing:1px;
+  padding:9px 16px;border-radius:6px;
+  box-shadow:0 4px 14px rgba(0,0,0,.6);
+  opacity:0;pointer-events:none;
+  transition:opacity .2s, transform .2s;
+  max-width:80%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  z-index:99;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ===== 二级页面：角色属性（参考游戏属性面板布局） ===== */
+.attrs{display:none;padding:4px 0 10px;}   /* 覆盖 .window 的左右内边距，让面板贴近页面边线 */
+.attrs-body{padding:2px 2px 12px;}
+.attrs .topbar{justify-content:center;}
+.attrs .back-arrow{
+  position:absolute;left:2px;top:50%;transform:translateY(-50%);
+  width:34px;height:28px;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;border:none;cursor:pointer;
+}
+.attrs .back-arrow svg{
+  width:20px;height:20px;
+  stroke:#cfc4a8;fill:none;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 1px 1px rgba(0,0,0,.6));
+}
+.attrs .back-arrow:active svg{opacity:.45;}
+.title-glow{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:210px;height:20px;
+  background:radial-gradient(ellipse at center,
+    rgba(166,118,52,1) 0%,rgba(166,118,52,.55) 42%,
+    rgba(166,118,52,.15) 66%,rgba(166,118,52,0) 84%);
+  filter:blur(3px);
+  pointer-events:none;z-index:0;
+}
+/* ===== 属性页第一部分：角色信息 ===== */
+.info-panel{background:transparent;border:none;padding:6px 14px 2px;margin-bottom:14px;}
+.info-row{display:flex;justify-content:space-between;align-items:baseline;}
+.info-name{font-size:18px;color:#ecd9a0;font-weight:400;}
+.info-lv{font-size:13px;color:#c9bfa8;font-variant-numeric:tabular-nums;}
+.info-cls{margin-top:6px;font-size:12px;color:#c9bfa8;letter-spacing:1px;}
+/* ===== 属性页第二部分：分配属性点（整块含标题） ===== */
+.attrs-panel{
+  background:linear-gradient(180deg,#282A2A,#262320);
+  border:1px solid #5A5550;border-radius:6px;
+  padding:4px 16px 8px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+.panel-title{
+  font-size:14px;color:#ffffff;font-weight:300;letter-spacing:2px;
+  text-align:center;padding:8px 0;position:relative;
+}
+.panel-title::after{
+  content:"";position:absolute;left:16px;right:16px;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,#6D6354 25%,#6D6354 75%,transparent);
+}
+/* 分配属性点 / 战斗属性 统一行：两列各占一半，标题左对齐、值右对齐 */
+.c-row{
+  display:flex;align-items:center;gap:30px;
+  padding:8px 0;border-bottom:1px solid rgba(109,99,84,.12);
+}
+.c-row:last-child{border-bottom:none;}
+.c-pair{
+  flex:1;display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+}
+.c-pair .cl{font-size:13px;color:#E0B900;font-weight:500;}
+.c-pair .cv{font-size:14px;color:#ffffff;font-weight:300;font-variant-numeric:tabular-nums;}
+/* 第二部分每列的值所在格背景铺满整列 */
+#attr-alloc .cv{
+  flex:1;
+  background:#161618;
+  padding:2px 9px;border-radius:4px;
+  text-align:right;
+}
+.alloc-points{
+  display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  margin-top:2px;padding:9px 0 2px;border-top:1px solid rgba(109,99,84,.22);
+}
+.alloc-points .cl{font-size:13px;color:#E0B900;font-weight:500;}
+.alloc-points b{font-weight:300;color:#ffffff;font-variant-numeric:tabular-nums;}
+.combat-divider{
+  height:1px;margin:10px 16px;
+  background:linear-gradient(90deg,transparent,#6D6354 25%,#6D6354 75%,transparent);
+}
+/* 第三部分（战斗属性/战绩）无面板，行距页面边线 16px（attrs-body 2px + 内补 14px） */
+#combat-list, #record-list{padding:0 14px;}
+
+/* ===== 页面顶部标题：晓夜之歌（草书 + Google 多彩） ===== */
+.page-title{
+  text-align:center;
+  padding:2px 0 6px;
+  font-family:'Liu Jian Mao Cao','Ma Shan Zheng','STXingkai','华文行楷','KaiTi','楷体',cursive;
+  font-size:36px;line-height:1;letter-spacing:8px;
+  text-shadow:0 2px 8px rgba(0,0,0,.55);
+}
+.page-title span{display:inline-block;margin:0 3px;transform:translateY(1px);}
+.page-title .c1{color:#4285F4;}
+.page-title .c2{color:#EA4335;}
+.page-title .c3{color:#FBBC05;}
+.page-title .c4{color:#34A853;}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="page-title"><span class="c1">晓</span><span class="c2">夜</span><span class="c3">之</span><span class="c4">歌</span></div>
+  <div class="window" id="view-main">
+
+    <!-- ===== 顶栏：物品栏（白字） ===== -->
+    <header class="topbar"><span class="title-glow"></span><h1>物品栏</h1></header>
+
+    <!-- ===== 第一部分：装备面板 ===== -->
+    <section class="panel equip-panel"><div id="equip" class="equip"></div></section>
+
+    <!-- ===== 第二部分：背包面板 ===== -->
+    <div class="bag-area">
+      <div id="bag-tabs" class="bag-tabs"></div>
+      <div id="bag-grid" class="bag-grid"></div>
+    </div>
+
+    <!-- ===== 下部：金币 / 分割线 / 按钮 ===== -->
+    <div class="money">
+      <div class="money-box">
+        <span class="coin"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e0b45a"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#8a6a2a" stroke-width="1.2"/><path d="M12 8.6v6.8M8.6 12h6.8" stroke="#8a6a2a" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+        <span id="gold-trade" class="val">1,195,630</span>
+      </div>
+      <div class="money-box bound">
+        <span class="coin"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#5b86c9"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#2b4a78" stroke-width="1.2"/><path d="M12 8.6v6.8M8.6 12h6.8" stroke="#2b4a78" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+        <span id="gold-bind" class="val">1,004,727</span>
+      </div>
+    </div>
+    <div class="divider"></div>
+    <div class="actions" id="actions">
+      <div class="act-row c4">
+        <button class="btn" data-act="属性">属性</button>
+        <button class="btn" data-act="强化">强化</button>
+        <button class="btn" data-act="宝石">宝石</button>
+        <button class="btn" data-act="寻宝">寻宝</button>
+      </div>
+      <div class="act-row c4">
+        <button class="btn" data-act="天神">天神</button>
+        <button class="btn" data-act="翅膀">翅膀</button>
+        <button class="btn" data-act="洗炼">洗炼</button>
+        <button class="btn" data-act="初始化">初始化</button>
+      </div>
+    </div>
+
+  </div>
+  <!-- ===== 二级页面：角色属性 ===== -->
+  <div class="window attrs" id="view-attrs">
+    <header class="topbar">
+      <span class="title-glow"></span>
+      <button class="back-arrow" id="attrs-back" aria-label="返回">
+        <svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg>
+      </button>
+      <h1>角色属性</h1>
+    </header>
+    <div class="attrs-body">
+      <!-- 第一部分：角色信息 -->
+      <div class="info-panel">
+        <div class="info-row">
+          <span class="info-name" id="ch-name"></span>
+          <span class="info-lv" id="ch-lv"></span>
+        </div>
+        <div class="info-cls" id="ch-cls"></div>
+      </div>
+      <!-- 第二部分：分配属性点（整块含标题） -->
+      <div class="attrs-panel">
+        <div class="panel-title">分配属性点</div>
+        <div id="attr-alloc"></div>
+        <div class="alloc-points"><span class="cl">可分配属性点</span><b>0点</b></div>
+      </div>
+      <!-- 第三部分：战斗属性（无边框透明）+ 战绩 -->
+      <div id="combat-list"></div>
+      <div class="combat-divider"></div>
+      <div id="record-list"></div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+
+var ICO = {
+  mark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M12 4.5L19 12l-7 7.5L5 12z"/><path d="M5 12h14"/></svg>',
+  neck:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5c-3 2-4 5-3 8 1 2.5 3 4.5 5 6"/><path d="M16 5c3 2 4 5 3 8-1 2.5-3 4.5-5 6"/><path d="M11.5 8l3.5 3.5 1 3-2.2 2-3.3-2 .8-3z"/></svg>',
+  helm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15c0-3.6 2.6-6 6-6s6 2.4 6 6v1.5c0 1-.8 1.5-.8 1.5H6.8S6 17.5 6 16.5z"/><path d="M9 15V8.5A3 3 0 0 1 12 5.5a3 3 0 0 1 3 3V15"/><path d="M10 20.5h4"/></svg>',
+  cloak:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4c2.5 2 5 3 5 3l-1 4-2 2c-1.5 1.5-2.5 1.5-4 0l-2-2-1-4s2.5-1 5-3z"/><path d="M8 13l-1 7 5-3 5 3-1-7"/></svg>',
+  glove:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v10.5c0 2 1 3 3 3h6c2 0 3-1 3-3V9h-2V4.5h1"/><path d="M8 4h3v6H8z"/><path d="M10 13.5h4M10 16h4"/></svg>',
+  armor:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4.5c1.8 1.3 3.8 2 3.8 2l1.2 2.8-1.8 2.6c-1 1.4-2.1 2.1-3.2 2.1s-2.2-.7-3.2-2.1L7 9.3l1.2-2.8s2-.7 3.8-2z"/><path d="M12 6.5l1 3.8-1 3-1-3z"/></svg>',
+  ring:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4.4"/></svg>',
+  weapon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3l7 7-2 2-7-7z"/><path d="M12.2 6.8L4 15l1.5 1.5 1.5 1.5L12 21l9-9z"/><path d="M4 15l5-5"/></svg>',
+  leg:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4v9l-1 7h8l-1-7V4"/><path d="M9 4h6M10 10h4M10 13h4"/></svg>',
+  bangle:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M8 7a5 5 0 0 0 0 10"/><path d="M16 7a5 5 0 0 1 0 10"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 2.5v5c0 4.5-3 7.5-7 9.5-4-2-7-5-7-9.5v-5z"/><path d="M12 6v11"/></svg>',
+  boot:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h8v9c0 2-1 3.5-2.5 3.5H6z"/><path d="M14 13h3c1.5 0 2 1 1.5 2l-2 3.5H8.5l3-3.5"/><path d="M7 6h5M7 9h5"/></svg>'
+};
+
+var EQUIP_ROWS = [
+  [ null, {id:'neck',    ico:'neck',    small:1}, {id:'helm',  ico:'helm',  label:'头盔'}, {id:'cloak', ico:'cloak', small:1} ],
+  [ {id:'ring1',  ico:'ring',   small:1}, {id:'glove', ico:'glove', label:'护手'}, {id:'armor', ico:'armor', label:'胸甲'}, {id:'ring2', ico:'ring', small:1} ],
+  [ {id:'bangle1', ico:'bangle', small:1}, {id:'weapon', ico:'weapon', label:'武器'}, {id:'leg',   ico:'leg',   label:'护腿'}, {id:'bangle2', ico:'bangle', small:1} ],
+  [ null, {id:'pet', ico:'pet', small:1}, {id:'boot', ico:'boot', label:'护鞋'}, {id:'mount', ico:'mount', small:1} ]
+];
+var flatEq = [];
+EQUIP_ROWS.forEach(function(r){ r.forEach(function(e){ if (e) flatEq.push(e); }); });
+var equipState = {};
+
+var BAG_NUM = 5, BAG_SLOTS = 24;
+var bag = [];
+for (var p = 0; p < BAG_NUM; p++){ bag.push([]); for (var i=0;i<BAG_SLOTS;i++) bag[p].push(null); }
+var currentTab = 0;
+
+var LOOT = [
+  {name:'碎裂红宝石', color:'#c85a3f'},
+  {name:'翠绿翡翠',   color:'#3f9d74'},
+  {name:'湛蓝魔石',   color:'#4f7fc9'},
+  {name:'暗金护符',   color:'#cfa545'},
+  {name:'精铁短剑',   color:'#aeb6c2'},
+  {name:'兽皮护腕',   color:'#b4764a'}
+];
+
+var $ = function(s){ return document.querySelector(s); };
+var equipEl = $('#equip'), tabsEl = $('#bag-tabs'), gridEl = $('#bag-grid'), toastEl = $('#toast');
+var toastTimer = null;
+
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 1800);
+}
+
+function slotHTML(item, small, label){
+  var h = '<div class="slot' + (item ? ' has-item' : '') + (small ? ' small' : '') + '">';
+  if (label) h += '<span class="hint">' + label + '</span>';
+  if (item){
+    h += '<span class="fill" style="--c:' + item.color + '"></span>';
+    if (item.qty > 1) h += '<span class="qty">' + item.qty + '</span>';
+  }
+  h += '</div>';
+  return h;
+}
+
+function renderEquip(){
+  var html = '';
+  EQUIP_ROWS.forEach(function(row, ri){
+    row.forEach(function(e, ci){
+      if (!e) return;
+      var js = (ci < 2) ? 'end' : (ci === 3 ? 'start' : 'center');
+      html += '<div class="eq-cell" style="grid-column:' + (ci+1) + ';grid-row:' + (ri+1) + ';justify-self:' + js + '">'
+        + slotHTML(equipState[e.id], e.small, e.label) + '</div>';
+    });
+  });
+  equipEl.innerHTML = html;
+}
+
+function renderTabs(){
+  var letters = ['I','II','III','IV','V'];
+  tabsEl.innerHTML = letters.map(function(l, i){
+    return '<div class="bag-tab' + (i===currentTab ? ' on' : '') + '" data-tab="' + i + '">' + l + '</div>';
+  }).join('');
+}
+
+function renderBag(){
+  gridEl.innerHTML = bag[currentTab].map(function(it, idx){
+    var r = Math.floor(idx/6)+1, c = (idx%6)+1;
+    return slotHTML(it).replace('class="slot', 'class="slot" data-slot="' + idx + '" data-row="' + r + '" data-col="' + c + '" ');
+  }).join('');
+}
+
+function bindEvents(){
+  equipEl.addEventListener('click', function(e){
+    var s = e.target.closest('.slot'); if (!s) return;
+    var idx = Array.prototype.indexOf.call(equipEl.querySelectorAll('.slot'), s);
+    var eq = flatEq[idx]; if (!eq) return;
+    toast(equipState[eq.id] ? '该装备位已放置物品' : '装备位 · 空');
+  });
+
+  tabsEl.addEventListener('click', function(e){
+    var t = e.target.closest('.bag-tab'); if (!t) return;
+    currentTab = parseInt(t.getAttribute('data-tab'), 10);
+    renderTabs(); renderBag();
+  });
+
+  gridEl.addEventListener('click', function(e){
+    var s = e.target.closest('.slot'); if (!s) return;
+    var it = bag[currentTab][parseInt(s.getAttribute('data-slot'),10)];
+    toast(it ? it.name + (it.qty>1 ? ' ×' + it.qty : '') : '背包格 · 空');
+  });
+
+  $('#actions').addEventListener('click', function(e){
+    var b = e.target.closest('.btn'); if (!b) return;
+    var act = b.getAttribute('data-act');
+    if (act === '寻宝') doLoot();
+    else if (act === '初始化') doReset();
+    else if (act === '属性'){ location.hash = '#attrs'; }
+    else toast('功能 · 演示中');
+  });
+
+  $('#attrs-back').addEventListener('click', function(){
+    location.hash = '';
+  });
+}
+
+/* ===== 角色数据 + 二级属性页 ===== */
+var CHARACTER = {
+  info: { name:'晓夜', level:1, cls:'斗士' },
+  base: { 力量:10, 敏捷:10, 体质:10, 精神:10, 智力:10, 幸运:10 },
+  combat: [
+    {k:'生命值',v:'100'},{k:'物理攻击',v:'50'},
+    {k:'魔法攻击',v:'0'},{k:'射击攻击',v:'0'},
+    {k:'攻击属性',v:'无'},{k:'物理防御',v:'20'},
+    {k:'防御属性',v:'无'},{k:'射击防御',v:'0'},
+    {k:'攻击速度',v:'最快'},{k:'移动速度',v:'最快'}
+  ],
+  record: [
+    {k:'击杀数',v:'0'},{k:'死亡数',v:'0'},
+    {k:'决斗胜数',v:'0'},{k:'决斗败数',v:'0'}
+  ]
+};
+
+/* 参考面板布局：属性两列三行成对展示 */
+var ATTR_PAIRS = [['力量','精神'],['体质','敏捷'],['智力','幸运']];
+
+function cRows(arr){
+  var h = '';
+  for (var i = 0; i < arr.length; i += 2){
+    var a = arr[i], b = arr[i+1];
+    h += '<div class="c-row">'
+      + '<span class="c-pair"><span class="cl">' + a.k + '</span><span class="cv">' + a.v + '</span></span>'
+      + (b ? '<span class="c-pair"><span class="cl">' + b.k + '</span><span class="cv">' + b.v + '</span></span>'
+           : '<span></span>')
+      + '</div>';
+  }
+  return h;
+}
+
+function renderAttrs(){
+  $('#ch-name').textContent = CHARACTER.info.name;
+  $('#ch-lv').textContent = 'Lv.' + CHARACTER.info.level;
+  $('#ch-cls').textContent = '职业 · ' + CHARACTER.info.cls;
+  $('#attr-alloc').innerHTML = ATTR_PAIRS.map(function(p){
+    return '<div class="c-row">'
+      + '<span class="c-pair"><span class="cl">' + p[0] + '</span><span class="cv">' + CHARACTER.base[p[0]] + '</span></span>'
+      + '<span class="c-pair"><span class="cl">' + p[1] + '</span><span class="cv">' + CHARACTER.base[p[1]] + '</span></span>'
+      + '</div>';
+  }).join('');
+  $('#combat-list').innerHTML = cRows(CHARACTER.combat);
+  $('#record-list').innerHTML = cRows(CHARACTER.record);
+}
+
+function route(){
+  var attrs = location.hash.indexOf('#attrs') >= 0;
+  document.body.classList.toggle('show-attrs', attrs);   /* 属性页加宽舞台 */
+  $('#view-main').style.display = attrs ? 'none' : 'block';
+  $('#view-attrs').style.display = attrs ? 'block' : 'none';
+  if (attrs) renderAttrs();
+}
+window.addEventListener('hashchange', route);
+
+function doLoot(){
+  var page = bag[currentTab], empties = [];
+  for (var i=0;i<page.length;i++) if (!page[i]) empties.push(i);
+  if (!empties.length){ toast('背包已满'); return; }
+  var pick = empties[Math.floor(Math.random()*empties.length)];
+  var item = LOOT[Math.floor(Math.random()*LOOT.length)];
+  page[pick] = { name:item.name, color:item.color, qty:1 };
+  renderBag(); toast('获得 ' + item.name);
+}
+
+function doReset(){
+  for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++) bag[p][i] = null;
+  equipState = {};
+  renderEquip(); renderBag(); toast('已初始化');
+}
+
+renderEquip();
+renderTabs();
+renderBag();
+renderAttrs();
+/* 打开或刷新一律回到主页面：清除 URL 中残留的 #hash，路由据此回到物品栏 */
+history.replaceState(null, '', location.href.split('#')[0]);
+route();
+bindEvents();
+})();
+</script>
+</body>
+</html>
