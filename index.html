@@ -12,7 +12,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="logos/favicon-32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="logos/favicon-16.png">
 <link rel="apple-touch-icon" href="logos/apple-touch-icon-180.png">
-<link rel="manifest" href="logos/site.webmanifest">
+
 <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Liu+Jian+Mao+Cao&family=Ma+Shan+Zheng&display=swap">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -129,8 +129,25 @@ body.show-attrs .stage{max-width:410px;}
 .bag-grid{
   display:grid;grid-template-columns:repeat(6,1fr);
   gap:6px;padding-top:10px;   /* 凹槽与 Tab 下缘留出间隔 */
+  touch-action:none;   /* 允许槽位内触控拖拽 */
 }
 .bag-grid .slot{width:46px;height:46px;justify-self:center;}   /* 46px 固定，6 等分列内居中，不换行 */
+
+/* ===== 拖拽态 ===== */
+.drag-ghost{
+  position:fixed;width:46px;height:46px;transform:translate(-50%,-50%);
+  pointer-events:none;z-index:9999;opacity:.92;
+  border:1px solid rgba(255,255,255,.3);border-radius:5px;
+  box-shadow:0 5px 16px rgba(0,0,0,.75);
+  background:#212020;
+}
+.drag-ghost img{width:100%;height:100%;object-fit:contain;}
+.drag-ghost .fill{position:absolute;inset:0;background:var(--c);border-radius:5px;}
+.drag-ghost .qty{position:absolute;right:2px;bottom:1px;font-size:9px;font-weight:600;color:#fff;text-shadow:0 1px 2px #000;}
+.slot.drag-from{opacity:.35;}
+.slot.drag-over{box-shadow:inset 0 0 0 2px rgba(214,173,90,.75), 0 0 8px rgba(214,173,90,.3);}
+.bag-tab.drag-tab-over{box-shadow:inset 0 0 0 2px rgba(214,173,90,.85), 0 0 10px rgba(214,173,90,.35);}
+.eq-cell.drag-over .slot{box-shadow:inset 0 0 0 2px rgba(214,173,90,.75), 0 0 8px rgba(214,173,90,.3);}
 
 /* ===== 凹槽：空槽 #212020 + 边框 #5E5E5E + 内凹凹陷 ===== */
 .slot{
@@ -166,6 +183,16 @@ body.show-attrs .stage{max-width:410px;}
 .slot .qty{
   position:absolute;right:4px;bottom:2px;font-size:9px;font-weight:600;color:#fff;
   text-shadow:0 1px 2px #000;pointer-events:none;
+}
+/* 已放置物品：图片铺满凹槽，四周内凹阴影（读取自 logos/） */
+.slot .item-img{
+  position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);
+  object-fit:contain;pointer-events:none;border-radius:4px;
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,.85),
+    inset 1px 0 5px rgba(0,0,0,.5),
+    inset -1px 0 5px rgba(0,0,0,.5),
+    inset 0 -2px 4px rgba(0,0,0,.5);
 }
 
 /* ===== 下部：金币 + 分割线 + 按钮 ===== */
@@ -321,6 +348,29 @@ body.show-attrs .stage{max-width:410px;}
 .page-title .c2{color:#EA4335;}
 .page-title .c3{color:#FBBC05;}
 .page-title .c4{color:#34A853;}
+
+/* ===== 页面转场：顶级体验（打开 / 返回统一过渡） ===== */
+/* 备用方案（不支持 View Transitions 的浏览器）：进入页滑动淡入 */
+.view-enter{animation:pageIn .3s ease-out both;}
+@keyframes pageIn{
+  from{opacity:0;transform:translateX(24px);}
+  to{opacity:1;transform:none;}
+}
+/* View Transitions：旧页淡出左滑、新页淡入右进，丝滑切换 */
+::view-transition-old(root){
+  animation:vtOut .24s ease-in both;
+}
+::view-transition-new(root){
+  animation:vtIn .3s ease-out both;
+}
+@keyframes vtOut{
+  from{opacity:1;}
+  to{opacity:.12;transform:translateX(-16px) scale(.992);}
+}
+@keyframes vtIn{
+  from{opacity:.22;transform:translateX(22px) scale(.996);}
+  to{opacity:1;transform:none;}
+}
 </style>
 </head>
 <body>
@@ -444,9 +494,246 @@ var LOOT = [
   {name:'兽皮护腕',   color:'#b4764a'}
 ];
 
+/* ============ 物品 & 装备定义（全部物品/宝石蓝图，图片存于 logos/） ============ */
+var ITEM_BLUEPRINTS = {
+  /* --- 可穿戴装备 --- */
+  epicOgdenHelmet: {
+    name:"史诗 奥格顿头盔", type:"helmet", img:"logos/史诗 奥格顿头盔.png",
+    enhanceLevel:0, defense:25, resistance:12, attribute:"无",
+    maxHp:500, maxVitality:500, strength:5, agility:0, constitution:5,
+    intelligence:0, spirit:0, luck:0, damageAbsorption:0,
+    price:18888888, durability:"1000/1000", category:"头盔", equipLevel:55,
+    gemSlots:Array(6).fill(null)
+  },
+  epicOgdenChest: {
+    name:"史诗 奥格顿胸甲", type:"chest", img:"logos/史诗 奥格顿胸甲.png",
+    enhanceLevel:0, defense:38, resistance:18, attribute:"无",
+    maxHp:750, maxVitality:750, strength:5, agility:4, constitution:9,
+    intelligence:0, spirit:0, luck:0, damageAbsorption:0,
+    price:18888888, durability:"1200/1200", category:"胸甲", equipLevel:59,
+    gemSlots:Array(6).fill(null)
+  },
+  epicOgdenGloves: {
+    name:"史诗 奥格顿护手", type:"gloves", img:"logos/史诗 奥格顿护手.png",
+    enhanceLevel:0, defense:18, resistance:8, attribute:"无",
+    maxHp:300, maxVitality:300, strength:9, agility:0, constitution:9,
+    intelligence:0, spirit:0, luck:0, damageAbsorption:0,
+    price:18888888, durability:"800/800", category:"护手", equipLevel:57,
+    gemSlots:Array(6).fill(null)
+  },
+  epicOgdenLeggings: {
+    name:"史诗 奥格顿护腿", type:"leggings", img:"logos/史诗 奥格顿护腿.png",
+    enhanceLevel:0, defense:28, resistance:14, attribute:"无",
+    maxHp:600, maxVitality:600, strength:9, agility:9, constitution:0,
+    intelligence:0, spirit:0, luck:0, damageAbsorption:0,
+    price:18888888, durability:"1000/1000", category:"护腿", equipLevel:56,
+    gemSlots:Array(6).fill(null)
+  },
+  epicOgdenBoots: {
+    name:"史诗 奥格顿长鞋", type:"boots", img:"logos/史诗 奥格顿长鞋.png",
+    enhanceLevel:0, defense:20, resistance:10, attribute:"无",
+    maxHp:400, maxVitality:400, strength:0, agility:9, constitution:9,
+    intelligence:0, spirit:0, luck:0, damageAbsorption:0,
+    price:18888888, durability:"900/900", category:"护鞋", equipLevel:55,
+    gemSlots:Array(6).fill(null)
+  },
+  demonWings: {
+    name:"魔翼", type:"weapon", img:"logos/魔翼.png",
+    strength:48, agility:0, constitution:0, intelligence:0, spirit:0, luck:0,
+    physicalAttack:168, attackSpeed:"最快",
+    price:18888888, durability:"2600/2600", category:"武器", equipLevel:59,
+    gemSlots:Array(5).fill(null)
+  },
+  /* --- 首饰 --- */
+  dominationNecklace: {
+    name:"魔灵统御项链", type:"necklace", img:"logos/项链.png",
+    strength:9, agility:9, constitution:9, intelligence:9, spirit:9, luck:9,
+    price:18888888, category:"项链", equipLevel:57, gemSlots:Array(6).fill(null)
+  },
+  dominationRing: {
+    name:"魔灵统御戒指", type:"ring", img:"logos/戒指.png",
+    strength:6, agility:6, constitution:6, intelligence:6, spirit:6, luck:6,
+    price:16888888, category:"戒指", equipLevel:58, gemSlots:Array(6).fill(null)
+  },
+  dominationBracelet: {
+    name:"魔灵统御手镯", type:"bracelet", img:"logos/手镯.png",
+    strength:5, agility:5, constitution:5, intelligence:5, spirit:5, luck:5,
+    price:13888888, category:"手镯", equipLevel:59, gemSlots:Array(6).fill(null)
+  },
+  /* --- 天神牌子 --- */
+  warGodsFavor: {
+    name:"神印-战神的青睐", type:"god_seal", img:"logos/神印-战神的青睐.png",
+    grade:0, star:1, currentExp:0, requiredExp:100,
+    fullAttributes:{ strength:130, constitution:149, intelligence:124, spirit:114, agility:126, luck:122, hp:14810, vitality:1610, physicalAttack:644, physicalDefense:6, magicDefense:2 }
+  },
+  adamBone: {
+    name:"神印-亚当骸骨", type:"god_seal", img:"logos/神印-亚当骸骨.png",
+    grade:0, star:1, currentExp:0, requiredExp:100,
+    fullAttributes:{ strength:226, constitution:169, intelligence:76, spirit:76, agility:76, luck:133, hp:11379, vitality:359, physicalAttack:655, physicalDefense:68, magicDefense:0 }
+  },
+  mercuryRam: {
+    name:"神印-墨丘利公羊", type:"god_seal", img:"logos/神印-墨丘利公羊.png",
+    grade:0, star:1, currentExp:0, requiredExp:100,
+    fullAttributes:{ strength:76, constitution:169, intelligence:76, spirit:76, agility:226, luck:133, hp:15349, vitality:1684, physicalAttack:599, physicalDefense:0, magicDefense:0 }
+  },
+  warGodsPowerRune: {
+    name:"神符-战神之力", type:"god_rune", img:"logos/神符-战神之力.png",
+    grade:0, star:1, currentExp:0, requiredExp:100,
+    fullAttributes:{ strength:94, constitution:108, intelligence:90, spirit:82, agility:91, luck:87, hp:11212, vitality:1195, physicalAttack:483, physicalDefense:5, magicDefense:2 }
+  },
+  omniscientOracle: {
+    name:"神印-全知之神谕", type:"god_seal", img:"logos/神印-全知之神谕.png",
+    grade:0, star:1, currentExp:0, requiredExp:100,
+    fullAttributes:{ strength:124, constitution:160, intelligence:124, spirit:114, agility:122, luck:122, hp:14846, vitality:1562, physicalAttack:644, physicalDefense:7, magicDefense:1 }
+  },
+  godsPraise: {
+    name:"神印-众神的礼赞", type:"god_seal", img:"logos/神印-众神的礼赞.png",
+    grade:0, star:1, currentExp:0, requiredExp:100,
+    fullAttributes:{ strength:131, constitution:149, intelligence:124, spirit:114, agility:122, luck:125, hp:14810, vitality:1574, physicalAttack:644, physicalDefense:6, magicDefense:2 }
+  },
+  godsTrustRune: {
+    name:"神符-众神的寄托", type:"god_rune", img:"logos/神符-众神的寄托.png",
+    grade:0, star:1, currentExp:0, requiredExp:100,
+    fullAttributes:{ strength:94, constitution:108, intelligence:90, spirit:82, agility:87, luck:90, hp:11212, vitality:1195, physicalAttack:483, physicalDefense:5, magicDefense:2 }
+  },
+  /* --- 材料 & 属性祝福宝石（可堆叠） --- */
+  runeFragment: { name:"神符神力碎片", type:"god_rune_material", img:"logos/神符神力碎片.png", count:255 },
+  sealFragment: { name:"神印神力碎片", type:"god_seal_material", img:"logos/神印神力碎片.png", count:255 },
+  earthBlessingGem: { name:"大地祝福宝石", type:"attribute_gem", img:"logos/大地祝福宝石.png", count:100, attribute:"土属性" },
+  fireBlessingGem: { name:"火焰祝福宝石", type:"attribute_gem", img:"logos/火焰祝福宝石.png", count:100, attribute:"火属性" },
+  waterBlessingGem: { name:"流水祝福宝石", type:"attribute_gem", img:"logos/流水祝福宝石.png", count:100, attribute:"水属性" },
+  windBlessingGem: { name:"清风祝福宝石", type:"attribute_gem", img:"logos/清风祝福宝石.png", count:100, attribute:"风属性" },
+  /* --- 普通属性宝石（可堆叠） --- */
+  statGems: [
+    { name:"力量之石Lv5", type:"stat_gem", img:"logos/力量之石.png", stat:"力量", value:20, level:5, count:255 },
+    { name:"力量之石Lv6", type:"stat_gem", img:"logos/力量之石.png", stat:"力量", value:30, level:6, count:255 },
+    { name:"敏捷之石Lv5", type:"stat_gem", img:"logos/敏捷之石.png", stat:"敏捷", value:20, level:5, count:255 },
+    { name:"敏捷之石Lv6", type:"stat_gem", img:"logos/敏捷之石.png", stat:"敏捷", value:30, level:6, count:255 },
+    { name:"体质之石Lv5", type:"stat_gem", img:"logos/体质之石.png", stat:"体质", value:20, level:5, count:255 },
+    { name:"体质之石Lv6", type:"stat_gem", img:"logos/体质之石.png", stat:"体质", value:30, level:6, count:255 },
+    { name:"幸运之石Lv5", type:"stat_gem", img:"logos/幸运之石.png", stat:"幸运", value:20, level:5, count:255 },
+    { name:"幸运之石Lv6", type:"stat_gem", img:"logos/幸运之石.png", stat:"幸运", value:30, level:6, count:255 },
+    { name:"专注宝石Lv5", type:"stat_gem", img:"logos/专注宝石.png", stat:"伤害 吸收", value:50, level:5, count:255 },
+    { name:"专注宝石Lv6", type:"stat_gem", img:"logos/专注宝石.png", stat:"伤害 吸收", value:75, level:6, count:255 },
+    { name:"生命之石Lv5", type:"stat_gem", img:"logos/生命之石.png", stat:"生命值", value:350, level:5, count:255 },
+    { name:"生命之石Lv6", type:"stat_gem", img:"logos/生命之石.png", stat:"生命值", value:500, level:6, count:255 },
+    { name:"攻击之石Lv5", type:"stat_gem", img:"logos/攻击之石.png", stat:"物理攻击", value:20, level:5, count:255 },
+    { name:"攻击之石Lv6", type:"stat_gem", img:"logos/攻击之石.png", stat:"物理攻击", value:30, level:6, count:255 },
+    { name:"海伦 力量之石", type:"helen_gem", img:"logos/力量之石.png", stat:"力量", value:20, level:"海伦", count:255 },
+    { name:"海伦 敏捷之石", type:"helen_gem", img:"logos/敏捷之石.png", stat:"敏捷", value:20, level:"海伦", count:255 },
+    { name:"海伦 幸运之石", type:"helen_gem", img:"logos/幸运之石.png", stat:"幸运", value:20, level:"海伦", count:255 },
+    { name:"海伦 体质之石", type:"helen_gem", img:"logos/体质之石.png", stat:"体质", value:20, level:"海伦", count:255 },
+    { name:"混沌神石", type:"stat_gem", img:"logos/混沌神石.png", strength:168, agility:168, constitution:168, intelligence:168, spirit:168, luck:168, stat:"所有属性", value:168, level:8, count:255 }
+  ],
+  /* --- 镶嵌锤（可堆叠） --- */
+  hammers: [
+    { name:"镶嵌之锤Lv7", type:"hammer", img:"logos/镶嵌之锤lv7.png", level:7, successRateBonus:4.5, price:1000000, description:"镶嵌宝石时成功率提升4.5倍（最高50%）", count:1 },
+    { name:"镶嵌之锤Lv6", type:"hammer", img:"logos/镶嵌之锤lv6.png", level:6, successRateBonus:3, price:800000, description:"镶嵌宝石时成功率提升3倍（最高50%）", count:1 },
+    { name:"镶嵌之锤Lv5", type:"hammer", img:"logos/镶嵌之锤lv5.png", level:5, successRateBonus:2, price:600000, description:"镶嵌宝石时成功率提升2倍（最高50%）", count:1 },
+    { name:"镶嵌之锤Lv4", type:"hammer", img:"logos/镶嵌之锤lv4.png", level:4, successRateBonus:1.8, price:600000, description:"镶嵌宝石时成功率提升1.8倍（最高50%）", count:1 }
+  ],
+  extractHammers: [
+    { name:"拆卸之锤Lv2", type:"extract_hammer", img:"logos/拆卸之锤lv2.png", level:2, successRateBonus:1.5, price:800000, description:"拆卸宝石时成功率提升1.5倍（最高50%）", count:255 },
+    { name:"拆卸之锤Lv1", type:"extract_hammer", img:"logos/拆卸之锤lv1.png", level:1, successRateBonus:1.2, price:600000, description:"拆卸宝石时成功率提升1.2倍（最高50%）", count:255 }
+  ],
+  /* --- 其他材料（可堆叠） --- */
+  godPowerFragment: { name:"神力碎片", type:"god_power_material", img:"logos/神力碎片.png", count:80000 },
+  godCrystal: { name:"神力结晶", type:"god_crystal", img:"logos/神力结晶.png", count:100 }
+};
+
+/* ============ 物品工厂 + 初始化物品生成 ============ */
+var itemIdCounter = 1;
+function createItem(blueprint, overrides){
+  var item = JSON.parse(JSON.stringify(blueprint));
+  if (overrides){ for (var k in overrides) item[k] = overrides[k]; }
+  if (item.count === undefined) item.count = 1;
+  return item;
+}
+function buildInitialItems(){
+  var items = [];
+  function addItem(blueprint, count, overrides){
+    count = count || 1;
+    var ov = overrides || {};
+    for (var i = 0; i < count; i++){
+      ov.id = itemIdCounter++;
+      items.push(createItem(blueprint, ov));
+    }
+  }
+  /* 装备（各1件） */
+  addItem(ITEM_BLUEPRINTS.epicOgdenHelmet);
+  addItem(ITEM_BLUEPRINTS.epicOgdenChest);
+  addItem(ITEM_BLUEPRINTS.epicOgdenGloves);
+  addItem(ITEM_BLUEPRINTS.epicOgdenLeggings);
+  addItem(ITEM_BLUEPRINTS.epicOgdenBoots);
+  addItem(ITEM_BLUEPRINTS.demonWings);
+  /* 首饰 */
+  addItem(ITEM_BLUEPRINTS.dominationNecklace);
+  addItem(ITEM_BLUEPRINTS.dominationRing);
+  addItem(ITEM_BLUEPRINTS.dominationRing);
+  addItem(ITEM_BLUEPRINTS.dominationBracelet);
+  addItem(ITEM_BLUEPRINTS.dominationBracelet);
+  /* 天神牌子 */
+  addItem(ITEM_BLUEPRINTS.warGodsFavor, 2);
+  addItem(ITEM_BLUEPRINTS.adamBone);
+  addItem(ITEM_BLUEPRINTS.mercuryRam);
+  addItem(ITEM_BLUEPRINTS.warGodsPowerRune);
+  addItem(ITEM_BLUEPRINTS.omniscientOracle);
+  addItem(ITEM_BLUEPRINTS.godsPraise);
+  addItem(ITEM_BLUEPRINTS.godsTrustRune);
+  /* 材料 & 祝福宝石 */
+  addItem(ITEM_BLUEPRINTS.runeFragment);
+  addItem(ITEM_BLUEPRINTS.sealFragment);
+  addItem(ITEM_BLUEPRINTS.earthBlessingGem);
+  addItem(ITEM_BLUEPRINTS.fireBlessingGem);
+  addItem(ITEM_BLUEPRINTS.waterBlessingGem);
+  addItem(ITEM_BLUEPRINTS.windBlessingGem);
+  addItem(ITEM_BLUEPRINTS.godPowerFragment);
+  addItem(ITEM_BLUEPRINTS.godCrystal);
+  /* 属性宝石 */
+  ITEM_BLUEPRINTS.statGems.forEach(function(gem){ addItem(gem); });
+  /* 镶嵌 / 拆卸锤 */
+  ITEM_BLUEPRINTS.hammers.forEach(function(h){ addItem(h); });
+  ITEM_BLUEPRINTS.extractHammers.forEach(function(h){ addItem(h); });
+  return items;
+}
+/* 寻宝掉落池：所有已定义物品 */
+function buildLootPool(){
+  var pool = [];
+  for (var key in ITEM_BLUEPRINTS){
+    var b = ITEM_BLUEPRINTS[key];
+    if (Object.prototype.toString.call(b) === '[object Array]') pool = pool.concat(b);
+    else pool.push(b);
+  }
+  return pool;
+}
+var LOOT_POOL = buildLootPool();
+
+
 var $ = function(s){ return document.querySelector(s); };
 var equipEl = $('#equip'), tabsEl = $('#bag-tabs'), gridEl = $('#bag-grid'), toastEl = $('#toast');
 var toastTimer = null;
+
+/* ===== 音效管理：拖拽放置 / 穿戴 / 卸下时按物品类型播放对应音效 ===== */
+function createPreloadedAudio(src){
+  var audio = new Audio(src);
+  audio.preload = 'auto';
+  return audio;
+}
+var soundEffects = {
+  weapon:  createPreloadedAudio('sound/武器.mp3'),
+  jewelry: createPreloadedAudio('sound/首饰.mp3'),
+  armor:   createPreloadedAudio('sound/衣服.mp3')
+};
+function playSoundEffect(itemType){
+  var key = itemType;
+  if (itemType === 'necklace' || itemType === 'ring' || itemType === 'bracelet') key = 'jewelry';
+  else if (itemType === 'helmet' || itemType === 'chest' || itemType === 'gloves' || itemType === 'leggings' || itemType === 'boots' || itemType === 'shield') key = 'armor';
+  var original = soundEffects[key];
+  if (!original) return;
+  var clone = original.cloneNode();
+  clone.volume = 0.7;
+  clone.play().catch(function(e){ console.log('音效播放失败（可能被浏览器阻止）:', e); });
+}
 
 function toast(msg){
   toastEl.textContent = msg;
@@ -455,12 +742,15 @@ function toast(msg){
   toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 1800);
 }
 
-function slotHTML(item, small, label){
-  var h = '<div class="slot' + (item ? ' has-item' : '') + (small ? ' small' : '') + '">';
+function slotHTML(item, small, label, idx){
+  var h = '<div class="slot' + (item ? ' has-item' : '') + (small ? ' small' : '') + '"'
+        + (idx != null ? ' data-slot="' + idx + '"' : '')
+        + '">';
   if (label) h += '<span class="hint">' + label + '</span>';
   if (item){
-    h += '<span class="fill" style="--c:' + item.color + '"></span>';
-    if (item.qty > 1) h += '<span class="qty">' + item.qty + '</span>';
+    if (item.img) h += '<img class="item-img" src="' + item.img + '" alt="">';
+    else h += '<span class="fill" style="--c:' + item.color + '"></span>';
+    if (item.count > 1) h += '<span class="qty">' + item.count + '</span>';
   }
   h += '</div>';
   return h;
@@ -472,7 +762,7 @@ function renderEquip(){
     row.forEach(function(e, ci){
       if (!e) return;
       var js = (ci < 2) ? 'end' : (ci === 3 ? 'start' : 'center');
-      html += '<div class="eq-cell" style="grid-column:' + (ci+1) + ';grid-row:' + (ri+1) + ';justify-self:' + js + '">'
+      html += '<div class="eq-cell" data-eq="' + e.id + '" style="grid-column:' + (ci+1) + ';grid-row:' + (ri+1) + ';justify-self:' + js + '">'
         + slotHTML(equipState[e.id], e.small, e.label) + '</div>';
     });
   });
@@ -488,17 +778,70 @@ function renderTabs(){
 
 function renderBag(){
   gridEl.innerHTML = bag[currentTab].map(function(it, idx){
-    var r = Math.floor(idx/6)+1, c = (idx%6)+1;
-    return slotHTML(it).replace('class="slot', 'class="slot" data-slot="' + idx + '" data-row="' + r + '" data-col="' + c + '" ');
+    return slotHTML(it, false, null, idx);
   }).join('');
+}
+
+/* ===== 穿戴/卸下：装备槽位 <-> 物品类型 映射 ===== */
+var EQ_ACCEPT = {
+  neck:'necklace', helm:'helmet', cloak:'cloak',
+  ring1:'ring', ring2:'ring',
+  glove:'gloves', armor:'chest',
+  bangle1:'bracelet', bangle2:'bracelet',
+  weapon:'weapon', leg:'leggings', boot:'boots',
+  pet:'pet', mount:'mount'
+};
+/* 把物品放入背包第一个空格（按 I→V 页顺序） */
+function placeInBag(item){
+  for (var p = 0; p < BAG_NUM; p++){
+    for (var i = 0; i < BAG_SLOTS; i++){
+      if (!bag[p][i]){ bag[p][i] = item; return true; }
+    }
+  }
+  return false;
+}
+/* 穿到指定装备位：类型必须匹配，已有装备则换下放回背包 */
+function equipTo(eqId, item, fromBag, fromSlot){
+  var accept = EQ_ACCEPT[eqId];
+  if (!accept){ toast('该部位暂不可装备'); return; }
+  if (item.type !== accept){ toast('类型不符，无法穿戴'); return; }
+  var old = equipState[eqId];
+  if (old){ if (!placeInBag(old)){ toast('背包已满，无法更换'); return; } }
+  bag[fromBag][fromSlot] = null;
+  equipState[eqId] = item;
+  playSoundEffect(item.type);
+  renderEquip(); renderBag();
+  toast('已穿戴 ' + item.name);
+}
+/* 自动穿戴：找该类型第一个空格位（无空位则用第一个） */
+function autoEquip(item, fromBag, fromSlot){
+  var type = item.type, candidates = [];
+  for (var k in EQ_ACCEPT){ if (EQ_ACCEPT[k] === type) candidates.push(k); }
+  if (!candidates.length){ toast('该物品无法穿戴'); return; }
+  var target = null;
+  for (var i = 0; i < candidates.length; i++){
+    if (!equipState[candidates[i]]){ target = candidates[i]; break; }
+  }
+  if (!target) target = candidates[0];
+  equipTo(target, item, fromBag, fromSlot);
+}
+/* 卸下：装备放回背包第一个空格 */
+function unequip(eqId){
+  var item = equipState[eqId];
+  if (!item) return;
+  if (!placeInBag(item)){ toast('背包已满，无法卸下'); return; }
+  equipState[eqId] = null;
+  playSoundEffect(item.type);
+  renderEquip(); renderBag();
+  toast('已卸下 ' + item.name);
 }
 
 function bindEvents(){
   equipEl.addEventListener('click', function(e){
-    var s = e.target.closest('.slot'); if (!s) return;
-    var idx = Array.prototype.indexOf.call(equipEl.querySelectorAll('.slot'), s);
-    var eq = flatEq[idx]; if (!eq) return;
-    toast(equipState[eq.id] ? '该装备位已放置物品' : '装备位 · 空');
+    if (suppressClick){ suppressClick = false; return; }
+    var cell = e.target.closest('.eq-cell'); if (!cell) return;
+    var eqId = cell.getAttribute('data-eq');
+    toast(equipState[eqId] ? equipState[eqId].name : '装备位 · 空');
   });
 
   tabsEl.addEventListener('click', function(e){
@@ -508,16 +851,178 @@ function bindEvents(){
   });
 
   gridEl.addEventListener('click', function(e){
+    if (suppressClick){ suppressClick = false; return; }
     var s = e.target.closest('.slot'); if (!s) return;
     var it = bag[currentTab][parseInt(s.getAttribute('data-slot'),10)];
-    toast(it ? it.name + (it.qty>1 ? ' ×' + it.qty : '') : '背包格 · 空');
+    toast(it ? it.name + (it.count>1 ? ' ×' + it.count : '') : '背包格 · 空');
   });
+
+  /* ===== 拖拽 & 长按：背包互换 / 跨背包放入 / 穿戴 / 卸下 ===== */
+  var drag = null, dragGhost = null, dragDist = 0, suppressClick = false;
+  var lpTimer = null, lpItem = null, lpKind = null;
+  function clearHover(){
+    var ov = gridEl.querySelector('.slot.drag-over');
+    if (ov) ov.classList.remove('drag-over');
+    var ev = equipEl.querySelector('.eq-cell.drag-over');
+    if (ev) ev.classList.remove('drag-over');
+    var tv = tabsEl.querySelector('.bag-tab.drag-tab-over');
+    if (tv) tv.classList.remove('drag-tab-over');
+  }
+  function clearDrag(){
+    if (dragGhost){ dragGhost.remove(); dragGhost = null; }
+    var from = gridEl.querySelector('.slot.drag-from');
+    if (from) from.classList.remove('drag-from');
+    var ef = equipEl.querySelector('.slot.drag-from');
+    if (ef) ef.classList.remove('drag-from');
+    clearHover();
+    drag = null;
+    if (lpTimer){ clearTimeout(lpTimer); lpTimer = null; }
+    lpItem = null; lpKind = null;
+  }
+  function makeGhost(item){
+    var g = document.createElement('div');
+    g.className = 'drag-ghost';
+    var inner = item.img
+      ? '<img src="' + item.img + '" alt="">'
+      : '<span class="fill" style="--c:' + item.color + '"></span>';
+    g.innerHTML = inner + (item.count > 1 ? '<span class="qty">' + item.count + '</span>' : '');
+    document.body.appendChild(g);
+    return g;
+  }
+  /* 长按触发：背包物品→自动穿戴；装备位→卸下 */
+  function onLongPress(){
+    if (!drag || drag.active){ return; }
+    lpTimer = null;
+    if (lpKind === 'bag') autoEquip(lpItem, drag.bag, drag.from);
+    else if (lpKind === 'equip') unequip(drag.eq);
+    suppressClick = true;
+    var from = gridEl.querySelector('.slot.drag-from');
+    if (from) from.classList.remove('drag-from');
+    var ef = equipEl.querySelector('.slot.drag-from');
+    if (ef) ef.classList.remove('drag-from');
+    try { gridEl.releasePointerCapture && gridEl.releasePointerCapture(); } catch (e2){}
+    try { equipEl.releasePointerCapture && equipEl.releasePointerCapture(); } catch (e3){}
+    drag = null; lpItem = null; lpKind = null;
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+
+  /* 背包格：按住拖动 / 长按自动穿戴 */
+  gridEl.addEventListener('pointerdown', function(e){
+    var s = e.target.closest('.slot');
+    if (!s || !s.classList.contains('has-item')) return;
+    var idx = parseInt(s.getAttribute('data-slot'), 10);
+    var it = bag[currentTab][idx];
+    if (!it) return;
+    clearTimeout(lpTimer); lpTimer = null; lpItem = null; lpKind = null;
+    drag = { src:'bag', bag: currentTab, from: idx, eq: null, x: e.clientX, y: e.clientY, active:false };
+    dragDist = 0;
+    s.classList.add('drag-from');
+    gridEl.setPointerCapture(e.pointerId);
+    lpKind = 'bag'; lpItem = it;
+    lpTimer = setTimeout(onLongPress, 520);
+  });
+  /* 装备位：按住拖动卸下 / 长按卸下 */
+  equipEl.addEventListener('pointerdown', function(e){
+    var cell = e.target.closest('.eq-cell'); if (!cell) return;
+    var s = cell.querySelector('.slot');
+    if (!s || !s.classList.contains('has-item')) return;
+    var eqId = cell.getAttribute('data-eq');
+    var it = equipState[eqId];
+    if (!it) return;
+    clearTimeout(lpTimer); lpTimer = null; lpItem = null; lpKind = null;
+    drag = { src:'equip', bag:-1, from:-1, eq: eqId, x: e.clientX, y: e.clientY, active:false };
+    dragDist = 0;
+    s.classList.add('drag-from');
+    equipEl.setPointerCapture(e.pointerId);
+    lpKind = 'equip'; lpItem = it;
+    lpTimer = setTimeout(onLongPress, 520);
+  });
+  document.addEventListener('pointermove', function(e){
+    if (!drag) return;
+    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+    dragDist = Math.max(dragDist, Math.sqrt(dx*dx + dy*dy));
+    if (dragDist > 7){
+      if (lpTimer){ clearTimeout(lpTimer); lpTimer = null; lpItem = null; lpKind = null; }
+      if (!drag.active){
+        drag.active = true;
+        var item = drag.src === 'bag' ? bag[drag.bag][drag.from] : equipState[drag.eq];
+        dragGhost = makeGhost(item);
+        dragGhost.style.left = e.clientX + 'px';
+        dragGhost.style.top = e.clientY + 'px';
+        e.preventDefault();
+      }
+    }
+    if (drag.active && dragGhost){
+      dragGhost.style.left = e.clientX + 'px';
+      dragGhost.style.top = e.clientY + 'px';
+      clearHover();
+      var el = document.elementFromPoint(e.clientX, e.clientY);
+      var ht = el && el.closest ? el.closest('.bag-tab') : null;
+      if (ht) ht.classList.add('drag-tab-over');
+      var he = el && el.closest ? el.closest('.eq-cell') : null;
+      if (he) he.classList.add('drag-over');
+      var hs = el && el.closest ? el.closest('.slot') : null;
+      if (hs && gridEl.contains(hs) && hs !== gridEl.querySelector('.slot.drag-from')) hs.classList.add('drag-over');
+    }
+  });
+  function endDrag(e){
+    if (!drag) return;
+    var moved = drag.active;
+    if (drag.active){
+      var el = document.elementFromPoint(e.clientX, e.clientY);
+      if (drag.src === 'bag'){
+        /* 松手在装备位 → 穿戴 */
+        var eqCell = el && el.closest ? el.closest('.eq-cell') : null;
+        if (eqCell){
+          var eqId = eqCell.getAttribute('data-eq');
+          var it = bag[drag.bag][drag.from];
+          if (it) equipTo(eqId, it, drag.bag, drag.from);
+        } else {
+          /* 松手在 tab 头 → 跨背包放入空格 */
+          var tab = el && el.closest ? el.closest('.bag-tab') : null;
+          if (tab){
+            var tBag = parseInt(tab.getAttribute('data-tab'), 10);
+            var tbag = bag[tBag], slot = -1;
+            for (var i = 0; i < tbag.length; i++){ if (!tbag[i]){ slot = i; break; } }
+            if (slot >= 0){
+              var si = bag[drag.bag][drag.from];
+              bag[drag.bag][drag.from] = null;
+              tbag[slot] = si;
+              playSoundEffect(si.type);
+              renderBag();
+            } else { toast('该背包已满'); }
+          } else {
+            /* 松手在背包槽位 → 互换/移动 */
+            var t = el && el.closest ? el.closest('.slot') : null;
+            var ti = t ? parseInt(t.getAttribute('data-slot'), 10) : -1;
+            var page = bag[drag.bag];
+            if (t && ti >= 0 && ti < BAG_SLOTS && ti !== drag.from){
+              var s2 = page[drag.from];
+              var tg = page[ti];
+              page[drag.from] = tg;
+              page[ti] = s2;
+              playSoundEffect(s2.type);
+              renderBag();
+            }
+          }
+        }
+      } else if (drag.src === 'equip'){
+        /* 从装备位拖出 → 卸下到背包第一个空格 */
+        unequip(drag.eq);
+      }
+    }
+    clearDrag();
+    if (moved) suppressClick = true;
+  }
+  document.addEventListener('pointerup', endDrag);
+  document.addEventListener('pointercancel', function(){ clearDrag(); });
+  document.addEventListener('lostpointercapture', function(e){ if (drag) endDrag(e); });
 
   $('#actions').addEventListener('click', function(e){
     var b = e.target.closest('.btn'); if (!b) return;
     var act = b.getAttribute('data-act');
     if (act === '寻宝') doLoot();
-    else if (act === '初始化') doReset();
+    else if (act === '初始化') doInit();
     else if (act === '属性'){ location.hash = '#attrs'; }
     else toast('功能 · 演示中');
   });
@@ -574,29 +1079,64 @@ function renderAttrs(){
   $('#record-list').innerHTML = cRows(CHARACTER.record);
 }
 
-function route(){
+function applyRoute(){
   var attrs = location.hash.indexOf('#attrs') >= 0;
   document.body.classList.toggle('show-attrs', attrs);   /* 属性页加宽舞台 */
   $('#view-main').style.display = attrs ? 'none' : 'block';
   $('#view-attrs').style.display = attrs ? 'block' : 'none';
   if (attrs) renderAttrs();
 }
+/* 统一页面转场：打开 / 返回均带过渡，后续新增页面接入 hash 路由即自动沿用 */
+function route(){
+  var attrs = location.hash.indexOf('#attrs') >= 0;
+  var changed = attrs !== route.last;
+  route.last = attrs;
+  if (changed && !route.first){
+    if (document.startViewTransition){          /* 顶级：View Transitions 原生交叠过渡 */
+      document.startViewTransition(applyRoute);
+    } else {                                     /* 备用：滑动淡入 */
+      applyRoute();
+      var shown = attrs ? $('#view-attrs') : $('#view-main');
+      shown.classList.remove('view-enter');
+      void shown.offsetWidth;
+      shown.classList.add('view-enter');
+    }
+  } else {
+    applyRoute();                                /* 首次加载不播动画 */
+  }
+  route.first = false;
+}
+route.first = true;
+route.last = undefined;
 window.addEventListener('hashchange', route);
 
 function doLoot(){
-  var page = bag[currentTab], empties = [];
-  for (var i=0;i<page.length;i++) if (!page[i]) empties.push(i);
-  if (!empties.length){ toast('背包已满'); return; }
-  var pick = empties[Math.floor(Math.random()*empties.length)];
-  var item = LOOT[Math.floor(Math.random()*LOOT.length)];
-  page[pick] = { name:item.name, color:item.color, qty:1 };
-  renderBag(); toast('获得 ' + item.name);
+  var page = bag[currentTab], idx = -1;
+  for (var i = 0; i < page.length; i++){ if (!page[i]){ idx = i; break; } }
+  if (idx < 0){ toast('背包已满'); return; }
+  var b = LOOT_POOL[Math.floor(Math.random() * LOOT_POOL.length)];
+  var item = createItem(b, { id: itemIdCounter++ });
+  page[idx] = item;
+  renderBag();
+  toast('获得 ' + item.name);
 }
 
-function doReset(){
-  for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++) bag[p][i] = null;
+function doInit(){
+  /* 清空背包与装备位 */
+  for (var p = 0; p < BAG_NUM; p++) for (var i = 0; i < BAG_SLOTS; i++) bag[p][i] = null;
   equipState = {};
-  renderEquip(); renderBag(); toast('已初始化');
+  /* 生成初始物品并按顺序放入背包（参照 物品生成-初始化 逻辑） */
+  itemIdCounter = 1;
+  var items = buildInitialItems();
+  var p2 = 0, i2 = 0;
+  items.forEach(function(it){
+    while (p2 < BAG_NUM && bag[p2][i2]){ i2++; if (i2 >= BAG_SLOTS){ i2 = 0; p2++; } }
+    if (p2 >= BAG_NUM) return;
+    bag[p2][i2] = it;
+    i2++; if (i2 >= BAG_SLOTS){ i2 = 0; p2++; }
+  });
+  renderEquip(); renderBag();
+  toast('已初始化 ' + items.length + ' 件物品');
 }
 
 renderEquip();
