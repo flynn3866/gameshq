@@ -15,14 +15,22 @@
 
 <link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Liu+Jian+Mao+Cao&family=Ma+Shan+Zheng&display=swap">
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
+  -webkit-touch-callout:none;   /* 关闭 iOS 长按选择气泡/放大镜 */
+  -webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none; /* 全局禁选中 */
+  -webkit-user-drag:none;}      /* 禁图片/元素拖拽 */
+img{-webkit-user-drag:none;}
+img::selection,img::-moz-selection{background:transparent;}
 html,body{height:100%;}
 body{
+  position:fixed;left:0;top:0;width:100%;height:100%;
+  overflow:hidden;                 /* 整页固定，不晃动、不滚动 */
+  overscroll-behavior:none;        /* 禁止下拉刷新/回弹 */
+  touch-action:none;               /* 触控手势全交给 JS，杜绝整页下拉 */
   background:#57524C;
   color:#e7e1d2;
   font-family:"PingFang SC","Microsoft YaHei","Heiti SC",sans-serif;
   -webkit-font-smoothing:antialiased;
-  overflow-x:hidden;
   user-select:none;
 }
 
@@ -135,7 +143,9 @@ body.show-attrs .stage{max-width:410px;}
 
 /* ===== 拖拽态 ===== */
 .drag-ghost{
-  position:fixed;width:46px;height:46px;transform:translate(-50%,-50%);
+  position:fixed;width:46px;height:46px;left:0;top:0;
+  transform:translate(-50%,-50%);
+  will-change:transform;            /* 用 transform 跟随手指，避免布局抖动 */
   pointer-events:none;z-index:9999;opacity:.92;
   border:1px solid rgba(255,255,255,.3);border-radius:5px;
   box-shadow:0 5px 16px rgba(0,0,0,.75);
@@ -708,6 +718,20 @@ function buildLootPool(){
 }
 var LOOT_POOL = buildLootPool();
 
+/* 预加载全部物品图，避免初始化/穿戴时现场拉取导致显示慢 */
+(function(){
+  var seen = {};
+  function pre(img){ if (img && !seen[img]){ seen[img] = 1; var im = new Image(); im.src = img; } }
+  for (var key in ITEM_BLUEPRINTS){
+    var b = ITEM_BLUEPRINTS[key];
+    if (Object.prototype.toString.call(b) === '[object Array]'){ b.forEach(function(x){ pre(x.img); }); }
+    else pre(b.img);
+  }
+})();
+
+/* 兜底：禁止任何原生触屏滚动/下拉刷新，整页固定 */
+document.addEventListener('touchmove', function(e){ if (e.cancelable) e.preventDefault(); }, { passive:false });
+
 
 var $ = function(s){ return document.querySelector(s); };
 var equipEl = $('#equip'), tabsEl = $('#bag-tabs'), gridEl = $('#bag-grid'), toastEl = $('#toast');
@@ -791,10 +815,11 @@ var EQ_ACCEPT = {
   weapon:'weapon', leg:'leggings', boot:'boots',
   pet:'pet', mount:'mount'
 };
-/* 把物品放入背包第一个空格（按 I→V 页顺序） */
-function placeInBag(item){
+/* 把物品放入背包第一个空格（按 I→V 页顺序，可跳过某槽） */
+function placeInBag(item, skipBag, skipIdx){
   for (var p = 0; p < BAG_NUM; p++){
     for (var i = 0; i < BAG_SLOTS; i++){
+      if (skipBag === p && skipIdx === i) continue;
       if (!bag[p][i]){ bag[p][i] = item; return true; }
     }
   }
@@ -831,6 +856,26 @@ function unequip(eqId){
   if (!item) return;
   if (!placeInBag(item)){ toast('背包已满，无法卸下'); return; }
   equipState[eqId] = null;
+  playSoundEffect(item.type);
+  renderEquip(); renderBag();
+  toast('已卸下 ' + item.name);
+}
+/* 卸下到指定背包槽位：目标槽有物品则把它移到空格，再放入目标槽 */
+function unequipTo(eqId, targetIdx){
+  var item = equipState[eqId];
+  if (!item) return;
+  if (targetIdx < 0 || targetIdx >= BAG_SLOTS) return;
+  var page = bag[currentTab];
+  var occupying = page[targetIdx];
+  page[targetIdx] = null;
+  if (occupying){
+    if (!placeInBag(occupying, currentTab, targetIdx)){
+      page[targetIdx] = occupying;
+      toast('背包已满，无法卸下'); return;
+    }
+  }
+  equipState[eqId] = null;
+  page[targetIdx] = item;
   playSoundEffect(item.type);
   renderEquip(); renderBag();
   toast('已卸下 ' + item.name);
@@ -937,6 +982,7 @@ function bindEvents(){
     lpKind = 'equip'; lpItem = it;
     lpTimer = setTimeout(onLongPress, 520);
   });
+  var lastHit = null, lastHitTime = 0;
   document.addEventListener('pointermove', function(e){
     if (!drag) return;
     var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
@@ -945,24 +991,32 @@ function bindEvents(){
       if (lpTimer){ clearTimeout(lpTimer); lpTimer = null; lpItem = null; lpKind = null; }
       if (!drag.active){
         drag.active = true;
+        lastHit = null; lastHitTime = 0;
         var item = drag.src === 'bag' ? bag[drag.bag][drag.from] : equipState[drag.eq];
         dragGhost = makeGhost(item);
-        dragGhost.style.left = e.clientX + 'px';
-        dragGhost.style.top = e.clientY + 'px';
+        dragGhost.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
         e.preventDefault();
       }
     }
     if (drag.active && dragGhost){
-      dragGhost.style.left = e.clientX + 'px';
-      dragGhost.style.top = e.clientY + 'px';
-      clearHover();
-      var el = document.elementFromPoint(e.clientX, e.clientY);
-      var ht = el && el.closest ? el.closest('.bag-tab') : null;
-      if (ht) ht.classList.add('drag-tab-over');
-      var he = el && el.closest ? el.closest('.eq-cell') : null;
-      if (he) he.classList.add('drag-over');
-      var hs = el && el.closest ? el.closest('.slot') : null;
-      if (hs && gridEl.contains(hs) && hs !== gridEl.querySelector('.slot.drag-from')) hs.classList.add('drag-over');
+      dragGhost.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
+      var now = Date.now();
+      if (now - lastHitTime > 40){   /* 节流命中检测，降低手机卡顿 */
+        lastHitTime = now;
+        var el = document.elementFromPoint(e.clientX, e.clientY);
+        if (el !== lastHit){
+          clearHover();
+          lastHit = el;
+          if (el){
+            var ht = el.closest ? el.closest('.bag-tab') : null;
+            if (ht) ht.classList.add('drag-tab-over');
+            var he = el.closest ? el.closest('.eq-cell') : null;
+            if (he) he.classList.add('drag-over');
+            var hs = el.closest ? el.closest('.slot') : null;
+            if (hs && gridEl.contains(hs) && hs !== gridEl.querySelector('.slot.drag-from')) hs.classList.add('drag-over');
+          }
+        }
+      }
     }
   });
   function endDrag(e){
@@ -1007,8 +1061,25 @@ function bindEvents(){
           }
         }
       } else if (drag.src === 'equip'){
-        /* 从装备位拖出 → 卸下到背包第一个空格 */
-        unequip(drag.eq);
+        /* 从装备位拖出 → 卸下到拖拽对应的背包槽位；该槽被占则不互换、无法卸下 */
+        var t = el && el.closest ? el.closest('.slot') : null;
+        if (t && gridEl.contains(t)){
+          var ti = parseInt(t.getAttribute('data-slot'), 10);
+          var page = bag[currentTab];
+          if (ti >= 0 && ti < BAG_SLOTS){
+            if (page[ti]){
+              toast('该位置已有物品，无法卸下');
+            } else {
+              var it = equipState[drag.eq];
+              equipState[drag.eq] = null;
+              page[ti] = it;
+              playSoundEffect(it.type);
+              renderEquip(); renderBag();
+              toast('已卸下 ' + it.name);
+            }
+          }
+        }
+        /* 拖到非背包槽位（其他装备位/空白处）：不卸下 */
       }
     }
     clearDrag();
