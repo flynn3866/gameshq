@@ -737,10 +737,10 @@ var $ = function(s){ return document.querySelector(s); };
 var equipEl = $('#equip'), tabsEl = $('#bag-tabs'), gridEl = $('#bag-grid'), toastEl = $('#toast');
 var toastTimer = null;
 
-/* ===== 音效管理：复用预加载的单实例音频，播放即时、不卡顿、不累积 ===== */
+/* ===== 音效管理：预加载 + 每次克隆全新音频播放（不自动播放、不复用实例防变调） ===== */
 function createPreloadedAudio(src){
   var audio = new Audio(src);
-  audio.preload = 'auto';
+  audio.preload = 'auto';   /* 只预加载，不自动播放 */
   return audio;
 }
 var soundEffects = {
@@ -748,28 +748,17 @@ var soundEffects = {
   jewelry: createPreloadedAudio('sound/首饰.mp3'),
   armor:   createPreloadedAudio('sound/衣服.mp3')
 };
-/* iOS 首次触摸时解锁音频，之后播放即时无延迟 */
-document.addEventListener('pointerdown', function prime(){
-  for (var k in soundEffects){
-    var a = soundEffects[k];
-    try {
-      a.volume = 0;
-      var pr = a.play();
-      if (pr && pr.then) pr.then(function(){ a.pause(); a.currentTime = 0; a.volume = 0.7; }).catch(function(){ a.volume = 0.7; });
-      else { a.pause(); a.currentTime = 0; a.volume = 0.7; }
-    } catch (e){}
-  }
-}, { once:true, passive:true });
 function playSoundEffect(itemType){
   var key = itemType;
   if (itemType === 'necklace' || itemType === 'ring' || itemType === 'bracelet') key = 'jewelry';
   else if (itemType === 'helmet' || itemType === 'chest' || itemType === 'gloves' || itemType === 'leggings' || itemType === 'boots' || itemType === 'shield') key = 'armor';
-  var a = soundEffects[key];
-  if (!a) return;
+  var original = soundEffects[key];
+  if (!original) return;
+  /* 克隆一个全新音频播放：各自独立、不重播同一实例，避免变调/卡顿；走浏览器缓存即时出声 */
   try {
-    a.currentTime = 0;       /* 同一实例从头重播，与拖拽动作同步即时 */
-    a.volume = 0.7;
-    var pr = a.play();
+    var clone = original.cloneNode();
+    clone.volume = 0.7;
+    var pr = clone.play();
     if (pr && pr.then) pr.catch(function(){});
   } catch (e){}
 }
