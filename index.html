@@ -46,6 +46,8 @@ body{
 }
 /* 属性页单独加宽 50px：窗口约 390px，主页面不受影响 */
 body.show-attrs .stage{max-width:410px;}
+/* 天神页：电脑宽屏加宽舞台以左右分栏，手机保持 360 上下堆叠 */
+body.show-god .stage{max-width:680px;}
 
 /* ===== 物品栏整体窗口：边框 + 紧收外阴影 ===== */
 .window{
@@ -267,6 +269,19 @@ body.show-attrs .stage{max-width:410px;}
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
+/* 确认框 */
+.confirm-mask{position:fixed;inset:0;background:rgba(8,7,6,.55);z-index:120;display:flex;align-items:center;justify-content:center;}
+.confirm-box{
+  width:min(82%,300px);background:linear-gradient(180deg,#26211c,#191512);
+  border:1px solid #6D6354;border-radius:8px;padding:18px 16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.6);
+}
+.confirm-msg{font-size:13px;color:#e7e1d2;line-height:1.6;text-align:center;margin-bottom:16px;}
+.confirm-actions{display:flex;gap:10px;justify-content:center;}
+.confirm-actions .cbtn{flex:1;max-width:110px;height:32px;font-size:13px;letter-spacing:2px;}
+.confirm-actions .c-ok{color:#f0e2b8;}
+.confirm-actions .c-no{color:#b9afa0;}
+
 /* ===== 二级页面：角色属性（参考游戏属性面板布局） ===== */
 .attrs{display:none;padding:4px 0 10px;}   /* 覆盖 .window 的左右内边距，让面板贴近页面边线 */
 .attrs-body{padding:2px 2px 12px;}
@@ -453,9 +468,52 @@ body.show-attrs .stage{max-width:410px;}
 .bar-fill{height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,#8a6a2a,#E0B900);transition:width .3s;}
 
 /* 天神总属性两列 */
-#god-attrs .c-row{padding:5px 0;}
-#god-attrs .c-pair .cl{font-size:12px;}
-#god-attrs .c-pair .cv{font-size:13px;color:#E0B900;}
+#god-attrs .c-row,#god-attrs2 .c-row{padding:5px 0;}
+#god-attrs .c-pair .cl,#god-attrs2 .c-pair .cl{font-size:12px;}
+#god-attrs .c-pair .cv,#god-attrs2 .c-pair .cv{font-size:13px;color:#E0B900;}
+
+/* ===== 天神页两栏布局 ===== */
+.god-frame{
+  border:1px solid #6D6354;border-radius:8px;padding:10px;
+  background:linear-gradient(180deg,#26211c,#191512);box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+  margin:0 1px 1px;   /* 与大 div 外的页面边界留 1px 间距（顶部贴合 tab，无间距） */
+}
+.god-head{display:flex;align-items:flex-end;padding:0 2px;}   /* 位于大边框外：左标题 + 右 tab（tab 左对齐右栏左边界） */
+.god-titlebar{flex:1;min-width:0;height:28px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#f0e2b8;font-weight:600;letter-spacing:2px;white-space:nowrap;border:1px solid #5E5E5E;border-radius:4px;box-sizing:border-box;}
+.god-head-tabs{flex:none;display:flex;gap:5px;align-items:flex-end;margin-bottom:0;}
+.god-head-tabs .pgtab{flex:0 0 auto;min-width:44px;padding:0 8px;font-size:12px;letter-spacing:1px;}
+.god-layout{display:flex;flex-direction:column;gap:10px;}
+.god-left{flex:0 0 auto;width:100%;}
+.god-right{flex:1;min-width:0;}
+.god-list{display:flex;flex-direction:column;gap:6px;min-height:324px;margin-left:-7px;}  /* 左边缩近大 div 左边界 */
+.god-li{
+  display:flex;align-items:center;gap:9px;padding:6px 8px;height:54px;
+  border:1px solid #5E5E5E;border-radius:6px;background:#1F1B19;
+  cursor:pointer;position:relative;transition:border-color .15s;width:100%;box-sizing:border-box;
+}
+.god-li.sel{border-color:rgba(214,173,90,.95);box-shadow:inset 0 0 0 1px rgba(214,173,90,.35);}
+.god-li.empty{border-color:#5E5E5E;background:#212020;box-shadow:inset 0 2px 8px rgba(0,0,0,.65),inset 0 0 0 1px rgba(0,0,0,.35);cursor:default;}
+.god-li .gi{width:34px;height:34px;object-fit:contain;flex:0 0 auto;}
+.god-li .gi-empty{width:34px;height:34px;flex:0 0 auto;border:1px solid #5E5E5E;border-radius:5px;background:#1F1B19;box-shadow:inset 0 2px 6px rgba(0,0,0,.65);}
+.god-li .gt{display:flex;flex-direction:column;flex:1;min-width:0;}
+.god-li .gn{font-size:12px;color:#f0e2b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.god-li .gr{font-size:10px;color:#8a8375;margin-top:1px;}
+.god-on{
+  position:absolute;top:5px;right:6px;font-size:9px;letter-spacing:1px;color:#ff6a5a;
+  border:1px solid rgba(255,106,90,.7);border-radius:3px;padding:0 4px;line-height:1.5;
+  background:rgba(255,106,90,.10);transform:rotate(-6deg);
+}
+.god-page{display:flex;justify-content:center;align-items:center;gap:12px;margin-top:9px;font-size:11px;color:#8a8375;}
+.gp-btn{
+  width:24px;height:24px;line-height:1;border:1px solid #5E5E5E;border-radius:4px;
+  background:#1F1B19;color:#e6dcc3;font-size:15px;cursor:pointer;padding:0;
+}
+.gp-btn:active{background:#2a2622;}
+@media(min-width:561px){
+  .god-layout{flex-direction:row;align-items:flex-start;}
+  .god-left{width:38%;flex:0 0 38%;}
+  .god-titlebar{flex:0 0 38%;}
+}
 
 /* ===== 底部选择面板（Bottom Sheet）：不遮满全屏、可滑动选择 ===== */
 #picker-mask{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s;z-index:120;}
@@ -722,40 +780,68 @@ body.show-attrs .stage{max-width:410px;}
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="god-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
-      <h1>天神</h1>
+      <h1>天神之力</h1>
     </header>
     <div class="sys-body">
-      <div class="sys-card">
-        <div class="sys-title">我的天神 <span class="mat-hint" id="god-sel-hint">点击选择天神</span></div>
-        <div class="sys-strip" id="god-list"></div>
-      </div>
-      <div class="pgtabs"><button class="pgtab on" data-gtab="formation">编队</button><button class="pgtab" data-gtab="upgrade">升级</button></div>
-      <div class="god-pane" id="god-formation">
-        <div class="sys-card">
-          <div class="sys-title">编队阵位</div>
-          <div class="sys-slotline" id="god-form"></div>
-          <div class="sys-tip">先点选天神，再点击阵位放入；点击已放入的阵位可卸下</div>
-        </div>
-        <div class="sys-card">
-          <div class="sys-title">天神总属性</div>
-          <div id="god-attrs"></div>
+      <div class="god-head">
+        <div class="god-titlebar">天神列表</div>
+        <div class="pgtabs god-head-tabs">
+          <button class="pgtab on" data-gtab="formation">编队</button>
+          <button class="pgtab" data-gtab="upgrade">升级</button>
+          <button class="pgtab" data-gtab="inherit">继承</button>
+          <button class="pgtab" data-gtab="refine">精炼</button>
         </div>
       </div>
-      <div class="god-pane" id="god-upgrade" style="display:none;">
-        <div class="sys-card">
-          <div class="sys-title">升级目标</div>
-          <div class="sys-slotline"><div class="eq-cell"><div class="slot tt-slot" id="god-target"></div></div></div>
+      <div class="god-frame">
+        <div class="god-layout">
+          <div class="god-left">
+            <div class="god-list" id="god-list"></div>
+            <div class="god-page">
+              <button class="gp-btn" id="god-prev" aria-label="上一页">‹</button>
+              <span id="god-pageinfo">1/1</span>
+              <button class="gp-btn" id="god-next" aria-label="下一页">›</button>
+            </div>
+          </div>
+          <div class="god-right">
+            <div class="god-pane" id="god-formation">
+              <div class="sys-card">
+                <div class="sys-title">编队阵位 <span class="mat-hint" id="god-sel-hint">点击列表选中天神</span></div>
+                <div class="sys-slotline" id="god-form"></div>
+                <div class="sys-tip">点击列表选中，再点击或拖拽到阵位上阵；主阵位100%、副阵位50%附加属性</div>
+              </div>
+              <div class="sys-card">
+                <div class="sys-title">天神总属性</div>
+                <div id="god-attrs"></div>
+              </div>
+              <div class="sys-card">
+                <div class="sys-title">可转化属性</div>
+                <div id="god-attrs2"></div>
+              </div>
+            </div>
+            <div class="god-pane" id="god-upgrade" style="display:none;">
+              <div class="sys-card">
+                <div class="sys-title">升级目标</div>
+                <div class="sys-slotline"><div class="eq-cell"><div class="slot tt-slot" id="god-target"></div></div></div>
+              </div>
+              <div class="sys-card">
+                <div class="sys-title">升级进度 <span class="mat-hint" id="god-progress">0%</span></div>
+                <div class="bar"><div class="bar-fill" id="god-bar"></div></div>
+                <div class="sys-tip" id="god-mats"></div>
+              </div>
+              <div class="sys-card">
+                <div class="rate-line"><span class="rl">成功概率</span><b id="god-rate">0%</b></div>
+                <div class="rate-line"><span class="rl">消耗绑定金币</span><b id="god-cost">0</b></div>
+              </div>
+              <button class="btn sys-ok" id="god-up-btn">升级</button>
+            </div>
+            <div class="god-pane" id="god-inherit" style="display:none;">
+              <div class="sys-card"><div class="sys-title">继承</div><div class="sys-tip">功能开发中</div></div>
+            </div>
+            <div class="god-pane" id="god-refine" style="display:none;">
+              <div class="sys-card"><div class="sys-title">精炼</div><div class="sys-tip">功能开发中</div></div>
+            </div>
+          </div>
         </div>
-        <div class="sys-card">
-          <div class="sys-title">升级进度 <span class="mat-hint" id="god-progress">0%</span></div>
-          <div class="bar"><div class="bar-fill" id="god-bar"></div></div>
-          <div class="sys-tip" id="god-mats"></div>
-        </div>
-        <div class="sys-card">
-          <div class="rate-line"><span class="rl">成功概率</span><b id="god-rate">0%</b></div>
-          <div class="rate-line"><span class="rl">消耗绑定金币</span><b id="god-cost">0</b></div>
-        </div>
-        <button class="btn sys-ok" id="god-up-btn">升级</button>
       </div>
     </div>
   </div>
@@ -1092,6 +1178,8 @@ function playSoundEffect(itemType){
   var key = itemType;
   if (itemType === 'necklace' || itemType === 'ring' || itemType === 'bracelet') key = 'jewelry';
   else if (itemType === 'helmet' || itemType === 'chest' || itemType === 'gloves' || itemType === 'leggings' || itemType === 'boots' || itemType === 'shield') key = 'armor';
+  /* 播放前确保音频上下文已恢复（iOS/Android 需用户手势 resume） */
+  if (audioCtx && audioCtx.state === 'suspended'){ try { audioCtx.resume(); } catch (e){} }
   /* 首选 Web Audio：解码完成则即时轻量播放（可叠加、不卡顿、与动作同步） */
   if (audioCtx && soundBuffers[key]){
     try {
@@ -1104,13 +1192,12 @@ function playSoundEffect(itemType){
     } catch (e){}
     return;
   }
-  /* 后备：Web Audio 未就绪时克隆预加载音频播放 */
+  /* 后备：直接播放已预加载的 Audio 元素（currentTime 归零重播，避免 cloneNode 重新异步加载导致无声） */
   var original = soundEffects[key];
   if (!original) return;
   try {
-    var clone = original.cloneNode();
-    clone.volume = 0.7;
-    var pr = clone.play();
+    original.currentTime = 0;
+    var pr = original.play();
     if (pr && pr.then) pr.catch(function(){});
   } catch (e){}
 }
@@ -1120,6 +1207,23 @@ function toast(msg){
   toastEl.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 1800);
+}
+/* 通用确认框：手机/电脑皆可用，确认后回调 cb(true) */
+function confirmDialog(msg, cb){
+  var old = document.getElementById('confirm-mask');
+  if (old) old.remove();
+  var mask = document.createElement('div');
+  mask.className = 'confirm-mask'; mask.id = 'confirm-mask';
+  mask.innerHTML = '<div class="confirm-box">'
+    + '<div class="confirm-msg">' + msg + '</div>'
+    + '<div class="confirm-actions">'
+    + '<button class="btn cbtn c-ok">确定</button>'
+    + '<button class="btn cbtn c-no">取消</button>'
+    + '</div></div>';
+  document.body.appendChild(mask);
+  mask.querySelector('.c-ok').onclick = function(){ mask.remove(); cb(true); };
+  mask.querySelector('.c-no').onclick = function(){ mask.remove(); cb(false); };
+  mask.addEventListener('click', function(e){ if (e.target === mask){ mask.remove(); cb(false); } });
 }
 
 function slotHTML(item, small, label, idx){
@@ -1266,6 +1370,15 @@ function bindEvents(){
     if (!it) toast('背包格 · 空');   /* 有物品时由点击式 tooltip 展示详情 */
   });
 
+  /* 电脑端：右键天神图标 → 加载到天神系统（手机端为长按） */
+  gridEl.addEventListener('contextmenu', function(e){
+    var s = e.target.closest ? e.target.closest('.slot') : null;
+    if (!s || !s.classList.contains('has-item')) return;
+    var i = parseInt(s.getAttribute('data-slot'),10);
+    var it = bag[currentTab][i];
+    if (it && isGodItem(it)){ e.preventDefault(); loadGodFromBag(it, currentTab, i); }
+  });
+
   /* ===== 拖拽 & 长按：背包互换 / 跨背包放入 / 穿戴 / 卸下 ===== */
   var drag = null, dragGhost = null, dragDist = 0, suppressClick = false;
   var lpTimer = null, lpItem = null, lpKind = null;
@@ -1302,7 +1415,11 @@ function bindEvents(){
   function onLongPress(){
     if (!drag || drag.active){ return; }
     lpTimer = null;
-    if (lpKind === 'bag') autoEquip(lpItem, drag.bag, drag.from);
+    if (lpKind === 'bag'){
+      /* 天神长按 → 加载到天神系统（确认框），其余物品 → 自动穿戴 */
+      if (isGodItem(lpItem)) loadGodFromBag(lpItem, drag.bag, drag.from);
+      else autoEquip(lpItem, drag.bag, drag.from);
+    }
     else if (lpKind === 'equip') unequip(drag.eq);
     suppressClick = true;
     var from = gridEl.querySelector('.slot.drag-from');
@@ -1654,9 +1771,10 @@ function recalcCharacter(){
   }
   if (GOD){ for (var gk in GOD.formation){ var g=GOD.formation[gk]; if(!g) continue;
     var ga=calculateGodAttributes(g);
-    bn.力量+=ga.strength||0; bn.敏捷+=ga.agility||0; bn.体质+=ga.constitution||0;
-    bn.精神+=ga.spirit||0; bn.智力+=ga.intelligence||0; bn.幸运+=ga.luck||0;
-    hp+=ga.hp||0; patk+=ga.physicalAttack||0; pdef+=ga.physicalDefense||0; mdef+=ga.magicDefense||0;
+    var gmult = (gk==='main') ? 1 : 0.5;   /* 主阵位100%、副阵位50%附加 */
+    bn.力量+=Math.floor((ga.strength||0)*gmult); bn.敏捷+=Math.floor((ga.agility||0)*gmult); bn.体质+=Math.floor((ga.constitution||0)*gmult);
+    bn.精神+=Math.floor((ga.spirit||0)*gmult); bn.智力+=Math.floor((ga.intelligence||0)*gmult); bn.幸运+=Math.floor((ga.luck||0)*gmult);
+    hp+=Math.floor((ga.hp||0)*gmult); patk+=Math.floor((ga.physicalAttack||0)*gmult); pdef+=Math.floor((ga.physicalDefense||0)*gmult); mdef+=Math.floor((ga.magicDefense||0)*gmult);
   } }
   CHARACTER.base=st; CHARACTER.bonus=bn;
   CHARACTER.combat=[
@@ -1971,12 +2089,10 @@ function doGemExtract(){
 }
 
 /* ============ 天神系统 ============ */
-var GOD={ formation:{main:null,sub1:null,sub2:null,sub3:null}, selected:null, upTarget:null, tab:'formation' };
-function ownedGods(){
-  var out=[];
-  for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&(it.type==='god_seal'||it.type==='god_rune')) out.push(it); }
-  return out;
-}
+var LOADED_GODS = [];   /* 已加载到天神系统的天神（按序，左列显示） */
+function isGodItem(it){ return it && (it.type === 'god_seal' || it.type === 'god_rune'); }
+var GOD={ formation:{main:null,sub1:null,sub2:null,sub3:null}, selected:null, upTarget:null, tab:'formation', page:1 };
+function ownedGods(){ return LOADED_GODS; }
 function isFormed(g){ for (var k in GOD.formation){ if(GOD.formation[k]&&GOD.formation[k].id===g.id) return true; } return false; }
 function calcGodProgress(g){ var r=g.requiredExp||100; if(r<=0) return 0; return Math.min(100,(g.currentExp||0)/r*100); }
 function calcGodRate(g){
@@ -2005,26 +2121,49 @@ GOD.reset=function(){ this.selected=null; this.upTarget=null; this.tab='formatio
 function godAttrsRows(){
   var a={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,攻击力:0,防御力:0,抵抗力:0};
   for (var k in GOD.formation){ var g=GOD.formation[k]; if(!g) continue; var ga=calculateGodAttributes(g);
-    a.力量+=ga.strength||0; a.敏捷+=ga.agility||0; a.体质+=ga.constitution||0; a.精神+=ga.spirit||0; a.智力+=ga.intelligence||0; a.幸运+=ga.luck||0;
-    a.攻击力+=ga.physicalAttack||0; a.防御力+=ga.physicalDefense||0; a.抵抗力+=ga.magicDefense||0;
+    var mult=(k==='main')?1:0.5;   /* 主阵位 100%、副阵位 50% 附加 */
+    a.力量+=Math.floor((ga.strength||0)*mult); a.敏捷+=Math.floor((ga.agility||0)*mult); a.体质+=Math.floor((ga.constitution||0)*mult);
+    a.精神+=Math.floor((ga.spirit||0)*mult); a.智力+=Math.floor((ga.intelligence||0)*mult); a.幸运+=Math.floor((ga.luck||0)*mult);
+    a.攻击力+=Math.floor((ga.physicalAttack||0)*mult); a.防御力+=Math.floor((ga.physicalDefense||0)*mult); a.抵抗力+=Math.floor((ga.magicDefense||0)*mult);
   }
-  var pairs=[['力量','敏捷'],['体质','精神'],['智力','幸运'],['攻击力','防御力']];
-  var h='';
-  pairs.forEach(function(p){ h+='<div class="c-row"><span class="c-pair"><span class="cl">'+p[0]+'</span><span class="cv">'+a[p[0]]+'</span></span><span class="c-pair"><span class="cl">'+p[1]+'</span><span class="cv">'+a[p[1]]+'</span></span></div>'; });
-  h+='<div class="c-row"><span class="c-pair"><span class="cl">抵抗力</span><span class="cv">'+a.抵抗力+'</span></span><span></span></div>';
-  return h;
+  var row=function(name,val){ return '<div class="c-row"><span class="c-pair"><span class="cl">'+name+'</span><span class="cv">'+val+'</span></span><span></span></div>'; };
+  /* 天神总属性：6 维 */
+  var main='';
+  [['力量','敏捷'],['体质','精神'],['智力','幸运']].forEach(function(p){
+    main+='<div class="c-row"><span class="c-pair"><span class="cl">'+p[0]+'</span><span class="cv">'+a[p[0]]+'</span></span><span class="c-pair"><span class="cl">'+p[1]+'</span><span class="cv">'+a[p[1]]+'</span></span></div>';
+  });
+  /* 可转化属性：战斗属性 */
+  var sub=row('攻击力',a.攻击力)+row('防御力',a.防御力)+row('抵抗力',a.抵抗力);
+  return { main:main, sub:sub };
 }
 function renderGod(){
   var list=$('#god-list'); list.innerHTML='';
-  ownedGods().forEach(function(g){
-    var d=document.createElement('div'); d.className='pick'+(GOD.selected&&GOD.selected.id===g.id?' sel':'');
-    d.innerHTML='<img src="'+g.img+'">'; d._item=g;
-    d.addEventListener('click', function(){ GOD.selected=(GOD.selected&&GOD.selected.id===g.id)?null:g; renderGod(); });
+  var gsi = function(g){ var ks=['main','sub1','sub2','sub3']; for(var i=0;i<ks.length;i++) if(GOD.formation[ks[i]]===g) return i; return 99; };
+  var gods = ownedGods().slice().sort(function(a,b){ return gsi(a)-gsi(b); }), pp=6, pages=5;   /* 已上阵按主副排最前，未上阵接后，中间无空行 */
+  if(GOD.page>pages) GOD.page=pages;
+  var slice=gods.slice((GOD.page-1)*pp, GOD.page*pp);
+  /* 固定渲染 6 个槽位 div（带边框、尺寸固定），有天神则填充，无则凹陷空槽 */
+  for(var si=0; si<pp; si++){
+    var liIdx=(GOD.page-1)*pp+si;
+    var g=slice[si];
+    var d=document.createElement('div');
+    d.className='god-li'+(g?'':' empty')+(g&&GOD.selected&&GOD.selected.id===g.id?' sel':'');
+    d.setAttribute('data-li', liIdx);
+    d._item=g||null;
+    if(g){
+      d.innerHTML='<img class="gi" src="'+g.img+'">'
+        +'<div class="gt"><span class="gn">'+g.name+'</span><span class="gr">'+(g.grade||0)+'重'+(g.star||1)+'星</span></div>'
+        +(isFormed(g)?'<span class="god-on">上阵中</span>':'');
+      (function(gg){ d.addEventListener('click', function(){ if(godSuppressClick){ godSuppressClick=false; return; } GOD.selected=(GOD.selected&&GOD.selected.id===gg.id)?null:gg; renderGod(); }); })(g);
+    }else{
+      d.innerHTML='<div class="gi gi-empty"></div><div class="gt"></div>';
+    }
     list.appendChild(d);
-  });
-  if(!list.children.length) list.innerHTML='<div class="sys-tip">背包中暂无天神</div>';
-  $('#god-sel-hint').textContent=GOD.selected?(GOD.selected.name+' · '+(GOD.selected.grade||0)+'重'+(GOD.selected.star||1)+'星'):'点击选择天神';
-  GOD.tab==='formation'?renderGodForm():renderGodUpgrade();
+  }
+  $('#god-pageinfo').textContent=GOD.page+'/'+pages;
+  $('#god-sel-hint').textContent=GOD.selected?(GOD.selected.name+' · '+(GOD.selected.grade||0)+'重'+(GOD.selected.star||1)+'星'):'点击列表选中天神';
+  if(GOD.tab==='formation') renderGodForm();
+  else if(GOD.tab==='upgrade') renderGodUpgrade();
 }
 function renderGodForm(){
   var keys=['main','sub1','sub2','sub3'];
@@ -2032,15 +2171,106 @@ function renderGodForm(){
   keys.forEach(function(k){
     var g=GOD.formation[k];
     var d=document.createElement('div'); d.className='pick'+(g?'':' add'); d.style.width='52px'; d.style.height='52px';
+    d.setAttribute('data-key', k);
     if(g){ d.innerHTML='<img src="'+g.img+'">'; d._item=g; }
     d.addEventListener('click', function(){
       if(g){ GOD.formation[k]=null; recalcCharacter(); renderGod(); toast('已卸下 '+g.name); }
       else if(GOD.selected){ if(isFormed(GOD.selected)){ toast('该天神已上阵'); return; } GOD.formation[k]=GOD.selected; recalcCharacter(); renderGod(); toast('已上阵 '+GOD.selected.name); }
-      else toast('先点选天神再放入阵位');
+      else toast('先点击列表选中天神再放入阵位');
     });
     f.appendChild(d);
   });
-  $('#god-attrs').innerHTML=godAttrsRows();
+  var attrs=godAttrsRows();
+  $('#god-attrs').innerHTML=attrs.main;
+  $('#god-attrs2').innerHTML=attrs.sub;
+}
+/* 从背包长按加载天神到系统 */
+function loadGodFromBag(item, p, i){
+  confirmDialog('是否加载「'+item.name+'」到天神系统？加载后也可回退到背包。', function(ok){
+    if(!ok) return;
+    if(isFormed(item)){ toast('该天神已上阵'); return; }
+    if(LOADED_GODS.indexOf(item)>=0){ toast('该天神已在系统中'); return; }
+    if(LOADED_GODS.length>=30){ toast('天神系统已满（30/30），请先回退部分天神'); return; }
+    bag[p][i]=null;
+    LOADED_GODS.push(item);
+    renderBag();
+    /* 自动打开天神页，显示加载结果 */
+    if(location.hash!=='#god') location.hash='#god';
+    else renderGod();
+    toast('已加载 '+item.name+' 到天神系统');
+  });
+}
+/* 左列长按回退到背包 */
+function godLongPress(g){
+  godSuppressClick=true;
+  if(godDrag){ godDrag.active=false; godDrag=null; }
+  var gi=LOADED_GODS.indexOf(g); if(gi<0){ toast('天神不存在'); return; }
+  confirmDialog('是否将「'+g.name+'」回退到背包？', function(ok){
+    if(!ok) return;
+    if(isFormed(g)){ toast('请先卸下上阵的天神再回退'); return; }
+    if(!placeInBag(g)){ toast('背包已满，无法回退'); return; }
+    LOADED_GODS.splice(gi,1);
+    if(GOD.selected&&GOD.selected.id===g.id) GOD.selected=null;
+    renderGod(); renderBag();
+    toast('已回退 '+g.name+' 到背包');
+  });
+}
+/* 拖拽左列天神上阵到阵位（空位直接放；有占位则替换） */
+function placeGodInForm(k, g){
+  var old=GOD.formation[k];
+  if(old && old.id===g.id){ toast('该天神已在此阵位'); return; }
+  if(isFormed(g)){ toast('该天神已上阵，请先卸下再换阵位'); return; }   /* 已上阵不可重复上阵 */
+  GOD.formation[k]=g;
+  recalcCharacter();
+  if(document.getElementById('view-god').style.display!=='none') renderGod();
+  playSoundEffect(g.type);
+  toast((k==='main'?'主阵位':'副阵位')+'上阵 '+g.name);
+}
+/* 天神列表：长按回退 + 拖拽上阵（一次性绑定，委托监听） */
+var godDrag=null, godGhost=null, godDist=0, godLP=null, godSuppressClick=false;
+function setupGodDrag(){
+  var list=document.getElementById('god-list');
+  list.addEventListener('pointerdown', function(e){
+    var li=e.target.closest('.god-li'); if(!li) return;
+    var g=li._item; if(!g) return;   /* 取当前行显示的天神（列表已按上阵排序），而非 LOADED_GODS 原序 */
+    var idx=parseInt(li.getAttribute('data-li'),10);
+    godDrag={ idx:idx, g:g, x:e.clientX, y:e.clientY, active:false };
+    godDist=0;
+    try{ li.setPointerCapture(e.pointerId); }catch(er){}
+    godLP=setTimeout(function(){ godLP=null; godLongPress(g); }, 520);
+  });
+  document.addEventListener('pointermove', function(e){
+    if(!godDrag) return;
+    var dx=e.clientX-godDrag.x, dy=e.clientY-godDrag.y;
+    godDist=Math.max(godDist, Math.sqrt(dx*dx+dy*dy));
+    if(godDist>7){
+      if(godLP){ clearTimeout(godLP); godLP=null; }
+      if(!godDrag.active){
+        godDrag.active=true; godSuppressClick=true;
+        godGhost=document.createElement('div'); godGhost.className='drag-ghost';
+        godGhost.innerHTML='<img src="'+godDrag.g.img+'">';
+        document.body.appendChild(godGhost);
+        e.preventDefault();
+      }
+    }
+    if(godDrag.active&&godGhost){ godGhost.style.transform='translate3d('+e.clientX+'px,'+e.clientY+'px,0) translate(-50%,-50%)'; }
+  });
+  document.addEventListener('pointerup', function(e){
+    if(!godDrag) return;
+    if(godLP){ clearTimeout(godLP); godLP=null; }
+    if(godDrag.active){
+      godSuppressClick=true;
+      /* elementsFromPoint 遍历找阵位，穿透 ghost/子层，命中更可靠 */
+      var els = document.elementsFromPoint ? document.elementsFromPoint(e.clientX, e.clientY) : [];
+      var slot = null;
+      for (var i = 0; i < els.length; i++){
+        if (els[i] && els[i].closest && els[i].closest('#god-form .pick')){ slot = els[i].closest('#god-form .pick'); break; }
+      }
+      if (slot) placeGodInForm(slot.getAttribute('data-key'), godDrag.g);
+    }
+    if(godGhost){ godGhost.remove(); godGhost=null; }
+    godDrag=null;
+  });
 }
 function godMaterials(g){
   var mats=[]; function find(t){ for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.type===t&&it.count>0) return it; } return null; }
@@ -2120,11 +2350,17 @@ function initSystemsUI(){
       document.querySelectorAll('#view-god .pgtab').forEach(function(x){ x.classList.remove('on'); });
       tab.classList.add('on');
       GOD.tab = tab.getAttribute('data-gtab');
-      document.getElementById('god-formation').style.display = GOD.tab==='formation' ? 'block' : 'none';
-      document.getElementById('god-upgrade').style.display = GOD.tab==='formation' ? 'none' : 'block';
+      ['god-formation','god-upgrade','god-inherit','god-refine'].forEach(function(id){
+        document.getElementById(id).style.display = (GOD.tab===id.replace('god-','')) ? 'block' : 'none';
+      });
       renderGod();
     });
   });
+  setupGodDrag();
+  /* 天神列表分页 */
+  $('#god-prev').onclick = function(){ if(GOD.page>1){ GOD.page--; renderGod(); } };
+  $('#god-next').onclick = function(){ if(GOD.page<5){ GOD.page++; renderGod(); } };
+  $('#god-up-btn').onclick = doGodUpgrade;
   /* 强化 */
   $('#enh-equip').onclick = function(){ openPicker('选择强化装备', allEquipmentForPick(), function(it){ ENH.equip=it; closePicker(); renderEnhance(); }); };
   $('#enh-btn').onclick = doEnhance;
@@ -2199,6 +2435,7 @@ function applyRoute(){
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
       gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0;
   document.body.classList.toggle('show-attrs', attrs);   /* 属性页加宽舞台 */
+  document.body.classList.toggle('show-god', god);       /* 天神页宽屏两栏 */
   var map = {
     '#view-main':    !(attrs||enh||gem||god),
     '#view-attrs':   attrs,
@@ -2255,6 +2492,10 @@ function doInit(){
   /* 清空背包与装备位 */
   for (var p = 0; p < BAG_NUM; p++) for (var i = 0; i < BAG_SLOTS; i++) bag[p][i] = null;
   equipState = {};
+  /* 重置天神系统：已加载列表与上阵阵位清空，天神回到背包由玩家长按加载 */
+  LOADED_GODS.length = 0;
+  GOD.formation = { main:null, sub1:null, sub2:null, sub3:null };
+  GOD.selected = null; GOD.upTarget = null; GOD.page = 1;
   /* 生成初始物品并按顺序放入背包（参照 物品生成-初始化 逻辑） */
   itemIdCounter = 1;
   var items = buildInitialItems();
