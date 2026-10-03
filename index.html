@@ -37,6 +37,7 @@ body{
 /* ===== 舞台：物品栏所在，与手机边缘留小间隔 ===== */
 .stage{
   min-height:100%;
+  width:100%;box-sizing:border-box;
   padding:
     calc(env(safe-area-inset-top,0px) + 4px)
     calc(env(safe-area-inset-right,0px) + 10px)
@@ -46,8 +47,9 @@ body{
 }
 /* 属性页单独加宽 50px：窗口约 390px，主页面不受影响 */
 body.show-attrs .stage{max-width:410px;}
-/* 天神页：电脑宽屏加宽舞台以左右分栏，手机保持 360 上下堆叠 */
+/* 天神页：电脑宽屏加宽舞台以左右分栏，手机保持单列不超屏幕宽 */
 body.show-god .stage{max-width:680px;}
+@media(max-width:480px){ body.show-god .stage{max-width:100%;} }
 
 /* ===== 物品栏整体窗口：边框 + 紧收外阴影 ===== */
 .window{
@@ -70,6 +72,8 @@ body.show-god .stage{max-width:680px;}
   font-size:17px;font-weight:600;letter-spacing:2px;padding:0 16px;
   color:#ffffff;text-shadow:0 1px 2px rgba(0,0,0,.9);
 }
+/* 主页「物品栏」标题：上下边距加大（二级页顶栏保持紧凑，不受影响） */
+#view-main .topbar{height:auto;padding:11px 0 9px;margin-bottom:8px;}
 
 /* ===== 面板通用 ===== */
 .panel{border-radius:6px;}
@@ -178,7 +182,7 @@ body.show-god .stage{max-width:680px;}
   transition:transform .06s ease;
 }
 .slot::before{
-  content:"";position:absolute;inset:2px;border-radius:4px;
+  content:"";position:absolute;inset:1px;border-radius:4px;
   border:1px solid rgba(0,0,0,.45);
   box-shadow:inset 0 1px 2px rgba(0,0,0,.5), inset 0 -1px 1px rgba(255,255,255,.03);
   pointer-events:none;
@@ -227,7 +231,7 @@ body.show-god .stage{max-width:680px;}
   background:linear-gradient(90deg,transparent,#6D6354 20%,#6D6354 80%,transparent);
 }
 
-.actions{display:flex;flex-direction:column;gap:5px;margin:0 4px 16px;}   /* 按钮下方留白加大 */
+.actions{display:flex;flex-direction:column;gap:5px;margin:10px 4px 16px;}   /* 按钮组与上面内容间距加大 */
 .act-row{display:flex;gap:6px;justify-content:center;}
 .act-row.c4 .btn{flex:1;max-width:86px;}
 .btn{
@@ -422,7 +426,7 @@ body.show-god .stage{max-width:680px;}
 }
 .sys .back-arrow:active svg{opacity:.45;}
 .sys-card{
-  background:linear-gradient(180deg,#282A2A,#262320);
+  background:linear-gradient(180deg,#191513,#100d0b);
   border:1px solid #5A5550;border-radius:6px;
   padding:6px 10px 8px;margin-bottom:6px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
@@ -435,6 +439,10 @@ body.show-god .stage{max-width:680px;}
 .mat-hint{font-size:10px;color:#8a8375;font-weight:300;letter-spacing:0;}
 .sys-tip{font-size:10px;color:#8a8375;letter-spacing:0;margin-top:5px;text-align:center;}
 .sys-slotline{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
+.god-up-line{justify-content:flex-start;align-items:center;gap:12px;flex-wrap:nowrap;}
+.god-up-info{display:flex;flex-direction:column;justify-content:center;gap:3px;flex:1;min-width:0;text-align:left;}
+.gu-name{font-size:13px;color:#f0e2b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gu-star{font-size:11px;color:#8a8375;}
 .sys-slotline .slot{width:52px;height:52px;}
 .sys-slotline .slot.small{width:34px;height:34px;}
 .sys-ok{width:100%;max-width:220px;margin:6px auto 2px;height:34px;font-size:15px;color:#f0e2b8;letter-spacing:4px;}
@@ -449,12 +457,17 @@ body.show-god .stage{max-width:680px;}
   radial-gradient(150% 170% at 50% 30%, #2b2a28 0%, #201f1e 45%, #141312 100%);
   border:1px solid #5E5E5E;box-shadow:inset 0 4px 7px rgba(0,0,0,.95),inset 1px 0 4px rgba(0,0,0,.7),inset -1px 0 3px rgba(0,0,0,.55),inset 0 -2px 3px rgba(255,255,255,.05),0 1px 1px rgba(0,0,0,.55);
   cursor:pointer;}
-.pick img{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);object-fit:contain;border-radius:4px;
+.pick img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain;border-radius:4px;
   box-shadow:inset 0 2px 6px rgba(0,0,0,.85),inset 1px 0 5px rgba(0,0,0,.5),inset -1px 0 5px rgba(0,0,0,.5),inset 0 -2px 4px rgba(0,0,0,.5);}
 .pick .qty{position:absolute;right:2px;bottom:1px;font-size:9px;font-weight:600;color:#fff;text-shadow:0 1px 2px #000;pointer-events:none;}
 .pick.sel{border-color:rgba(214,173,90,.9);box-shadow:0 0 0 2px rgba(214,173,90,.45),inset 0 4px 7px rgba(0,0,0,.95);}
 .pick.add{border-style:dashed;border-color:#6b6356;display:flex;align-items:center;justify-content:center;}
 .pick.add::before{content:"+";color:#8a8375;font-size:20px;}
+/* 天神阵位空槽：去掉 + 号，仅保留虚线凹槽凹陷感 */
+#god-form .pick.add::before{content:"";}
+/* 天神阵位：空槽边框用实线；主凹槽与副凹槽增加间隔 */
+#god-form .pick.add{border-style:solid;}
+#god-form .pick[data-key="main"]{margin-right:4px;}
 .pick .rm{position:absolute;top:-4px;right:-4px;width:16px;height:16px;border-radius:50%;background:#c0392b;color:#fff;font-size:10px;line-height:16px;text-align:center;z-index:2;}
 
 /* 系统页内 tab（宝石镶嵌/拆卸、天神编队/升级） */
@@ -465,12 +478,15 @@ body.show-god .stage{max-width:680px;}
 
 /* 升级进度条 */
 .bar{height:10px;border-radius:5px;background:#141312;border:1px solid #3a352e;overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.6);}
-.bar-fill{height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,#8a6a2a,#E0B900);transition:width .3s;}
+.bar-fill{height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,#4CAF50,#8BC34A);box-shadow:0 0 5px rgba(76,175,80,.5);transition:width .3s;}
+#god-target img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain;border-radius:3px;}
 
 /* 天神总属性两列 */
-#god-attrs .c-row,#god-attrs2 .c-row{padding:5px 0;}
-#god-attrs .c-pair .cl,#god-attrs2 .c-pair .cl{font-size:12px;}
+#god-attrs .c-row,#god-attrs2 .c-row{padding:2px 0;}
+#god-attrs .c-pair .cl,#god-attrs2 .c-pair .cl{font-size:12px;color:#ffffff;}
 #god-attrs .c-pair .cv,#god-attrs2 .c-pair .cv{font-size:13px;color:#E0B900;}
+/* 「天神总属性」「可转化属性」标题：居中 + 与属性页标题同色 */
+#god-formation .sys-title.god-at-title{justify-content:center;color:#E0B900;}
 
 /* ===== 天神页两栏布局 ===== */
 .god-frame{
@@ -485,15 +501,15 @@ body.show-god .stage{max-width:680px;}
 .god-layout{display:flex;flex-direction:column;gap:10px;}
 .god-left{flex:0 0 auto;width:100%;}
 .god-right{flex:1;min-width:0;}
-.god-list{display:flex;flex-direction:column;gap:6px;min-height:324px;margin-left:-7px;}  /* 左边缩近大 div 左边界 */
+.god-list{display:flex;flex-direction:column;gap:4px;min-height:308px;margin-left:-7px;}  /* 左边缩近大 div 左边界 */
 .god-li{
-  display:flex;align-items:center;gap:9px;padding:6px 8px;height:54px;
+  display:flex;align-items:center;gap:9px;padding:4px 8px;height:48px;
   border:1px solid #5E5E5E;border-radius:6px;background:#1F1B19;
   cursor:pointer;position:relative;transition:border-color .15s;width:100%;box-sizing:border-box;
 }
-.god-li.sel{border-color:rgba(214,173,90,.95);box-shadow:inset 0 0 0 1px rgba(214,173,90,.35);}
+.god-li.sel{background:#402412;border-color:#5E4528;box-shadow:none;}
 .god-li.empty{border-color:#5E5E5E;background:#212020;box-shadow:inset 0 2px 8px rgba(0,0,0,.65),inset 0 0 0 1px rgba(0,0,0,.35);cursor:default;}
-.god-li .gi{width:34px;height:34px;object-fit:contain;flex:0 0 auto;}
+.god-li .gi{width:34px;height:34px;object-fit:contain;flex:0 0 auto;border:1px solid #5E5E5E;border-radius:5px;background:#1F1B19;box-shadow:inset 0 2px 6px rgba(0,0,0,.65);}
 .god-li .gi-empty{width:34px;height:34px;flex:0 0 auto;border:1px solid #5E5E5E;border-radius:5px;background:#1F1B19;box-shadow:inset 0 2px 6px rgba(0,0,0,.65);}
 .god-li .gt{display:flex;flex-direction:column;flex:1;min-width:0;}
 .god-li .gn{font-size:12px;color:#f0e2b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -535,43 +551,63 @@ body.show-god .stage{max-width:680px;}
 
 /* ===== 点击式 Tooltip（手机）：点击显示、点击其他处隐藏，防屏幕遮挡 ===== */
 #tooltip{
-  position:fixed;z-index:130;max-width:min(280px,78vw);
-  background:linear-gradient(180deg,#201e1c,#151312);
-  border:1px solid #6D6354;border-radius:7px;
-  padding:8px 11px;box-shadow:0 6px 20px rgba(0,0,0,.65);
-  font-size:12px;line-height:1.5;color:#e7e1d2;
-  opacity:0;pointer-events:none;transition:opacity .15s;
-  max-height:56vh;overflow-y:auto;
+  position:fixed;z-index:130;width:max-content;min-width:220px;max-width:min(280px,80vw);
+  background:rgba(0,0,0,.95);color:#fff;padding:12px;border-radius:8px;
+  border:1px solid rgb(51,49,49);box-shadow:0 6px 12px rgba(0,0,0,.6);
+  font-size:13px;line-height:1.4;font-weight:normal;word-wrap:break-word;
+  opacity:0;pointer-events:none;transition:opacity .15s;backdrop-filter:blur(5px);
+  max-height:70vh;overflow-y:auto;
 }
 #tooltip.show{opacity:1;}
-.tt-name{font-size:13px;color:#fff;font-weight:600;margin-bottom:4px;}
-.tt-y{color:#E0B900;}
-.tt-w{color:#e7e1d2;}
-.tt-o{color:#ff8c42;}
-.tt-b{color:rgb(103,198,198);}
-.tt-gap{height:5px;}
+.tt-name{font-size:16px;color:rgb(255,128,0);font-weight:normal;}
+.tt-y{color:rgb(244,243,1);font-weight:normal;}
+.tt-w{color:#ffffff;font-weight:normal;}
+.tt-o{color:rgb(255,128,0);font-weight:normal;}
+.tt-b{color:rgb(103,198,198);font-weight:normal;}
+.tt-gap{height:13px;}
 .tt-line{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.tt-gems{display:flex;gap:3px;margin-top:5px;}
-.tt-gems i{width:16px;height:16px;border-radius:3px;background:#212020;border:1px solid #5E5E5E;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;}
-.tt-gems i img{width:100%;height:100%;object-fit:contain;}
-/* 名称/说明配色（参考旧系统：等级绿/黄/紫、海伦淡紫、伤害橙） */
-.tt-green{color:#7CCB3A;}
-.tt-purple{color:#C77BFF;}
-.tt-lp{color:#E0B0FF;}
-.tt-gold{color:#E0B900;}
+.tt-gems{display:grid;grid-template-columns:repeat(6,1fr);gap:1px 0;margin-top:5px;width:75%;}
+.tt-gems i{width:20px;height:20px;background:rgb(94,94,94);border-radius:1px;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.tt-gems i img{width:100%;height:100%;object-fit:contain;display:block;}
+.tt-gems i.filled{background:rgba(0,0,0,.95);}
+/* 名称/说明配色（严格按旧系统 tooltip 颜色值） */
+.tt-green{color:rgb(1,230,58);}
+.tt-purple{color:rgb(231,2,231);}
+.tt-lp{color:rgb(232,2,232);}
+.tt-gold{color:rgb(244,243,1);}
 
 /* ===== 宝石页（参考旧系统：边框卡片、40px 渐变槽、绿色选中、成功率三行、分页箭头、一屏固定） ===== */
 #view-gem{width:296px;margin:0 auto;height:auto;max-height:calc(100vh - 66px);}   /* 宽度≈凹槽+边距；高度随内容到按钮结束，最多一屏 */
 #view-gem .topbar{margin-bottom:16px;}   /* 标题与下方内容拉开间距 */
+#view-enhance{width:296px;margin:0 auto;height:auto;max-height:calc(100vh - 66px);}   /* 与宝石页同宽：凹槽与边界间距≈凹槽间距 */
+/* 强化页凹槽行：首尾留白收紧到与凹槽间距一致 */
+#view-enhance .gem-slotrow{justify-content:space-evenly;}
+#view-enhance .gem-sec{padding-left:1px;padding-right:1px;}
+/* 强化页置灰凹槽：仅第二排（可使用的材料）与第三排（强化之锤）背景 #191113，凹槽内间距 1px；第一排保持原置灰但内间距减 1px */
+#enh-mats .pick.dim::after{inset:2px;}
+#enh-avail .pick.dim,#enh-hammers .pick.dim{background:#191113;border:1px solid #5E5E5E;}
+#enh-avail .pick.dim::after,#enh-hammers .pick.dim::after{inset:2px;background:rgba(0,0,0,.28);opacity:1;}
 .gem-body{display:flex;flex-direction:column;box-sizing:border-box;padding:0 3px 8px;max-height:calc(100vh - 66px);overflow:hidden;}
 .gem-pane{display:flex;flex-direction:column;overflow-y:auto;padding-bottom:4px;}
-.gem-sec{border:1px solid #413634;border-radius:4px;padding:5px 4px 4px;margin:0 0 10px;
-  background:linear-gradient(180deg,rgba(26,22,19,.5),rgba(14,12,11,.5));}
-.gem-target-sec{display:flex;flex-direction:column;align-items:center;padding:18px 5px 14px;}   /* 装备凹槽与上边界间距加大、上下对称 */
-.gem-main{display:flex;justify-content:center;}
+.gem-sec{border:1px solid #5A5550;border-radius:4px;padding:4px 4px 4px;margin:0 0 6px;position:relative;
+  background:linear-gradient(180deg,#191513,#100d0b);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.gem-target-sec{display:flex;flex-direction:column;align-items:center;padding:8px 5px 4px;}
+.enh-name{font-size:15px;color:rgb(255,128,0);font-weight:normal;text-align:center;min-height:12px;margin-bottom:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
+.gem-main{display:flex;justify-content:center;position:relative;}
 .gem-main .slot{width:44px;height:44px;}
-.gem-subtitle{font-size:11px;color:#d4ca8d;letter-spacing:1px;margin:7px 2px 9px;text-align:center;}
-.gem-main .slot img.item-img{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);object-fit:contain;border-radius:3px;
+/* 主装备凹槽：迁移老系统 equipment-main-slot（细边框 + 外扩圆形光晕，颜色 #918A5F） */
+#gem-equip,#gemx-equip,#enh-equip{border:1px solid #918A5F;z-index:1;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.6),inset 0 -2px 4px rgba(255,255,255,.1),0 0 8px rgba(145,138,95,.4);}
+#gem-equip.has-item,#gemx-equip.has-item,#enh-equip.has-item{box-shadow:inset 0 4px 8px rgba(0,0,0,.6),inset 0 -4px 8px rgba(255,255,255,.08),0 0 12px rgba(145,138,95,.5);}
+#gem-equip::before,#gemx-equip::before,#enh-equip::before{content:"";position:absolute;top:-7px;left:-7px;right:-7px;bottom:-7px;
+  border:1px solid rgba(145,138,95,.45);border-radius:50%;}
+/* 部分标题：迁移老系统 gem-subtitle（白色细体、底部白线、横向渐变光带） */
+.gem-subtitle{font-size:13px;font-weight:300;color:#ffffff;text-align:center;margin:6px 2px 10px;padding:3px 0;
+  border-bottom:1px solid rgba(255,255,255,.3);letter-spacing:.5px;text-shadow:0 1px 2px rgba(0,0,0,.6);
+  background:linear-gradient(90deg,transparent 10%,rgba(255,255,255,.15) 50%,transparent 90%);position:relative;}
+.gem-target-sec .gem-subtitle{color:rgb(212,202,141);margin-top:10px;}
+.gem-main .slot img.item-img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain;border-radius:3px;
   box-shadow:inset 0 2px 6px rgba(0,0,0,.85),inset 1px 0 5px rgba(0,0,0,.5),inset -1px 0 5px rgba(0,0,0,.5),inset 0 -2px 4px rgba(0,0,0,.5);}
 /* 槽位：40px 渐变内凹（参考旧系统） */
 .gem-slotrow{display:grid;grid-template-columns:repeat(6,40px);gap:5px;justify-content:center;}
@@ -584,10 +620,10 @@ body.show-god .stage{max-width:680px;}
 /* 拆卸页：选了拆卸之锤后，未选中的已镶宝石置灰，选中后恢复正常 */
 .gem-slotrow .slot.await::after{content:"";position:absolute;inset:2px;border-radius:3px;background:rgb(127,127,127);opacity:.6;}
 .gem-slotrow .slot.await .item-img{opacity:.5;}
-.gem-slotrow .slot img.item-img{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);object-fit:contain;border-radius:3px;
+.gem-slotrow .slot img.item-img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain;border-radius:3px;
   box-shadow:inset 0 2px 5px rgba(0,0,0,.8),inset 0 -1px 3px rgba(0,0,0,.4);}
-.gem-slotrow .slot .temp{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);object-fit:contain;opacity:.72;border-radius:3px;z-index:2;}
-.gem-slotrow .slot .gem-mask{position:absolute;inset:2px;border-radius:3px;background:rgba(0,0,0,.8);opacity:.8;z-index:3;pointer-events:none;}
+.gem-slotrow .slot .temp{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain;opacity:.72;border-radius:3px;z-index:2;}
+.gem-slotrow .slot .gem-mask{position:absolute;inset:1px;border-radius:3px;background:rgba(0,0,0,.8);opacity:.8;z-index:3;pointer-events:none;}
 /* 选中（细金色高亮，与背包凹槽选中风格统一） */
 .gem-slotrow .slot.sel,.gem-slotrow .pick.sel{
   border-color:rgba(214,173,90,.95);
@@ -595,24 +631,197 @@ body.show-god .stage{max-width:680px;}
 /* 可用宝石空位：置灰 */
 .gem-slotrow .pick.dim{background:linear-gradient(180deg,#2f2d2b,#201e1c);border:1px solid #4a4640;cursor:default;pointer-events:none;
   box-shadow:inset 0 0 8px rgba(0,0,0,.6);}
-.gem-slotrow .pick.dim::after{content:"";position:absolute;inset:3px;background:rgb(127,127,127);border-radius:3px;opacity:.5;}
-.gem-slotrow .pick img{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);object-fit:contain;}
+.gem-slotrow .pick.dim::after{content:"";position:absolute;inset:2px;background:rgb(127,127,127);border-radius:3px;opacity:.5;}
+.gem-slotrow .pick img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain;}
 .gem-slotrow .pick .qty{position:absolute;right:2px;bottom:1px;font-size:9px;color:#fff;background:rgba(0,0,0,.65);padding:0 3px;border-radius:3px;z-index:3;}
-/* 分页箭头（参考旧 page-button） */
-.gem-pages{display:flex;justify-content:center;gap:24px;margin-top:4px;}
-.gem-pg{width:26px;height:22px;border:1px solid rgba(90,90,110,.6);border-radius:4px;
-  background:linear-gradient(135deg,rgba(60,60,80,.9),rgba(50,50,70,.8));color:#d4d4d4;font-size:13px;font-weight:bold;cursor:pointer;}
+/* 天神升级材料：固定 5 个干净凹槽（参考旧系统材料槽） */
+.god-mats-row{display:flex;justify-content:center;gap:6px;}
+.god-mats-row .pick{width:40px;height:40px;background:#1F1B19;border:1px solid #5E5E5E;border-radius:6px;position:relative;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.55);}
+.god-mats-row .pick img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain;border-radius:3px;}
+.god-mats-row .pick.empty{opacity:.55;}
+.god-mats-row .pick .qty{position:absolute;right:2px;bottom:1px;font-size:9px;color:#fff;background:rgba(0,0,0,.65);padding:0 3px;border-radius:3px;z-index:3;}
+/* 天神升级成功/失败全屏特效（参照旧系统 .upgrade-success） */
+.god-glow-fx{position:fixed;top:32%;left:50%;transform:translate(-50%,-50%);z-index:10000;pointer-events:none;height:110px;width:300px;max-width:84vw;display:flex;align-items:center;justify-content:center;border:0;opacity:0;border-radius:60%/80%;animation:fadeInOut 1.5s cubic-bezier(.4,0,.2,1) forwards;}
+.god-glow-fx.success{background-color:rgba(122,235,33,.2);box-shadow:0 0 30px 10px rgba(122,235,33,.1),0 0 60px 20px rgba(122,235,33,.1),0 0 100px 30px rgba(122,235,33,.1);}
+.god-glow-fx.fail{background-color:rgba(235,60,33,.2);box-shadow:0 0 30px 10px rgba(235,60,33,.1),0 0 60px 20px rgba(235,60,33,.1),0 0 100px 30px rgba(235,60,33,.1);animation:gfxFadeFail 1.5s cubic-bezier(.4,0,.2,1) forwards;}
+.god-glow-fx .gfx-text{font-size:46px;font-weight:bold;color:#FFD700;text-align:center;font-family:'Microsoft YaHei','SimHei',sans-serif;line-height:1;}
+/* 强化特效色块：从凹槽底部中心向外扩散，无文字 */
+.enh-fx{position:fixed;width:76px;height:76px;border-radius:50%;pointer-events:none;opacity:0;z-index:5;
+  transform:translate(-50%,-50%) scale(.18);animation:enhFxAnim 2s cubic-bezier(.2,.7,.3,1) forwards;}
+#enh-equip,#gem-equip,#gemx-equip{position:relative;z-index:10;}
+.enh-fx.success{background:radial-gradient(circle,rgba(122,235,33,.95) 0%,rgba(122,235,33,.68) 50%,rgba(122,235,33,.2) 72%,transparent 80%);box-shadow:0 0 26px 12px rgba(122,235,33,.55);}
+.enh-fx.fail{background:radial-gradient(circle,rgba(235,60,33,.95) 0%,rgba(235,60,33,.68) 50%,rgba(235,60,33,.2) 72%,transparent 80%);box-shadow:0 0 26px 12px rgba(235,60,33,.55);}
+@keyframes enhFxAnim{0%{opacity:0;transform:translate(-50%,-50%) scale(.18);}25%{opacity:1;}100%{opacity:0;transform:translate(-50%,-50%) scale(1.5);}}
+.god-glow-fx.fail .gfx-text{color:#ff6a5a;}
+.god-glow-fx::before,.god-glow-fx::after{content:'';position:absolute;background:radial-gradient(circle,#fff 20%,transparent 70%);border-radius:50%;opacity:0;pointer-events:none;animation:twinkle-star .6s ease-in-out .5s infinite alternate;}
+.god-glow-fx::before{width:5px;height:5px;top:-30px;right:120px;box-shadow:0 0 15px #fff,0 0 30px #ffd700;}
+.god-glow-fx::after{width:5px;height:5px;bottom:0;right:40px;animation-duration:.7s;animation-delay:.8s;box-shadow:0 0 20px #fff,0 0 40px #4CAF50;}
+.god-glow-fx.fail::before{box-shadow:0 0 15px #fff,0 0 30px #e03a2f;}
+.god-glow-fx.fail::after{box-shadow:0 0 20px #fff,0 0 40px #e03a2f;}
+@keyframes fadeInOut{
+  0%{opacity:0;transform:translate(-50%,-50%);}
+  10%{opacity:1;text-shadow:0 0 10px rgba(0,255,0,.6),0 0 20px rgba(0,255,0,.5),0 0 30px rgba(0,255,0,.4);}
+  90%{opacity:1;text-shadow:0 0 10px rgba(0,255,0,.6),0 0 20px rgba(0,255,0,.5),0 0 30px rgba(0,255,0,.4);}
+  100%{opacity:0;text-shadow:none;}
+}
+@keyframes gfxFadeFail{
+  0%{opacity:0;transform:translate(-50%,-50%);}
+  10%{opacity:1;text-shadow:0 0 10px rgba(255,60,40,.6),0 0 20px rgba(255,60,40,.5),0 0 30px rgba(255,60,40,.4);}
+  90%{opacity:1;text-shadow:0 0 10px rgba(255,60,40,.6),0 0 20px rgba(255,60,40,.5),0 0 30px rgba(255,60,40,.4);}
+  100%{opacity:0;text-shadow:none;}
+}
+@keyframes twinkle-star{0%,100%{opacity:0;transform:scale(.8) rotate(0);}50%{opacity:1;transform:scale(1.2) rotate(180deg);}}
+/* 镶嵌宝石行与镶嵌之锤行（镶嵌/拆卸页）：去掉渐变/阴影，与天神列表左侧凹槽一致（干净清爽） */
+#gem-slots .slot,#gem-hammers .pick,#gemx-slots .slot,#gemx-hammers .pick{
+  background:#1F1B19;border:1px solid #5E5E5E;border-radius:6px;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.55);
+}
+/* 锤子凹槽（有物品）选中：亮绿色 #75FA61 细边框 + 轻微阴影 + 渐变光晕覆盖（背景色不变） */
+#gem-hammers .pick.sel,#gemx-hammers .pick.sel{
+  border-color:#75FA61;border-width:1px;
+  box-shadow:0 0 4px rgba(117,250,97,.6),inset 0 0 12px rgba(117,250,97,.3);
+}
+/* 可用宝石选中（参考旧系统 selected-slot-tool）：内层细绿框 + 四角绿光 + 暗黑遮盖，槽边框保持纤细 */
+#gem-avail .pick.sel{
+  border-color:rgba(255,255,255,.3);
+}
+#gem-avail .pick.sel::after{
+  content:"";position:absolute;inset:2.5px;border-radius:3px;
+  border:1px solid rgb(168,234,81);
+  box-shadow:
+    inset -2px -2px 6px 0 rgba(168,234,81,.5),
+    inset 2px 2px 6px 0 rgba(168,234,81,.5),
+    inset 2px -2px 6px 0 rgba(168,234,81,.5),
+    inset -2px 2px 6px 0 rgba(168,234,81,.5);
+  background:rgba(0,0,0,.68);pointer-events:none;z-index:2;
+}
+/* 分页按钮行（参考旧 available-gems-buttons） */
+.gem-pages{display:flex;justify-content:center;align-items:center;gap:20px;margin-top:6px;}
+/* 强化页：两枚按钮一行（沿用宝石页 .gem-ok 首页按钮风格） */
+.enh-btns{display:flex;gap:10px;justify-content:center;max-width:320px;margin:12px auto 2px;}
+.enh-btns .gem-ok{margin:0;padding:0 24px;flex:0 0 auto;}
+.gem-pg{width:25px;height:25px;border:1px solid rgba(90,90,110,.6);border-radius:4px;
+  background:linear-gradient(135deg,rgba(60,60,80,.9),rgba(50,50,70,.8));color:#d4d4d4;font-size:14px;font-weight:bold;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;padding:0;line-height:1;}
+.gem-pg:active{transform:translateY(1px);}
+.gem-pg:disabled{opacity:.3;cursor:default;transform:none;}
 .gem-pg:disabled{opacity:.3;cursor:default;}
 .gem-pg:not(:disabled):active{transform:translateY(1px);}
 /* 成功率三行（参考旧 rate-info） */
-.rate-sec{padding:6px 9px 4px;}
-.rate-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#cfc4a8;padding:3px 0;border-bottom:1px solid rgba(65,54,52,.6);}
-.rate-info:last-child{border-bottom:none;}
-.rate-info b{color:#e8d98a;font-weight:500;font-variant-numeric:tabular-nums;}
-.rate-info.total b{color:#a8ea51;}
+.rate-sec{padding:6px 9px 6px;}
+#view-enhance .rate-sec{padding:7px 0;}   /* 强化页成功率/金币 与上方凹槽区同宽居中 */
+#view-enhance .rate-sec .rate-info{width:278px;margin:0 auto;}   /* 固定宽度 居中，对齐 6 凹槽区宽(278px) */
+/* 成功率：迁移老系统 rate-info / total-rate */
+.rate-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#aaa;padding:2px 0;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.1);}
+.rate-info:last-child{border-bottom:none;margin-bottom:0;}
+.rate-info b{color:#ffd700;font-weight:bold;font-variant-numeric:tabular-nums;}
+.rate-info.total{background:rgba(255,215,0,.1);padding:6px;border-radius:4px;margin-top:3px;border-bottom:none;}
+.rate-info.total span{color:#ffd700;font-weight:bold;}
+.rate-info.total b{color:#ffd700;}
 /* 操作按钮：与首页按钮同一风格（深色渐变 + 金色细内框），宽度自适应不撑满整行 */
 .gem-ok{display:flex;align-items:center;justify-content:center;margin:10px auto 0;height:32px;padding:0 26px;font-size:15px;letter-spacing:4px;}
 .gem-ok:active{transform:translateY(1px);background:linear-gradient(180deg,#141311,#0c0b0a);box-shadow:inset 0 2px 5px rgba(0,0,0,.7);}
+
+/* ===== 寻宝页 ===== */
+#view-treasure .topbar{margin-bottom:10px;}
+.tr-body{padding:0 2px;}
+/* 副本选择：横向卡片 */
+.tr-dungeons{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px;scrollbar-width:none;}
+.tr-dungeons::-webkit-scrollbar{display:none;}
+.tr-dun{flex:0 0 auto;width:96px;border:1px solid #6D6354;border-radius:6px;padding:5px 6px;text-align:center;
+  background:linear-gradient(180deg,#1E1C1B,#171412);cursor:pointer;position:relative;transition:border-color .15s,box-shadow .15s;}
+.tr-dun.on{border-color:#E0B900;box-shadow:0 0 8px rgba(224,185,0,.35),inset 0 0 6px rgba(224,185,0,.12);}
+.tr-dun-name{font-size:12px;color:#fff;letter-spacing:1px;margin-bottom:2px;}
+.tr-dun-lv{font-size:10px;color:#8a8375;}
+.tr-dun-tag{display:inline-block;margin-top:3px;font-size:9px;color:#E0B900;border:1px solid rgba(224,185,0,.4);border-radius:3px;padding:0 4px;}
+/* 战斗场景 */
+.tr-battle{border:1px solid #5A5550;border-radius:6px;overflow:hidden;background:linear-gradient(180deg,#171311,#0d0b0a);}
+.tr-scene{position:relative;height:130px;background:
+  radial-gradient(120px 90px at 70% 22%,rgba(224,185,0,.10),transparent 60%),
+  radial-gradient(160px 120px at 30% 20%,rgba(120,40,160,.14),transparent 65%),
+  linear-gradient(180deg,#0e0b0a,#16110e);overflow:hidden;}
+.tr-floor{position:absolute;left:0;right:0;bottom:0;height:26px;
+  background:linear-gradient(180deg,#241d17,#0c0907);border-top:1px solid rgba(145,138,95,.25);}
+.tr-drop-layer{position:absolute;inset:0;pointer-events:none;z-index:3;}
+.tr-monster{position:absolute;left:50%;top:60%;transform:translate(-50%,-46%);z-index:2;transition:filter .12s,transform .12s;}
+.tr-monster.hit{filter:brightness(2.4) saturate(0.2);transform:translate(-50%,-46%) scale(.96);}
+.tr-monster svg{display:block;width:76px;height:auto;filter:drop-shadow(0 6px 14px rgba(0,0,0,.7));}
+.tr-monster.boss svg{width:92px;}
+.tr-monhead{position:absolute;left:50%;top:6px;transform:translateX(-50%);display:flex;gap:6px;align-items:center;z-index:2;white-space:nowrap;}
+.tr-mon-name{font-size:12px;color:#fff;letter-spacing:1px;text-shadow:0 1px 2px #000;}
+.tr-mon-lv{font-size:10px;color:#E0B900;}
+.tr-scene .tr-bar{position:absolute;left:50%;top:26px;transform:translateX(-50%);width:150px;z-index:2;}
+.tr-bar{position:relative;height:8px;border:1px solid #3a342c;border-radius:4px;overflow:hidden;background:#0c0a08;}
+.tr-bar-fill{height:100%;width:100%;border-radius:3px;background:linear-gradient(180deg,#ff5c3d,#b82012);transition:width .18s ease;}
+.tr-bar-fill.low{background:linear-gradient(180deg,#ff3d2c,#7c0e05);}
+.tr-bar-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;text-shadow:0 1px 1px #000;font-variant-numeric:tabular-nums;}
+/* 角色状态 */
+.tr-char{display:flex;flex-direction:column;gap:5px;padding:9px 10px 6px;background:linear-gradient(180deg,#191513,#100d0b);border:1px solid #5A5550;border-radius:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.tr-ch-line{display:flex;align-items:center;gap:8px;}
+.tr-ch-label{font-size:11px;color:#8a8375;flex:0 0 auto;}
+.tr-ch-num{font-size:11px;color:#E0B900;font-variant-numeric:tabular-nums;}
+.tr-char .tr-bar.ch{flex:1;}
+.tr-char .tr-bar-fill.ch{background:linear-gradient(180deg,#4fc46a,#1e7a36);}
+/* 商店页 */
+.shop-tip{font-size:12px;color:#8a8375;padding:9px 10px 4px;letter-spacing:1px;}
+#view-shop{display:flex;flex-direction:column;box-sizing:border-box;}
+#view-shop .sys-body{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
+#view-shop .shop-list{flex:1;overflow-y:hidden;display:flex;flex-direction:column;gap:5px;padding:4px 10px 6px;min-height:0;}
+#view-shop .shop-pager{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 0 8px;}
+#view-shop .shop-pager .btn{height:26px;padding:0 16px;font-size:12px;border-radius:5px;}
+#view-shop .shop-pager .pg-num{font-size:12px;color:#f0e2b8;min-width:44px;text-align:center;letter-spacing:1px;}
+.shop-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid #5A5550;border-radius:6px;background:linear-gradient(180deg,#191513,#100d0b);}
+.shop-row .shop-ico{width:34px;height:34px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:4px;background:#212020;}
+.shop-row .shop-ico img{width:30px;height:30px;object-fit:contain;}
+.shop-row .shop-info{flex:1;min-width:0;}
+.shop-row .shop-name{font-size:12px;color:#f0e2b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.shop-row .shop-sub{font-size:10px;color:#8a8375;margin-top:2px;}
+.shop-row .shop-price{font-size:12px;color:#E0B900;white-space:nowrap;flex:0 0 auto;}
+.shop-row .shop-sell{flex:0 0 auto;}
+.shop-row .shop-sell.btn{height:26px;padding:0 12px;font-size:11px;border-radius:5px;}
+.shop-empty{color:#8a8375;font-size:12px;text-align:center;padding:30px 0;}
+/* 离线补偿条 */
+#offline-bar{display:flex;align-items:center;gap:8px;margin:6px 0;padding:6px 10px;border:1px solid #6C6253;border-radius:6px;background:linear-gradient(180deg,#2a241d,#181411);}
+#offline-bar span{flex:1;font-size:12px;color:#f0e2b8;letter-spacing:1px;}
+#offline-bar .btn.sys-ok{width:auto;max-width:120px;margin:0;padding:0 14px;height:28px;font-size:12px;letter-spacing:1px;}
+/* 攻击 / 挂机按钮 */
+.tr-ctl{display:flex;gap:10px;justify-content:center;padding:6px 0;background:linear-gradient(180deg,#191513,#100d0b);border:1px solid #5A5550;border-radius:6px;margin-top:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.tr-ctl .btn.sys-ok{flex:0 0 auto;width:auto;max-width:172px;margin:0;padding:0 30px;height:34px;letter-spacing:2px;font-size:15px;white-space:nowrap;box-sizing:border-box;}
+.tr-ctl .btn.sys-ok.on{background:linear-gradient(180deg,#3a2c12,#241b08);border-color:#E0B900;color:#ffdf6b;box-shadow:0 0 8px rgba(224,185,0,.35);}
+/* 掉落动画 */
+.tr-drop{position:absolute;top:-26px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;pointer-events:none;z-index:4;animation:trDrop 1s cubic-bezier(.3,.7,.4,1) forwards;}
+.tr-drop .coin-ico{width:30px;height:30px;}
+.tr-drop .drop-img{width:30px;height:30px;object-fit:contain;border-radius:4px;box-shadow:0 0 8px rgba(255,215,0,.6);}
+.tr-drop.gold{background:radial-gradient(circle,rgba(255,215,0,.25),transparent 65%);}
+@keyframes trDrop{0%{transform:translateY(0) scale(.5) rotate(-18deg);opacity:0;}15%{opacity:1;}75%{opacity:1;}100%{transform:translateY(180px) scale(1) rotate(12deg);opacity:0;}}
+.tr-drop-burst{position:absolute;width:60px;height:60px;border-radius:50%;z-index:4;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,215,0,.55),transparent 70%);animation:trBurst .6s ease-out forwards;}
+@keyframes trBurst{0%{opacity:.9;transform:scale(.3);}100%{opacity:0;transform:scale(1.8);}}
+/* 日志 */
+.tr-log{margin-top:8px;border:1px solid #5A5550;border-radius:6px;background:linear-gradient(180deg,#171311,#100d0b);
+  padding:6px 8px;height:340px;overflow-y:auto;font-size:11px;line-height:1.7;}
+.tr-log::-webkit-scrollbar{width:4px;}
+.tr-log::-webkit-scrollbar-thumb{background:#3a342c;border-radius:2px;}
+.tr-logline{display:flex;gap:6px;align-items:center;color:#a89c88;animation:trLogIn .3s ease;}
+.tr-logline b{color:#E0B900;font-weight:normal;}
+.tr-logline .lg-gold{color:#ffd700;}
+.tr-logline .lg-item{color:#7ee08a;}
+.tr-logline .lg-boss{color:#ff7b5c;}
+@keyframes trLogIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
+/* 受击飘字 */
+.tr-float{position:absolute;font-size:15px;font-weight:bold;color:#ffd33a;text-shadow:0 0 6px rgba(255,120,30,.6);z-index:5;pointer-events:none;
+  animation:trFloat 1s ease-out forwards;}
+.tr-float.mon{color:#ff6a4d;}
+/* 寻宝页经验条 / 垂直居中 / 高度增加 */
+.tr-ch-line .tr-exp{flex:1;height:9px;border:1px solid #3a342c;border-radius:4px;overflow:hidden;background:#0c0a08;position:relative;}
+.tr-exp-fill{height:100%;background:linear-gradient(180deg,#ffd33a,#b8860b);transition:width .3s ease;}
+.tr-exp-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;text-shadow:0 1px 1px #000;font-variant-numeric:tabular-nums;}
+body.show-treasure .stage{display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;}
+#view-treasure .tr-battle .tr-scene{height:130px;}
+#view-treasure .tr-log{height:340px;}
+@keyframes trFloat{0%{opacity:0;transform:translateY(6px);}20%{opacity:1;}100%{opacity:0;transform:translateY(-22px);}}
 </style>
 </head>
 <body>
@@ -655,7 +864,11 @@ body.show-god .stage{max-width:680px;}
         <button class="btn" data-act="天神">天神</button>
         <button class="btn" data-act="翅膀">翅膀</button>
         <button class="btn" data-act="洗炼">洗炼</button>
+        <button class="btn" data-act="商店">商店</button>
+      </div>
+      <div class="act-row c4">
         <button class="btn" data-act="初始化">初始化</button>
+        <button class="btn" data-act="GM生成">GM生成</button>
       </div>
     </div>
 
@@ -697,22 +910,32 @@ body.show-god .stage{max-width:680px;}
       <button class="back-arrow" id="enhance-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>强化</h1>
     </header>
-    <div class="sys-body">
-      <div class="sys-card">
-        <div class="sys-title">强化目标</div>
-        <div class="sys-slotline"><div class="eq-cell"><div class="slot tt-slot" id="enh-equip"></div></div></div>
-        <div class="sys-tip">点击凹槽选择要强化的装备</div>
+    <div class="sys-body gem-body">
+      <div class="gem-sec gem-target-sec">
+        <div class="enh-name" id="enh-name"></div>
+        <div class="gem-main"><div class="slot tt-slot" id="enh-equip"></div></div>
+        <div class="gem-subtitle">需要强化的道具</div>
       </div>
-      <div class="sys-card">
-        <div class="sys-title">强化材料 <span class="mat-hint">每份 +5%</span></div>
-        <div class="sys-slotline" id="enh-mats"><!-- 6 个材料凹槽 --></div>
-        <div class="sys-tip">点击空凹槽从背包添加材料，点击已放置材料可移除</div>
+      <div class="gem-sec">
+        <div class="gem-subtitle">可使用的道具</div>
+        <div class="gem-slotrow" id="enh-mats"></div>
+        <div class="gem-pages"><button class="gem-pg" id="enh-avail-prev">‹</button><button class="gem-pg" id="enh-avail-next">›</button></div>
       </div>
-      <div class="sys-card">
-        <div class="rate-line"><span class="rl">成功率</span><b id="enh-rate">30%</b></div>
-        <div class="rate-line"><span class="rl">消耗金币</span><b id="enh-cost">0</b></div>
+      <div class="gem-sec">
+        <div class="gem-slotrow" id="enh-avail"></div>
+        <div class="gem-pages"><button class="gem-pg" disabled>‹</button><button class="gem-pg" disabled>›</button></div>
       </div>
-      <button class="btn sys-ok" id="enh-btn">强化</button>
+      <div class="gem-sec">
+        <div class="gem-slotrow" id="enh-hammers"></div>
+      </div>
+      <div class="gem-sec rate-sec">
+        <div class="rate-info"><span>成功率</span><b id="enh-rate">30%</b></div>
+        <div class="rate-info"><span>消耗金币</span><b id="enh-cost">0</b></div>
+      </div>
+      <div class="enh-btns">
+        <button class="btn gem-ok" id="enh-auto-btn">自动强化</button>
+        <button class="btn gem-ok" id="enh-btn">强化</button>
+      </div>
     </div>
   </div>
   <!-- ===== 二级页面：宝石 ===== -->
@@ -810,29 +1033,35 @@ body.show-god .stage{max-width:680px;}
                 <div class="sys-tip">点击列表选中，再点击或拖拽到阵位上阵；主阵位100%、副阵位50%附加属性</div>
               </div>
               <div class="sys-card">
-                <div class="sys-title">天神总属性</div>
+                <div class="sys-title god-at-title">天神总属性</div>
                 <div id="god-attrs"></div>
               </div>
               <div class="sys-card">
-                <div class="sys-title">可转化属性</div>
+                <div class="sys-title god-at-title">可转化属性</div>
                 <div id="god-attrs2"></div>
               </div>
             </div>
             <div class="god-pane" id="god-upgrade" style="display:none;">
               <div class="sys-card">
                 <div class="sys-title">升级目标</div>
-                <div class="sys-slotline"><div class="eq-cell"><div class="slot tt-slot" id="god-target"></div></div></div>
+                <div class="sys-slotline god-up-line"><div class="eq-cell"><div class="slot tt-slot" id="god-target"></div></div><div class="god-up-info" id="god-up-info"></div></div>
+              </div>
+              <div class="sys-card">
+                <div class="sys-title">升级材料</div>
+                <div class="god-mats-row" id="god-mats-slots"></div>
               </div>
               <div class="sys-card">
                 <div class="sys-title">升级进度 <span class="mat-hint" id="god-progress">0%</span></div>
                 <div class="bar"><div class="bar-fill" id="god-bar"></div></div>
-                <div class="sys-tip" id="god-mats"></div>
               </div>
               <div class="sys-card">
                 <div class="rate-line"><span class="rl">成功概率</span><b id="god-rate">0%</b></div>
                 <div class="rate-line"><span class="rl">消耗绑定金币</span><b id="god-cost">0</b></div>
               </div>
-              <button class="btn sys-ok" id="god-up-btn">升级</button>
+              <div style="display:flex;gap:8px;justify-content:center;width:100%;max-width:300px;margin:8px auto 2px;">
+                <button class="btn sys-ok" id="god-up-btn" style="flex:1;max-width:none;margin:0;">升级</button>
+                <button class="btn sys-ok" id="god-auto-btn" style="flex:1;max-width:none;margin:0;">自动升级</button>
+              </div>
             </div>
             <div class="god-pane" id="god-inherit" style="display:none;">
               <div class="sys-card"><div class="sys-title">继承</div><div class="sys-tip">功能开发中</div></div>
@@ -842,6 +1071,58 @@ body.show-god .stage{max-width:680px;}
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+  <!-- ===== 二级页面：寻宝 ===== -->
+  <div class="window sys" id="view-treasure">
+    <header class="topbar">
+      <span class="title-glow"></span>
+      <button class="back-arrow" id="treasure-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
+      <h1>寻宝</h1>
+    </header>
+    <div class="sys-body">
+      <div id="offline-bar" style="display:none">
+        <span id="offline-txt"></span>
+        <button class="btn sys-ok" id="offline-btn">补算掉落</button>
+      </div>
+      <div class="tr-dungeons" id="tr-dungeons"></div>
+      <div class="tr-battle">
+        <div class="tr-scene" id="tr-scene">
+          <div class="tr-drop-layer" id="tr-drop-layer"></div>
+          <div class="tr-monster" id="tr-monster"></div>
+          <div class="tr-monhead">
+            <span class="tr-mon-name" id="tr-mon-name"></span>
+            <span class="tr-mon-lv" id="tr-mon-lv"></span>
+          </div>
+          <div class="tr-bar"><div class="tr-bar-fill" id="tr-mon-hp"></div><span class="tr-bar-txt" id="tr-mon-hpnum"></span></div>
+        </div>
+        <div class="tr-char">
+          <div class="tr-ch-line"><span class="tr-ch-label">生命</span><div class="tr-bar ch"><div class="tr-bar-fill" id="tr-ch-hp"></div></div><span class="tr-ch-num" id="tr-ch-hpnum"></span></div>
+          <div class="tr-ch-line"><span class="tr-ch-label">等级</span><b class="tr-ch-num" id="tr-lv"></b><div class="tr-exp"><div class="tr-exp-fill" id="tr-exp-fill"></div><span class="tr-exp-num" id="tr-exp-num"></span></div></div>
+        </div>
+        <div class="tr-ctl">
+          <button class="btn sys-ok" id="tr-atk">攻击</button>
+          <button class="btn sys-ok" id="tr-auto">挂机</button>
+        </div>
+      </div>
+      <div class="tr-log" id="tr-log"></div>
+    </div>
+  </div>
+  <!-- ===== 二级页面：商店 ===== -->
+  <div class="window sys" id="view-shop">
+    <header class="topbar">
+      <span class="title-glow"></span>
+      <button class="back-arrow" id="shop-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
+      <h1>商店</h1>
+    </header>
+    <div class="sys-body">
+      <div class="shop-tip" id="shop-tip"></div>
+      <div class="shop-list" id="shop-list"></div>
+      <div class="shop-pager">
+        <button class="btn" id="shop-prev">◀ 上一页</button>
+        <span class="pg-num" id="shop-pg"></span>
+        <button class="btn" id="shop-next">下一页 ▶</button>
       </div>
     </div>
   </div>
@@ -1041,7 +1322,7 @@ var ITEM_BLUEPRINTS = {
   ],
   /* --- 其他材料（可堆叠） --- */
   godPowerFragment: { name:"神力碎片", type:"god_power_material", img:"logos/神力碎片.png", count:80000 },
-  godCrystal: { name:"神力结晶", type:"god_crystal", img:"logos/神力结晶.png", count:100 }
+  godCrystal: { name:"神力结晶", type:"god_crystal", img:"logos/神力结晶.png", count:255 }
 };
 
 /* ============ 物品工厂 + 初始化物品生成 ============ */
@@ -1256,6 +1537,7 @@ function renderEquip(){
     var s = cell.querySelector('.slot.has-item');
     if (s) s._item = equipState[cell.getAttribute('data-eq')];
   });
+  saveGame();
 }
 
 function renderTabs(){
@@ -1272,6 +1554,7 @@ function renderBag(){
   /* 给物品格挂 _item，供点击/悬停 tooltip 使用 */
   var slots = gridEl.querySelectorAll('.slot.has-item');
   for (var i = 0; i < slots.length; i++){ var s = slots[i]; s._item = bag[currentTab][+s.getAttribute('data-slot')]; }
+  saveGame();
 }
 
 /* ===== 穿戴/卸下：装备槽位 <-> 物品类型 映射 ===== */
@@ -1573,8 +1856,10 @@ function bindEvents(){
   $('#actions').addEventListener('click', function(e){
     var b = e.target.closest('.btn'); if (!b) return;
     var act = b.getAttribute('data-act');
-    if (act === '寻宝') doLoot();
-    else if (act === '初始化') doInit();
+    if (act === '寻宝') location.hash = '#treasure';
+    else if (act === '商店') location.hash = '#shop';
+    else if (act === 'GM生成') doInit();
+    else if (act === '初始化') doReset();
     else if (act === '属性'){ location.hash = '#attrs'; }
     else if (act === '强化'){ location.hash = '#enhance'; }
     else if (act === '宝石'){ location.hash = '#gem'; }
@@ -1586,14 +1871,38 @@ function bindEvents(){
   $('#enhance-back').addEventListener('click', function(){ location.hash = ''; });
   $('#gem-back').addEventListener('click', function(){ location.hash = ''; });
   $('#god-back').addEventListener('click', function(){ location.hash = ''; });
+  $('#treasure-back').addEventListener('click', function(){ location.hash = ''; });
+  $('#shop-back').addEventListener('click', function(){ location.hash = ''; });
+  var sp=document.getElementById('shop-prev'); if(sp) sp.addEventListener('click', shopPrev);
+  var sn=document.getElementById('shop-next'); if(sn) sn.addEventListener('click', shopNext);
+  var shopList=document.getElementById('shop-list');
+  if(shopList) shopList.addEventListener('click', function(e){
+    var b=e.target.closest('.shop-sell'); if(!b) return;
+    sellShopItem(+b.getAttribute('data-p'), +b.getAttribute('data-i'));
+  });
   initSystemsUI();
+  initTreasureUI();
 }
 
 /* ============ 货币 ============ */
-var CURRENCY = { gold: 1195630, bound: 1004727 };
+var CURRENCY = { gold: 0, bound: 0 };
+/* 金币颜色（参考旧系统 getCurrencyStyle）：按金额分档 */
+function getCurrencyStyle(amount){
+  if (amount < 10000) return '#ffffff';
+  if (amount < 100000) return '#4169e1';
+  if (amount < 1000000) return 'rgb(103,198,198)';
+  if (amount < 10000000) return 'rgb(244,243,1)';
+  if (amount < 100000000) return 'rgb(255,128,0)';
+  if (amount < 1000000000) return 'rgb(232,2,232)';
+  return 'rgb(231,2,231)';
+}
 function renderCurrency(){
-  $('#gold-trade').textContent = CURRENCY.gold.toLocaleString();
-  $('#gold-bind').textContent = CURRENCY.bound.toLocaleString();
+  var gt = $('#gold-trade'), gb = $('#gold-bind');
+  gt.textContent = CURRENCY.gold.toLocaleString();
+  gt.style.color = getCurrencyStyle(CURRENCY.gold);
+  gb.textContent = CURRENCY.bound.toLocaleString();
+  gb.style.color = getCurrencyStyle(CURRENCY.bound);
+  saveGame();
 }
 
 /* ============ 点击式 Tooltip（手机：点击显示、点击其他处隐藏、防屏幕遮挡） ============ */
@@ -1611,9 +1920,15 @@ function buildTooltip(item){
   var isW=item.type==='weapon';
   var h='';
   if (eq.indexOf(item.type)>=0){
-    h += '<div class="tt-name">'+item.name+(item.enhanceLevel>0?' ['+item.enhanceLevel+']':'')+'</div><div class="tt-gap"></div>';
+    h += '<div class="tt-name">'+item.name+(item.enhanceLevel>0?' ['+item.enhanceLevel+']':'')+'</div>';
+    if (isA){ var enhAbs=armorEnhAbs(item.enhanceLevel||0);
+      if((item.damageAbsorption||0)+enhAbs>0) h+='<div class="tt-o">伤害 吸收 +'+((item.damageAbsorption||0)+enhAbs)+'</div>'; }
+    h += '<div class="tt-gap"></div>';
     if (isW){ if(item.physicalAttack!==undefined) h+='<div class="tt-y">攻击力 '+item.physicalAttack+'</div>'; h+='<div class="tt-w">攻击速度一般</div>'; }
-    if (isA){ if(item.damageAbsorption>0) h+='<div class="tt-o">伤害吸收 + '+item.damageAbsorption+'</div>';
+    if (isA){ var alv=item.enhanceLevel||0;
+      if(alv>=15) h+='<div class="tt-purple">抗暴率 +3%</div>';
+      if(alv>=18) h+='<div class="tt-purple">暴击伤害减免 +3%</div>';
+      if(alv>=20) h+='<div class="tt-purple">最终伤害减免 +3%</div>';
       if(item.defense!==undefined) h+='<div class="tt-w">防御力 '+item.defense+'</div>'; if(item.resistance!==undefined) h+='<div class="tt-w">抵抗力 '+item.resistance+'</div>'; }
     var gemAttr=(item.gemAttributes&&item.gemAttributes.additionalAttribute)||'无';
     if (gemAttr!=='无' && (isW||item.type==='chest')) h+='<div class="tt-y">'+gemAttr+' I</div>';
@@ -1626,7 +1941,7 @@ function buildTooltip(item){
     if (isA && item.gemDamageAbsorption) h+='<div class="tt-y">伤害吸收 + '+item.gemDamageAbsorption+'</div>';
     if (!isJ) h+='<div class="tt-y">锻造值 230/230</div>';
     h+='<div class="tt-w">等级：'+(item.equipLevel||'—')+'</div><div class="tt-gap"></div>';
-    if (item.price!==undefined) h+='<div class="tt-w">购买价格：'+item.price.toLocaleString()+'</div>';
+    if (item.price!==undefined) h+='<div style="color:'+getCurrencyStyle(item.price)+'">购买价格：'+item.price.toLocaleString()+'</div>';
     if (item.durability!==undefined) h+='<div class="tt-w">持久度：'+item.durability+'</div>';
     h+='<div class="tt-gap"></div>';
     if (item.category && !isJ) h+='<div><span class="tt-b">种类：</span><span class="tt-w">'+(isW?'双手类':'')+item.category+'</span></div>';
@@ -1634,7 +1949,7 @@ function buildTooltip(item){
     else h+='<div><span class="tt-b">职业：</span><span class="tt-w">斗士、护卫</span></div>';
     h+='<div><span class="tt-b">道具状态：</span><span class="tt-w">允许交易</span></div>';
     if (item.gemSlots){ h+='<div class="tt-gems">';
-      for (var i=0;i<item.gemSlots.length;i++){ var g=item.gemSlots[i]; h+='<i>'+((g&&g.img)?'<img src="'+g.img+'">':'')+'</i>'; }
+      for (var i=0;i<item.gemSlots.length;i++){ var g=item.gemSlots[i]; h+='<i class="'+(g?'filled':'')+'">'+((g&&g.img)?'<img src="'+g.img+'">':'')+'</i>'; }
       h+='</div>'; }
     return h;
   }
@@ -1680,8 +1995,8 @@ function buildTooltip(item){
   if (item.type==='god_seal_material'||item.type==='god_rune_material'||item.type==='god_power_material'||item.type==='god_crystal'){
     if(item.type==='god_seal_material'){ h+='<div class="tt-name tt-purple">'+item.name+'</div><div class="tt-gap"></div><div class="tt-w">神印品质天神的残片,蕴含的力量已经有所流</div><div class="tt-w">失,但其拥有的力量还颇为不俗.</div><div class="tt-y">天神系统神印品质天神升重材料,50级以上可</div><div class="tt-y">用.</div>'; }
     else if(item.type==='god_rune_material'){ h+='<div class="tt-name tt-gold">'+item.name+'</div><div class="tt-gap"></div><div class="tt-w">神符品质天神的残片,蕴含的力量已经有所流</div><div class="tt-w">失,但其拥有的力量还颇为不俗.</div><div class="tt-y">天神系统神符品质天神升重材料,50级以上可</div><div class="tt-y">用.</div>'; }
-    else if(item.type==='god_power_material'){ h+='<div class="tt-name">'+item.name+'</div><div class="tt-gap"></div><div class="tt-w">蕴含着少量神秘天神力量的碎片,可以对天神</div><div class="tt-w">进行升级.</div><div class="tt-y">天神系统升级材料,50级以上可用.</div>'; }
-    else { h+='<div class="tt-name">'+item.name+'</div><div class="tt-gap"></div><div class="tt-w">蕴含着大量神秘天神力量的结晶,可以对天神</div><div class="tt-w">进行升星.</div><div class="tt-y">天神系统升级材料,50级以上可用.</div>'; }
+    else if(item.type==='god_power_material'){ h+='<div class="tt-name tt-w">'+item.name+'</div><div class="tt-gap"></div><div class="tt-w">蕴含着少量神秘天神力量的碎片,可以对天神</div><div class="tt-w">进行升级.</div><div class="tt-y">天神系统升级材料,50级以上可用.</div>'; }
+    else { h+='<div class="tt-name tt-w">'+item.name+'</div><div class="tt-gap"></div><div class="tt-w">蕴含着大量神秘天神力量的结晶,可以对天神</div><div class="tt-w">进行升星.</div><div class="tt-y">天神系统升级材料,50级以上可用.</div>'; }
     h+='<div class="tt-gap"></div><div><span class="tt-b">道具状态：</span><span class="tt-w">允许交易</span></div>';
     return h;
   }
@@ -1693,13 +2008,13 @@ function buildTooltip(item){
     return h;
   }
   if (item.type==='hammer'){
-    h+='<div class="tt-name">'+item.name+'</div><div class="tt-gap"></div>';
+    h+='<div class="tt-name tt-w">'+item.name+'</div><div class="tt-gap"></div>';
     h+='<div class="tt-w">镶嵌宝石时,和宝石一起使用镶嵌之锤,</div><div class="tt-w">镶嵌成功概率会提高'+(item.successRateBonus||1)+'倍.</div><div class="tt-w">镶嵌概率最高不会超过50%.</div>';
     h+='<div><span class="tt-b">道具状态：</span><span class="tt-w">允许交易</span></div>';
     return h;
   }
   if (item.type==='extract_hammer'){
-    h+='<div class="tt-name">'+item.name+'</div><div class="tt-gap"></div>';
+    h+='<div class="tt-name tt-w">'+item.name+'</div><div class="tt-gap"></div>';
     h+='<div class="tt-w">拆卸宝石时使用的话,按照较低的几率取出自</div><div class="tt-w">己选择的宝石.</div>';
     h+='<div><span class="tt-b">道具状态：</span><span class="tt-w">允许交易</span></div>';
     return h;
@@ -1722,19 +2037,37 @@ function showTooltip(item, anchor){
   ttEl.style.left=left+'px'; ttEl.style.top=top+'px';
 }
 function hideTooltip(){ ttEl.classList.remove('show'); }
+/* 鼠标跟随式 tooltip（参考旧系统 _positionGlobalTooltip：右对齐鼠标 X、位于鼠标下方，随鼠标移动） */
+function showTooltipAt(item, x, y){
+  if(!item) return;
+  ttEl.innerHTML=buildTooltip(item);
+  ttEl.classList.add('show');
+  var t=ttEl.getBoundingClientRect(), gap=6;
+  var left=x-t.width-gap, top=y+gap;
+  left=Math.max(4,Math.min(left,window.innerWidth-t.width-4));
+  top=Math.max(4,Math.min(top,window.innerHeight-t.height-4));
+  ttEl.style.left=left+'px'; ttEl.style.top=top+'px';
+}
 
 /* 电脑端鼠标悬停 tooltip：仅支持 hover 的设备启用（手机触摸走点击式，避免干扰拖拽） */
 var hoverTimer=null;
 if (window.matchMedia && window.matchMedia('(hover: hover)').matches){
   document.addEventListener('mouseover', function(e){
     var t=e.target; if(!t||!t.closest) return;
-    var el=t.closest('.tt-slot, .slot, .pick');
+    var el=t.closest('.tt-slot, .slot, .pick, .god-li');
     if(!el||!el._item) return;
-    clearTimeout(hoverTimer); showTooltip(el._item, el);
+    clearTimeout(hoverTimer); showTooltipAt(el._item, e.clientX, e.clientY);
+  });
+  /* 鼠标移动时 tooltip 跟随 */
+  document.addEventListener('mousemove', function(e){
+    if(!ttEl.classList.contains('show')) return;
+    var t=e.target; if(!t||!t.closest) return;
+    var el=t.closest('.tt-slot, .slot, .pick, .god-li');
+    if(el&&el._item) showTooltipAt(el._item, e.clientX, e.clientY);
   });
   document.addEventListener('mouseout', function(e){
     var t=e.target; if(!t||!t.closest) return;
-    var el=t.closest('.tt-slot, .slot, .pick');
+    var el=t.closest('.tt-slot, .slot, .pick, .god-li');
     if(!el||!el._item) return;
     clearTimeout(hoverTimer); hoverTimer=setTimeout(hideTooltip, 120);
   });
@@ -1758,30 +2091,52 @@ function openPicker(title, items, cb){
 }
 function closePicker(){ pickerEl.classList.remove('show'); pickerMask.classList.remove('show'); pickerCb=null; }
 
-/* ============ 角色属性重算（基础 + 装备 + 宝石 + 天神） ============ */
+/* ============ 角色属性重算（基础 + 装备/宝石 + 天神 + 属性换算），参照旧系统 updateCharacterStats ============ */
 function recalcCharacter(){
-  var st={力量:10,敏捷:10,体质:10,精神:10,智力:10,幸运:10};   /* 基础：原始+升级分配 */
-  var bn={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0};          /* 附加：装备+天神翅膀 */
-  var hp=100,patk=50,pdef=20,mdef=0,attr='无';
+  /* 基础：原始+升级分配（6 大属性） */
+  var base={力量:10,敏捷:10,体质:10,精神:10,智力:10,幸运:10};
+  var lvB=10+((CHARACTER.info.level||1)-1);   /* 每升1级，6项基础属性各+1 */
+  base={力量:lvB,敏捷:lvB,体质:lvB,精神:lvB,智力:lvB,幸运:lvB};
+  /* 附加：装备（含宝石加成）+ 天神编队 */
+  var bonus={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0};
+  /* 基础状态 */
+  var baseHp=153, baseVitality=100, basePatk=65, basePdef=30, baseMdef=15;
+  /* 装备累加：6 大属性（含宝石加成后的最终值）+ 直接状态 */
   for (var k in equipState){ var e=equipState[k]; if(!e) continue;
-    bn.力量+=e.strength||0; bn.敏捷+=e.agility||0; bn.体质+=e.constitution||0;
-    bn.精神+=e.spirit||0; bn.智力+=e.intelligence||0; bn.幸运+=e.luck||0;
-    hp+=e.maxHp||0; patk+=e.physicalAttack||0; pdef+=e.defense||0; mdef+=e.resistance||0;
-    if (e.attribute && e.attribute!=='无') attr=e.attribute;
+    bonus.力量+=e.strength||0; bonus.敏捷+=e.agility||0; bonus.体质+=e.constitution||0;
+    bonus.精神+=e.spirit||0; bonus.智力+=e.intelligence||0; bonus.幸运+=e.luck||0;
+    baseHp+=e.maxHp||0; basePatk+=e.physicalAttack||0; basePdef+=e.defense||0; baseMdef+=e.resistance||0;
+    if(e.type==='weapon') basePatk+=weaponEnhAtk(e.enhanceLevel||0);   /* 武器强化攻击加成 */
   }
-  if (GOD){ for (var gk in GOD.formation){ var g=GOD.formation[gk]; if(!g) continue;
-    var ga=calculateGodAttributes(g);
-    var gmult = (gk==='main') ? 1 : 0.5;   /* 主阵位100%、副阵位50%附加 */
-    bn.力量+=Math.floor((ga.strength||0)*gmult); bn.敏捷+=Math.floor((ga.agility||0)*gmult); bn.体质+=Math.floor((ga.constitution||0)*gmult);
-    bn.精神+=Math.floor((ga.spirit||0)*gmult); bn.智力+=Math.floor((ga.intelligence||0)*gmult); bn.幸运+=Math.floor((ga.luck||0)*gmult);
-    hp+=Math.floor((ga.hp||0)*gmult); patk+=Math.floor((ga.physicalAttack||0)*gmult); pdef+=Math.floor((ga.physicalDefense||0)*gmult); mdef+=Math.floor((ga.magicDefense||0)*gmult);
-  } }
-  CHARACTER.base=st; CHARACTER.bonus=bn;
+  /* 天神编队累加：主100% / 副50% */
+  for (var gk in GOD.formation){ var g=GOD.formation[gk]; if(!g) continue;
+    var ga=calculateGodAttributes(g), gmult=(gk==='main')?1:0.5;
+    bonus.力量+=Math.floor((ga.strength||0)*gmult); bonus.敏捷+=Math.floor((ga.agility||0)*gmult); bonus.体质+=Math.floor((ga.constitution||0)*gmult);
+    bonus.精神+=Math.floor((ga.spirit||0)*gmult); bonus.智力+=Math.floor((ga.intelligence||0)*gmult); bonus.幸运+=Math.floor((ga.luck||0)*gmult);
+    baseHp+=Math.floor((ga.hp||0)*gmult); baseVitality+=Math.floor((ga.vitality||0)*gmult);
+    basePatk+=Math.floor((ga.physicalAttack||0)*gmult); basePdef+=Math.floor((ga.physicalDefense||0)*gmult); baseMdef+=Math.floor((ga.magicDefense||0)*gmult);
+  }
+  /* 属性换算：基础属性 + 附加属性（装备+天神）共同参与 */
+  var A={力量:base.力量+bonus.力量,敏捷:base.敏捷+bonus.敏捷,体质:base.体质+bonus.体质,精神:base.精神+bonus.精神,智力:base.智力+bonus.智力,幸运:base.幸运+bonus.幸运};
+  var strengthAttackBonus=Math.floor(A.力量*1.3);                      /* 1力量=1.3物理攻击 */
+  var agilityAttackBonus=Math.floor(A.敏捷*0.2), agilityHpBonus=Math.floor(A.敏捷*0.3);   /* 1敏捷=0.2物攻+0.3生命 */
+  var constitutionHpBonus=A.体质*5, constitutionDefenseBonus=A.体质;    /* 1体质=5生命+1物防 */
+  var spiritMagicDefenseBonus=A.精神;                                   /* 1精神=1魔法防御 */
+  var hp=baseHp+agilityHpBonus+constitutionHpBonus;
+  var vitality=baseVitality;
+  var patk=basePatk+strengthAttackBonus+agilityAttackBonus;
+  var pdef=basePdef+constitutionDefenseBonus;
+  var mdef=baseMdef+spiritMagicDefenseBonus;
+  /* 攻击属性=武器槽宝石附加；防御属性=胸甲槽宝石附加 */
+  var attr='无', dattr='无';
+  if(equipState['weapon']&&equipState['weapon'].gemAttributes&&equipState['weapon'].gemAttributes.additionalAttribute) attr=equipState['weapon'].gemAttributes.additionalAttribute;
+  if(equipState['armor']&&equipState['armor'].gemAttributes&&equipState['armor'].gemAttributes.additionalAttribute) dattr=equipState['armor'].gemAttributes.additionalAttribute;
+  CHARACTER.base=base; CHARACTER.bonus=bonus;
   CHARACTER.combat=[
     {k:'生命值',v:String(hp)},{k:'物理攻击',v:String(patk)},
-    {k:'魔法攻击',v:'0'},{k:'射击攻击',v:'0'},
+    {k:'魔法攻击',v:'0'},{k:'射击攻击',v:String(Math.round(patk*0.6))},
     {k:'攻击属性',v:attr},{k:'物理防御',v:String(pdef)},
-    {k:'防御属性',v:'无'},{k:'射击防御',v:'0'},
+    {k:'防御属性',v:dattr},{k:'射击防御',v:String(Math.round(pdef*0.96))},
     {k:'攻击速度',v:'最快'},{k:'移动速度',v:'最快'}
   ];
   if (document.getElementById('view-attrs').style.display!=='none') renderAttrs();
@@ -1789,6 +2144,19 @@ function recalcCharacter(){
 
 /* ============ 强化系统 ============ */
 var ENH={ equip:null, mats:[null,null,null,null,null,null] };
+/* 武器强化：独立概率与金币消耗表（参照官方公示），材料消耗忽略；攻击加成见 WEAPON_ENH_ATK */
+var WEAPON_ENH_COST=[1000,4500,12000,23500,39000,58500,82000,109500,141000,176500,216000,259500,307000,358500,414000,473500,537000,604500,676000,751500];
+var WEAPON_ENH_RATE=[0.9,0.8,0.7,0.6,0.4,0.2,0.1,0.08,0.06,0.01,0.006,0.002,0.001,0.0006,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002];
+var WEAPON_ENH_ATK=[0,7,16,26,42,61,82,113,148,187,240,300,366,452,547,651,782,924,1078,1267,1471];
+function weaponEnhCfg(level){ if(level<0)level=0; if(level>=WEAPON_ENH_COST.length) return {cost:0,rate:0}; return {cost:WEAPON_ENH_COST[level], rate:WEAPON_ENH_RATE[level]}; }
+function weaponEnhAtk(level){ return (level>=0&&level<WEAPON_ENH_ATK.length)?WEAPON_ENH_ATK[level]:0; }
+/* 防具强化：独立概率表（参照官方公示），金币与武器相同，材料忽略；伤害吸收见 ARMOR_ENH_ABS */
+var ARMOR_ENH_COST=WEAPON_ENH_COST;
+var ARMOR_ENH_RATE=[0.99,0.98,0.97,0.8,0.6,0.4,0.2,0.1,0.08,0.06,0.01,0.006,0.002,0.001,0.0006,0.0002,0.0002,0.0002,0.0002,0.0002];
+var ARMOR_ENH_ABS=[0,2,6,8,14,19,26,36,44,56,66,80,95,112,130,155,176,204,234,266,300];
+function armorEnhCfg(level){ if(level<0)level=0; if(level>=ARMOR_ENH_COST.length) return {cost:0,rate:0}; return {cost:ARMOR_ENH_COST[level], rate:ARMOR_ENH_RATE[level]}; }
+function armorEnhAbs(level){ return (level>=0&&level<ARMOR_ENH_ABS.length)?ARMOR_ENH_ABS[level]:0; }
+function isArmorType(t){ return t==='helmet'||t==='chest'||t==='gloves'||t==='leggings'||t==='boots'||t==='shield'||t==='cloak'; }
 var EQUIPPABLE={helmet:1,chest:1,gloves:1,leggings:1,boots:1,weapon:1,shield:1,necklace:1,ring:1,bracelet:1,cloak:1};
 function allEquipmentForPick(){
   var out=[];
@@ -1801,7 +2169,7 @@ function stackItems(type){
   for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.type===type) out.push(it); }
   return out;
 }
-ENH.reset=function(){ this.equip=null; this.mats=[null,null,null,null,null,null]; };
+ENH.reset=function(){ this.equip=null; this.mats=[null,null,null,null,null,null]; this.availPage=0; this.hammer=null; };
 function consumeStack(it,n){
   for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++){
     if (bag[p][i] && bag[p][i].id===it.id){ bag[p][i].count-=n; if(bag[p][i].count<=0) bag[p][i]=null; return; }
@@ -1809,8 +2177,12 @@ function consumeStack(it,n){
 }
 function renderEnhance(){
   var eq=$('#enh-equip');
-  eq.innerHTML = ENH.equip ? '<img src="'+ENH.equip.img+'" alt="">' : '<span class="hint">选择装备</span>';
+  eq.innerHTML = ENH.equip ? '<img class="item-img" src="'+ENH.equip.img+'" alt="">' : '<span class="hint">选择装备</span>';
+  var nm=$('#enh-name');
+  nm.innerHTML = ENH.equip ? ENH.equip.name+(ENH.equip.enhanceLevel>0?' ['+ENH.equip.enhanceLevel+']':'') : '';
+  eq.classList.toggle('has-item', !!ENH.equip);
   eq._item=ENH.equip;
+  /* 1. 可使用的道具（6 材料凹槽） */
   var m=$('#enh-mats'); m.innerHTML='';
   for (var i=0;i<6;i++){
     (function(idx){
@@ -1819,32 +2191,101 @@ function renderEnhance(){
         d.className='pick'; d.innerHTML='<img src="'+ENH.mats[idx].img+'"><span class="rm">×</span>'; d._item=ENH.mats[idx];
         d.addEventListener('click', function(e){ if(e.target.classList.contains('rm')){ ENH.mats[idx]=null; renderEnhance(); } });
       } else {
-        d.className='pick add';
-        d.addEventListener('click', function(){ openPicker('选择强化材料', stackItems('god_power_material'), function(it){
-          var placed=false; for (var j=0;j<6;j++){ if(!ENH.mats[j]){ ENH.mats[j]=it; placed=true; break; } }
-          if(!placed) toast('材料槽已满'); closePicker(); renderEnhance();
-        }); });
+        d.className='pick dim';
       }
       m.appendChild(d);
     })(i);
   }
+  /* 2. 可使用的材料（6/页 + 翻页，点击放入第一个空材料槽） */
+  var avail=stackItems('enhance_material');
+  var pages=Math.max(1,Math.ceil(avail.length/6));
+  if(ENH.availPage>pages-1) ENH.availPage=pages-1;
+  var $a=$('#enh-avail'); $a.innerHTML='';
+  for (var i2=0;i2<6;i2++){
+    (function(i3){
+      var it=avail[ENH.availPage*6+i3];
+      var d=document.createElement('div');
+      if(it){
+        d.className='pick'; d.innerHTML='<img src="'+it.img+'">'+(it.count>1?'<span class="qty">'+it.count+'</span>':'');
+        d._item=it;
+        d.addEventListener('click', function(){
+          var placed=false;
+          for (var j=0;j<6;j++){ if(!ENH.mats[j]){ ENH.mats[j]=it; placed=true; break; } }
+          if(!placed) toast('材料槽已满');
+          renderEnhance();
+        });
+      } else { d.className='pick dim'; }
+      $a.appendChild(d);
+    })(i2);
+  }
+  /* 3. 强化之锤（6 槽 等级1-6，点击选中） */
+  var hams=stackItems('enhance_hammer');
+  var $h=$('#enh-hammers'); $h.innerHTML='';
+  for (var lv=1;lv<=6;lv++){
+    (function(l){
+      var ham=null; for (var k=0;k<hams.length;k++){ if(hams[k].level===l){ ham=hams[k]; break; } }
+      var d=document.createElement('div');
+      if(ham){
+        d.className='pick'+(ENH.hammer&&ENH.hammer.level===l?' sel':'');
+        d.innerHTML='<img src="'+ham.img+'">';
+        d._item=ham;
+        d.addEventListener('click', function(){ ENH.hammer=(ENH.hammer&&ENH.hammer.level===l)?null:ham; renderEnhance(); });
+      } else { d.className='pick dim'; }
+      $h.appendChild(d);
+    })(lv);
+  }
+  /* 4. 成功率 + 消耗金币（武器/防具各自独立表） */
   var n=ENH.mats.filter(function(x){return x;}).length;
-  $('#enh-rate').textContent=Math.round(Math.min(0.9,0.3+n*0.05)*100)+'%';
-  $('#enh-cost').textContent=((ENH.equip?((ENH.equip.enhanceLevel||0)+1)*1000:0)+n*500).toLocaleString();
+  if(ENH.equip && ENH.equip.type==='weapon'){
+    var wlv=ENH.equip.enhanceLevel||0;
+    if(wlv>=20){ $('#enh-rate').textContent='MAX'; $('#enh-cost').textContent='—'; }
+    else { var wcfg=weaponEnhCfg(wlv); $('#enh-rate').textContent=Math.round(wcfg.rate*100)+'%'; $('#enh-cost').textContent=wcfg.cost.toLocaleString(); }
+  } else {
+    var alv=ENH.equip?(ENH.equip.enhanceLevel||0):0;
+    if(alv>=20){ $('#enh-rate').textContent='MAX'; $('#enh-cost').textContent='—'; }
+    else { var acfg=armorEnhCfg(alv); $('#enh-rate').textContent=Math.round(acfg.rate*100)+'%'; $('#enh-cost').textContent=acfg.cost.toLocaleString(); }
+  }
+  saveGame();
+}
+function doEnhanceCore(){
+  if(!ENH.equip){ toast('请先选择强化目标'); return; }
+  var eq=ENH.equip, lv=eq.enhanceLevel||0, ok;
+  if(eq.type==='weapon'){
+    if(lv>=20){ toast('已达最高强化等级'); return; }
+    var wcfg=weaponEnhCfg(lv);
+    if(CURRENCY.gold<wcfg.cost){ toast('金币不足'); return; }
+    CURRENCY.gold-=wcfg.cost; renderCurrency();
+    ok=Math.random()<wcfg.rate;
+  } else {
+    if(lv>=20){ toast('已达最高强化等级'); return; }
+    var acfg=armorEnhCfg(lv);
+    if(CURRENCY.gold<acfg.cost){ toast('金币不足'); return; }
+    CURRENCY.gold-=acfg.cost; renderCurrency();
+    ok=Math.random()<acfg.rate;
+  }
+  if(ok){ eq.enhanceLevel=lv+1; playSoundEffect('embedSuccess'); enhFx('success'); toast('强化成功 +'+eq.enhanceLevel); }
+  else { playSoundEffect('embedFail'); enhFx('fail'); toast('强化失败'); }
+  ENH.mats=[null,null,null,null,null,null]; ENH.hammer=null;
+  renderEquip(); renderBag(); renderEnhance(); recalcCharacter();
 }
 function doEnhance(){
   if(!ENH.equip){ toast('请先选择强化目标'); return; }
-  var n=ENH.mats.filter(function(x){return x;}).length;
-  var rate=Math.min(0.9,0.3+n*0.05);
-  var cost=((ENH.equip.enhanceLevel||0)+1)*1000+n*500;
-  if(CURRENCY.gold<cost){ toast('金币不足'); return; }
-  CURRENCY.gold-=cost; renderCurrency();
-  var ok=Math.random()<rate;
-  ENH.mats.forEach(function(it){ if(it) consumeStack(it,1); });
-  if(ok){ ENH.equip.enhanceLevel=(ENH.equip.enhanceLevel||0)+1; playSoundEffect('embedSuccess'); toast('强化成功 +'+ENH.equip.enhanceLevel); }
-  else { playSoundEffect('embedFail'); toast('强化失败'); }
-  ENH.mats=[null,null,null,null,null,null];
-  renderEquip(); renderBag(); renderEnhance();
+  var eq=ENH.equip, lv=eq.enhanceLevel||0;
+  if(eq.type==='weapon' && lv>=20){ toast('已达最高强化等级'); return; }
+  doEnhanceCore();
+}
+var enhAutoTimer=null;
+function stopEnhAuto(){ if(enhAutoTimer){ clearInterval(enhAutoTimer); enhAutoTimer=null; } var b=$('#enh-auto-btn'); if(b) b.textContent='自动强化'; }
+function toggleEnhAuto(){
+  if(enhAutoTimer){ stopEnhAuto(); toast('已停止自动强化'); return; }
+  if(!ENH.equip){ toast('请先选择强化目标'); return; }
+  $('#enh-auto-btn').textContent='停止自动';
+  enhAutoTimer=setInterval(function(){
+    if(!ENH.equip){ stopEnhAuto(); return; }
+    var need=ENH.equip.type==='weapon' ? weaponEnhCfg(ENH.equip.enhanceLevel||0).cost : armorEnhCfg(ENH.equip.enhanceLevel||0).cost;
+    if(CURRENCY.gold<need){ stopEnhAuto(); toast('金币不足，自动强化停止'); return; }
+    doEnhanceCore();
+  },1200);
 }
 
 /* ============ 宝石系统 ============ */
@@ -1928,7 +2369,10 @@ function removeGemAttrs(eq,gem){
     if(!has){ if(eq.gemAttributes) delete eq.gemAttributes.additionalAttribute; if(eq.attribute===gem.attribute) eq.attribute='无'; }
   }
 }
-function renderGem(){ GEM.mode==='embed' ? renderGemEmbed() : renderGemExtract(); }
+function renderGem(){ document.querySelectorAll('#view-gem .pgtab').forEach(function(x){ x.classList.toggle('on', x.getAttribute('data-mode')===GEM.mode); });
+  document.getElementById('gem-embed').style.display = GEM.mode==='embed' ? 'block' : 'none';
+  document.getElementById('gem-extract').style.display = GEM.mode==='embed' ? 'none' : 'block';
+  GEM.mode==='embed' ? renderGemEmbed() : renderGemExtract(); saveGame(); }
 function renderGemEmbed(){
   /* 道具槽：图片正常显示（与背包一致的内凹阴影） */
   var eq=$('#gem-equip');
@@ -2061,12 +2505,12 @@ function doGemEmbed(){
     /* 成功：镶入该槽、消耗宝石、槽位移到下一空槽、取消选中 */
     slots[GEM.slotIdx]=JSON.parse(JSON.stringify(GEM.selGem));
     applyGemAttrs(GEM.equip,GEM.selGem);
-    playSoundEffect('embedSuccess'); toast('镶嵌成功');
+    playSoundEffect('embedSuccess'); enhFx('success','gem-equip'); toast('镶嵌成功');
     consumeStackRet(GEM.selGem,1); GEM.selGem=null;
     for (var i=GEM.slotIdx+1;i<slots.length;i++){ if(!slots[i]){ GEM.slotIdx=i; break; } }
   } else {
     /* 失败：消耗宝石但保持选中（耗尽才取消）、槽位原样不动 */
-    playSoundEffect('embedFail'); toast('镶嵌失败');
+    playSoundEffect('embedFail'); enhFx('fail','gem-equip'); toast('镶嵌失败');
     if(consumeStackRet(GEM.selGem,1)<=0) GEM.selGem=null;
   }
   renderEquip(); renderBag(); renderGem(); recalcCharacter();
@@ -2081,8 +2525,8 @@ function doGemExtract(){
   slots[GEM.xslot]=null; removeGemAttrs(GEM.xequip,gem);
   if(ok){ var g=JSON.parse(JSON.stringify(gem)); g.count=1; g.id=itemIdCounter++;
     var placed=false; for (var p=0;p<BAG_NUM&&!placed;p++) for (var i=0;i<BAG_SLOTS&&!placed;i++){ if(!bag[p][i]){ bag[p][i]=g; placed=true; } }
-    playSoundEffect('embedSuccess'); toast('成功取出 '+gem.name);
-  } else { playSoundEffect('embedFail'); toast('取出失败，宝石损毁'); }
+    playSoundEffect('embedSuccess'); enhFx('success','gemx-equip'); toast('成功取出 '+gem.name);
+  } else { playSoundEffect('embedFail'); enhFx('fail','gemx-equip'); toast('取出失败，宝石损毁'); }
   if(GEM.xhammer) consumeStack(GEM.xhammer,1);
   GEM.xslot=null; GEM.xsel=null;
   renderEquip(); renderBag(); renderGem(); recalcCharacter();
@@ -2119,27 +2563,39 @@ function calculateGodAttributes(g){
 }
 GOD.reset=function(){ this.selected=null; this.upTarget=null; this.tab='formation'; };
 function godAttrsRows(){
-  var a={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,攻击力:0,防御力:0,抵抗力:0};
+  /* 天神总属性（不乘转化率）与可转化属性（主阵位100%/副阵位50%，取整）各 9 项，参照旧系统 */
+  var tot={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,攻击力:0,防御力:0,抵抗力:0};
+  var conv={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,攻击力:0,防御力:0,抵抗力:0};
   for (var k in GOD.formation){ var g=GOD.formation[k]; if(!g) continue; var ga=calculateGodAttributes(g);
-    var mult=(k==='main')?1:0.5;   /* 主阵位 100%、副阵位 50% 附加 */
-    a.力量+=Math.floor((ga.strength||0)*mult); a.敏捷+=Math.floor((ga.agility||0)*mult); a.体质+=Math.floor((ga.constitution||0)*mult);
-    a.精神+=Math.floor((ga.spirit||0)*mult); a.智力+=Math.floor((ga.intelligence||0)*mult); a.幸运+=Math.floor((ga.luck||0)*mult);
-    a.攻击力+=Math.floor((ga.physicalAttack||0)*mult); a.防御力+=Math.floor((ga.physicalDefense||0)*mult); a.抵抗力+=Math.floor((ga.magicDefense||0)*mult);
+    var mult=(k==='main')?1:0.5;
+    tot.力量+=(ga.strength||0); conv.力量+=Math.floor((ga.strength||0)*mult);
+    tot.敏捷+=(ga.agility||0); conv.敏捷+=Math.floor((ga.agility||0)*mult);
+    tot.体质+=(ga.constitution||0); conv.体质+=Math.floor((ga.constitution||0)*mult);
+    tot.精神+=(ga.spirit||0); conv.精神+=Math.floor((ga.spirit||0)*mult);
+    tot.智力+=(ga.intelligence||0); conv.智力+=Math.floor((ga.intelligence||0)*mult);
+    tot.幸运+=(ga.luck||0); conv.幸运+=Math.floor((ga.luck||0)*mult);
+    tot.攻击力+=(ga.physicalAttack||0); conv.攻击力+=Math.floor((ga.physicalAttack||0)*mult);
+    tot.防御力+=(ga.physicalDefense||0); conv.防御力+=Math.floor((ga.physicalDefense||0)*mult);
+    tot.抵抗力+=(ga.magicDefense||0); conv.抵抗力+=Math.floor((ga.magicDefense||0)*mult);
   }
-  var row=function(name,val){ return '<div class="c-row"><span class="c-pair"><span class="cl">'+name+'</span><span class="cv">'+val+'</span></span><span></span></div>'; };
-  /* 天神总属性：6 维 */
-  var main='';
-  [['力量','敏捷'],['体质','精神'],['智力','幸运']].forEach(function(p){
-    main+='<div class="c-row"><span class="c-pair"><span class="cl">'+p[0]+'</span><span class="cv">'+a[p[0]]+'</span></span><span class="c-pair"><span class="cl">'+p[1]+'</span><span class="cv">'+a[p[1]]+'</span></span></div>';
-  });
-  /* 可转化属性：战斗属性 */
-  var sub=row('攻击力',a.攻击力)+row('防御力',a.防御力)+row('抵抗力',a.抵抗力);
-  return { main:main, sub:sub };
+  var rows=function(obj){
+    var h='';
+    [['力量','敏捷'],['体质','精神'],['智力','幸运'],['攻击力','防御力'],['抵抗力',null]].forEach(function(p){
+      h+='<div class="c-row"><span class="c-pair"><span class="cl">'+p[0]+'</span><span class="cv">'+obj[p[0]]+'</span></span>'
+        +(p[1]?'<span class="c-pair"><span class="cl">'+p[1]+'</span><span class="cv">'+obj[p[1]]+'</span></span>':'<span></span>')+'</div>';
+    });
+    return h;
+  };
+  return { main:rows(tot), sub:rows(conv) };
 }
 function renderGod(){
+  document.querySelectorAll('#view-god .pgtab').forEach(function(x){ x.classList.toggle('on', x.getAttribute('data-gtab')===GOD.tab); });
+  ['god-formation','god-upgrade','god-inherit','god-refine'].forEach(function(id){
+    document.getElementById(id).style.display = (GOD.tab===id.replace('god-','')) ? 'block' : 'none';
+  });
   var list=$('#god-list'); list.innerHTML='';
-  var gsi = function(g){ var ks=['main','sub1','sub2','sub3']; for(var i=0;i<ks.length;i++) if(GOD.formation[ks[i]]===g) return i; return 99; };
-  var gods = ownedGods().slice().sort(function(a,b){ return gsi(a)-gsi(b); }), pp=6, pages=5;   /* 已上阵按主副排最前，未上阵接后，中间无空行 */
+  var godGroup = function(g){ var ks=['main','sub1','sub2','sub3']; for(var i=0;i<ks.length;i++) if(GOD.formation[ks[i]]===g) return [0, i]; return [1, g.type==='god_seal'?0:1]; };   /* [0上阵(阵位顺序含主)/1未上阵, 品质紫0>金1] */
+  var gods = ownedGods().slice().sort(function(a,b){ var A=godGroup(a), B=godGroup(b); if(A[0]!==B[0]) return A[0]-B[0]; return A[1]-B[1]; }), pp=6, pages=5;   /* 主天神→上阵→品质(紫>金) */
   if(GOD.page>pages) GOD.page=pages;
   var slice=gods.slice((GOD.page-1)*pp, GOD.page*pp);
   /* 固定渲染 6 个槽位 div（带边框、尺寸固定），有天神则填充，无则凹陷空槽 */
@@ -2147,14 +2603,17 @@ function renderGod(){
     var liIdx=(GOD.page-1)*pp+si;
     var g=slice[si];
     var d=document.createElement('div');
-    d.className='god-li'+(g?'':' empty')+(g&&GOD.selected&&GOD.selected.id===g.id?' sel':'');
+    d.className='god-li'+(g?'':' empty')+(g&&((GOD.selected&&GOD.selected.id===g.id)||(GOD.upTarget&&GOD.upTarget.id===g.id))?' sel':'');
     d.setAttribute('data-li', liIdx);
     d._item=g||null;
     if(g){
       d.innerHTML='<img class="gi" src="'+g.img+'">'
         +'<div class="gt"><span class="gn">'+g.name+'</span><span class="gr">'+(g.grade||0)+'重'+(g.star||1)+'星</span></div>'
         +(isFormed(g)?'<span class="god-on">上阵中</span>':'');
-      (function(gg){ d.addEventListener('click', function(){ if(godSuppressClick){ godSuppressClick=false; return; } GOD.selected=(GOD.selected&&GOD.selected.id===gg.id)?null:gg; renderGod(); }); })(g);
+      (function(gg){ d.addEventListener('click', function(e){ if(godSuppressClick){ godSuppressClick=false; return; } if(e){ e.stopPropagation(); } showTooltip(gg, d);
+        if(GOD.tab==='upgrade'){ GOD.upTarget=gg; }
+        else GOD.selected=gg;
+        renderGod(); }); })(g);
     }else{
       d.innerHTML='<div class="gi gi-empty"></div><div class="gt"></div>';
     }
@@ -2164,6 +2623,7 @@ function renderGod(){
   $('#god-sel-hint').textContent=GOD.selected?(GOD.selected.name+' · '+(GOD.selected.grade||0)+'重'+(GOD.selected.star||1)+'星'):'点击列表选中天神';
   if(GOD.tab==='formation') renderGodForm();
   else if(GOD.tab==='upgrade') renderGodUpgrade();
+  saveGame();
 }
 function renderGodForm(){
   var keys=['main','sub1','sub2','sub3'];
@@ -2283,14 +2743,47 @@ function godMaterials(g){
 function renderGodUpgrade(){
   var t=$('#god-target'); var g=GOD.upTarget;
   t.innerHTML=g?'<img src="'+g.img+'">':'<span class="hint">选择升级目标</span>'; t._item=g;
-  if(!g){ $('#god-progress').textContent='0%'; $('#god-bar').style.width='0%'; $('#god-mats').textContent=''; $('#god-rate').textContent='0%'; $('#god-cost').textContent='0'; return; }
+  var info=$('#god-up-info');
+  info.innerHTML = g ? '<div class="gu-name '+(g.type==='god_rune'?'tt-gold':'tt-purple')+'">'+g.name+'</div><div class="gu-star '+(g.type==='god_rune'?'tt-gold':'tt-purple')+'">'+(g.grade||0)+'重'+(g.star||1)+'星</div>' : '';
+  /* 升级材料：固定 5 凹槽，自动填充背包中升级所需材料（参考旧系统） */
+  var mats=g?godMaterials(g):[];
+  var ms=$('#god-mats-slots'); ms.innerHTML='';
+  for (var mi=0;mi<5;mi++){
+    var m=mats[mi];
+    var d=document.createElement('div');
+    d.className='pick'+(m?'':' empty');
+    if(m) d.innerHTML='<img src="'+m.img+'"><span class="qty">'+m.count+'</span>';
+    ms.appendChild(d);
+  }
+  if(!g){ $('#god-progress').textContent='0%'; $('#god-bar').style.width='0%'; $('#god-rate').textContent='0%'; $('#god-cost').textContent='0'; return; }
   var prog=calcGodProgress(g);
   $('#god-progress').textContent=Math.round(prog)+'%';
   $('#god-bar').style.width=prog+'%';
-  var mats=godMaterials(g);
-  $('#god-mats').textContent=mats.map(function(m){ return m.name+' ×'+m.count; }).join(' · ')||'缺少升级材料';
   $('#god-rate').textContent=calcGodRate(g)+'%';
   $('#god-cost').textContent=calcGodCost(g).toLocaleString();
+}
+var godFxTimer=null, godFx=null;
+function godFxShow(cls,text){
+  if(godFx&&godFx.parentNode) godFx.parentNode.removeChild(godFx);
+  if(godFxTimer){ clearTimeout(godFxTimer); godFxTimer=null; }
+  godFx=document.createElement('div');
+  godFx.className='god-glow-fx '+cls;
+  var t=document.createElement('div'); t.className='gfx-text'; t.textContent=text;
+  godFx.appendChild(t);
+  document.body.appendChild(godFx);
+  godFxTimer=setTimeout(function(){ if(godFx&&godFx.parentNode) godFx.parentNode.removeChild(godFx); godFx=null; },2000);
+}
+function showGodUpgradeSuccess(){ godFxShow('success','升级成功'); }
+function showGodUpgradeFailure(){ godFxShow('fail','升级失败'); }
+/* 强化特效：从凹槽中心向外扩散的无文字色块，可指定槽位 */
+function enhFx(cls, slotId){
+  var old=document.querySelector('.enh-fx'); if(old) old.remove();
+  var fx=document.createElement('div'); fx.className='enh-fx '+cls;
+  var eq=document.getElementById(slotId||'enh-equip'); var r=eq?eq.getBoundingClientRect():{left:214,top:400,bottom:430};
+  fx.style.left=(r.left+r.width/2)+'px';
+  fx.style.top=(r.top+r.height/2)+'px';
+  document.body.appendChild(fx);
+  setTimeout(function(){ if(fx.parentNode) fx.remove(); },2000);
 }
 function doGodUpgrade(){
   var g=GOD.upTarget; if(!g){ toast('请选择升级目标'); return; }
@@ -2302,7 +2795,7 @@ function doGodUpgrade(){
   var ok=Math.random()<calcGodRate(g)/100;
   mats.forEach(function(m){ consumeStack(m,1); });
   CURRENCY.bound-=cost; renderCurrency();
-  if(ok){ playSoundEffect('embedSuccess');
+  if(ok){ playSoundEffect('embedSuccess'); showGodUpgradeSuccess();
     var prog=calcGodProgress(g);
     if(prog<100){ var lv=(g.grade*5)+g.star;
       var gain=lv===1?(Math.floor(Math.random()*3)+1):(Math.floor(Math.random()*lv*2+6));
@@ -2313,11 +2806,26 @@ function doGodUpgrade(){
       if(g.grade>=5){ g.grade=5; g.star=5; g.currentExp=g.requiredExp; toast('已达满级'); }
       else { g.grade+=1; g.star=1; g.currentExp=0; g.requiredExp=calcReqExp(g); toast('升重成功！'+g.grade+'重'); }
     } else { g.star+=1; g.currentExp=0; g.requiredExp=calcReqExp(g); toast('升星成功！'+g.star+'星'); }
-  } else { playSoundEffect('embedFail'); toast('升级失败'); }
+  } else { playSoundEffect('embedFail'); showGodUpgradeFailure(); toast('升级失败'); }
   renderBag(); renderGod(); recalcCharacter();
 }
 
 /* ============ 系统页 UI 绑定（一次性） ============ */
+var godAutoTimer=null;
+function stopGodAuto(){ if(godAutoTimer){ clearInterval(godAutoTimer); godAutoTimer=null; } var b=$('#god-auto-btn'); if(b) b.textContent='自动升级'; }
+function toggleGodAuto(){
+  if(godAutoTimer){ stopGodAuto(); toast('已停止自动升级'); return; }
+  var g=GOD.upTarget; if(!g){ toast('请先选择升级目标'); return; }
+  $('#god-auto-btn').textContent='停止自动';
+  godAutoTimer=setInterval(function(){
+    var gg=GOD.upTarget;
+    if(!gg){ stopGodAuto(); return; }
+    if(gg.grade>=5&&gg.star>=5&&calcGodProgress(gg)>=100){ stopGodAuto(); toast('天神已达满级，自动升级停止'); return; }
+    if(CURRENCY.bound<calcGodCost(gg)){ stopGodAuto(); toast('绑定金币不足，自动升级停止'); return; }
+    var mats=godMaterials(gg); if(!mats.length){ stopGodAuto(); toast('缺少升级材料，自动升级停止'); return; }
+    doGodUpgrade();
+  },1000);
+}
 function initSystemsUI(){
   /* tooltip：点击物品显示、点击他处隐藏 */
   document.addEventListener('click', function(e){
@@ -2339,9 +2847,10 @@ function initSystemsUI(){
     tab.addEventListener('click', function(){
       document.querySelectorAll('#view-gem .pgtab').forEach(function(x){ x.classList.remove('on'); });
       tab.classList.add('on');
-      GEM.mode = tab.getAttribute('data-mode');
-      document.getElementById('gem-embed').style.display = GEM.mode==='embed' ? 'block' : 'none';
-      document.getElementById('gem-extract').style.display = GEM.mode==='embed' ? 'none' : 'block';
+      var m = tab.getAttribute('data-mode');
+      GEM.reset(); GEM.mode = m;   /* 切换 tab：清空凹槽选中装备/宝石，恢复初始状态 */
+      document.getElementById('gem-embed').style.display = m==='embed' ? 'block' : 'none';
+      document.getElementById('gem-extract').style.display = m==='embed' ? 'none' : 'block';
       renderGem();
     });
   });
@@ -2350,6 +2859,9 @@ function initSystemsUI(){
       document.querySelectorAll('#view-god .pgtab').forEach(function(x){ x.classList.remove('on'); });
       tab.classList.add('on');
       GOD.tab = tab.getAttribute('data-gtab');
+      GOD.selected = null;   /* 各 tab 独立选中状态，切换时回到默认初始 */
+      GOD.upTarget = null;   /* 切换 tab 时，选中的升级天神还原为未选中 */
+      stopGodAuto();
       ['god-formation','god-upgrade','god-inherit','god-refine'].forEach(function(id){
         document.getElementById(id).style.display = (GOD.tab===id.replace('god-','')) ? 'block' : 'none';
       });
@@ -2360,10 +2872,13 @@ function initSystemsUI(){
   /* 天神列表分页 */
   $('#god-prev').onclick = function(){ if(GOD.page>1){ GOD.page--; renderGod(); } };
   $('#god-next').onclick = function(){ if(GOD.page<5){ GOD.page++; renderGod(); } };
-  $('#god-up-btn').onclick = doGodUpgrade;
+  $('#god-up-btn').onclick = function(){ stopGodAuto(); doGodUpgrade(); };
   /* 强化 */
-  $('#enh-equip').onclick = function(){ openPicker('选择强化装备', allEquipmentForPick(), function(it){ ENH.equip=it; closePicker(); renderEnhance(); }); };
+  $('#enh-equip').onclick = function(){ openPicker('选择强化装备', allEquipmentForPick().filter(function(it){ return !(it.type==='necklace'||it.type==='ring'||it.type==='bracelet'); }), function(it){ ENH.equip=it; closePicker(); renderEnhance(); }); };
   $('#enh-btn').onclick = doEnhance;
+  $('#enh-auto-btn').onclick = toggleEnhAuto;
+  $('#enh-avail-prev').onclick = function(){ if(ENH.availPage>0){ ENH.availPage--; renderEnhance(); } };
+  $('#enh-avail-next').onclick = function(){ var pages=Math.max(1,Math.ceil(stackItems('enhance_material').length/6)); if(ENH.availPage<pages-1){ ENH.availPage++; renderEnhance(); } };
   /* 宝石 */
   $('#gem-equip').onclick = function(){ openPicker('选择要镶嵌的装备', equipCandidates(), function(it){ GEM.equip=it; GEM.slotIdx=0; GEM.selGem=null; closePicker(); renderGem(); }); };
   $('#gemx-equip').onclick = function(){ openPicker('选择要拆卸的装备', equipCandidates().filter(function(it){ return (it.gemSlots||[]).some(function(g){ return g; }); }), function(it){ GEM.xequip=it; GEM.xslot=null; GEM.xsel=null; closePicker(); renderGem(); }); };
@@ -2373,7 +2888,8 @@ function initSystemsUI(){
   $('#gem-next').onclick = function(){ GEM.availPage++; renderGem(); };
   /* 天神 */
   $('#god-target').onclick = function(){ if(GOD.selected){ GOD.upTarget=GOD.selected; renderGod(); } else toast('先点选天神'); };
-  $('#god-up-btn').onclick = doGodUpgrade;
+  $('#god-up-btn').onclick = function(){ stopGodAuto(); doGodUpgrade(); };
+  $('#god-auto-btn').onclick = toggleGodAuto;
 }
 
 /* ===== 角色数据 + 二级属性页 ===== */
@@ -2382,10 +2898,10 @@ var CHARACTER = {
   base: { 力量:10, 敏捷:10, 体质:10, 精神:10, 智力:10, 幸运:10 },
   bonus: { 力量:0, 敏捷:0, 体质:0, 精神:0, 智力:0, 幸运:0 },
   combat: [
-    {k:'生命值',v:'100'},{k:'物理攻击',v:'50'},
-    {k:'魔法攻击',v:'0'},{k:'射击攻击',v:'0'},
-    {k:'攻击属性',v:'无'},{k:'物理防御',v:'20'},
-    {k:'防御属性',v:'无'},{k:'射击防御',v:'0'},
+    {k:'生命值',v:'153'},{k:'物理攻击',v:'65'},
+    {k:'魔法攻击',v:'0'},{k:'射击攻击',v:'39'},
+    {k:'攻击属性',v:'无'},{k:'物理防御',v:'30'},
+    {k:'防御属性',v:'无'},{k:'射击防御',v:'29'},
     {k:'攻击速度',v:'最快'},{k:'移动速度',v:'最快'}
   ],
   record: [
@@ -2430,32 +2946,100 @@ function renderAttrs(){
   $('#record-list').innerHTML = cRows(CHARACTER.record);
 }
 
+/* ============ 商店：出售背包物品换取金币 ============ */
+function isShopValuable(it){
+  var t=it.type;
+  return isArmorType(t)||t==='weapon'||t==='necklace'||t==='ring'||t==='bracelet'||t==='god_seal'||t==='god_rune';
+}
+function shopTypeName(it){
+  if(isArmorType(it.type)) return '防具';
+  if(it.type==='weapon') return '武器';
+  if(it.type==='necklace'||it.type==='ring'||it.type==='bracelet') return '首饰';
+  if(it.type==='god_seal'||it.type==='god_rune') return '天神牌子';
+  if(it.type==='stat_gem') return '宝石';
+  if(it.type==='hammer') return '镶嵌锤';
+  if(it.type==='extract_hammer') return '拆卸锤';
+  if(it.type==='enhance_hammer') return '强化锤';
+  return '材料';
+}
+var SHOP_PAGE={cur:1, per:10};
+function renderShop(){
+  var list=document.getElementById('shop-list'); if(!list) return;
+  var items=[];
+  for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++){
+    var it=bag[p][i]; if(!it) continue;
+    items.push({p:p,i:i,it:it});
+  }
+  var total=items.length, pages=Math.max(1,Math.ceil(total/SHOP_PAGE.per));
+  if(SHOP_PAGE.cur>pages) SHOP_PAGE.cur=pages;
+  var start=(SHOP_PAGE.cur-1)*SHOP_PAGE.per;
+  list.innerHTML='';
+  for (var k=start;k<start+SHOP_PAGE.per && k<total;k++){
+    var it=items[k].it, price=isShopValuable(it)?10000000:10000;
+    var row=document.createElement('div'); row.className='shop-row';
+    row.innerHTML='<div class="shop-ico"><img src="'+it.img+'"></div>'+
+      '<div class="shop-info"><div class="shop-name">'+it.name+(it.count>1?(' ×'+it.count):'')+'</div><div class="shop-sub">'+shopTypeName(it)+'</div></div>'+
+      '<div class="shop-price">'+price.toLocaleString()+'</div>'+
+      '<button class="btn shop-sell" data-p="'+items[k].p+'" data-i="'+items[k].i+'">出售</button>';
+    list.appendChild(row);
+  }
+  var tip=document.getElementById('shop-tip');
+  if(tip) tip.textContent=total?('出售背包物品换取金币（共 '+total+' 件）'):'背包暂无物品';
+  var pg=document.getElementById('shop-pg'); if(pg) pg.textContent=total?(SHOP_PAGE.cur+' / '+pages):'';
+  var prev=document.getElementById('shop-prev'), next=document.getElementById('shop-next');
+  if(prev) prev.disabled = SHOP_PAGE.cur<=1;
+  if(next) next.disabled = SHOP_PAGE.cur>=pages;
+  if(!total){ list.innerHTML='<div class="shop-empty">背包暂无物品可出售</div>'; }
+}
+function shopPrev(){ if(SHOP_PAGE.cur>1){ SHOP_PAGE.cur--; renderShop(); } }
+function shopNext(){ var pages=Math.max(1,Math.ceil(shopTotalCount()/SHOP_PAGE.per)); if(SHOP_PAGE.cur<pages){ SHOP_PAGE.cur++; renderShop(); } }
+function shopTotalCount(){ var c=0; for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++){ if(bag[p][i]) c++; } return c; }
+function sellShopItem(p,i){
+  var it=bag[p][i]; if(!it) return;
+  var price=isShopValuable(it)?10000000:10000;
+  var n=it.count>1?it.count:1;      /* 整叠一次卖完 */
+  var total=price*n;
+  confirmDialog('确认出售 '+it.name+(n>1?(' ×'+n):'')+'？<br>获得 '+total.toLocaleString()+' 金币', function(ok){
+    if(!ok) return;
+    bag[p][i]=null;
+    CURRENCY.gold+=total; renderCurrency(); renderShop(); renderBag(); saveGame();
+    toast('卖出 '+it.name+' ×'+n+' +'+total.toLocaleString()+' 金币');
+  });
+}
 function applyRoute(){
   var h = location.hash;
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
-      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0;
+      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0;
   document.body.classList.toggle('show-attrs', attrs);   /* 属性页加宽舞台 */
   document.body.classList.toggle('show-god', god);       /* 天神页宽屏两栏 */
+  document.body.classList.toggle('show-treasure', trs);   /* 寻宝页垂直居中 */
   var map = {
-    '#view-main':    !(attrs||enh||gem||god),
+    '#view-main':    !(attrs||enh||gem||god||trs||shop),
     '#view-attrs':   attrs,
     '#view-enhance': enh,
     '#view-gem':     gem,
-    '#view-god':     god
+    '#view-god':     god,
+    '#view-treasure': trs,
+    '#view-shop':    shop
   };
   for (var id in map) document.getElementById(id.slice(1)).style.display = map[id] ? 'block' : 'none';
   if (attrs) renderAttrs();
   if (enh){ ENH.reset(); renderEnhance(); }
   if (gem){ GEM.reset(); renderGem(); }
   if (god){ GOD.reset(); renderGod(); }
+  if (trs){ trSyncChar(); renderTreasure(); }
+  if (shop) renderShop();
   recalcCharacter();   /* 统一刷新角色属性（装备/宝石/天神变化后生效） */
 }
 /* 统一页面转场：打开 / 返回均带过渡，后续新增页面接入 hash 路由即自动沿用 */
 function route(){
   var h = location.hash;
+  if (h.indexOf('#god')<0) stopGodAuto();   /* 离开天神页即停止自动升级 */
+  if (h.indexOf('#enhance')<0) stopEnhAuto(); /* 离开强化页即停止自动强化 */
+  if (h.indexOf('#treasure')<0) stopTreasure(); /* 离开寻宝页即停止挂机 */
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
-      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0;
-  var view = attrs ? '#view-attrs' : enh ? '#view-enhance' : gem ? '#view-gem' : god ? '#view-god' : '#view-main';
+      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0;
+  var view = attrs ? '#view-attrs' : enh ? '#view-enhance' : gem ? '#view-gem' : god ? '#view-god' : trs ? '#view-treasure' : shop ? '#view-shop' : '#view-main';
   var changed = view !== route.last;
   route.last = view;
   if (changed && !route.first){
@@ -2488,10 +3072,360 @@ function doLoot(){
   toast('获得 ' + item.name);
 }
 
+/* ============ 寻宝系统：模拟打怪升级 / 掉落宝物金币 ============ */
+var DUNGEONS=[
+  { name:'雕俱星座', lv:52, mode:'bound', tag:'绑定金币', bossName:'雕俱星主', monName:'雕俱守卫', color:'#7a86b8', atk:0.35, hp:6, bossAtk:1.9 },
+  { name:'水龙巢穴', lv:59, mode:'loot', tag:'武器·魔翼', bossName:'范特西玛', monName:'水龙精英', color:'#4fc4c0', atk:0.55, hp:7, bossAtk:1.8 },
+  { name:'无限深渊', lv:60, mode:'gem', tag:'全部宝石', bossName:'深渊之主', monName:'深渊魔物', color:'#a04fd4', atk:0.70, hp:8, bossAtk:1.8 },
+  { name:'克里普特王座', lv:60, mode:'godcard', tag:'天神牌子', bossName:'王座霸主', monName:'王座卫士', color:'#a58ad6', atk:0.78, hp:8.5, bossAtk:1.72 },
+  { name:'奥利森废墟', lv:57, mode:'jewelry', tag:'首饰', bossName:'废墟王座', monName:'废墟怨灵', color:'#e0a24f', atk:0.85, hp:9, bossAtk:1.7 },
+  { name:'沙漠之渊', lv:58, mode:'armor', tag:'防具', bossName:'沙渊巨兽', monName:'沙渊猎手', color:'#d4643c', atk:1.10, hp:11, bossAtk:1.6 }
+];
+var TR={ dungeon:0, isBoss:false, hp:0, maxHp:0, patk:0, pdef:0, attrDef:false, absorb:0,
+  kill:0, killToBoss:20, auto:false, timer:null, regen:null, revTimer:null, revCount:0, suppressLog:false,
+  monHp:0, monMax:0, lastAtk:0, level:1, exp:0, reqExp:100 };
+function monsterSVG(color, boss){
+  return '<svg viewBox="0 0 64 64">'+
+    '<path d="M18 46 C13 39 13 29 18 24 C24 20 28 13 30 8 C31 10 34 12 38 14 C44 12 50 11 52 15 C52 17 50 20 47 23 C50 28 51 36 46 42 C44 47 38 51 32 51 C26 51 22 49 18 46 Z" fill="'+color+'" opacity="0.92"/>'+
+    '<path d="M22 51 L20 60 M42 51 L44 60" stroke="'+color+'" stroke-width="4" stroke-linecap="round"/>'+
+    '<path d="M13 36 L6 30 M51 36 L58 30" stroke="'+color+'" stroke-width="3" stroke-linecap="round"/>'+
+    '<circle cx="26" cy="27" r="3" fill="#ffd33a"/><circle cx="38" cy="27" r="3" fill="#ffd33a"/>'+
+    '<path d="M29 35 Q32 39 35 35" stroke="#ffd33a" fill="none" stroke-width="2" stroke-linecap="round"/>'+
+    (boss?'<path d="M32 2 L35 9 L29 9 Z" fill="#ff7b5c"/><path d="M24 6 L25 11 L22 10 Z" fill="#ff9c4f"/><path d="M40 6 L39 11 L42 10 Z" fill="#ff9c4f"/>'
+          :'<path d="M31 4 L33 10 L29 10 Z" fill="#ff9c4f"/>')+
+  '</svg>';
+}
+/* 读取角色战斗属性与减伤数据（防御 + 属性防御30% + 防具伤害吸收累加） */
+function trSyncChar(){
+  var hp=parseInt((CHARACTER.combat[0]||{}).v||153), patk=parseInt((CHARACTER.combat[1]||{}).v||65);
+  var pdef=parseInt((CHARACTER.combat[5]||{}).v||30);
+  TR.maxHp=hp; TR.patk=patk; TR.pdef=pdef;
+  TR.attrDef = ((CHARACTER.combat[6]||{}).v!=='无');
+  var ab=0; for(var k in equipState){ var e=equipState[k]; if(!e) continue;
+    if(isArmorType(e.type)) ab+=(e.damageAbsorption||0)+armorEnhAbs(e.enhanceLevel||0); }
+  TR.absorb=ab;
+  if(TR.hp<=0) TR.hp=hp;
+  TR.level=Math.max(1, CHARACTER.info.level||1); TR.reqExp=100*TR.level;
+}
+/* 怪物属性：攻击=副本系数×角色物攻，血=HP系数×角色物攻；等级=角色等级 */
+function trMonStats(){
+  var d=DUNGEONS[TR.dungeon];
+  var atk=Math.max(6, Math.round(TR.patk*d.atk*(TR.isBoss?d.bossAtk:1)));
+  var mhp=Math.max(40, Math.round(TR.patk*d.hp*(TR.isBoss?2.2:1)));
+  var def=Math.round(TR.pdef*(TR.isBoss?0.85:0.4));
+  return {atk:atk, hp:mhp, def:def};
+}
+/* 角色受击伤害：先被物理防御抵挡 → 属性防御再减30% → 防具伤害吸收累加抵消 */
+function roleHitDamage(monAtk){
+  var raw=monAtk*(0.55+Math.random()*0.4);
+  var afterDef=Math.max(0, raw-TR.pdef);
+  if(TR.attrDef) afterDef*=0.7;
+  return Math.max(0, Math.round(afterDef-TR.absorb));
+}
+function trGainExp(lv){
+  TR.exp+=Math.round(10*lv*Math.pow(1.1,TR.dungeon));   /* 更强副本经验比前一级多 10% */
+  while(TR.level<60 && TR.exp>=TR.reqExp){
+    TR.exp-=TR.reqExp; TR.level++; TR.reqExp=100*TR.level;
+    CHARACTER.info.level=TR.level; renderAttrs();   /* 与属性页右上角等级同步 */
+    toast('升级！当前 Lv.'+TR.level);
+  }
+  recalcCharacter();   /* 升级后基础属性+1，刷新战斗属性 */
+  renderChar();
+}
+/* 生成可叠加的掉落物品：count=当前1个，maxStack=蓝图最大堆叠 */
+function mkLoot(bp){
+  var it=createItem(bp,{id:itemIdCounter++});
+  it.count=1;
+  it.maxStack=(bp.count>1)?bp.count:1;
+  return it;
+}
+/* 叠加放入背包：同名字物品累加，满 maxStack 再开新凹槽 */
+function addStackable(item){
+  var max=item.maxStack||1;
+  if(max>1){
+    var remain=item.count||1;
+    for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){
+      var s=bag[p][i];
+      if(s && s.name===item.name && (s.count||1)<max){
+        var space=max-(s.count||1), add=Math.min(space,remain);
+        s.count+=add; remain-=add;
+        if(remain<=0){ renderBag(); return true; }
+      }
+    }
+    if(remain>0){
+      for(var p2=0;p2<BAG_NUM;p2++) for(var i2=0;i2<BAG_SLOTS;i2++){
+        if(!bag[p2][i2]){ item.count=remain; bag[p2][i2]=item; renderBag(); return true; }
+      }
+    }
+    return false;
+  }
+  return placeInBag(item);
+}
+/* 副本专属掉落（各物品独立计算概率，互不影响）；武器仅BOSS掉 */
+function trRollDrop(){
+  var d=DUNGEONS[TR.dungeon], out=[];
+  var bossR=TR.isBoss?0.20:0.01;   /* 防具/首饰/宝石：小怪1%、BOSS20% */
+  if(d.mode==='jewelry'){ if(Math.random()<bossR){ var js=[ITEM_BLUEPRINTS.dominationNecklace,ITEM_BLUEPRINTS.dominationRing,ITEM_BLUEPRINTS.dominationBracelet]; out.push(mkLoot(js[Math.floor(Math.random()*js.length)])); } }
+  else if(d.mode==='armor'){ if(Math.random()<bossR){ var as=[ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots]; out.push(mkLoot(as[Math.floor(Math.random()*as.length)])); } }
+  else if(d.mode==='loot'){ if(TR.isBoss && Math.random()<0.10){ out.push(mkLoot(ITEM_BLUEPRINTS.demonWings)); } }
+  else if(d.mode==='gem'){
+    /* 5级宝石：小怪10%、BOSS20%；6级/属性/混沌：小怪1%、BOSS20% */
+    var pool5=[], pool6=[];
+    for (var gi=0; gi<ITEM_BLUEPRINTS.statGems.length; gi++){ var gg=ITEM_BLUEPRINTS.statGems[gi]; if(gg.level===5) pool5.push(gg); else if(gg.level===6) pool6.push(gg); }
+    if(Math.random()<(TR.isBoss?0.20:0.10) && pool5.length){ out.push(mkLoot(pool5[Math.floor(Math.random()*pool5.length)])); }
+    if(Math.random()<bossR && pool6.length){ out.push(mkLoot(pool6[Math.floor(Math.random()*pool6.length)])); }
+    if(Math.random()<bossR){ var ag=[ITEM_BLUEPRINTS.earthBlessingGem,ITEM_BLUEPRINTS.fireBlessingGem,ITEM_BLUEPRINTS.waterBlessingGem,ITEM_BLUEPRINTS.windBlessingGem]; out.push(mkLoot(ag[Math.floor(Math.random()*ag.length)])); }
+    if(Math.random()<bossR){ out.push(mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1])); }  /* 混沌神石 */
+    /* 镶嵌/拆卸锤：10%（独立），可255叠加 */
+    if(Math.random()<0.10){ var hb=ITEM_BLUEPRINTS.hammers.concat(ITEM_BLUEPRINTS.extractHammers); var hl=mkLoot(hb[Math.floor(Math.random()*hb.length)]); hl.count=1; hl.maxStack=255; out.push(hl); }
+  }
+  else if(d.mode==='godcard'){
+    if(Math.random()<0.10){
+      /* 神印 / 神符牌子随机；每种最多3张，掉满不再掉落 */
+      var gods=[ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,
+                ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise,
+                ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune];
+      var cand=gods.filter(function(g){ return countInBagByName(g.name)<3; });
+      if(cand.length){ var g=cand[Math.floor(Math.random()*cand.length)]; out.push(mkLoot(g)); }
+    }
+  }
+  return out;
+}
+/* 统计背包中同名物品数量（天神牌不叠加，每格一张） */
+function countInBagByName(name){
+  var c=0;
+  for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++){ if(bag[p][i] && bag[p][i].name===name) c++; }
+  return c;
+}
+function trSpawnMon(){
+  TR.kill++;
+  TR.isBoss=(TR.kill>TR.killToBoss);
+  if(TR.isBoss){ TR.kill=0; }   /* 打完20小怪后遇boss；boss后重新计数继续出小怪 */
+  var s=trMonStats(); TR.monMax=s.hp; TR.monHp=s.hp;
+  renderMon(); renderChar();
+}
+function trLog(html){
+  if(TR.suppressLog) return;
+  var l=document.getElementById('tr-log'); if(!l) return;
+  var d=document.createElement('div'); d.className='tr-logline';
+  d.innerHTML='<span style="color:#5c5548">['+new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})+']</span>'+html;
+  l.insertBefore(d, l.firstChild);
+  while(l.children.length>50) l.removeChild(l.lastChild);
+}
+function trFloat(n,isMon){
+  var s=document.getElementById('tr-scene'); if(!s) return;
+  var el=document.createElement('div'); el.className='tr-float'+(isMon?' mon':''); el.textContent='-'+n;
+  el.style.left=(30+Math.random()*40)+'%'; el.style.top='52%';
+  s.appendChild(el); setTimeout(function(){ el.remove(); },1000);
+}
+function trHitAnim(){ var m=document.getElementById('tr-monster'); if(!m) return; m.classList.add('hit'); setTimeout(function(){ m.classList.remove('hit'); },120); }
+function trDropAnim(img){
+  var layer=document.getElementById('tr-drop-layer'); if(!layer) return;
+  var el=document.createElement('div'); el.className='tr-drop'+(img?'':' gold');
+  el.innerHTML= img?('<img class="drop-img" src="'+img+'">') :('<svg class="coin-ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e0b45a"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#8a6a2a" stroke-width="1.2"/><path d="M12 8.6v6.8M8.6 12h6.8" stroke="#8a6a2a" stroke-width="1.4" stroke-linecap="round"/></svg>');
+  el.style.left=(12+Math.random()*Math.max(20,(layer.clientWidth-44)))+'px';
+  layer.appendChild(el);
+  var burst=document.createElement('div'); burst.className='tr-drop-burst'; burst.style.left=el.style.left; burst.style.top='120px'; layer.appendChild(burst);
+  setTimeout(function(){ if(el.parentNode)el.remove(); if(burst.parentNode)burst.remove(); },1100);
+}
+function trKillMon(){
+  var d=DUNGEONS[TR.dungeon];
+  var lv=TR.level, got=false;
+  if(d.mode==='bound'){
+    if(Math.random()<0.80){ CURRENCY.bound+=100000; renderCurrency(); trDropAnim(null); trLog('雕俱守卫掉落 <b class="lg-gold">绑定金币 100,000</b>'); got=true; }
+  } else {
+    /* 非绑定金币：1% 掉1亿；否则 10万~1000万，金额越低概率越高(80%)、越高越低(8%) */
+    if(Math.random()<0.01){ CURRENCY.gold+=100000000; renderCurrency(); trDropAnim(null); trLog('掉落 <b class="lg-gold">金币 100,000,000</b>'); got=true; }
+    else { var g=100000+Math.floor(Math.random()*9900000); var pct=80-(g-100000)/9900000*(80-8); if(Math.random()*100<pct){ CURRENCY.gold+=g; renderCurrency(); trDropAnim(null); trLog('掉落 <b class="lg-gold">金币 '+g.toLocaleString()+'</b>'); got=true; } }
+    var drops=trRollDrop();
+    drops.forEach(function(item){ if(item){ got=true; addStackable(item); trDropAnim(item.img); trLog('掉落 <b class="lg-item">'+item.name+'</b>'); } });
+    /* 天神材料：每只怪独立计算（20% 神力碎片 / 90% 神力结晶） */
+    if(Math.random()<0.20){ var fr=(Math.random()<0.5)?ITEM_BLUEPRINTS.runeFragment:ITEM_BLUEPRINTS.sealFragment; addStackable(mkLoot(fr)); got=true; trDropAnim(fr.img); trLog('掉落 <b class="lg-item">'+fr.name+'</b>'); }
+    if(Math.random()<0.90){ var cr=ITEM_BLUEPRINTS.godCrystal; var cl=mkLoot(cr); cl.count=10; addStackable(cl); got=true; trDropAnim(cr.img); trLog('掉落 <b class="lg-item">'+cr.name+'×10</b>'); }
+    if(TR.isBoss) trLog('<b class="lg-boss">击败 BOSS '+d.bossName+'</b>');
+  }
+  if(!got) trLog('没有收获');
+  trGainExp(lv);
+  trSpawnMon();
+}
+function trAtk(){
+  if(!TR.maxHp) trSyncChar();
+  if(TR.hp<=0 || TR.revTimer) return;   /* 死亡中不可攻击 */
+  TR.lastAtk=Date.now();
+  var s=trMonStats();
+  var dmg=Math.max(6, Math.round(TR.patk*(0.85+Math.random()*0.3))-Math.round(s.def*0.2));
+  TR.monHp-=dmg; trFloat(dmg,true); trHitAnim(); renderMon();
+  if(TR.monHp<=0){ trKillMon(); return; }
+  var md=roleHitDamage(s.atk);
+  if(md>0){ TR.hp-=md; trFloat(md,false); }
+  renderChar();
+  if(TR.hp<=0){ TR.hp=0; renderChar(); startRevive(); }
+}
+function startRevive(){
+  if(TR.revTimer) clearInterval(TR.revTimer);
+  TR.revCount=10; trLog('你被击败了，10秒后自动复活…');
+  TR.revTimer=setInterval(function(){
+    TR.revCount--;
+    if(TR.revCount<=0){ clearInterval(TR.revTimer); TR.revTimer=null; TR.hp=TR.maxHp; renderChar(); trLog('<b>已满血复活</b>'); toast('已满血复活'); }
+  },1000);
+}
+function trStartRegen(){
+  if(TR.regen) clearInterval(TR.regen);
+  TR.regen=setInterval(function(){
+    if(TR.revTimer) return;
+    if(TR.hp>0 && TR.hp<TR.maxHp && (Date.now()-TR.lastAtk)>5000){
+      TR.hp=Math.min(TR.maxHp, TR.hp+Math.max(2,Math.round(TR.maxHp*0.02))); renderChar();
+    }
+  },1000);
+}
+function renderMon(){
+  var d=DUNGEONS[TR.dungeon];
+  var m=document.getElementById('tr-monster'); if(m){ m.innerHTML=monsterSVG(d.color,TR.isBoss); m.className='tr-monster'+(TR.isBoss?' boss':''); }
+  var nm=document.getElementById('tr-mon-name'); if(nm) nm.textContent=TR.isBoss?d.bossName:d.monName;
+  var lv=document.getElementById('tr-mon-lv'); if(lv) lv.textContent='Lv.'+TR.level+(TR.isBoss?' · BOSS':'');
+  var fill=document.getElementById('tr-mon-hp'), num=document.getElementById('tr-mon-hpnum');
+  var pct=TR.monMax?Math.max(0,Math.min(100,TR.monHp/TR.monMax*100)):100;
+  if(fill){ fill.style.width=pct+'%'; fill.classList.toggle('low',pct<25); }
+  if(num) num.textContent=Math.max(0,TR.monHp)+'/'+TR.monMax;
+}
+function renderChar(){
+  var f=document.getElementById('tr-ch-hp'); if(f){ var p=TR.maxHp?TR.hp/TR.maxHp*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; }
+  var num=document.getElementById('tr-ch-hpnum'); if(num) num.textContent=Math.max(0,TR.hp)+'/'+TR.maxHp;
+  var a=document.getElementById('tr-ch-atk'); if(a) a.textContent=TR.patk;
+  var k=document.getElementById('tr-kill'); if(k) k.textContent=TR.kill;
+  var lv=document.getElementById('tr-lv'); if(lv) lv.textContent=TR.level;
+  var ef=document.getElementById('tr-exp-fill'), en=document.getElementById('tr-exp-num');
+  if(ef){ var pp=TR.reqExp?TR.exp/TR.reqExp*100:0; ef.style.width=Math.max(0,Math.min(100,pp))+'%'; }
+  if(en) en.textContent=TR.level>=60?'MAX':(TR.exp+'/'+TR.reqExp);
+}
+function renderTreasure(){
+  var d=document.getElementById('tr-dungeons'); if(d){ d.innerHTML=DUNGEONS.map(function(x,i){ return '<div class="tr-dun'+(i===TR.dungeon?' on':'')+'" data-i="'+i+'"><div class="tr-dun-name">'+x.name+'</div><div class="tr-dun-lv">Lv.'+x.lv+'</div><span class="tr-dun-tag">'+x.tag+'</span></div>'; }).join(''); }
+  if(!TR.maxHp) trSyncChar();
+  if(TR.monMax<=0) trSpawnMon();
+  renderMon(); renderChar();
+}
+function trSetAuto(on){
+  var was=TR.auto;
+  TR.auto=on;
+  var b=document.getElementById('tr-auto'); if(b){ b.classList.toggle('on',on); b.textContent=on?'挂机中':'挂机'; }
+  if(on){ if(TR.timer) clearInterval(TR.timer); TR.timer=setInterval(function(){ trAtk(); },680); }
+  else { if(TR.timer){ clearInterval(TR.timer); TR.timer=null; } }
+  if(on){ trLog('开始挂机刷取…'); }
+  else if(was){ trLog('停止挂机'); }
+}
+function initTreasureUI(){
+  var ds=document.getElementById('tr-dungeons');
+  if(ds) ds.addEventListener('click',function(e){ var t=e.target.closest('.tr-dun'); if(!t) return; TR.dungeon=+t.getAttribute('data-i'); TR.kill=0; TR.isBoss=false; TR.hp=TR.maxHp; trSpawnMon(); renderTreasure(); trLog('进入 <b>'+DUNGEONS[TR.dungeon].name+'</b>'); });
+  var ab=document.getElementById('tr-atk'); if(ab) ab.addEventListener('click',function(){ trAtk(); });
+  var au=document.getElementById('tr-auto'); if(au) au.addEventListener('click',function(){ trSetAuto(!TR.auto); });
+  trStartRegen();
+}
+function stopTreasure(){ trSetAuto(false); OFFLINE.dur=0; OFFLINE.pending=false; if(OFFLINE.expireTimer){ clearTimeout(OFFLINE.expireTimer); OFFLINE.expireTimer=null; } offlineHide(); }   /* 离开寻宝页彻底清空离线补偿状态 */
+
+/* ============ 离线时长补算掉落 ============ */
+var OFFLINE={ hiddenAt:0, dur:0, pending:false, expireTimer:null };
+function offlineShow(){
+  var bar=document.getElementById('offline-bar'); if(!bar) return;
+  var txt=document.getElementById('offline-txt');
+  var dur=OFFLINE.dur;
+  var s=Math.floor(dur/1000), sec=s%60, min=Math.floor(s/60)%60, hr=Math.floor(s/3600);
+  txt.textContent='离线 '+(hr>0?(hr+'小时'):'')+(min>0?(min+'分'):'')+sec+'秒，可补算掉落';
+  bar.style.display='flex';
+  var btn=document.getElementById('offline-btn');
+  btn.onclick=applyOffline;
+}
+function offlineHide(){
+  var bar=document.getElementById('offline-bar'); if(bar) bar.style.display='none';
+}
+function offlineScheduleExpire(){
+  if(OFFLINE.expireTimer) clearTimeout(OFFLINE.expireTimer);
+  OFFLINE.expireTimer=setTimeout(function(){
+    if(OFFLINE.pending){ OFFLINE.dur=0; OFFLINE.pending=false; offlineHide(); }
+  },60000);
+}
+function applyOffline(){
+  if(!OFFLINE.pending || OFFLINE.dur<=0) return;
+  OFFLINE.pending=false;
+  if(OFFLINE.expireTimer){ clearTimeout(OFFLINE.expireTimer); OFFLINE.expireTimer=null; }
+  var dur=OFFLINE.dur, n=Math.floor(dur/680);
+  OFFLINE.dur=0; offlineHide();
+  var g0=CURRENCY.gold, b0=CURRENCY.bound, x0=TR.exp, lv0=TR.level;
+  if(!TR.maxHp) trSyncChar();
+  TR.suppressLog=true;
+  for(var i=0;i<n;i++){ if(TR.revTimer || TR.hp<=0) break; trAtk(); }
+  TR.suppressLog=false;
+  var parts=[];
+  if(CURRENCY.gold>g0) parts.push('金币 +'+((CURRENCY.gold-g0)/10000).toFixed(1)+'万');
+  if(CURRENCY.bound>b0) parts.push('绑定金币 +'+((CURRENCY.bound-b0)/10000).toFixed(1)+'万');
+  if(TR.level>lv0) parts.push('升至 Lv.'+TR.level);
+  saveGame();
+  toast('离线补偿完成');
+  trLog('离线补算：'+(parts.length?parts.join('，'):'无收获'));
+}
+document.addEventListener('visibilitychange', function(){
+  if(document.hidden){ if(TR.auto){ OFFLINE.hiddenAt=Date.now(); } }   /* 仅挂机中记录离线，未挂机不弹补偿 */
+  else {
+    if(OFFLINE.hiddenAt){ var d=Date.now()-OFFLINE.hiddenAt; OFFLINE.hiddenAt=0;
+      if(d>=3000 && TR.auto){ OFFLINE.dur=d; OFFLINE.pending=true; offlineShow(); offlineScheduleExpire(); }
+    }
+  }
+});
+
+
+/* ============ 本地存档（localStorage）：初始化后的所有操作都会保存，刷新恢复，仅点“初始化”回到原始 ============ */
+var SAVE_KEY='shenqi_save_v1';
+function saveGame(){
+  try{
+    localStorage.setItem(SAVE_KEY, JSON.stringify({
+      v:1, bag:bag, equipState:equipState, currency:CURRENCY,
+      loadedGods:LOADED_GODS, formation:GOD.formation,
+      itemIdCounter:itemIdCounter, currentTab:currentTab
+    }));
+  }catch(e){}
+}
+/* 恢复存档并重建物品共享引用（背包/装备/天神可能引用同一物品对象） */
+function loadGame(){
+  var raw; try{ raw=localStorage.getItem(SAVE_KEY); }catch(e){}
+  if(!raw) return false;
+  var s; try{ s=JSON.parse(raw); }catch(e){ return false; }
+  if(!s||s.v!==1) return false;
+  var pool={};
+  function reg(it){ if(it&&it.id!=null&&pool[it.id]===undefined) pool[it.id]=it; }
+  function link(it){ return (it&&it.id!=null&&pool[it.id]!==undefined)?pool[it.id]:it; }
+  var pages=s.bag||[]; for(var p=0;p<pages.length;p++){ var pg=pages[p]; if(pg) for(var i=0;i<pg.length;i++) reg(pg[i]); }
+  for(var ek in (s.equipState||{})) reg(s.equipState[ek]);
+  var lg=s.loadedGods||[]; for(var j=0;j<lg.length;j++) reg(lg[j]);
+  for(var fk in (s.formation||{})) reg(s.formation[fk]);
+  bag=[]; for(var q=0;q<BAG_NUM;q++){ var row=[]; var pq=(s.bag&&s.bag[q])||[]; for(var iq=0;iq<BAG_SLOTS;iq++) row[iq]=link(pq[iq]); bag.push(row); }
+  equipState={}; for(var ekk in (s.equipState||{})) equipState[ekk]=link(s.equipState[ekk]);
+  LOADED_GODS=[]; var lg2=s.loadedGods||[]; for(var lq=0;lq<lg2.length;lq++) LOADED_GODS.push(link(lg2[lq]));
+  GOD.formation={ main:link(s.formation&&s.formation.main), sub1:link(s.formation&&s.formation.sub1), sub2:link(s.formation&&s.formation.sub2), sub3:link(s.formation&&s.formation.sub3) };
+  if(s.itemIdCounter) itemIdCounter=s.itemIdCounter;
+  if(s.currency) CURRENCY=s.currency;
+  if(typeof s.currentTab==='number') currentTab=s.currentTab;
+  return true;
+}
+
+function doReset(){
+  /* 回到完全初始状态：等级1、装备背包与物品全空、天神清空、金币默认 */
+  for (var p = 0; p < BAG_NUM; p++) for (var i = 0; i < BAG_SLOTS; i++) bag[p][i] = null;
+  equipState = {};
+  LOADED_GODS.length = 0;
+  GOD.formation = { main:null, sub1:null, sub2:null, sub3:null };
+  GOD.selected = null; GOD.upTarget = null; GOD.page = 1;
+  CURRENCY.gold = 0; CURRENCY.bound = 0;
+  CHARACTER.info.level = 1; TR.level = 1; TR.exp = 0; TR.reqExp = 100;
+  itemIdCounter = 1;
+  recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); renderCurrency();
+  saveGame();
+  toast('已恢复到初始状态');
+}
 function doInit(){
   /* 清空背包与装备位 */
   for (var p = 0; p < BAG_NUM; p++) for (var i = 0; i < BAG_SLOTS; i++) bag[p][i] = null;
   equipState = {};
+  /* GM生成：金币统一给默认值 */
+  CURRENCY.gold = 100000000; CURRENCY.bound = 100000000;
   /* 重置天神系统：已加载列表与上阵阵位清空，天神回到背包由玩家长按加载 */
   LOADED_GODS.length = 0;
   GOD.formation = { main:null, sub1:null, sub2:null, sub3:null };
@@ -2506,10 +3440,12 @@ function doInit(){
     bag[p2][i2] = it;
     i2++; if (i2 >= BAG_SLOTS){ i2 = 0; p2++; }
   });
-  renderEquip(); renderBag();
+  renderEquip(); renderBag(); renderCurrency();
   toast('已初始化 ' + items.length + ' 件物品');
+  saveGame();
 }
 
+loadGame();        /* 恢复本地存档（无存档则保持初始空状态） */
 renderEquip();
 renderTabs();
 renderBag();
@@ -2517,8 +3453,7 @@ renderAttrs();
 renderCurrency();
 history.replaceState(null, '', location.href.split('#')[0]);
 route();          /* 进入主页并重算角色属性 */
-bindEvents();
-})();
+bindEvents();})();
 </script>
 </body>
 </html>
