@@ -1533,7 +1533,7 @@ var LOOT_POOL = buildLootPool();
   }
 })();
 
-/* 兜底：禁止任何原生触屏滚动/下拉刷新，整页固定 */
+/* 兜底：整页固定，禁止下拉刷新；但放行可滚动容器（寻宝副本横滚、日志纵滚）以支持原生触摸滚动 */
 document.addEventListener('touchmove', function(e){ if (e.cancelable) e.preventDefault(); }, { passive:false });
 
 
@@ -3639,6 +3639,18 @@ function initTreasureUI(){
   if(ds) ds.addEventListener('wheel',function(e){
     if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ e.preventDefault(); ds.scrollLeft+=e.deltaY; }
   },{passive:false});
+  /* 移动端手动触摸滚动：全局已 preventDefault 禁原生滚动（防橡皮筋），此处手动改 scrollLeft/Top 实现滚动 */
+  ['tr-dungeons','tr-log'].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    var sx=0,sy=0,tsx=0,tsy=0,active=false;
+    el.addEventListener('touchstart',function(e){ var t=e.touches[0]||e.changedTouches[0]; tsx=t.clientX; tsy=t.clientY; sx=el.scrollLeft; sy=el.scrollTop; active=true; },{passive:true});
+    el.addEventListener('touchmove',function(e){
+      if(!active) return; var t=e.touches[0]||e.changedTouches[0];
+      var dx=tsx-t.clientX, dy=tsy-t.clientY;
+      if(id==='tr-dungeons') el.scrollLeft=sx+dx; else el.scrollTop=sy+dy;
+    },{passive:true});
+    el.addEventListener('touchend',function(){ active=false; },{passive:true});
+  });
   var sb=document.getElementById('tr-stats-bar'); if(sb) sb.addEventListener('click',function(){ var w=document.getElementById('tr-stats'); if(w){ w.classList.toggle('open'); renderTrStats(); } });
   var ab=document.getElementById('tr-atk'); if(ab) ab.addEventListener('click',function(){ trAtk(); });
   var au=document.getElementById('tr-auto'); if(au) au.addEventListener('click',function(){ trSetAuto(!TR.auto); });
