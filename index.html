@@ -532,6 +532,12 @@ body.show-god .stage{max-width:680px;}
 .god-layout{flex-direction:row;align-items:flex-start;}   /* 手机/桌面统一左右分栏，实测 428 宽无溢出 */
 .god-left{width:38%;flex:0 0 38%;}
 .god-titlebar{flex:0 0 38%;}
+/* 手机窄屏：上阵凹槽改小、禁换行，避免 4 槽排成两行 */
+@media(max-width:560px){
+  #god-form{flex-wrap:nowrap;justify-content:center;}
+  #god-target{width:40px;height:40px;}
+  #god-mats-slots .pick{width:32px;height:32px;}
+}
 
 /* ===== 底部选择面板（Bottom Sheet）：不遮满全屏、可滑动选择 ===== */
 #picker-mask{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s;z-index:120;}
@@ -923,6 +929,14 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
 #view-treasure .tr-battle .tr-scene{height:200px;}
 #view-treasure .tr-log{height:160px;}
 @keyframes trFloat{0%{opacity:0;transform:translateY(6px);}20%{opacity:1;}100%{opacity:0;transform:translateY(-22px);}}
+/* 桌面端天神阵位/升级凹槽：与背包凹槽(46px)一致；材料槽40px */
+#god-form .slot{width:46px;height:46px;}
+#god-target{width:46px;height:46px;}
+#god-mats-slots .pick{width:40px;height:40px;}
+@media(max-width:560px){
+  #god-target{width:40px;height:40px;}
+  #god-mats-slots .pick{width:32px;height:32px;}
+}
 </style>
 </head>
 <body>
@@ -2750,7 +2764,7 @@ function renderGodForm(){
   var f=$('#god-form'); f.innerHTML='';
   keys.forEach(function(k){
     var g=GOD.formation[k];
-    var d=document.createElement('div'); d.className='pick'+(g?'':' add'); d.style.width='52px'; d.style.height='52px';
+    var pw=window.innerWidth<=560?40:46; var d=document.createElement('div'); d.className='pick'+(g?'':' add'); d.style.width=pw+'px'; d.style.height=pw+'px';
     d.setAttribute('data-key', k);
     if(g){ d.innerHTML='<img src="'+g.img+'">'; d._item=g; }
     d.addEventListener('click', function(){
@@ -2862,7 +2876,7 @@ function godMaterials(g){
 }
 function renderGodUpgrade(){
   var t=$('#god-target'); var g=GOD.upTarget;
-  t.innerHTML=g?'<img src="'+g.img+'">':'<span class="hint">选择升级目标</span>'; t._item=g;
+  t.innerHTML=g?'<img src="'+g.img+'">':''; t._item=g;
   var info=$('#god-up-info');
   info.innerHTML = g ? '<div class="gu-name '+(g.type==='god_rune'?'tt-gold':'tt-purple')+'">'+g.name+'</div><div class="gu-star '+(g.type==='god_rune'?'tt-gold':'tt-purple')+'">'+(g.grade||0)+'重'+(g.star||1)+'星</div>' : '';
   /* 升级材料：固定 5 凹槽，自动填充背包中升级所需材料（参考旧系统） */
