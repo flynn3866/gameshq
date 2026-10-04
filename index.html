@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#57524C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -26,6 +26,7 @@ body{
   position:fixed;left:0;top:0;width:100%;height:100%;
   overflow:hidden;                 /* 整页固定，不晃动、不滚动 */
   overscroll-behavior:none;        /* 禁止下拉刷新/回弹 */
+  touch-action:manipulation;       /* 禁双击缩放，保留拖拽/滚动 */
   display:flex;flex-direction:column;align-items:center;justify-content:center;   /* 内容整体垂直居中 */
   background:#57524C;
   color:#e7e1d2;
@@ -529,6 +530,15 @@ body.show-god .stage{max-width:680px;}
   background:#1F1B19;color:#e6dcc3;font-size:15px;cursor:pointer;padding:0;
 }
 .gp-btn:active{background:#2a2622;}
+@media(max-width:560px){
+  /* 手机单列：压缩左侧列表，右侧内容超高时内部滚动可见，不裁切不换行 */
+  .god-li{height:42px;padding:3px 6px;gap:7px;}
+  .god-li .gi,.god-li .gi-empty{width:30px;height:30px;}
+  .god-list{min-height:272px;}
+  .god-right{max-height:calc(100vh - 462px);overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .god-right::-webkit-scrollbar{width:4px;}
+  .god-right::-webkit-scrollbar-thumb{background:#3a342c;border-radius:2px;}
+}
 @media(min-width:561px){
   .god-layout{flex-direction:row;align-items:flex-start;}
   .god-left{width:38%;flex:0 0 38%;}
@@ -816,6 +826,8 @@ body.show-god .stage{max-width:680px;}
 #view-shop .shop-pager .btn{height:26px;padding:0 16px;font-size:12px;border-radius:5px;}
 #view-shop .shop-pager .pg-num{font-size:12px;color:#f0e2b8;min-width:44px;text-align:center;letter-spacing:1px;}
 .shop-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid #5A5550;border-radius:6px;background:linear-gradient(180deg,#191513,#100d0b);}
+.shop-row.shop-empty-row{border-style:dashed;border-color:#3a352e;background:linear-gradient(180deg,#141210,#0e0c0a);}
+.shop-row.shop-empty-row .shop-ico{background:#181614;}
 .shop-row .shop-ico{width:34px;height:34px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:4px;background:#212020;}
 .shop-row .shop-ico img{width:30px;height:30px;object-fit:contain;}
 .shop-row .shop-info{flex:1;min-width:0;}
@@ -3101,6 +3113,7 @@ function renderShop(){
   if(SHOP_PAGE.cur>pages) SHOP_PAGE.cur=pages;
   var start=(SHOP_PAGE.cur-1)*SHOP_PAGE.per;
   list.innerHTML='';
+  var rows=0;
   for (var k=start;k<start+SHOP_PAGE.per && k<total;k++){
     var it=items[k].it, price=isShopValuable(it)?10000000:10000;
     var row=document.createElement('div'); row.className='shop-row'; row._item=it;
@@ -3108,7 +3121,13 @@ function renderShop(){
       '<div class="shop-info"><div class="shop-name">'+it.name+(it.count>1?(' ×'+it.count):'')+'</div><div class="shop-sub">'+shopTypeName(it)+'</div></div>'+
       '<div class="shop-price">'+price.toLocaleString()+'</div>'+
       '<button class="btn shop-sell" data-p="'+items[k].p+'" data-i="'+items[k].i+'">出售</button>';
-    list.appendChild(row);
+    list.appendChild(row); rows++;
+  }
+  /* 不足每页行数时补齐占位空行，保持与系统商店一致的高度 */
+  for (var k2=rows;k2<SHOP_PAGE.per;k2++){
+    var er=document.createElement('div'); er.className='shop-row shop-empty-row';
+    er.innerHTML='<div class="shop-ico"></div><div class="shop-info"></div>';
+    list.appendChild(er);
   }
   var tip=document.getElementById('shop-tip');
   if(tip) tip.textContent=total?('出售背包物品换取金币（共 '+total+' 件）'):'背包暂无物品';
@@ -3116,7 +3135,6 @@ function renderShop(){
   var prev=document.getElementById('shop-prev'), next=document.getElementById('shop-next');
   if(prev) prev.disabled = SHOP_PAGE.cur<=1;
   if(next) next.disabled = SHOP_PAGE.cur>=pages;
-  if(!total){ list.innerHTML='<div class="shop-empty">背包暂无物品可出售</div>'; }
 }
 function renderSysShop(){
   var list=document.getElementById('shop-list'); if(!list) return;
@@ -3544,6 +3562,14 @@ function trAtk(){
 }
 function startRevive(){
   if(TR.revTimer) clearInterval(TR.revTimer);
+  TR.monHp=TR.monMax; renderMon();   /* 角色死亡，当前未死亡怪物血量回满 */
+  /* 死亡掉落当前等级经验条10%，直到经验为0；等级不掉 */
+  var lose=Math.round(TR.reqExp*0.10);
+  if(lose>0 && TR.exp>0){
+    TR.exp=Math.max(0, TR.exp-lose);
+    renderChar();
+    trLog('死亡损失经验 '+lose);
+  }
   var tip=document.getElementById('revive-tip');
   function upd(){ if(tip){ tip.textContent='你被击败了，'+TR.revCount+'秒后自动复活…'; tip.style.display='block'; } }
   TR.revCount=10; trLog('你被击败了，10秒后自动复活…'); upd();
