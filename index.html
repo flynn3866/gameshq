@@ -588,6 +588,16 @@ body.show-god .stage{max-width:680px;}
 #view-gem{width:296px;margin:0 auto;height:auto;max-height:calc(100vh - 66px);}   /* 宽度≈凹槽+边距；高度随内容到按钮结束，最多一屏 */
 #view-gem .topbar{margin-bottom:16px;}   /* 标题与下方内容拉开间距 */
 #view-enhance{width:296px;margin:0 auto;height:auto;max-height:calc(100vh - 66px);}   /* 与宝石页同宽：凹槽与边界间距≈凹槽间距 */
+#view-refine{width:296px;margin:0 auto;height:auto;max-height:calc(100vh - 66px);}   /* 洗炼页，同强化页 */
+#view-refine .gem-slotrow{justify-content:space-evenly;}
+#refine-mats-r1{margin-bottom:6px;}
+.ref-attr{font-size:10px;color:#e0b900;line-height:1.15;text-align:center;display:block;}
+#refine-attrs .pick.dim{background:#191113;border:1px solid #5E5E5E;}   /* 附加属性置灰样式，同强化页最后一行 */
+.tt-rf{color:#FF8700;font-weight:300;}   /* tooltip 洗炼加成：与洗炼结果 div 字体同色 */
+#refine-attrs .pick.dim::after{inset:2px;background:rgba(0,0,0,.28);opacity:1;}
+.refine-result{height:68px;overflow:hidden;box-sizing:border-box;padding:4px 10px;margin:2px 0;background:linear-gradient(180deg,#191513,#100d0b);border:1px solid #3a342c;border-radius:6px;display:flex;flex-wrap:wrap;gap:1px 16px;justify-content:center;align-items:center;}
+.refine-result span{font-size:12px;color:#FF8700;font-weight:300;letter-spacing:.5px;}
+.refine-result .refr-none{color:#8a8375;}
 /* 强化页凹槽行：首尾留白收紧到与凹槽间距一致 */
 #view-enhance .gem-slotrow{justify-content:space-evenly;}
 #view-enhance .gem-sec{padding-left:1px;padding-right:1px;}
@@ -808,6 +818,11 @@ body.show-god .stage{max-width:680px;}
 .tr-char{display:flex;flex-direction:column;gap:5px;padding:9px 10px 6px;background:linear-gradient(180deg,#191513,#100d0b);border:1px solid #5A5550;border-radius:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
 .tr-ch-line{display:flex;align-items:center;gap:8px;}
 .tr-ch-label{font-size:11px;color:#8a8375;flex:0 0 auto;}
+.tr-buffs{position:absolute;left:10px;bottom:9px;z-index:6;display:flex;align-items:center;gap:4px;}
+.tr-buff{position:relative;width:20px;height:20px;border-radius:4px;overflow:visible;animation:trBuffPulse 1.6s ease-in-out infinite;}
+.tr-buff img{width:20px;height:20px;object-fit:contain;filter:drop-shadow(0 0 4px rgba(80,220,150,.85));}
+.tr-buff .tm{position:absolute;left:50%;top:100%;transform:translateX(-50%);font-size:8px;line-height:1;color:#cfeeda;text-shadow:0 1px 2px #000;white-space:nowrap;}
+@keyframes trBuffPulse{0%,100%{filter:drop-shadow(0 0 3px rgba(80,220,150,.55));}50%{filter:drop-shadow(0 0 7px rgba(80,220,150,.95));}}
 .tr-ch-num{font-size:11px;color:#E0B900;font-variant-numeric:tabular-nums;}
 .tr-char .tr-bar.ch{flex:1;}
 .tr-char .tr-bar-fill.ch{background:linear-gradient(180deg,#4fc46a,#1e7a36);}
@@ -1054,6 +1069,38 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
       </div>
     </div>
   </div>
+  <!-- ===== 二级页面：洗炼 ===== -->
+  <div class="window sys" id="view-refine">
+    <header class="topbar">
+      <span class="title-glow"></span>
+      <button class="back-arrow" id="refine-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
+      <h1>洗炼</h1>
+    </header>
+    <div class="sys-body gem-body">
+      <div class="gem-sec gem-target-sec">
+        <div class="enh-name" id="refine-name"></div>
+        <div class="gem-main"><div class="slot tt-slot" id="refine-equip"></div></div>
+        <div class="gem-subtitle">需要洗炼的道具</div>
+      </div>
+      <div class="refine-result" id="refine-result"></div>
+      <div class="gem-sec">
+        <div class="gem-subtitle">可使用的卷轴</div>
+        <div class="gem-slotrow" id="refine-mats-r1"></div>
+        <div class="gem-slotrow" id="refine-mats-r2"></div>
+      </div>
+      <div class="gem-sec">
+        <div class="gem-subtitle"></div>
+        <div class="gem-slotrow" id="refine-attrs"></div>
+      </div>
+      <div class="gem-sec rate-sec">
+        <div class="rate-info"><span></span><b></b></div>
+        <div class="rate-info"><span></span><b></b></div>
+      </div>
+      <div class="enh-btns">
+        <button class="btn gem-ok" id="refine-btn">洗炼</button>
+      </div>
+    </div>
+  </div>
   <!-- ===== 二级页面：宝石 ===== -->
   <div class="window sys" id="view-gem">
     <header class="topbar">
@@ -1221,6 +1268,7 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
             <span class="tr-mon-lv" id="tr-mon-lv"></span>
           </div>
           <div class="tr-bar"><div class="tr-bar-fill" id="tr-mon-hp"></div><span class="tr-bar-txt" id="tr-mon-hpnum"></span></div>
+          <div class="tr-buffs" id="tr-buffs"></div>
         </div>
         <div class="tr-char">
           <div class="tr-ch-line"><span class="tr-ch-label">生命</span><div class="tr-bar ch"><div class="tr-bar-fill" id="tr-ch-hp"></div></div><span class="tr-ch-num" id="tr-ch-hpnum"></span></div>
@@ -1310,6 +1358,20 @@ var LOOT = [
 
 /* ============ 物品 & 装备定义（全部物品/宝石蓝图，图片存于 logos/） ============ */
 var ITEM_BLUEPRINTS = {
+  /* --- 消耗品 --- */
+  holyPotion: { name:"神圣药水", type:"potion", img:"logos/神圣药水.png", count:1, maxStack:99 },
+  /* --- 洗炼卷轴 --- */
+  refineScroll:    { name:"属性卷轴",       type:"normal_scroll", img:"logos/属性卷轴.png",       count:255, maxStack:255 },   /* 仅用于洗炼 */
+  refineScrollFull:{ name:"完整的属性卷轴", type:"full_scroll",  img:"logos/完整的属性卷轴.png", count:255, maxStack:255 },   /* 仅用于洗炼 */
+  /* --- 坐骑 --- */
+  mount: {
+    name:"坐骑", type:"mount", img:"logos/坐骑.png",
+    enhanceLevel:0, defense:30, resistance:15, attribute:"无",
+    maxHp:500, maxVitality:500, strength:0, agility:8, constitution:6,
+    intelligence:0, spirit:0, luck:0, damageAbsorption:0,
+    price:10000000000, durability:"2000/2000", category:"坐骑", equipLevel:1,
+    gemSlots:Array(6).fill(null)
+  },
   /* --- 可穿戴装备 --- */
   epicOgdenHelmet: {
     name:"史诗 奥格顿头盔", type:"helmet", img:"logos/史诗 奥格顿头盔.png",
@@ -1503,6 +1565,9 @@ function buildInitialItems(){
   addItem(ITEM_BLUEPRINTS.windBlessingGem);
   addItem(ITEM_BLUEPRINTS.godPowerFragment);
   addItem(ITEM_BLUEPRINTS.godCrystal);
+  /* 洗炼卷轴 */
+  addItem(ITEM_BLUEPRINTS.refineScroll);
+  addItem(ITEM_BLUEPRINTS.refineScrollFull);
   /* 属性宝石 */
   ITEM_BLUEPRINTS.statGems.forEach(function(gem){ addItem(gem); });
   /* 镶嵌 / 拆卸锤 */
@@ -1777,10 +1842,13 @@ function bindEvents(){
   });
 
   gridEl.addEventListener('click', function(e){
-    if (suppressClick){ suppressClick = false; return; }
-    var s = e.target.closest('.slot'); if (!s) return;
+    var s = e.target.closest ? e.target.closest('.slot') : null;
+    if (!s){ var fp = document.elementFromPoint(e.clientX, e.clientY); s = fp && fp.closest ? fp.closest('.slot') : null; }
+    if (!s) return;
     var it = bag[currentTab][parseInt(s.getAttribute('data-slot'),10)];
-    if (!it) toast('背包格 · 空');   /* 有物品时由点击式 tooltip 展示详情 */
+    if (it && it.type==='potion'){ usePotion(s); e.stopPropagation(); return; }   /* 优先处理物品类型：药水使用不受拖拽抑制点击影响；stopPropagation 防 document 重复 */
+    if (suppressClick){ suppressClick = false; return; }
+    if (!it) toast('背包格 · 空');   /* 有物品由 document 点击委托显示 tooltip */
   });
 
   /* 电脑端：右键天神图标 → 加载到天神系统（手机端为长按） */
@@ -1993,12 +2061,14 @@ function bindEvents(){
     else if (act === '属性'){ location.hash = '#attrs'; }
     else if (act === '强化'){ location.hash = '#enhance'; }
     else if (act === '宝石'){ location.hash = '#gem'; }
+    else if (act === '洗炼'){ location.hash = '#refine'; }
     else if (act === '天神'){ location.hash = '#god'; }
     else toast('功能 · 演示中');
   });
 
   $('#attrs-back').addEventListener('click', function(){ location.hash = ''; });
   $('#enhance-back').addEventListener('click', function(){ location.hash = ''; });
+  $('#refine-back').addEventListener('click', function(){ location.hash = ''; });
   $('#gem-back').addEventListener('click', function(){ location.hash = ''; });
   $('#god-back').addEventListener('click', function(){ location.hash = ''; });
   $('#treasure-back').addEventListener('click', function(){ location.hash = ''; });
@@ -2065,11 +2135,12 @@ function buildTooltip(item){
       if(item.defense!==undefined) h+='<div class="tt-w">防御力 '+item.defense+'</div>'; if(item.resistance!==undefined) h+='<div class="tt-w">抵抗力 '+item.resistance+'</div>'; }
     var gemAttr=(item.gemAttributes&&item.gemAttributes.additionalAttribute)||'无';
     if (gemAttr!=='无' && (isW||item.type==='chest')) h+='<div class="tt-y">'+gemAttr+' I</div>';
-    if (item.maxHp) h+='<div class="tt-y">最大生命值 + '+item.maxHp+'</div>';
-    if (item.maxVitality) h+='<div class="tt-y">最大活力值 + '+item.maxVitality+'</div>';
+    if (item.maxHp){ var rfhp=(item.washAttrs&&item.washAttrs.生命>0)?' <span class="tt-rf">+ '+item.washAttrs.生命+'</span>':''; h+='<div class="tt-y">最大生命值 + '+item.maxHp+rfhp+'</div>'; }
+    if (item.maxVitality||(item.washAttrs&&item.washAttrs.活力>0)){ var rfv=(item.washAttrs&&item.washAttrs.活力>0)?' <span class="tt-rf">+ '+item.washAttrs.活力+'</span>':''; h+='<div class="tt-y">最大活力值 + '+(item.maxVitality||0)+rfv+'</div>'; }
     ['力量','敏捷','体质','智力','精神','幸运'].forEach(function(n){
       var key={'力量':'strength','敏捷':'agility','体质':'constitution','智力':'intelligence','精神':'spirit','幸运':'luck'}[n];
-      if (item[key]) h+='<div class="tt-y">'+n+' + '+item[key]+'</div>';
+      var rf=(item.washAttrs&&item.washAttrs[n]>0)?' <span class="tt-rf">+ '+item.washAttrs[n]+'</span>':'';
+      if (item[key]||rf) h+='<div class="tt-y">'+n+' + '+(item[key]||0)+rf+'</div>';
     });
     if (isA && item.gemDamageAbsorption) h+='<div class="tt-y">伤害吸收 + '+item.gemDamageAbsorption+'</div>';
     if (!isJ) h+='<div class="tt-y">锻造值 230/230</div>';
@@ -2240,6 +2311,7 @@ function recalcCharacter(){
     bonus.精神+=e.spirit||0; bonus.智力+=e.intelligence||0; bonus.幸运+=e.luck||0;
     baseHp+=e.maxHp||0; basePatk+=e.physicalAttack||0; basePdef+=e.defense||0; baseMdef+=e.resistance||0;
     if(e.type==='weapon') basePatk+=weaponEnhAtk(e.enhanceLevel||0);   /* 武器强化攻击加成 */
+    if(e.washAttrs){ bonus.力量+=e.washAttrs.力量||0; bonus.敏捷+=e.washAttrs.敏捷||0; bonus.体质+=e.washAttrs.体质||0; bonus.精神+=e.washAttrs.精神||0; bonus.智力+=e.washAttrs.智力||0; bonus.幸运+=e.washAttrs.幸运||0; baseHp+=e.washAttrs.生命||0; baseVitality+=e.washAttrs.活力||0; }   /* 洗炼附加属性 */
   }
   /* 天神编队累加：主100% / 副50% */
   for (var gk in GOD.formation){ var g=GOD.formation[gk]; if(!g) continue;
@@ -2303,6 +2375,77 @@ function stackItems(type){
   return out;
 }
 ENH.reset=function(){ this.equip=null; this.mats=[null,null,null,null,null,null]; this.availPage=0; this.hammer=null; };
+/* ============ 洗炼系统 ============ */
+var REFINE={ equip:null, material:null };
+REFINE.reset=function(){ this.equip=null; this.material=null; };
+function countStack(type){ var n=0; for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.type===type) n+=(it.count||1); } return n; }
+function rollRefine(n, full){
+  var pool=['力量','敏捷','体质','智力','精神','幸运','生命','活力'];
+  var used={}, attrs={}, m=0;
+  while(m<n && m<8){
+    var idx=Math.floor(Math.random()*8);
+    if(used[idx]) continue;
+    used[idx]=true;
+    var isBig=(pool[idx]==='生命'||pool[idx]==='活力');
+    attrs[pool[idx]]=isBig?(full?(900+Math.floor(Math.random()*5)*100):(Math.floor(Math.random()*14)*100)):(full?Math.floor(70+Math.random()*30):Math.floor(Math.random()*100));   /* 生命/活力为整百 */
+    m++;
+  }
+  return attrs;
+}
+function renderRefine(){
+  var eq=$('#refine-equip');
+  eq.innerHTML=REFINE.equip?'<img class="item-img" src="'+REFINE.equip.img+'" alt="">':'<span class="hint">选择装备</span>';
+  var nm=$('#refine-name'); nm.innerHTML=REFINE.equip?REFINE.equip.name+(REFINE.equip.enhanceLevel>0?' ['+REFINE.equip.enhanceLevel+']':''):'';
+  eq.classList.toggle('has-item',!!REFINE.equip); eq._item=REFINE.equip;
+  var scrolls=[{t:'normal_scroll',n:'属性卷轴',img:'logos/属性卷轴.png'},{t:'full_scroll',n:'完整的属性卷轴',img:'logos/完整的属性卷轴.png'}];
+  ['refine-mats-r1','refine-mats-r2'].forEach(function(rid,ri){
+    var $m=document.getElementById(rid); $m.innerHTML='';
+    for(var c=0;c<6;c++){
+      var gi=ri*6+c;
+      (function(gIdx){
+        var d=document.createElement('div');
+        if(gIdx<scrolls.length){
+          var o=scrolls[gIdx], cnt=countStack(o.t);
+          if(cnt>0){
+            d.className='pick'+(REFINE.material===o.t?' sel':'');
+            d.innerHTML='<img src="'+o.img+'"><span class="qty">'+cnt+'</span>';
+            d._item={type:o.t,name:o.n};
+            d.addEventListener('click',function(){ REFINE.material=(REFINE.material===o.t)?null:o.t; renderRefine(); });
+          } else { d.className='pick dim'; }
+        } else { d.className='pick dim'; }
+        $m.appendChild(d);
+      })(gi);
+    }
+  });
+  var $a=$('#refine-attrs'); $a.innerHTML='';   /* 最后一排凹槽保持置灰，不显示洗炼结果 */
+  for(var i=0;i<6;i++){ var d=document.createElement('div'); d.className='pick dim'; $a.appendChild(d); }
+  var $res=document.getElementById('refine-result');
+  if($res){
+    var order=['力量','敏捷','体质','智力','精神','幸运','生命','活力'];
+    var parts=[];
+    if(REFINE.equip && REFINE.equip.washAttrs){
+      var wr=REFINE.equip.washAttrs;
+      for(var oi=0; oi<order.length; oi++){ var k=order[oi]; if(wr[k]>0) parts.push('<span>'+k+' +'+wr[k]+'</span>'); }
+    }
+    $res.innerHTML=parts.join('')||'<span class="refr-none">—</span>';
+  }
+}
+function doRefine(){
+  if(!REFINE.equip){ toast('请先选择洗炼目标'); return; }
+  if(!REFINE.material){ toast('请选择洗炼卷轴'); return; }
+  var found=null;
+  for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.type===REFINE.material){ found=it; break; } }
+  if(!found){ toast('没有可用的洗炼卷轴'); return; }
+  var full = REFINE.material==='full_scroll';
+  var n;
+  if(full){ var rr=Math.random(); n = rr<0.55 ? 8 : (rr<0.8 ? 7 : 3+Math.floor(Math.random()*4)); }   /* 完整卷轴3~8条，倾向最多条，可洗炼全部8项 */
+  else { n = Math.floor(Math.random()*4); }   /* 属性卷轴0~3条 */
+  consumeStack(found,1);
+  REFINE.equip.washAttrs=rollRefine(n, full);
+  playSoundEffect('embedSuccess');
+  toast('洗炼成功：附加 '+n+' 条属性');
+  renderBag(); renderRefine(); recalcCharacter();
+}
 function consumeStack(it,n){
   for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++){
     if (bag[p][i] && bag[p][i].id===it.id){ bag[p][i].count-=n; if(bag[p][i].count<=0) bag[p][i]=null; return; }
@@ -2965,6 +3108,7 @@ function initSystemsUI(){
   /* tooltip：点击物品显示、点击他处隐藏 */
   document.addEventListener('click', function(e){
     var el = e.target.closest ? e.target.closest('.tt-slot, .slot.has-item, .pick') : null;
+    if (!el){ var fp = document.elementFromPoint(e.clientX, e.clientY); el = fp && fp.closest ? fp.closest('.tt-slot, .slot.has-item, .pick') : null; }
     var it = null;
     if (el && el._item) it = el._item;
     else if (el){
@@ -2972,7 +3116,11 @@ function initSystemsUI(){
       if (gs != null && !pickerGrid.contains(el)) it = bag[currentTab][parseInt(gs,10)];
       else { var cell = el.closest && el.closest('.eq-cell'); if (cell) it = equipState[cell.getAttribute('data-eq')]; }
     }
-    if (it && !pickerGrid.contains(el)){ e.stopPropagation(); showTooltip(it, el); return; }
+    if (it && !pickerGrid.contains(el)){
+      e.stopPropagation();
+      if (it.type==='potion'){ usePotion(el); return; }
+      showTooltip(it, el); return;
+    }
     hideTooltip();
   });
   pickerMask.onclick = closePicker;
@@ -3014,6 +3162,9 @@ function initSystemsUI(){
   $('#enh-auto-btn').onclick = toggleEnhAuto;
   $('#enh-avail-prev').onclick = function(){ if(ENH.availPage>0){ ENH.availPage--; renderEnhance(); } };
   $('#enh-avail-next').onclick = function(){ var pages=Math.max(1,Math.ceil(stackItems('enhance_material').length/6)); if(ENH.availPage<pages-1){ ENH.availPage++; renderEnhance(); } };
+  /* 洗炼 */
+  $('#refine-equip').onclick = function(){ openPicker('选择洗炼装备', allEquipmentForPick(), function(it){ REFINE.equip=it; closePicker(); renderRefine(); }); };
+  $('#refine-btn').onclick = doRefine;
   /* 宝石 */
   $('#gem-equip').onclick = function(){ openPicker('选择要镶嵌的装备', equipCandidates(), function(it){ GEM.equip=it; GEM.slotIdx=0; GEM.selGem=null; closePicker(); renderGem(); }); };
   $('#gemx-equip').onclick = function(){ openPicker('选择要拆卸的装备', equipCandidates().filter(function(it){ return (it.gemSlots||[]).some(function(g){ return g; }); }), function(it){ GEM.xequip=it; GEM.xslot=null; GEM.xsel=null; closePicker(); renderGem(); }); };
@@ -3082,6 +3233,7 @@ function renderAttrs(){
 }
 
 /* ============ 商店：出售背包物品换取金币 ============ */
+function shopSellPrice(it){ return it.type==='potion'?100000:(it.type==='mount'?10000000000:(isShopValuable(it)?10000000:10000)); }
 function isShopValuable(it){
   var t=it.type;
   return isArmorType(t)||t==='weapon'||t==='necklace'||t==='ring'||t==='bracelet'||t==='god_seal'||t==='god_rune';
@@ -3101,7 +3253,7 @@ var SHOP_PAGE={cur:1, per:10};
 var SHOP_MODE='system';
 var SYS_ITEMS=[];
 (function(){ Object.keys(ITEM_BLUEPRINTS).forEach(function(k){ var v=ITEM_BLUEPRINTS[k]; if(Object.prototype.toString.call(v)==='[object Array]'){ v.forEach(function(x){ SYS_ITEMS.push(x); }); } else SYS_ITEMS.push(v); }); })();
-function sysBuyPrice(it){ return isShopValuable(it)?100000000:100000; }
+function sysBuyPrice(it){ return it.type==='potion'?1000000:(it.type==='mount'?10000000000:(isShopValuable(it)?100000000:100000)); }
 function buyShopItem(idx){ var bp=SYS_ITEMS[idx]; if(!bp) return; var price=sysBuyPrice(bp); if(CURRENCY.gold<price){ toast('金币不足'); return; } confirmDialog('确认购买 '+bp.name+'？<br>价格 '+price.toLocaleString()+' 金币', function(ok){ if(!ok) return; if(CURRENCY.gold<price){ toast('金币不足'); return; } CURRENCY.gold-=price; renderCurrency(); var cp=mkLoot(bp); cp.count=1; addStackable(cp); renderShop(); renderBag(); saveGame(); toast('已购买 '+bp.name); }); }
 function renderShop(){
   if(SHOP_MODE==='system'){ renderSysShop(); return; }
@@ -3117,7 +3269,7 @@ function renderShop(){
   list.innerHTML='';
   var rows=0;
   for (var k=start;k<start+SHOP_PAGE.per && k<total;k++){
-    var it=items[k].it, price=isShopValuable(it)?10000000:10000;
+    var it=items[k].it, price=shopSellPrice(it);
     var row=document.createElement('div'); row.className='shop-row'; row._item=it;
     row.innerHTML='<div class="shop-ico"><img src="'+it.img+'"></div>'+
       '<div class="shop-info"><div class="shop-name">'+it.name+(it.count>1?(' ×'+it.count):'')+'</div><div class="shop-sub">'+shopTypeName(it)+'</div></div>'+
@@ -3166,7 +3318,7 @@ function shopNext(){ var pages=shopPageCount(); if(SHOP_PAGE.cur<pages){ SHOP_PA
 function shopTotalCount(){ var c=0; for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++){ if(bag[p][i]) c++; } return c; }
 function sellShopItem(p,i){
   var it=bag[p][i]; if(!it) return;
-  var price=isShopValuable(it)?10000000:10000;
+  var price=shopSellPrice(it);
   var n=it.count>1?it.count:1;      /* 整叠一次卖完 */
   var total=price*n;
   confirmDialog('确认出售 '+it.name+(n>1?(' ×'+n):'')+'？<br>获得 '+total.toLocaleString()+' 金币', function(ok){
@@ -3179,14 +3331,16 @@ function sellShopItem(p,i){
 function applyRoute(){
   var h = location.hash;
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
+      refine = h.indexOf('#refine')>=0,
       gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0;
   document.body.classList.toggle('show-attrs', attrs);   /* 属性页加宽舞台 */
   document.body.classList.toggle('show-god', god);       /* 天神页宽屏两栏 */
   document.body.classList.toggle('show-treasure', trs);   /* 寻宝页垂直居中 */
   var map = {
-    '#view-main':    !(attrs||enh||gem||god||trs||shop),
+    '#view-main':    !(attrs||enh||refine||gem||god||trs||shop),
     '#view-attrs':   attrs,
     '#view-enhance': enh,
+    '#view-refine':  refine,
     '#view-gem':     gem,
     '#view-god':     god,
     '#view-treasure': trs,
@@ -3195,6 +3349,7 @@ function applyRoute(){
   for (var id in map) document.getElementById(id.slice(1)).style.display = map[id] ? 'block' : 'none';
   if (attrs) renderAttrs();
   if (enh){ ENH.reset(); renderEnhance(); }
+  if (refine){ REFINE.reset(); renderRefine(); }
   if (gem){ GEM.reset(); renderGem(); }
   if (god){ GOD.reset(); renderGod(); }
   if (trs){ trSyncChar(); renderTreasure(); }
@@ -3208,8 +3363,9 @@ function route(){
   if (h.indexOf('#enhance')<0) stopEnhAuto(); /* 离开强化页即停止自动强化 */
   if (h.indexOf('#treasure')<0) stopTreasure(); /* 离开寻宝页即停止挂机 */
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
+      refine = h.indexOf('#refine')>=0,
       gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0;
-  var view = attrs ? '#view-attrs' : enh ? '#view-enhance' : gem ? '#view-gem' : god ? '#view-god' : trs ? '#view-treasure' : shop ? '#view-shop' : '#view-main';
+  var view = attrs ? '#view-attrs' : enh ? '#view-enhance' : refine ? '#view-refine' : gem ? '#view-gem' : god ? '#view-god' : trs ? '#view-treasure' : shop ? '#view-shop' : '#view-main';
   var changed = view !== route.last;
   route.last = view;
   if (changed && !route.first){
@@ -3270,13 +3426,15 @@ function monsterSVG(color, boss){
 function trSyncChar(){
   var hp=parseInt((CHARACTER.combat[0]||{}).v||153), patk=parseInt((CHARACTER.combat[1]||{}).v||65);
   var pdef=parseInt((CHARACTER.combat[5]||{}).v||30);
-  TR.maxHp=hp; TR.patk=patk; TR.pdef=pdef;
+  TR.level=Math.max(1, CHARACTER.info.level||1);
+  TR.maxHp=hp + (TR.level-1)*10;   /* 每升一级额外 +10 血量，独立于属性转换 */
+  TR.patk=patk; TR.pdef=pdef;
   TR.attrDef = ((CHARACTER.combat[6]||{}).v!=='无');
   var ab=0; for(var k in equipState){ var e=equipState[k]; if(!e) continue;
     if(isArmorType(e.type)) ab+=(e.damageAbsorption||0)+armorEnhAbs(e.enhanceLevel||0); }
   TR.absorb=ab;
   if(TR.hp<=0) TR.hp=hp;
-  TR.level=Math.max(1, CHARACTER.info.level||1); TR.reqExp=100*TR.level;
+  TR.reqExp=100*TR.level;
 }
 /* 怪物属性：攻击=副本系数×角色物攻，血=HP系数×角色物攻；等级=角色等级 */
 function trMonStats(){
@@ -3289,7 +3447,7 @@ function trMonStats(){
 /* 角色受击伤害：先被物理防御抵挡 → 属性防御再减30% → 防具伤害吸收累加抵消 */
 function roleHitDamage(monAtk){
   var raw=monAtk*(0.55+Math.random()*0.4);
-  var afterDef=Math.max(0, raw-TR.pdef);
+  var afterDef=Math.max(0, raw-TR.pdef*(Date.now()<POTION_UNTIL?2:1));
   if(TR.attrDef) afterDef*=0.7;
   return Math.max(0, Math.round(afterDef-TR.absorb));
 }
@@ -3303,6 +3461,7 @@ function trGainExp(lv){
   }
   if(TR.level>oldLv) trLevelUp(TR.level);   /* 升级全屏金光+大字 */
   recalcCharacter();   /* 升级后基础属性+1，刷新战斗属性 */
+  trSyncChar();   /* 升级后强制同步血/攻/防，刷新血条 */
   renderChar();
   saveGame();   /* 保存等级/经验，刷新后保留 */
 }
@@ -3553,7 +3712,7 @@ function trAtk(){
   TR.lastAtk=Date.now();
   var s=trMonStats();
   var isCrit=Math.random()<trCritRate();
-  var dmg=Math.max(6, Math.round(TR.patk*(0.85+Math.random()*0.3))-Math.round(s.def*0.2));
+  var dmg=Math.max(6, Math.round(TR.patk*(Date.now()<POTION_UNTIL?2:1)*(0.85+Math.random()*0.3))-Math.round(s.def*0.2));
   if(isCrit) dmg*=2;
   TR.monHp-=dmg; trFloat(dmg,true,isCrit); trHitAnim(isCrit); renderMon();
   if(TR.monHp<=0){ trKillMon(); return; }
@@ -3600,6 +3759,13 @@ function renderMon(){
   if(fill){ fill.style.width=pct+'%'; fill.classList.toggle('low',pct<25); }
   if(num) num.textContent=Math.max(0,TR.monHp)+'/'+TR.monMax;
 }
+function renderBuff(){
+  var b=document.getElementById('tr-buffs'); if(!b) return;
+  if(Date.now()<POTION_UNTIL){
+    var left=Math.max(0,Math.ceil((POTION_UNTIL-Date.now())/1000));
+    b.innerHTML='<div class="tr-buff" title="神圣药水：攻击/防御/攻速翻倍"><img src="logos/神圣药水.png"><span class="tm">'+left+'s</span></div>';
+  } else if(b.innerHTML){ b.innerHTML=''; }
+}
 function renderChar(){
   var f=document.getElementById('tr-ch-hp'); if(f){ var p=TR.maxHp?TR.hp/TR.maxHp*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; }
   var num=document.getElementById('tr-ch-hpnum'); if(num) num.textContent=Math.max(0,TR.hp)+'/'+TR.maxHp;
@@ -3609,6 +3775,7 @@ function renderChar(){
   var ef=document.getElementById('tr-exp-fill'), en=document.getElementById('tr-exp-num');
   if(ef){ var pp=TR.reqExp?TR.exp/TR.reqExp*100:0; ef.style.width=Math.max(0,Math.min(100,pp))+'%'; }
   if(en) en.textContent=TR.level>=60?'MAX':(TR.exp+'/'+TR.reqExp);
+  renderBuff();
 }
 function renderTreasure(){
   var d=document.getElementById('tr-dungeons'); if(d){ d.innerHTML=DUNGEONS.map(function(x,i){ return '<div class="tr-dun'+(i===TR.dungeon?' on':'')+'" data-i="'+i+'"><div class="tr-dun-name">'+x.name+'</div><div class="tr-dun-lv">Lv.'+x.lv+'</div><span class="tr-dun-tag">'+x.tag+'</span></div>'; }).join(''); }
@@ -3620,8 +3787,8 @@ function trSetAuto(on){
   var was=TR.auto;
   TR.auto=on;
   var b=document.getElementById('tr-auto'); if(b){ b.classList.toggle('on',on); b.textContent=on?'挂机中':'挂机'; }
-  if(on){ if(TR.timer) clearInterval(TR.timer); TR.timer=setInterval(function(){ trAtk(); },680); }
-  else { if(TR.timer){ clearInterval(TR.timer); TR.timer=null; } }
+  if(on){ if(TR.timer) clearTimeout(TR.timer); TR.timer=setTimeout(function loop(){ if(!TR.auto) return; trAtk(); var d=(Date.now()<POTION_UNTIL)?340:680; TR.timer=setTimeout(loop,d); },680); }
+  else { if(TR.timer){ clearTimeout(TR.timer); TR.timer=null; } }
   if(on){ trLog('开始挂机刷取…'); }
   else if(was){ trLog('停止挂机'); }
 }
@@ -3711,13 +3878,29 @@ document.addEventListener('visibilitychange', function(){
 
 /* ============ 本地存档（localStorage）：初始化后的所有操作都会保存，刷新恢复，仅点“初始化”回到原始 ============ */
 var SAVE_KEY='shenqi_save_v1';
+var POTION_UNTIL=0;   /* 神圣药水生效截止时间戳（0=未生效） */
+setInterval(function(){ if(window.location.hash==='#treasure' && Date.now()<POTION_UNTIL) renderBuff(); },1000);
+function usePotion(slotEl){
+  var idx=parseInt(slotEl.getAttribute('data-slot'),10);
+  var it=bag[currentTab][idx]; if(!it) return;
+  confirmDialog('使用神圣药水？<br>攻击/防御/攻速翻倍，持续 30 分钟', function(ok2){
+    if(!ok2) return;
+    it.count=(it.count||1)-1;
+    if(it.count<=0){ bag[currentTab][idx]=null; }
+    POTION_UNTIL=Date.now()+30*60*1000;
+    if(typeof trSyncChar==='function') trSyncChar();
+    if(typeof renderChar==='function') renderChar();
+    renderBag(); saveGame();
+    toast('神圣药水生效！攻击/防御/攻速翻倍，持续30分钟');
+  });
+}
 function saveGame(){
   try{
     localStorage.setItem(SAVE_KEY, JSON.stringify({
       v:1, bag:bag, equipState:equipState, currency:CURRENCY,
       loadedGods:LOADED_GODS, formation:GOD.formation,
       itemIdCounter:itemIdCounter, currentTab:currentTab,
-      characterLevel:CHARACTER.info.level, trExp:TR.exp
+      characterLevel:CHARACTER.info.level, trExp:TR.exp, potionUntil:POTION_UNTIL
     }));
   }catch(e){}
 }
@@ -3743,6 +3926,7 @@ function loadGame(){
   if(typeof s.currentTab==='number') currentTab=s.currentTab;
   if(typeof s.characterLevel==='number') CHARACTER.info.level=s.characterLevel;
   if(typeof s.trExp==='number') TR.exp=s.trExp;
+  if(typeof s.potionUntil==='number') POTION_UNTIL=s.potionUntil;
   return true;
 }
 
@@ -3755,6 +3939,7 @@ function doReset(){
   GOD.selected = null; GOD.upTarget = null; GOD.page = 1;
   CURRENCY.gold = 0; CURRENCY.bound = 0;
   CHARACTER.info.level = 1; TR.level = 1; TR.exp = 0; TR.reqExp = 100;
+  POTION_UNTIL = 0;   /* 初始化清空药水效果 */
   itemIdCounter = 1;
   recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); renderCurrency();
   saveGame();
