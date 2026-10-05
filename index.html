@@ -1361,6 +1361,7 @@ var LOOT = [
 var ITEM_BLUEPRINTS = {
   /* --- 消耗品 --- */
   holyPotion: { name:"神圣药水", type:"potion", img:"logos/神圣药水.png", count:1, maxStack:99 },
+  sunPotion: { name:"太阳", type:"sun_potion", img:"logos/太阳.png", count:1, maxStack:99 },
   /* --- 洗炼卷轴 --- */
   refineScroll:    { name:"属性卷轴",       type:"normal_scroll", img:"logos/属性卷轴.png",       count:255, maxStack:255 },   /* 仅用于洗炼 */
   refineScrollFull:{ name:"完整的属性卷轴", type:"full_scroll",  img:"logos/完整的属性卷轴.png", count:255, maxStack:255 },   /* 仅用于洗炼 */
@@ -1782,6 +1783,7 @@ function equipTo(eqId, item, fromBag, fromSlot){
   var accept = EQ_ACCEPT[eqId];
   if (!accept){ toast('该部位暂不可装备'); return; }
   if (item.type !== accept){ toast('类型不符，无法穿戴'); return; }
+  if ((item.equipLevel||0) > (CHARACTER.info.level||1)){ toast('等级不足，无法穿戴（需 Lv.'+item.equipLevel+'）'); return; }   /* 装备等级：角色等级需≥装备等级 */
   var old = equipState[eqId];
   if (old){ if (!placeInBag(old)){ toast('背包已满，无法更换'); return; } }
   bag[fromBag][fromSlot] = null;
@@ -1852,7 +1854,7 @@ function bindEvents(){
     if (!s){ var fp = document.elementFromPoint(e.clientX, e.clientY); s = fp && fp.closest ? fp.closest('.slot') : null; }
     if (!s) return;
     var it = bag[currentTab][parseInt(s.getAttribute('data-slot'),10)];
-    if (it && it.type==='potion'){ usePotion(s); e.stopPropagation(); return; }   /* 优先处理物品类型：药水使用不受拖拽抑制点击影响；stopPropagation 防 document 重复 */
+    if (it && (it.type==='potion'||it.type==='sun_potion')){ usePotion(s); e.stopPropagation(); return; }   /* 优先处理物品类型：药水使用不受拖拽抑制点击影响 */
     if (suppressClick){ suppressClick = false; return; }
     if (!it) toast('背包格 · 空');   /* 有物品由 document 点击委托显示 tooltip */
   });
@@ -3125,7 +3127,7 @@ function initSystemsUI(){
     }
     if (it && !pickerGrid.contains(el)){
       e.stopPropagation();
-      if (it.type==='potion'){ usePotion(el); return; }
+      if (it.type==='potion'||it.type==='sun_potion'){ usePotion(el); return; }
       showTooltip(it, el); return;
     }
     hideTooltip();
@@ -3262,6 +3264,7 @@ var SYS_ITEMS=[];
 (function(){ Object.keys(ITEM_BLUEPRINTS).forEach(function(k){ var v=ITEM_BLUEPRINTS[k]; if(Object.prototype.toString.call(v)==='[object Array]'){ v.forEach(function(x){ SYS_ITEMS.push(x); }); } else SYS_ITEMS.push(v); }); })();
 function sysBuyPrice(it){
   if(it.name==='伊泰安项链') return 1000000;   /* 伊泰安项链 100万 */
+  if(it.name==='太阳') return 1000000;   /* 太阳 100万 */
   var t=it.type;
   if(t==='mount') return 100000000000;          /* 坐骑 1000亿 */
   if(t==='full_scroll'||t==='god_seal_material'||it.name.indexOf('混沌')>=0) return 100000000;   /* 完整卷轴/神印碎片/混沌 1亿 */
@@ -3513,6 +3516,7 @@ function trGainExp(monLv, af, isBoss){
   else { exp=Math.round((10000+(monLv-50)/10*40000)*(0.9+af)); }          /* 50~60：1万~5万 */
   exp=Math.round(exp*Math.pow(1.1,TR.dungeon));   /* 副本难度加成：右侧比前一个副本高 10%，雕俱星座最低 */
   if(isBoss) exp*=60;   /* Boss 经验显著奖励：该副本小怪 60 倍（击杀耗时×DPS 校准） */
+  if(Date.now()<SUN_UNTIL) exp*=2;   /* 太阳：打怪经验翻倍 */
   TR.exp+=exp;
   if(!TR.suppressLog) trLog('获得经验 <b class="lg-gold">+'+exp.toLocaleString()+'</b>');   /* 显示本次获取经验 */
   var oldLv=TR.level;
@@ -3713,7 +3717,7 @@ function itemQuality(it){
   var t=it.type;
   if(t==='god_seal'||t==='full_scroll'||t==='mount'||it.name.indexOf('混沌')>=0||it.name.indexOf('祝福')>=0||it.name==='伊泰安项链') return 'purple';   /* 传说级：神印、完整卷轴、坐骑、混沌/祝福、伊泰安项链 */
   if(t==='god_rune'||t==='weapon'||isArmorType(t)||t==='necklace'||t==='ring'||t==='bracelet'||(it.level===6&&t!=='hammer')) return 'gold';   /* 神符、武器/护具/首饰、6级宝石（含6级专注） */
-  if(it.type==='helen_gem'||(it.name.indexOf('专注')>=0&&it.level!==6)||t==='potion'||t==='normal_scroll') return 'blue';   /* 第二层级：5级专注、药水、属性卷轴、海伦石 */
+  if(it.type==='helen_gem'||(it.name.indexOf('专注')>=0&&it.level!==6)||t==='potion'||t==='normal_scroll'||t==='sun_potion') return 'blue';   /* 第二层级：5级专注、药水、属性卷轴、海伦石、太阳 */
   return 'grey';
 }
 function isRareDrop(it){
@@ -3865,7 +3869,7 @@ function trStartRegen(){
   TR.regen=setInterval(function(){
     if(TR.revTimer) return;
     if(TR.hp>0 && TR.hp<TR.maxHp && (Date.now()-TR.lastAtk)>5000){
-      TR.hp=Math.min(TR.maxHp, TR.hp+Math.max(2,Math.round(TR.maxHp*0.02))); renderChar();
+      TR.hp=Math.min(TR.maxHp, TR.hp+Math.max(2,Math.round(TR.maxHp*0.05))); renderChar();
     }
   },1000);
 }
@@ -3882,10 +3886,16 @@ function renderMon(){
 }
 function renderBuff(){
   var b=document.getElementById('tr-buffs'); if(!b) return;
+  var h='';
   if(Date.now()<POTION_UNTIL){
     var left=Math.max(0,Math.ceil((POTION_UNTIL-Date.now())/1000));
-    b.innerHTML='<div class="tr-buff" title="神圣药水：攻击/防御/攻速翻倍"><img src="logos/神圣药水.png"><span class="tm">'+left+'s</span></div>';
-  } else if(b.innerHTML){ b.innerHTML=''; }
+    h+='<div class="tr-buff" title="神圣药水：攻击/防御/攻速翻倍"><img src="logos/神圣药水.png"><span class="tm">'+left+'s</span></div>';
+  }
+  if(Date.now()<SUN_UNTIL){
+    var sleft=Math.max(0,Math.ceil((SUN_UNTIL-Date.now())/1000));
+    h+='<div class="tr-buff" title="太阳：打怪经验翻倍"><img src="logos/太阳.png"><span class="tm">'+sleft+'s</span></div>';
+  }
+  b.innerHTML=h;
 }
 function renderChar(){
   var f=document.getElementById('tr-ch-hp'); if(f){ var p=TR.maxHp?TR.hp/TR.maxHp*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; }
@@ -4000,10 +4010,22 @@ document.addEventListener('visibilitychange', function(){
 /* ============ 本地存档（localStorage）：初始化后的所有操作都会保存，刷新恢复，仅点“初始化”回到原始 ============ */
 var SAVE_KEY='shenqi_save_v1';
 var POTION_UNTIL=0;   /* 神圣药水生效截止时间戳（0=未生效） */
+var SUN_UNTIL=0;   /* 太阳生效截止时间戳：打怪经验翻倍12小时（0=未生效） */
 setInterval(function(){ if(window.location.hash==='#treasure' && Date.now()<POTION_UNTIL) renderBuff(); },1000);
 function usePotion(slotEl){
   var idx=parseInt(slotEl.getAttribute('data-slot'),10);
   var it=bag[currentTab][idx]; if(!it) return;
+  if(it.type==='sun_potion'){
+    confirmDialog('使用太阳？<br>打怪获取经验翻倍，持续 12 小时', function(ok2){
+      if(!ok2) return;
+      it.count=(it.count||1)-1;
+      if(it.count<=0){ bag[currentTab][idx]=null; }
+      SUN_UNTIL=Date.now()+12*60*60*1000;
+      renderBag(); saveGame();
+      toast('太阳生效！打怪经验翻倍，持续12小时');
+    });
+    return;
+  }
   confirmDialog('使用神圣药水？<br>攻击/防御/攻速翻倍，持续 30 分钟', function(ok2){
     if(!ok2) return;
     it.count=(it.count||1)-1;
@@ -4021,7 +4043,7 @@ function saveGame(){
       v:1, bag:bag, equipState:equipState, currency:CURRENCY,
       loadedGods:LOADED_GODS, formation:GOD.formation,
       itemIdCounter:itemIdCounter, currentTab:currentTab,
-      characterLevel:CHARACTER.info.level, trExp:TR.exp, potionUntil:POTION_UNTIL
+      characterLevel:CHARACTER.info.level, trExp:TR.exp, potionUntil:POTION_UNTIL, sunUntil:SUN_UNTIL
     }));
   }catch(e){}
 }
@@ -4048,6 +4070,7 @@ function loadGame(){
   if(typeof s.characterLevel==='number') CHARACTER.info.level=s.characterLevel;
   if(typeof s.trExp==='number') TR.exp=s.trExp;
   if(typeof s.potionUntil==='number') POTION_UNTIL=s.potionUntil;
+  if(typeof s.sunUntil==='number') SUN_UNTIL=s.sunUntil;
   return true;
 }
 
@@ -4060,7 +4083,7 @@ function doReset(){
   GOD.selected = null; GOD.upTarget = null; GOD.page = 1;
   CURRENCY.gold = 0; CURRENCY.bound = 0;
   CHARACTER.info.level = 1; TR.level = 1; TR.exp = 0; TR.reqExp = 100;
-  POTION_UNTIL = 0;   /* 初始化清空药水效果 */
+  POTION_UNTIL = 0; SUN_UNTIL = 0;   /* 初始化清空药水效果 */
   itemIdCounter = 1;
   recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); renderCurrency();
   saveGame();
