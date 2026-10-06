@@ -960,27 +960,27 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
 .lottery-panel{display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0 4px;}
 .wheel-wrap{position:relative;width:min(352px,86vw);aspect-ratio:1;margin-top:4px;}
 .wheel-wrap::before{content:'';position:absolute;inset:-12px;border-radius:50%;z-index:0;pointer-events:none;
-  background:radial-gradient(circle at 50% 50%, #313131 0 58%, #101010 78%, #4e4e4e 91%, #030303 100%);
+  background:radial-gradient(circle at 50% 50%, #141414 0 58%, #060606 78%, #242424 91%, #010101 100%);
   box-shadow:0 12px 26px rgba(0,0,0,.9), 0 5px 10px rgba(0,0,0,.65),
-    inset 0 2px 4px rgba(255,255,255,.42), inset 0 -2px 4px rgba(255,255,255,.42), inset 0 0 16px rgba(0,0,0,.5),
-    inset 26px 0 16px -10px rgba(0,0,0,.42), inset -26px 0 16px -10px rgba(0,0,0,.42);
+    inset 0 2px 3px rgba(255,255,255,.10), inset 0 -2px 3px rgba(255,255,255,.10), inset 0 0 16px rgba(0,0,0,.6),
+    inset 26px 0 16px -10px rgba(0,0,0,.5), inset -26px 0 16px -10px rgba(0,0,0,.5);
   -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 23px), #000 calc(100% - 21px));
   mask:radial-gradient(closest-side, transparent calc(100% - 23px), #000 calc(100% - 21px));
 }
-.wheel{width:100%;height:100%;border-radius:50%;border:5px solid #7a6a4a;position:relative;z-index:1;
-  box-shadow:inset 0 0 0 2px #2e2822, inset 0 0 0 8px #4c3f2e, inset 0 0 26px rgba(0,0,0,.6),
-    inset 0 2px 5px rgba(255,240,205,.4), inset 0 -8px 13px rgba(0,0,0,.6), 0 0 0 3px #241f1a, 0 0 26px rgba(201,162,39,.3), 0 0 30px rgba(0,0,0,.6);
+.wheel{width:100%;height:100%;border-radius:50%;border:5px solid #1e1e1e;position:relative;z-index:1;
+  box-shadow:inset 0 0 0 2px #1b1b1b, inset 0 0 0 8px #0f0f0f, inset 0 0 62px rgba(0,0,0,.38), inset 0 0 26px rgba(0,0,0,.48),
+    inset 0 1px 6px rgba(190,198,210,.10), inset 0 -10px 18px rgba(0,0,0,.6), 0 0 0 3px #0a0a0a, 0 0 28px rgba(0,0,0,.62), 0 6px 24px rgba(0,0,0,.78);
   transition:transform 32s cubic-bezier(.08,.7,.05,1);}
 .wheel::before{content:'';position:absolute;inset:0;border-radius:50%;z-index:2;pointer-events:none;
-  background:repeating-conic-gradient(rgba(255,244,215,.2) 0deg .5deg, transparent .5deg 25.7deg);
+  background:repeating-conic-gradient(rgba(0,0,0,.30) 0deg .9deg, rgba(190,198,210,.06) .9deg 1.9deg, transparent 1.9deg 25.7deg);
 }
 .wheel::after{content:'';position:absolute;left:50%;top:50%;width:38%;height:38%;transform:translate(-50%,-50%);
-  border-radius:50%;background:radial-gradient(circle,#989898,#676767 56%,#303030 80%,#141414 100%);border:2px solid #868686;
-  box-shadow:0 0 16px rgba(0,0,0,.7), inset 0 2px 5px rgba(0,0,0,.6), inset 0 -3px 6px rgba(255,235,190,.16);}
+  border-radius:50%;background:radial-gradient(circle,#383838,#1a1a1a 55%,#0b0b0b 82%,#000 100%);border:2px solid #292929;
+  box-shadow:0 0 0 3px rgba(0,0,0,.5) inset, 0 0 16px rgba(0,0,0,.78), inset 0 1px 3px rgba(190,198,210,.12), inset 0 2px 5px rgba(0,0,0,.5), inset 0 -4px 8px rgba(0,0,0,.62);}
 .wheel-pointer{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:0;height:0;z-index:4;
-  border-left:14px solid transparent;border-right:14px solid transparent;border-top:27px solid #f0c93f;
-  filter:drop-shadow(0 2px 3px rgba(0,0,0,.75)) drop-shadow(0 0 6px rgba(240,201,63,.5));}
-.wheel-pointer::after{content:'';position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff2cf,#e0b900);box-shadow:0 0 7px rgba(240,201,63,.9);}
+  border-left:14px solid transparent;border-right:14px solid transparent;border-top:27px solid #d9b45a;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.8)) drop-shadow(0 0 5px rgba(217,180,90,.45));}
+.wheel-pointer::after{content:'';position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9c2,#c99f4a);box-shadow:0 0 6px rgba(217,180,90,.7);}
 .wseg{position:absolute;left:50%;top:50%;width:66px;height:32px;margin-left:-33px;margin-top:-16px;z-index:3;
   display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;
   text-shadow:0 1px 2px rgba(0,0,0,.95);letter-spacing:.2px;pointer-events:none;line-height:1.2;}
@@ -1017,16 +1017,16 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
 .lottery-head #lottery-pity-num{color:#ffd93d;font-size:12px;font-weight:600;text-align:right;}
 /* 轴轮齿轮：在轮盘内随转，黑金属质感 */
 .wheel-gear{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:126px;height:126px;border-radius:50%;z-index:4;pointer-events:none;
-  background:radial-gradient(circle, #787878, #262626 80%);
+  background:radial-gradient(circle, #3c3c3c, #0f0f0f 80%);
   -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 11px), #000 calc(100% - 8px));
   mask:radial-gradient(closest-side, transparent calc(100% - 11px), #000 calc(100% - 8px));
-  box-shadow:0 0 12px rgba(0,0,0,.5), inset 0 1px 2px rgba(255,255,255,.22), inset 0 -3px 5px rgba(0,0,0,.4);
+  box-shadow:0 0 12px rgba(0,0,0,.55), inset 0 1px 2px rgba(255,255,255,.12), inset 0 -3px 5px rgba(0,0,0,.5);
 }
 .wheel-btn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:88px;height:88px;border-radius:50%;
-  background:radial-gradient(circle at 50% 30%,#9f9f9f,#6e6e6e 52%,#3a3a3a 82%,#1b1b1b 100%);border:2px solid #7d7d7d;color:#fff;font-size:16px;font-weight:700;cursor:pointer;z-index:5;
-  box-shadow:0 6px 14px rgba(0,0,0,.72), 0 0 0 3px #1a1a1a, 0 0 14px rgba(255,255,255,.06), inset 0 2px 3px rgba(255,255,255,.5), inset 0 -6px 12px rgba(0,0,0,.3);
-  text-shadow:0 1px 3px rgba(0,0,0,.85);}
-.wheel-btn::before{content:'';position:absolute;inset:9px;border-radius:50%;border:1px solid rgba(255,228,180,.4);box-shadow:0 1px 2px rgba(255,230,190,.25) inset, 0 -2px 4px rgba(0,0,0,.7) inset;}
+  background:radial-gradient(circle at 50% 38%,#3a3a3a,#1a1a1a 46%,#0a0a0a 80%,#010101 100%);border:2px solid #262626;color:#ececec;font-size:16px;font-weight:700;cursor:pointer;z-index:5;
+  box-shadow:0 0 0 6px rgba(0,0,0,.38) inset, 0 6px 14px rgba(0,0,0,.75), 0 0 0 3px #0d0d0d, 0 0 12px rgba(0,0,0,.5), inset 0 1px 2px rgba(190,198,210,.15), inset 0 -8px 16px rgba(0,0,0,.55);
+  text-shadow:0 1px 3px rgba(0,0,0,.9);}
+.wheel-btn::before{content:'';position:absolute;inset:9px;border-radius:50%;border:1px solid rgba(198,166,100,.22);box-shadow:0 1px 1px rgba(217,180,90,.08) inset, 0 -2px 5px rgba(0,0,0,.8) inset;}
 
 /* 充能条：细条，长按时出现在按钮上方（轮盘上部），松手消失 */
 .charge-overlay{position:fixed;top:29%;left:50%;transform:translateX(-50%);width:96px;height:6px;border-radius:3px;
@@ -3608,18 +3608,18 @@ window.addEventListener('hashchange', route);
 /* ============ 幸运轮盘 ============ */
 /* 抽奖概率=真实概率（总和1.0）；prob<0.01 为稀有档（保底奖池） */
 var LOTTERY=[
-  {label:'谢谢参与',short:'谢谢',prob:0.2405,color:'#3a352f',apply:function(){}},
-  {label:'300万金币',short:'300万',prob:0.26,color:'#8a5a2b',apply:function(){CURRENCY.gold+=3000000;}},
-  {label:'全属性+10',short:'全属性+10',prob:0.05,color:'#4f7da0',apply:function(){addPerm(10,0);}},
-  {label:'神符碎片',short:'神符碎片',prob:0.045,color:'#e2b04f',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=1; addStackable(g); }},
-  {label:'神力碎片',short:'神力碎片',prob:0.045,color:'#6fa8dc',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; addStackable(g); }},
-  {label:'1亿金币',short:'1亿',prob:0.06,color:'#f2c51e',apply:function(){CURRENCY.gold+=100000000;}},
+  {label:'谢谢参与',short:'谢谢',prob:0.2905,color:'#3a352f',apply:function(){}},
+  {label:'300万金币',short:'300万',prob:0.29,color:'#8a5a2b',apply:function(){CURRENCY.gold+=3000000;}},
+  {label:'全属性+10',short:'全属性+10',prob:0.065,color:'#4f7da0',apply:function(){addPerm(10,0);}},
+  {label:'神符碎片',short:'神符碎片',prob:0.05,color:'#e2b04f',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=1; addStackable(g); }},
+  {label:'神力碎片',short:'神力碎片',prob:0.05,color:'#6fa8dc',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; addStackable(g); }},
+  {label:'1亿金币',short:'1亿',prob:0.074,color:'#f2c51e',apply:function(){CURRENCY.gold+=100000000;}},
   {label:'神符天神牌子',short:'神符牌',prob:0.03,color:'#d4a017',apply:function(){var rs=[ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune]; var g=mkLoot(rs[Math.floor(Math.random()*rs.length)]); g.count=1; placeInBag(g); }},
   {label:'生命+10000',short:'生命+1万',prob:0.02,color:'#a04f4f',apply:function(){addPerm(0,10000);}},
   {label:'神印碎片',short:'神印碎片',prob:0.02,color:'#9a5bd0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.sealFragment); g.count=1; addStackable(g); }},
   {label:'锤7',short:'锤7',prob:0.10,color:'#e8b54a',apply:function(){var h=ITEM_BLUEPRINTS.hammers[0]; var g=mkLoot(h); g.count=1; g.maxStack=255; addStackable(g); }},
   {label:'全属性+100',short:'全属性+100',prob:0.008,color:'#4fa05f',apply:function(){addPerm(100,0);}},
-  {label:'锤6',short:'锤6',prob:0.12,color:'#d9a050',apply:function(){var h=ITEM_BLUEPRINTS.hammers[1]; var g=mkLoot(h); g.count=1; g.maxStack=255; addStackable(g); }},
+  {label:'坐骑',short:'坐骑',prob:0.001,color:'#9a5bd0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.mount); g.count=1; placeInBag(g); }},
   {label:'全属性+500',short:'全属性+500',prob:0.0005,color:'#a04fd4',apply:function(){addPerm(500,0);}},
   {label:'神印天神牌',short:'神印',prob:0.001,color:'#7a3fb0',apply:function(){var seals=[ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise]; var g=mkLoot(seals[Math.floor(Math.random()*seals.length)]); g.count=1; placeInBag(g); }}
 ];
@@ -3796,9 +3796,10 @@ function runLottery(charge){
 }
 function rechargeGold(){
   var mask=document.createElement('div'); mask.className='confirm-mask'; mask.id='confirm-mask';
-  mask.innerHTML='<div class="confirm-box"><div class="confirm-msg">充值非绑定金币</div><input id="recharge-input" class="recharge-input" type="number" min="1" placeholder="请输入充值金额"><div class="confirm-actions"><button class="btn cbtn c-ok">确定</button><button class="btn cbtn c-no">取消</button></div></div>';
+  mask.innerHTML='<div class="confirm-box"><div class="confirm-msg">充值非绑定金币</div><input id="recharge-input" class="recharge-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="15" placeholder="请输入充值金额"><div class="confirm-actions"><button class="btn cbtn c-ok">确定</button><button class="btn cbtn c-no">取消</button></div></div>';
   document.body.appendChild(mask);
   var inp=mask.querySelector('#recharge-input');
+  inp.addEventListener('input',function(){ this.value=this.value.replace(/[^0-9]/g,'').slice(0,15); });
   mask.querySelector('.c-ok').onclick=function(){ var n=parseInt(inp.value,10); if(!n||n<=0){ toast('请输入有效金额'); return; } mask.remove(); CURRENCY.gold+=n; renderCurrency(); renderGem(); updateLotteryGold(); saveGame(); toast('已充值 '+n.toLocaleString()+' 金币'); };
   mask.querySelector('.c-no').onclick=function(){ mask.remove(); };
   mask.addEventListener('click',function(e){ if(e.target===mask) mask.remove(); });
@@ -3934,6 +3935,11 @@ function trSyncChar(){
 /* 怪物属性：按角色等级关联的裸装基准曲线，完全不随角色属性变化。
    裸装角色属性曲线：物攻=65+(lv+9)*1.5、血量=153+(lv-1)*100+(lv+9)*5.3、物防=30+(lv+9)
    雕俱星座小怪实力 ≈ 角色(Lv-5) 裸装属性的 80%；每个副本等效等级 +2.5 级，并再乘 1.1^dungeon 难度系数 */
+function lvSuppress(diff){   /* 等级压制系数：等级差≥10 触发，从×10 起，每多 5 级再翻倍（差距越大压制越强） */
+  var a=Math.abs(diff);
+  if(a<10) return 1;
+  return 10*Math.pow(2,(a-10)/5);
+}
 function trMonStats(){
   var d=DUNGEONS[TR.dungeon];
   var el=Math.max(1, d.monLv||1);                           /* 怪物等级=副本固定等级，不随角色等级/属性变化 */
@@ -3956,15 +3962,18 @@ function trMonStats(){
 }
 /* 角色受击伤害：先被物理防御抵挡 → 属性防御再减30% → 防具伤害吸收累加抵消 */
 function roleHitDamage(monAtk){
-  var raw=monAtk*(0.55+Math.random()*0.4);                          /* 怪物基础伤害 */
-  var pd=TR.pdef*(Date.now()<POTION_UNTIL?2:1);                     /* 物理防御（药水翻倍） */
+  var __lvd=TR.level-(TR.isBoss?60:(DUNGEONS[TR.dungeon].monLv||1));   /* 等级压制：差距≥10级，等级高的一方攻防×10 */
+  var __pS=(__lvd>=10)?lvSuppress(__lvd):(__lvd<=-10?0.5:1);   /* 角色攻防倍率：压制怪×lvs、被怪压制×0.5 */
+  var __mS=(__lvd<=-10)?lvSuppress(-__lvd):(__lvd>=10?0.5:1);   /* 怪物攻防倍率：压制角色×lvs、被角色压制×0.5 */
+  var raw=monAtk*__mS*(0.55+Math.random()*0.4);                     /* 怪物基础伤害（怪物压制角色时×10） */
+  var pd=TR.pdef*__pS*(Date.now()<POTION_UNTIL?2:1);                /* 物理防御（药水翻倍；角色压制怪物时×10） */
   var afterDef=raw*(pd/(pd+200));                                   /* 物理防御减伤：伤害系数=物防/(物防+200)，1000防≈83%、1400防≈87.5% */
   if(TR.attrDef) afterDef*=0.7;                                     /* 属性防御再减30% */
   var enhN=0; for(var ek in equipState){ var ee=equipState[ek]; if(ee && (ee.enhanceLevel||0)>=20) enhN++; }
   if(enhN>0) afterDef*=(1-enhN*0.09);                               /* 强化满20每件-9%最终伤害（5件满=45%） */
   return Math.max(0, Math.round(afterDef-TR.absorb));               /* 再减伤害吸收+专注宝石吸收（全装备累加） */
 }
-function trReqExp(lv){ var m=lv<=10?100:lv<=20?100:lv<=30?1000:lv<=40?10000:lv<=50?100000:1000000; return lv*m; }   /* 每级所需经验分段表 */
+function trReqExp(lv){ return Math.floor((lv*lv*190 + lv*120)*800); }   /* 每级所需经验：floor((L²×190 + L×120)×800) */
 function trGainExp(monLv, af, isBoss){
   var exp;
   if(monLv<30){ exp=Math.round(5+(monLv-1)/29*95); }                       /* 30级前：5~100，等级越高经验越高 */
@@ -4227,6 +4236,28 @@ function renderTrStats(){
   else s.recent.forEach(function(rr){ h+='<div class="tr-ss-rec"><i>'+rr.time+'</i><span>'+rr.name+'</span></div>'; });
   p.innerHTML=h;
 }
+function trBossGuarantee(){   /* Boss 保底：必掉金币 + 保底稀有一件（按副本保底池随机） */
+  var d=DUNGEONS[TR.dungeon];
+  if(d.mode==='bound'){
+    /* 雕俱：绑定金币必掉 + 保底池 */
+    var bg=50000+Math.floor(Math.random()*50000); CURRENCY.bound+=bg; TR.stats.gold+=bg; renderCurrency(); trDropAnim(null); trLog('雕俱 Boss 掉落 <b class="lg-gold">绑定金币 '+bg.toLocaleString()+'</b>'); TR.bossLoot.push('绑定金币 '+bg.toLocaleString());
+    var pool=[ function(){ var f=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); f.count=3+Math.floor(Math.random()*8); return f; },
+               function(){ var c=mkLoot(ITEM_BLUEPRINTS.godCrystal); c.count=1; return c; } ];
+    return pool[Math.floor(Math.random()*pool.length)]();
+  }
+  /* 非绑定：必掉金币 100万~500万 */
+  var g2=1000000+Math.floor(Math.random()*4000000); CURRENCY.gold+=g2; TR.stats.gold+=g2; renderCurrency(); trDropAnim(null); trLog('Boss 掉落 <b class="lg-gold">金币 '+g2.toLocaleString()+'</b>'); TR.bossLoot.push('金币 '+g2.toLocaleString());
+  /* 各副本保底池（必掉1件） */
+  var pools=[
+    function(){ var c=mkLoot(ITEM_BLUEPRINTS.godCrystal); c.count=1; return c; },   /* 水龙 */
+    function(){ var g=ITEM_BLUEPRINTS.statGems; var six=g.filter(function(x){ return x.level===6&&x.name.indexOf('专注')<0; }); var arr=[six.length?function(){return mkLoot(six[Math.floor(Math.random()*six.length)]);}:null, function(){ return mkLoot(g[g.length-1]); }].filter(Boolean); return arr[Math.floor(Math.random()*arr.length)](); },   /* 无限深渊：6级宝石/混沌神石 */
+    function(){ var rs=[function(){var f=mkLoot(ITEM_BLUEPRINTS.runeFragment);f.count=1;return f;}, function(){var f=mkLoot(ITEM_BLUEPRINTS.sealFragment);f.count=1;return f;}, function(){var g=mkLoot([ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune][Math.floor(Math.random()*2)]);g.count=1;return g;}]; return rs[Math.floor(Math.random()*rs.length)](); },   /* 克里普特 */
+    function(){ var js=[ITEM_BLUEPRINTS.dominationNecklace,ITEM_BLUEPRINTS.dominationRing,ITEM_BLUEPRINTS.dominationBracelet]; return mkLoot(js[Math.floor(Math.random()*js.length)]); },   /* 奥利森：随机首饰 */
+    function(){ var as=[ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots]; return mkLoot(as[Math.floor(Math.random()*as.length)]); }   /* 沙漠：随机史诗防具 */
+  ];
+  var pi=TR.dungeon-1;   /* dungeon 1~5 -> pools 0~4 */
+  return (pi>=0&&pi<pools.length)?pools[pi]():null;
+}
 function trKillMon(){
   var d=DUNGEONS[TR.dungeon];
   var lv=TR.level, got=false;
@@ -4250,6 +4281,7 @@ function trKillMon(){
     drops.forEach(function(item){ if(item){ got=true; addStackable(item); var rare=isRareDrop(item); trDropAnim(item.img,itemQuality(item)); trLog('掉落 <b class="lg-item">'+item.name+'</b>'); TR.stats.drop++; TR.stats.per[TR.dungeon].drop++; if(rare){ TR.stats.rare++; TR.stats.recent.unshift({name:item.name,time:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})}); if(TR.stats.recent.length>5) TR.stats.recent.pop(); } if(TR.isBoss) TR.bossLoot.push(item.name); } });
     if(TR.isBoss) trLog('<b class="lg-boss">击败 BOSS '+d.bossName+'</b>');
   }
+  if(TR.isBoss){ var gg=trBossGuarantee(); if(gg){ addStackable(gg); got=true; trDropAnim(gg.img,itemQuality(gg)); trLog('Boss 保底 <b class="lg-item">'+gg.name+(gg.count>1?'×'+gg.count:'')+'</b>'); TR.bossLoot.push(gg.name+(gg.count>1?'×'+gg.count:'')); } got=true; }   /* Boss 必掉金币+保底1件 */
   if(!got) trLog('没有收获');
   trGainExp((DUNGEONS[TR.dungeon].monLv||1), TR.isBoss?d.bossAtk:d.atk, TR.isBoss);   /* 经验按怪物固定等级 */
   trMonDie();
@@ -4286,8 +4318,11 @@ function trAtk(){
   TR.__lastAtkTick=__now;
   var s=trMonStats();
   var isCrit=Math.random()<trCritRate();
-  var _pa=TR.patk*(Date.now()<POTION_UNTIL?2:1)*(0.85+Math.random()*0.3);   /* 攻防比：防御有用，伤害=攻²/(攻+防) */
-  var dmg=Math.max(6, Math.round(_pa*_pa/(_pa+s.def)));
+  var __lvd=TR.level-(TR.isBoss?60:(DUNGEONS[TR.dungeon].monLv||1));   /* 等级压制：差距≥10级，等级高的一方攻防×10 */
+  var __pS=(__lvd>=10)?lvSuppress(__lvd):(__lvd<=-10?0.5:1);   /* 角色攻防倍率：压制怪×lvs、被怪压制×0.5 */
+  var __mS=(__lvd<=-10)?lvSuppress(-__lvd):(__lvd>=10?0.5:1);   /* 怪物攻防倍率：压制角色×lvs、被角色压制×0.5 */
+  var _pa=TR.patk*__pS*(Date.now()<POTION_UNTIL?2:1)*(0.85+Math.random()*0.3);   /* 攻防比：防御有用，伤害=攻²/(攻+防) */
+  var dmg=Math.max(6, Math.round(_pa*_pa/(_pa+s.def*__mS)));
   if(TR.attr && TR.attr!=='无') dmg=Math.round(dmg*1.3);   /* 属性攻击：真实伤害+30% */
   var weak=Math.random()<0.10;                              /* 弱点攻击10%概率 */
   if(isCrit && weak){ dmg*=4; dmg=Math.round(dmg*1.1); }    /* 暴击+弱点同时：×4 再提升10% */
