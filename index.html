@@ -3896,7 +3896,7 @@ var DUNGEONS=[
   { name:'无限深渊', lv:60, monLv:35, mode:'gem', ambient:'gem', tag:'全部宝石', bossName:'深渊之主', monName:'深渊魔物', color:'#a04fd4', atk:0.70, hp:8, bossAtk:1.8 },
   { name:'克里普特王座', lv:60, monLv:45, mode:'godcard', ambient:'crown', tag:'天神牌子', bossName:'王座霸主', monName:'王座卫士', color:'#a58ad6', atk:0.78, hp:8.5, bossAtk:1.72 },
   { name:'奥利森废墟', lv:57, monLv:50, mode:'jewelry', ambient:'jewelry', tag:'首饰', bossName:'废墟王座', monName:'废墟怨灵', color:'#e0a24f', atk:0.85, hp:9, bossAtk:1.7 },
-  { name:'沙漠之渊', lv:58, monLv:58, mode:'armor', ambient:'desert', tag:'防具', bossName:'沙渊巨兽', monName:'沙渊猎手', color:'#d4643c', atk:1.10, hp:11, bossAtk:1.6 }
+  { name:'沙漠之渊', lv:58, monLv:59, mode:'armor', ambient:'desert', tag:'防具', bossName:'沙渊巨兽', monName:'沙渊猎手', color:'#d4643c', atk:1.10, hp:11, bossAtk:1.6 }
 ];
 var TR={ dungeon:0, isBoss:false, hp:0, maxHp:0, patk:0, pdef:0, attrDef:false, attr:'无', absorb:0,
   kill:0, killToBoss:20, auto:false, timer:null, regen:null, revTimer:null, revCount:0, suppressLog:false, atkTick:0, monAtkCoef:0.1,
@@ -3926,6 +3926,8 @@ function trSyncChar(){
     if(isArmorType(e.type)) ab+=(e.damageAbsorption||0)+armorEnhAbs(e.enhanceLevel||0);
     ab+=(e.gemDamageAbsorption||0); }   /* 加专注宝石吸收（累加所有装备） */
   TR.absorb=ab;
+  if(TR.maxHp>0 && hp>TR.maxHp) TR.hp+=hp-TR.maxHp;   /* 生命上限提升时血量同步提升（穿戴更强装备后进入刷新） */
+  if(TR.hp>hp) TR.hp=hp;
   if(TR.hp<=0) TR.hp=hp;
   TR.reqExp=trReqExp(TR.level);   /* 每级所需经验分段表 */
 }
@@ -3935,15 +3937,20 @@ function trSyncChar(){
 function trMonStats(){
   var d=DUNGEONS[TR.dungeon];
   var el=Math.max(1, d.monLv||1);                           /* 怪物等级=副本固定等级，不随角色等级/属性变化 */
-  var ba=Math.round(65+(el+9)*1.5);                         /* 裸装物攻基准 */
+  var hi=(d.monLv||1)>=45;                                  /* 高阶副本（45级以上）：攻击系数翻倍 */
+  if(TR.isBoss) el=60;                                      /* Boss 统一 60 级 */
+  var ba=Math.round(65+(el+9)*1.5);                         /* 裸装物攻基准（连续曲线） */
   var bl=Math.round(153+(el-1)*100+(el+9)*5.3);             /* 裸装血量基准 */
   var bd=Math.round(30+(el+9));                             /* 裸装物防基准 */
-  var rl=Math.round(153+(el-1)*100+(el+9)*5.3);             /* 怪物血量基准=该等级裸装血量 */
   var diff=Math.pow(1.1,TR.dungeon);                        /* 副本难度：雕俱星座最低，右侧每个高10% */
-  var atk=Math.max(6, Math.round(ba*TR.monAtkCoef*diff*(TR.isBoss?5:1)));   /* 攻击系数0.05~0.18；Boss：攻击为小怪5倍 */
-  var mhp=Math.max(60, Math.round(rl*5*diff*(TR.isBoss?10:1))); /* 小怪血量=裸装角色Lv血量×5；Boss=小怪×10 */
-  var def=Math.round(bd*0.3*diff*(TR.isBoss?1.0:0.2));      /* 小怪防御再降；Boss防御为小怪5倍 */
-  if(TR.isBoss){ atk=Math.max(atk, Math.round(10000*diff)); mhp=TR.dungeon===0?Math.round(100000000):Math.round(5000000000*diff); def=Math.max(def, Math.round(8000*diff)); }   /* 雕俱Boss血1亿，其他副本50亿；攻击过万、防御已降低 */
+  var atk=Math.max(8, Math.round(ba*TR.monAtkCoef*(hi?2:1)*diff));   /* 小怪攻击：该级裸装物攻×攻击系数×难度；45级以上副本攻击系数×2 */
+  var mhp=Math.max(80, Math.round(bl*5*diff));              /* 小怪血量=该级裸装血量×5×难度，连续 */
+  var def=Math.max(5, Math.round(bd*0.3*diff));             /* 小怪防御=该级裸装物防×0.3×难度，连续 */
+  if(TR.isBoss){                                            /* Boss：随副本等级平滑放大，不再×5/×10硬跳变 */
+    atk=Math.round(atk*(2.5+el*0.03));
+    mhp=Math.round(mhp*(5+el*0.1));
+    def=Math.round(def*(1.5+el*0.02));
+  }
   var agi=TR.isBoss?1500:(10+(el-1)*5);   /* 怪物敏捷：小怪=裸装el敏捷；Boss敏捷很高=1500 */
   return {atk:atk, hp:mhp, def:def, agi:agi};
 }
@@ -4269,7 +4276,7 @@ function trShootArrow(cb){   /* 从场景左下角发射箭矢飞向怪物，到
   anim.oncancel=function(){ if(a.parentNode) a.remove(); };
 }
 function trAtk(){
-  if(!TR.maxHp) trSyncChar();
+  trSyncChar();   /* 每次进入/切副本都强制同步角色最新属性（穿戴装备后刷新） */
   if(TR.hp<=0 || TR.revTimer) return;   /* 死亡中不可攻击 */
   if(TR.monHp<=0) return;   /* 怪物死亡动画/刷新间隙不攻击 */
   TR.lastAtk=Date.now();
@@ -4286,7 +4293,7 @@ function trAtk(){
   if(isCrit && weak){ dmg*=4; dmg=Math.round(dmg*1.1); }    /* 暴击+弱点同时：×4 再提升10% */
   else if(isCrit) dmg*=2;                                   /* 仅暴击翻倍 */
   else if(weak) dmg*=2;                                     /* 仅弱点翻倍 */
-  dmg=Math.min(100000, Math.round(dmg));                    /* 最高10万真实伤害 */
+  dmg=Math.round(dmg);                                           /* 取消伤害封顶 */
   TR.monHp-=dmg;   /* 先扣血 */
   trShootArrow(function(){   /* 箭到达怪物后：显示掉血/死亡/反击 */
     trFloat(dmg,true,isCrit); trHitAnim(isCrit); renderMon();
