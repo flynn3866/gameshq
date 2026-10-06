@@ -46,6 +46,8 @@ body{
 }
 /* 属性页单独加宽 50px：窗口约 390px，主页面不受影响 */
 body.show-attrs .stage{max-width:410px;}
+/* 抽奖页：加宽舞台容纳轮盘 */
+body.show-lottery .stage{max-width:404px;}
 /* 天神页：电脑宽屏加宽舞台以左右分栏，手机保持单列不超屏幕宽 */
 body.show-god .stage{max-width:680px;}
 @media(max-width:480px){ body.show-god .stage{max-width:100%;} }
@@ -238,6 +240,7 @@ body.show-god .stage{max-width:680px;}
 .actions{display:flex;flex-direction:column;gap:5px;margin:10px 4px 16px;}   /* 按钮组与上面内容间距加大 */
 .act-row{display:flex;gap:6px;justify-content:center;}
 .act-row.c4 .btn{flex:1;max-width:86px;}
+.act-row.c4 .act-empty{pointer-events:none;opacity:0;visibility:hidden;}
 .btn{
   position:relative;
   height:30px;border-radius:6px;
@@ -792,7 +795,7 @@ body.show-god .stage{max-width:680px;}
 @keyframes trFlame{0%{opacity:0;}25%{opacity:1;}100%{opacity:0;transform:translate(-50%,-75px) scale(1.25);}}
 /* 怪物死亡：本体崩解 + 碎片飞散 */
 .tr-monster.die{animation:trMonDie .7s ease-out forwards;}
-@keyframes trMonDie{0%{transform:translate(-50%,-46%) scale(1);opacity:1;filter:brightness(2.4);}100%{transform:translate(-50%,-46%) scale(0) rotate(40deg);opacity:0;}}
+@keyframes trMonDie{0%{transform:translate(calc(-50% + 50px),-46%) scale(1);opacity:1;filter:brightness(2.4);}100%{transform:translate(calc(-50% + 50px),-46%) scale(0) rotate(40deg);opacity:0;}}
 .tr-scene.boss-in{animation:trBossRed 1.2s ease;}
 @keyframes trBossRed{0%{filter:brightness(1);}15%{filter:brightness(1.6) saturate(1.7);}40%{filter:brightness(.85) saturate(2.2);}100%{filter:brightness(1);}}
 .tr-boss-veil{position:fixed;inset:0;z-index:998;pointer-events:none;background:#000;animation:trVeil .7s ease forwards;}
@@ -955,21 +958,49 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
 }
 /* ===== 幸运轮盘 ===== */
 .lottery-panel{display:flex;flex-direction:column;align-items:center;gap:12px;padding:8px 0 4px;}
-.wheel-wrap{position:relative;width:min(300px,78vw);aspect-ratio:1;margin-top:6px;}
-.wheel{width:100%;height:100%;border-radius:50%;border:4px solid #6C6253;
-  box-shadow:0 0 26px rgba(0,0,0,.65), inset 0 0 34px rgba(0,0,0,.5);
-  transition:transform 32s cubic-bezier(.08,.7,.05,1);position:relative;}
+.wheel-wrap{position:relative;width:min(352px,86vw);aspect-ratio:1;margin-top:4px;}
+.wheel-wrap::before{content:'';position:absolute;inset:-12px;border-radius:50%;z-index:0;pointer-events:none;
+  background:radial-gradient(circle at 50% 50%, #313131 0 58%, #101010 78%, #4e4e4e 91%, #030303 100%);
+  box-shadow:0 12px 26px rgba(0,0,0,.9), 0 5px 10px rgba(0,0,0,.65),
+    inset 0 2px 4px rgba(255,255,255,.42), inset 0 -2px 4px rgba(255,255,255,.42), inset 0 0 16px rgba(0,0,0,.5),
+    inset 26px 0 16px -10px rgba(0,0,0,.42), inset -26px 0 16px -10px rgba(0,0,0,.42);
+  -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 23px), #000 calc(100% - 21px));
+  mask:radial-gradient(closest-side, transparent calc(100% - 23px), #000 calc(100% - 21px));
+}
+.wheel{width:100%;height:100%;border-radius:50%;border:5px solid #7a6a4a;position:relative;z-index:1;
+  box-shadow:inset 0 0 0 2px #2e2822, inset 0 0 0 8px #4c3f2e, inset 0 0 26px rgba(0,0,0,.6),
+    inset 0 2px 5px rgba(255,240,205,.4), inset 0 -8px 13px rgba(0,0,0,.6), 0 0 0 3px #241f1a, 0 0 26px rgba(201,162,39,.3), 0 0 30px rgba(0,0,0,.6);
+  transition:transform 32s cubic-bezier(.08,.7,.05,1);}
+.wheel::before{content:'';position:absolute;inset:0;border-radius:50%;z-index:2;pointer-events:none;
+  background:repeating-conic-gradient(rgba(255,244,215,.2) 0deg .5deg, transparent .5deg 25.7deg);
+}
 .wheel::after{content:'';position:absolute;left:50%;top:50%;width:38%;height:38%;transform:translate(-50%,-50%);
-  border-radius:50%;background:radial-gradient(circle at 35% 30%,#4a433b,#181513 70%);border:3px solid #6C6253;
-  box-shadow:0 0 18px rgba(0,0,0,.7), inset 0 2px 6px rgba(0,0,0,.6);}
-.wheel-pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;
-  border-left:13px solid transparent;border-right:13px solid transparent;border-top:24px solid #E0B900;
-  filter:drop-shadow(0 3px 4px rgba(0,0,0,.7));z-index:3;}
-.wseg{position:absolute;left:50%;top:50%;width:62px;height:30px;margin-left:-31px;margin-top:-15px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:600;
+  border-radius:50%;background:radial-gradient(circle,#989898,#676767 56%,#303030 80%,#141414 100%);border:2px solid #868686;
+  box-shadow:0 0 16px rgba(0,0,0,.7), inset 0 2px 5px rgba(0,0,0,.6), inset 0 -3px 6px rgba(255,235,190,.16);}
+.wheel-pointer{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:0;height:0;z-index:4;
+  border-left:14px solid transparent;border-right:14px solid transparent;border-top:27px solid #f0c93f;
+  filter:drop-shadow(0 2px 3px rgba(0,0,0,.75)) drop-shadow(0 0 6px rgba(240,201,63,.5));}
+.wheel-pointer::after{content:'';position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff2cf,#e0b900);box-shadow:0 0 7px rgba(240,201,63,.9);}
+.wseg{position:absolute;left:50%;top:50%;width:66px;height:32px;margin-left:-33px;margin-top:-16px;z-index:3;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;
   text-shadow:0 1px 2px rgba(0,0,0,.95);letter-spacing:.2px;pointer-events:none;line-height:1.2;}
-.wseg .wprob{font-size:8px;opacity:.9;}
+.wseg .wprob{font-size:9px;opacity:.95;color:#ffe9b0;}
 .lottery-cost{margin-top:2px;font-size:13px;color:#d9d2c4;}
+.recharge-input{width:78%;padding:9px 12px;margin:10px auto 4px;font-size:16px;color:#f0e2b8;background:#161614;border:1px solid #6C6253;border-radius:7px;outline:none;text-align:center;display:block;box-sizing:border-box;}
+.lottery-x10{display:flex;justify-content:center;gap:8px;margin-top:4px;}
+.lottery-x10 .btn{min-width:170px;padding:8px 0;font-size:14px;letter-spacing:2px;background:linear-gradient(#6C6253,#4a4238);color:#f0e2b8;border:1px solid #8a7c66;border-radius:8px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.5);}
+.lottery-x10 #lottery-recharge{min-width:88px;font-size:13px;letter-spacing:1px;}
+.lottery-x10 .btn:active{transform:translateY(1px);}
+.lot-gold-fx{position:fixed;top:34%;left:50%;z-index:10000;pointer-events:none;opacity:0;text-align:center;}
+.lot-gold-fx .lg-gold{font-size:28px;color:#ffd93d;font-weight:700;letter-spacing:3px;text-shadow:0 0 16px #ffb700,0 0 42px rgba(255,205,0,.75);white-space:nowrap;}
+.lot-gold-fx .lg-gold i{font-style:normal;display:block;font-size:13px;color:#ffe9a8;font-weight:400;margin-top:2px;letter-spacing:4px;}
+.lot-gold-fx.on{animation:goldFx 1.7s cubic-bezier(.2,.6,.3,1) forwards;}
+@keyframes goldFx{0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}16%{opacity:1;transform:translate(-50%,-54%) scale(1.16);}68%{opacity:1;transform:translate(-50%,-56%) scale(1);}100%{opacity:0;transform:translate(-50%,-64%) scale(1);}}
+.lot-item-fx{position:fixed;left:50%;top:16%;z-index:10000;pointer-events:none;opacity:0;width:64px;height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.lot-item-fx .li-box{width:52px;height:52px;border-radius:10px;background:radial-gradient(circle at 50% 35%,#ffe6a3,rgba(200,160,70,.85));box-shadow:0 0 16px rgba(255,215,110,.9),inset 0 0 8px rgba(255,255,255,.6);display:flex;align-items:center;justify-content:center;font-size:24px;color:#6a4d12;}
+.lot-item-fx .li-name{font-size:12px;color:#ffe9a8;margin-top:5px;text-shadow:0 0 8px rgba(255,210,100,.9);white-space:nowrap;}
+.lot-item-fx.on{animation:itemFx 1.6s cubic-bezier(.3,.7,.4,1) forwards;}
+@keyframes itemFx{0%{opacity:0;transform:translate(-50%,0) scale(.6);}12%{opacity:1;transform:translate(-50%,12%) scale(1.12);}66%{opacity:1;transform:translate(-50%,26%) scale(1);}100%{opacity:0;transform:translate(-50%,72%) scale(.85);}}
 .lottery-cost b{color:#E0B900;font-weight:600;}
   border:1px solid #8a7c66;border-radius:8px;color:#fff;cursor:pointer;}
 .drop-item{position:absolute;left:50%;top:50%;width:54px;height:54px;margin-left:-27px;margin-top:-27px;
@@ -980,17 +1011,38 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
 @keyframes dropFall{0%{transform:translate(-50%,-50%) scale(.5);opacity:1;}
   55%{transform:translate(-50%,30%) scale(1.15);opacity:1;}
   100%{transform:translate(-50%,150%) scale(.85);opacity:0;}}
-.lottery-head{font-size:13px;color:#d9d2c4;letter-spacing:1px;}
+.lottery-head{display:flex;justify-content:space-between;align-items:center;width:min(352px,86vw);font-size:13px;color:#d9d2c4;letter-spacing:1px;}
 .lottery-head b{color:#E0B900;font-weight:600;font-size:15px;}
+.lottery-head span:first-child{text-align:left;}
+.lottery-head #lottery-pity-num{color:#ffd93d;font-size:12px;font-weight:600;text-align:right;}
+/* 轴轮齿轮：在轮盘内随转，黑金属质感 */
+.wheel-gear{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:126px;height:126px;border-radius:50%;z-index:4;pointer-events:none;
+  background:radial-gradient(circle, #787878, #262626 80%);
+  -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 11px), #000 calc(100% - 8px));
+  mask:radial-gradient(closest-side, transparent calc(100% - 11px), #000 calc(100% - 8px));
+  box-shadow:0 0 12px rgba(0,0,0,.5), inset 0 1px 2px rgba(255,255,255,.22), inset 0 -3px 5px rgba(0,0,0,.4);
+}
 .wheel-btn{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:88px;height:88px;border-radius:50%;
-  background:radial-gradient(circle at 35% 30%,#9a8a6f,#4a4238 70%);border:3px solid #c9a227;color:#fff;font-size:16px;font-weight:700;cursor:pointer;z-index:5;
-  box-shadow:0 0 24px rgba(201,162,39,.5), inset 0 2px 6px rgba(0,0,0,.6);text-shadow:0 1px 2px rgba(0,0,0,.85);}
+  background:radial-gradient(circle at 50% 30%,#9f9f9f,#6e6e6e 52%,#3a3a3a 82%,#1b1b1b 100%);border:2px solid #7d7d7d;color:#fff;font-size:16px;font-weight:700;cursor:pointer;z-index:5;
+  box-shadow:0 6px 14px rgba(0,0,0,.72), 0 0 0 3px #1a1a1a, 0 0 14px rgba(255,255,255,.06), inset 0 2px 3px rgba(255,255,255,.5), inset 0 -6px 12px rgba(0,0,0,.3);
+  text-shadow:0 1px 3px rgba(0,0,0,.85);}
+.wheel-btn::before{content:'';position:absolute;inset:9px;border-radius:50%;border:1px solid rgba(255,228,180,.4);box-shadow:0 1px 2px rgba(255,230,190,.25) inset, 0 -2px 4px rgba(0,0,0,.7) inset;}
+
+/* 充能条：细条，长按时出现在按钮上方（轮盘上部），松手消失 */
+.charge-overlay{position:fixed;top:29%;left:50%;transform:translateX(-50%);width:96px;height:6px;border-radius:3px;
+  background:rgba(0,0,0,.6);border:1px solid #b09a70;z-index:60;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .16s;}
+.charge-overlay.on{opacity:1;}
+.charge-overlay .charge-fill{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd93d,#ff9f2b);border-radius:3px;box-shadow:0 0 8px rgba(255,200,80,.7);transition:width .1s linear;}
+.charge-overlay .charge-txt{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);color:#ffe9b0;font-size:11px;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.9);white-space:nowrap;}
 .wheel-btn:active{transform:translate(-50%,-50%) scale(.96);}
-.wheel-wrap .wheel{box-shadow:0 0 30px rgba(201,162,39,.25), 0 0 18px rgba(0,0,0,.7), inset 0 0 30px rgba(0,0,0,.55);border:4px solid #8a7c66;}
-.lottery-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 11px;max-width:320px;margin-top:2px;}
+.wheel-wrap .wheel{box-shadow:inset 0 0 0 2px #2e2822, inset 0 0 0 8px #4c3f2e, inset 0 0 26px rgba(0,0,0,.6), inset 0 2px 5px rgba(255,240,205,.4), inset 0 -8px 13px rgba(0,0,0,.6), 0 0 0 3px #241f1a, 0 0 26px rgba(201,162,39,.3), 0 0 30px rgba(0,0,0,.6);border:5px solid #7a6a4a;}
+.lottery-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:5px 12px;max-width:322px;margin:4px auto 8px;}
+.lottery-legend .lg-item{font-size:11px;color:#cfc4ae;display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.lottery-legend .lg-dot{width:8px;height:8px;border-radius:50%;flex:none;}
+.lottery-legend .lg-p{color:#ffd93d;min-width:38px;text-align:right;}
 .lg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#cfc8ba;}
 .lg-dot{width:12px;height:12px;border-radius:3px;border:1px solid rgba(255,255,255,.3);}
-.lottery-log-wrap{width:min(310px,82vw);margin-top:2px;}
+.lottery-log-wrap{width:min(352px,86vw);margin:2px auto 0;}   /* 与轮盘同宽对齐，左右居中 */
 .ll-title{font-size:12px;color:#E0B900;letter-spacing:2px;text-align:center;margin-bottom:6px;}
 .cfetti{position:fixed;top:38%;left:50%;z-index:9999;pointer-events:none;opacity:0;border-radius:2px;
   box-shadow:0 0 5px rgba(255,255,255,.45);animation:cf 2.6s ease-out forwards;}
@@ -1061,6 +1113,7 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
         <button class="btn" data-act="抽奖">抽奖</button>
         <button class="btn" data-act="初始化">初始化</button>
         <button class="btn" data-act="GM生成">GM生成</button>
+        <div class="btn act-empty"></div>
       </div>
     </div>
 
@@ -1374,13 +1427,15 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
     </header>
     <div class="sys-body">
       <div class="lottery-panel">
-        <div class="lottery-head">剩余金币：<b id="lottery-gold">0</b></div>
+        <div class="lottery-head"><span>剩余金币：<b id="lottery-gold">0</b></span><span id="lottery-pity-num"></span></div>
         <div class="wheel-wrap">
-          <div class="wheel" id="wheel"></div>
+          <div class="wheel" id="wheel"><div class="wheel-gear" id="wheel-gear"></div></div>
           <div class="wheel-pointer"></div>
           <button class="wheel-btn" id="wheel-btn">抽奖</button>
         </div>
-        <div class="lottery-cost">每次抽奖消耗 <b>1000万</b> 金币</div>
+        <div class="charge-overlay" id="charge-overlay"><div class="charge-fill" id="charge-fill"></div><span class="charge-txt" id="charge-num"></span></div>
+        <div class="lottery-cost">每次抽奖消耗 <b>1000万</b> 金币 · 今日免费 <b id="lottery-free">3/3</b></div>
+        <div class="lottery-x10"><button class="btn" id="lottery-x10">10 连抽（1 亿）</button><button class="btn" id="lottery-recharge">充值</button></div>
         <div class="lottery-log-wrap">
           <div class="ll-title">获 奖 记 录</div>
           <div class="lottery-log" id="lottery-log"></div>
@@ -1445,6 +1500,7 @@ var ITEM_BLUEPRINTS = {
   /* --- 消耗品 --- */
   holyPotion: { name:"神圣药水", type:"potion", img:"logos/神圣药水.png", count:1, maxStack:99 },
   sunPotion: { name:"太阳", type:"sun_potion", img:"logos/太阳.png", count:1, maxStack:99 },
+  megaSunPotion: { name:"超级大太阳", type:"sun_potion", img:"logos/太阳.png", count:1, maxStack:99, mega:true },
   /* --- 洗炼卷轴 --- */
   refineScroll:    { name:"属性卷轴",       type:"normal_scroll", img:"logos/属性卷轴.png",       count:255, maxStack:255 },   /* 仅用于洗炼 */
   refineScrollFull:{ name:"完整的属性卷轴", type:"full_scroll",  img:"logos/完整的属性卷轴.png", count:255, maxStack:255 },   /* 仅用于洗炼 */
@@ -1593,10 +1649,10 @@ var ITEM_BLUEPRINTS = {
   ],
   /* --- 镶嵌锤（可堆叠） --- */
   hammers: [
-    { name:"镶嵌之锤Lv7", type:"hammer", img:"logos/镶嵌之锤lv7.png", level:7, successRateBonus:4.5, price:1000000, description:"镶嵌宝石时成功率提升4.5倍（最高50%）", count:1 },
-    { name:"镶嵌之锤Lv6", type:"hammer", img:"logos/镶嵌之锤lv6.png", level:6, successRateBonus:3, price:800000, description:"镶嵌宝石时成功率提升3倍（最高50%）", count:1 },
-    { name:"镶嵌之锤Lv5", type:"hammer", img:"logos/镶嵌之锤lv5.png", level:5, successRateBonus:2, price:600000, description:"镶嵌宝石时成功率提升2倍（最高50%）", count:1 },
-    { name:"镶嵌之锤Lv4", type:"hammer", img:"logos/镶嵌之锤lv4.png", level:4, successRateBonus:1.8, price:600000, description:"镶嵌宝石时成功率提升1.8倍（最高50%）", count:1 }
+    { name:"镶嵌之锤Lv7", type:"hammer", img:"logos/镶嵌之锤lv7.png", level:7, successRateBonus:4.5, price:1000000, description:"镶嵌宝石时成功率提升4.5倍（最高50%）", count:1, maxStack:255 },
+    { name:"镶嵌之锤Lv6", type:"hammer", img:"logos/镶嵌之锤lv6.png", level:6, successRateBonus:3, price:800000, description:"镶嵌宝石时成功率提升3倍（最高50%）", count:1, maxStack:255 },
+    { name:"镶嵌之锤Lv5", type:"hammer", img:"logos/镶嵌之锤lv5.png", level:5, successRateBonus:2, price:600000, description:"镶嵌宝石时成功率提升2倍（最高50%）", count:1, maxStack:255 },
+    { name:"镶嵌之锤Lv4", type:"hammer", img:"logos/镶嵌之锤lv4.png", level:4, successRateBonus:1.8, price:600000, description:"镶嵌宝石时成功率提升1.8倍（最高50%）", count:1, maxStack:255 }
   ],
   extractHammers: [
     { name:"拆卸之锤Lv2", type:"extract_hammer", img:"logos/拆卸之锤lv2.png", level:2, successRateBonus:1.5, price:800000, description:"拆卸宝石时成功率提升1.5倍（最高50%）", count:255 },
@@ -2099,17 +2155,28 @@ function bindEvents(){
               renderBag();
             } else { toast('该背包已满'); }
           } else {
-            /* 松手在背包槽位 → 互换/移动 */
+            /* 松手在背包槽位 → 同种可叠加则合并，否则互换/移动 */
             var t = el && el.closest ? el.closest('.slot') : null;
             var ti = t ? parseInt(t.getAttribute('data-slot'), 10) : -1;
             var page = bag[drag.bag];
             if (t && ti >= 0 && ti < BAG_SLOTS && ti !== drag.from){
               var s2 = page[drag.from];
               var tg = page[ti];
-              page[drag.from] = tg;
-              page[ti] = s2;
-              playSoundEffect(s2.type);
-              renderBag();
+              if (tg && s2 && tg.name === s2.name && (s2.maxStack || 1) > 1){
+                /* 同种可叠加：合并到目标槽（受堆叠上限，超出留回原槽） */
+                var max = s2.maxStack || 1, space = max - (tg.count || 1);
+                if (space > 0){
+                  var add = Math.min(space, s2.count || 1);
+                  tg.count = (tg.count || 1) + add;
+                  var rem = (s2.count || 1) - add;
+                  if (rem <= 0) page[drag.from] = null; else s2.count = rem;
+                  playSoundEffect(s2.type); renderBag();
+                } else {
+                  page[drag.from] = tg; page[ti] = s2; playSoundEffect(s2.type); renderBag();
+                }
+              } else {
+                page[drag.from] = tg; page[ti] = s2; playSoundEffect(s2.type); renderBag();
+              }
             }
           }
         }
@@ -2191,12 +2258,20 @@ function getCurrencyStyle(amount){
   if (amount < 1000000000) return 'rgb(232,2,232)';
   return 'rgb(231,2,231)';
 }
+function fitMoney(el, n){
+  if(!el) return;
+  var s=String(n).length;
+  el.style.fontSize=(s<=9?15:s<=11?14:s<=13?13:s<=16?12:11)+'px';
+  el.style.whiteSpace='nowrap';
+}
 function renderCurrency(){
   var gt = $('#gold-trade'), gb = $('#gold-bind');
   gt.textContent = CURRENCY.gold.toLocaleString();
   gt.style.color = getCurrencyStyle(CURRENCY.gold);
+  fitMoney(gt, CURRENCY.gold);
   gb.textContent = CURRENCY.bound.toLocaleString();
   gb.style.color = getCurrencyStyle(CURRENCY.bound);
+  fitMoney(gb, CURRENCY.bound);
   saveGame();
 }
 
@@ -2405,6 +2480,13 @@ function recalcCharacter(){
     if(e.type==='weapon') basePatk+=weaponEnhAtk(e.enhanceLevel||0);   /* 武器强化攻击加成 */
     if(e.washAttrs){ bonus.力量+=e.washAttrs.力量||0; bonus.敏捷+=e.washAttrs.敏捷||0; bonus.体质+=e.washAttrs.体质||0; bonus.精神+=e.washAttrs.精神||0; bonus.智力+=e.washAttrs.智力||0; bonus.幸运+=e.washAttrs.幸运||0; baseHp+=e.washAttrs.生命||0; baseVitality+=e.washAttrs.活力||0; }   /* 洗炼附加属性 */
   }
+  /* 套装效果：史诗 奥格顿套装（头盔/胸甲/护手/护腿/护鞋），按穿齐件数给最高档加成 */
+  var setN=0;
+  ['helmet','chest','gloves','leggings','boots'].forEach(function(tk){ var e=equipState[tk]; if(e&&String(e.name).indexOf('史诗')===0) setN++; });
+  if(setN>=5){ bonus.力量+=200; bonus.敏捷+=200; bonus.体质+=200; bonus.精神+=200; bonus.智力+=200; bonus.幸运+=200; baseHp+=2000; }
+  else if(setN>=4){ bonus.力量+=60; bonus.敏捷+=60; bonus.体质+=60; bonus.幸运+=60; }
+  else if(setN>=3){ bonus.力量+=30; bonus.敏捷+=30; bonus.体质+=30; bonus.幸运+=30; }
+  else if(setN>=2){ bonus.力量+=20; bonus.敏捷+=20; }
   /* 天神编队累加：主100% / 副50% */
   for (var gk in GOD.formation){ var g=GOD.formation[gk]; if(!g) continue;
     var ga=calculateGodAttributes(g), gmult=(gk==='main')?1:0.5;
@@ -2796,7 +2878,7 @@ function renderGemEmbed(){
     (function(h2){ var h=hs[h2]; var d=document.createElement('div');
       if(h){
         d.className='pick'+(GEM.hammer&&GEM.hammer.id===h.id?' sel':'');
-        d.innerHTML='<img src="'+h.img+'" alt="">'; d._item=h;
+        d.innerHTML='<img src="'+h.img+'" alt="">'+(h.count>1?'<span class="qty">'+h.count+'</span>':''); d._item=h;
         d.addEventListener('click', function(){ GEM.hammer=(GEM.hammer&&GEM.hammer.id===h.id)?null:h; renderGem(); });
       } else d.className='pick dim';   /* 置灰空槽 */
       hm.appendChild(d);
@@ -2842,7 +2924,7 @@ function renderGemExtract(){
     (function(h2){ var h=hs[h2]; var d=document.createElement('div');
       if(h){
         d.className='pick'+(GEM.xhammer&&GEM.xhammer.id===h.id?' sel':'');
-        d.innerHTML='<img src="'+h.img+'" alt="">'; d._item=h;
+        d.innerHTML='<img src="'+h.img+'" alt="">'+(h.count>1?'<span class="qty">'+h.count+'</span>':''); d._item=h;
         d.addEventListener('click', function(){ GEM.xhammer=(GEM.xhammer&&GEM.xhammer.id===h.id)?null:h; renderGem(); });
       } else d.className='pick dim';   /* 置灰空槽 */
       hm.appendChild(d);
@@ -2868,6 +2950,9 @@ function doGemEmbed(){
   if(GEM.slotIdx>=slots.length){ toast('宝石槽已满'); return; }
   if(slots[GEM.slotIdx]){ toast('该槽已有宝石'); return; }
   if(sameTypeExists(GEM.equip,GEM.selGem)){ toast('已镶嵌同类型宝石'); return; }
+  var cost=(GEM.selGem.level===5)?120000:158926;   /* 5级12万/其他158926 */
+  if(CURRENCY.gold<cost){ toast('金币不足'); return; }
+  CURRENCY.gold-=cost; renderCurrency();   /* 无论成败均消耗金额 */
   var base=gemBaseRate(GEM.selGem), total=base;
   if(GEM.hammer) total=base*hammerMult(GEM.hammer.level);
   var ok=Math.random()<Math.min(0.5,total);
@@ -2883,6 +2968,8 @@ function doGemEmbed(){
     playSoundEffect('embedFail'); toast('镶嵌失败');
     if(consumeStackRet(GEM.selGem,1)<=0) GEM.selGem=null;
   }
+  /* 使用了镶嵌之锤：无论镶嵌成败均消耗 1 个，用完取消选中 */
+  if(GEM.hammer){ if(consumeStackRet(GEM.hammer,1)<=0) GEM.hammer=null; }
   renderEquip(); renderBag(); renderGem(); recalcCharacter();
 }
 function doGemExtract(){
@@ -3350,6 +3437,7 @@ var SYS_ITEMS=[];
 function sysBuyPrice(it){
   if(it.name==='伊泰安项链') return 1000000;   /* 伊泰安项链 100万 */
   if(it.name==='太阳') return 1000000;   /* 太阳 100万 */
+  if(it.name==='超级大太阳') return 20000000;   /* 超级大太阳 2000万 */
   var t=it.type;
   if(t==='mount') return 100000000000;          /* 坐骑 1000亿 */
   if(t==='full_scroll'||t==='god_seal_material'||it.name.indexOf('混沌')>=0) return 100000000;   /* 完整卷轴/神印碎片/混沌 1亿 */
@@ -3458,6 +3546,8 @@ function applyRoute(){
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
       refine = h.indexOf('#refine')>=0,
       gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0, lot = h.indexOf('#lottery')>=0;
+  document.body.classList.toggle('show-lottery', lot);         /* 抽奖页加宽舞台 */
+  document.body.classList.toggle('show-lottery', lot);         /* 抽奖页加宽舞台 */
   document.body.classList.toggle('show-attrs', attrs);   /* 属性页加宽舞台 */
   document.body.classList.toggle('show-god', god);       /* 天神页宽屏两栏 */
   document.body.classList.toggle('show-treasure', trs);   /* 寻宝页垂直居中 */
@@ -3508,7 +3598,7 @@ function route(){
   } else {
     applyRoute();                                /* 首次加载不播动画 */
   }
-  if (lot) setTimeout(function(){ renderWheel(); updateLotteryGold(); loadLotteryLog(); }, 80);   /* 每次进入抽奖页刷新轮盘/剩余金币/抽奖记录 */
+  if (lot) setTimeout(function(){ renderWheel(); buildLegend(); updateLotteryGold(); loadLotteryLog(); loadLotteryCount(); updatePity(); loadLotteryFree(); }, 80);   /* 每次进入抽奖页刷新轮盘/概率图例/剩余金币/抽奖记录/保底进度/免费次数 */
   route.first = false;
 }
 route.first = true;
@@ -3516,24 +3606,59 @@ route.last = undefined;
 window.addEventListener('hashchange', route);
 
 /* ============ 幸运轮盘 ============ */
+/* 抽奖概率=真实概率（总和1.0）；prob<0.01 为稀有档（保底奖池） */
 var LOTTERY=[
-  {label:'谢谢参与',short:'谢谢',prob:0.60,color:'#3a352f',apply:function(){}},
-  {label:'100万金币',short:'100万',prob:0.70,color:'#8a5a2b',apply:function(){CURRENCY.gold+=1000000;}},
-  {label:'1亿金币',short:'1亿',prob:0.05,color:'#c9a227',apply:function(){CURRENCY.gold+=100000000;}},
-  {label:'全属性+500',short:'全属性+500',prob:0.001,color:'#a04fd4',apply:function(){addPerm(500,0);}},
-  {label:'全属性+10',short:'全属性+10',prob:0.10,color:'#4f7da0',apply:function(){addPerm(10,0);}},
-  {label:'神印天神牌',short:'神印',prob:0.001,color:'#7a3fb0',apply:function(){var seals=[ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise]; var g=mkLoot(seals[Math.floor(Math.random()*seals.length)]); g.count=1; placeInBag(g); }},
-  {label:'全属性+100',short:'全属性+100',prob:0.008,color:'#4fa05f',apply:function(){addPerm(100,0);}},
-  {label:'生命+10000',short:'生命+1万',prob:0.01,color:'#a04f4f',apply:function(){addPerm(0,10000);}},
+  {label:'谢谢参与',short:'谢谢',prob:0.2405,color:'#3a352f',apply:function(){}},
+  {label:'300万金币',short:'300万',prob:0.26,color:'#8a5a2b',apply:function(){CURRENCY.gold+=3000000;}},
+  {label:'全属性+10',short:'全属性+10',prob:0.05,color:'#4f7da0',apply:function(){addPerm(10,0);}},
+  {label:'神符碎片',short:'神符碎片',prob:0.045,color:'#e2b04f',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=1; addStackable(g); }},
+  {label:'神力碎片',short:'神力碎片',prob:0.045,color:'#6fa8dc',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; addStackable(g); }},
+  {label:'1亿金币',short:'1亿',prob:0.06,color:'#f2c51e',apply:function(){CURRENCY.gold+=100000000;}},
   {label:'神符天神牌子',short:'神符牌',prob:0.03,color:'#d4a017',apply:function(){var rs=[ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune]; var g=mkLoot(rs[Math.floor(Math.random()*rs.length)]); g.count=1; placeInBag(g); }},
-  {label:'神符碎片',short:'神符碎片',prob:0.05,color:'#c9a24f',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=1; addStackable(g); }},
+  {label:'生命+10000',short:'生命+1万',prob:0.02,color:'#a04f4f',apply:function(){addPerm(0,10000);}},
   {label:'神印碎片',short:'神印碎片',prob:0.02,color:'#9a5bd0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.sealFragment); g.count=1; addStackable(g); }},
-  {label:'神力碎片',short:'神力碎片',prob:0.10,color:'#6fa8dc',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; addStackable(g); }},
-  {label:'7级镶嵌锤',short:'锤7',prob:0.10,color:'#e8b54a',apply:function(){var h=ITEM_BLUEPRINTS.hammers[0]; var g=mkLoot(h); g.count=1; g.maxStack=255; addStackable(g); }},
-  {label:'6级镶嵌锤',short:'锤6',prob:0.12,color:'#d9a050',apply:function(){var h=ITEM_BLUEPRINTS.hammers[1]; var g=mkLoot(h); g.count=1; g.maxStack=255; addStackable(g); }}
+  {label:'锤7',short:'锤7',prob:0.10,color:'#e8b54a',apply:function(){var h=ITEM_BLUEPRINTS.hammers[0]; var g=mkLoot(h); g.count=1; g.maxStack=255; addStackable(g); }},
+  {label:'全属性+100',short:'全属性+100',prob:0.008,color:'#4fa05f',apply:function(){addPerm(100,0);}},
+  {label:'锤6',short:'锤6',prob:0.12,color:'#d9a050',apply:function(){var h=ITEM_BLUEPRINTS.hammers[1]; var g=mkLoot(h); g.count=1; g.maxStack=255; addStackable(g); }},
+  {label:'全属性+500',short:'全属性+500',prob:0.0005,color:'#a04fd4',apply:function(){addPerm(500,0);}},
+  {label:'神印天神牌',short:'神印',prob:0.001,color:'#7a3fb0',apply:function(){var seals=[ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise]; var g=mkLoot(seals[Math.floor(Math.random()*seals.length)]); g.count=1; placeInBag(g); }}
 ];
 var wheelAngle=0, lotteryBusy=false;   /* lotteryBusy：轮盘转动中禁止连点 */
 var LOTTERY_LOG=[];   /* 抽奖记录（持久，保留最新10条） */
+var LOTTERY_COUNT=0;   /* 保底计数：累计100次必中一次稀有档 */
+var LOTTERY_FREE_MAX=3, LOTTERY_FREE=0;   /* 每日免费抽奖次数 */
+function loadLotteryFree(){
+  var d=new Date(), key=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+  try{ var o=JSON.parse(localStorage.getItem('shenqi_lottery_free')||'{}'); if(o.date===key){ LOTTERY_FREE=Math.min(o.n,3); } else { LOTTERY_FREE=3; saveLotteryFree(); } }catch(e){ LOTTERY_FREE=3; }
+  updateLotteryFree();
+}
+function saveLotteryFree(){ var d=new Date(), key=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); try{ localStorage.setItem('shenqi_lottery_free', JSON.stringify({date:key,n:LOTTERY_FREE})); }catch(e){} }
+function updateLotteryFree(){ var el=document.getElementById('lottery-free'); if(el) el.textContent=LOTTERY_FREE+'/'+LOTTERY_FREE_MAX; }
+function goldFlashFx(text){
+  var f=document.createElement('div'); f.className='lot-gold-fx';
+  var s=document.createElement('div'); s.className='lg-gold'; s.textContent=text;
+  f.appendChild(s); document.body.appendChild(f);
+  void f.offsetWidth; f.classList.add('on');
+  setTimeout(function(){ f.remove(); }, 1800);
+}
+function itemDropFx(label){
+  var f=document.createElement('div'); f.className='lot-item-fx';
+  var b=document.createElement('div'); b.className='li-box'; b.textContent='✦';
+  var n=document.createElement('div'); n.className='li-name'; n.textContent=label;
+  f.appendChild(b); f.appendChild(n); document.body.appendChild(f);
+  void f.offsetWidth; f.classList.add('on');
+  setTimeout(function(){ f.remove(); }, 1700);
+}
+function lotteryRarePool(){
+  var rare=LOTTERY.filter(function(s){ return s.prob<0.01; });   /* 稀有奖池=概率<1% */
+  var tot=0; rare.forEach(function(s){ tot+=s.prob; });
+  var r=Math.random()*tot, acc=0;
+  for(var i=0;i<rare.length;i++){ acc+=rare[i].prob; if(r<acc) return {item:rare[i], idx:LOTTERY.indexOf(rare[i])}; }
+  return {item:rare[rare.length-1], idx:LOTTERY.indexOf(rare[rare.length-1])};
+}
+function loadLotteryCount(){ try{ var v=parseInt(localStorage.getItem('shenqi_lottery_count')||'0',10); LOTTERY_COUNT=isNaN(v)?0:Math.max(0,Math.min(v,99)); }catch(e){ LOTTERY_COUNT=0; } }
+function saveLotteryCount(){ try{ localStorage.setItem('shenqi_lottery_count', String(LOTTERY_COUNT)); }catch(e){} }
+function updatePity(){ var el=document.getElementById('lottery-pity-num'); if(el) el.textContent=(LOTTERY_COUNT%100)+'/100'; }
 function renderWheel(){
   var w=document.getElementById('wheel'); if(!w) return;
   var N=LOTTERY.length, sa=360/N;
@@ -3543,7 +3668,7 @@ function renderWheel(){
   var R=(w.clientWidth||300)*0.40;   /* 未布局/隐藏时兜底 300，避免扇区标签堆在中心 */
   LOTTERY.forEach(function(s,i){
     var d=document.createElement('div'); d.className='wseg';
-    d.innerHTML='<span>'+s.short+'</span><span class="wprob">'+fmtProb(s.prob)+'</span>';
+    d.innerHTML='<span>'+s.short+'</span><span class="wprob">'+fmtProb(s.prob)+'</span>';   /* 概率紧贴轮盘边框 */
     var a=i*sa+sa/2;
     d.style.transform='rotate('+a+'deg) translateY(-'+R+'px) rotate(-'+a+'deg)';
     w.appendChild(d);
@@ -3555,13 +3680,14 @@ function addPerm(attr,hp){
   PERM.hp+=hp||0;
   recalcCharacter();
 }
-function spinWheel(idx, win){
+function spinWheel(idx, win, spins, durMs, x10results){
   var w=document.getElementById('wheel'); if(!w) return;
   var sa2=360/LOTTERY.length;
-  var target=((360-(idx*sa2+sa2/2))%360);
-  wheelAngle += 360*10 + ((target-(wheelAngle%360)+360)%360);
+  var target=((360-(idx*sa2+sa2/2))%360);   /* 停在中奖扇区中心，指针对准 */
+  wheelAngle += 360*(spins||6) + ((target-(wheelAngle%360)+360)%360);
+  w.style.transition='transform '+(durMs||12000)+'ms cubic-bezier(.18,.82,.32,1)';   /* 更强刹车：末段快速停下，减少滑动 */
   w.style.transform='rotate('+wheelAngle+'deg)';
-  setTimeout(function(){ showDrops(win); }, 32500);
+  setTimeout(function(){ showDrops(win, x10results); }, (durMs||12000)+300);
 }
 function celebrateConfetti(){
   /* 中大奖（概率<=1%）庆祝：从屏幕中部喷出彩色纸带与星点，四散飘落 */
@@ -3586,13 +3712,27 @@ function celebrateConfetti(){
     (function(el){ setTimeout(function(){ el.remove(); }, 3000); })(s);
   }
 }
-function showDrops(win){
-  var wrap=document.querySelector('#view-lottery .wheel-wrap'); if(!wrap) return;
-  var el=document.createElement('div'); el.className='drop-item'; el.textContent=win.short;
-  wrap.appendChild(el);
-  setTimeout(function(){ el.remove(); }, 1150);
-  /* 轮盘转完后结算：发放物品/属性 + 日志 + 解锁（金币已在点击时扣除） */
-  if(win.prob<=0.01) celebrateConfetti();   /* 中大奖（概率<=1%）喷彩带庆祝 */
+function showDrops(win, x10results){
+  if(x10results){
+    /* 10连抽结算：逐个发放 + 日志，最后汇总 */
+    x10results.forEach(function(rs,i){
+      setTimeout(function(){
+        /* 连抽逐项反馈：稀有彩带 / 其余全部金色光效 */
+        if(rs.win.prob<=0.01) celebrateConfetti();
+        else if((rs.win.label||'')!=='谢谢参与') goldFlashFx(rs.win.label);
+        rs.win.apply(); lotteryLog([rs.win]);
+      }, i*1100);
+    });
+    setTimeout(function(){
+      renderCurrency(); renderBag(); saveGame();
+      lotteryBusy=false;
+      toast('10连抽完成，请查看获奖记录');
+    }, x10results.length*1000);
+    return;
+  }
+  /* 单抽结算：反馈层级——稀有彩带 / 其余全部金色光效 */
+  if(win.prob<=0.01) celebrateConfetti();
+  else if((win.label||'')!=='谢谢参与') goldFlashFx(win.label);
   win.apply();
   updateLotteryGold();   /* 同步刷新轮盘上方剩余金币（中奖加币等） */
   lotteryLog([win]);
@@ -3600,34 +3740,115 @@ function showDrops(win){
   renderCurrency(); renderBag(); saveGame();
   lotteryBusy=false;
 }
-function runLottery(){
+var LOTTERY_CHARGE_MAX=3000;   /* 满充能时长：长按3秒 */
+var lotCharge=0, lotChargeTimer=null, lotChargeStart=0, lotCharging=false;
+function lotStartCharge(){
+  if(lotteryBusy) return;
+  lotCharging=true;
+  var ov=document.getElementById('charge-overlay'); if(ov) ov.classList.add('on');   /* 长按时充能条浮现 */
+  lotChargeStart=Date.now(); lotCharge=0; lotChargeDraw();
+  lotChargeTimer=setInterval(function(){
+    lotCharge=Math.min(1,(Date.now()-lotChargeStart)/LOTTERY_CHARGE_MAX);
+    lotChargeDraw();
+    if(lotCharge>=1) clearInterval(lotChargeTimer);
+  },33);
+}
+function lotEndCharge(){
+  if(!lotCharging) return;   /* 未按下过（如鼠标仅移过）不抽奖 */
+  lotCharging=false;
+  var ov=document.getElementById('charge-overlay'); if(ov) ov.classList.remove('on');   /* 松手充能条消失 */
+  if(lotChargeTimer){ clearInterval(lotChargeTimer); lotChargeTimer=null; }
+  var c=lotCharge; lotCharge=0; lotChargeDraw();
+  runLottery(c);   /* 松手即抽奖，充能越久转越快越久 */
+}
+function lotChargeDraw(){
+  var f=document.getElementById('charge-fill');
+  if(f) f.style.width=Math.round(lotCharge*100)+'%';
+  var t=document.getElementById('charge-num');
+  if(t) t.textContent=Math.round(lotCharge*100)+'%';
+}
+function runLottery(charge){
   if(lotteryBusy){ toast('轮盘转动中，请稍候…'); return; }   /* 转动中禁止连点 */
-  if(CURRENCY.gold<10000000){ toast('金币不足（需1000万）'); return; }
+  /* 每日免费优先：有免费次数则不消耗金币 */
+  if(LOTTERY_FREE>0){ LOTTERY_FREE--; saveLotteryFree(); updateLotteryFree(); }
+  else {
+    if(CURRENCY.gold<10000000){ toast('金币不足（需1000万）'); return; }
+    CURRENCY.gold-=10000000; renderCurrency(); updateLotteryGold();   /* 点击立即扣金币 */
+  }
   lotteryBusy=true;
-  CURRENCY.gold-=10000000; renderCurrency(); updateLotteryGold();   /* 点击立即扣金币 */
   /* 判定结果并转动轮盘；物品/属性发放与日志待轮盘转完后再结算 */
-  var total=0, acc=0, win=LOTTERY[0], winIdx=0;
-  LOTTERY.forEach(function(s){ total+=s.prob; });
-  var r=Math.random()*total;
-  for(var i=0;i<LOTTERY.length;i++){ acc+=LOTTERY[i].prob; if(r<acc){ win=LOTTERY[i]; winIdx=i; break; } }
-  spinWheel(winIdx, win);
+  var total=0, acc=0, win=LOTTERY[0], winIdx=0, pitied=false;
+  LOTTERY_COUNT++;
+  if(LOTTERY_COUNT>=100){
+    /* 保底：累计100次必中一次稀有档（从稀有奖池按权重抽取，越珍贵概率越小） */
+    var pr=lotteryRarePool(); win=pr.item; winIdx=pr.idx; LOTTERY_COUNT=0; pitied=true;
+  } else {
+    LOTTERY.forEach(function(s){ total+=s.prob; });
+    var r=Math.random()*total;
+    for(var i=0;i<LOTTERY.length;i++){ acc+=LOTTERY[i].prob; if(r<acc){ win=LOTTERY[i]; winIdx=i; break; } }
+    if(win.prob<0.01) LOTTERY_COUNT=0;   /* 自然抽中稀有也重置保底计数 */
+  }
+  saveLotteryCount(); updatePity();
+  var c=Math.min(1, charge||0);   /* 充能比例 0~1 */
+  var spins=8+Math.round(c*30);         /* 轻点8圈 ~ 满充能38圈 */
+  var dur=12000+Math.round(c*16000);    /* 时长平滑 12s~28s，随充能比例递增 */
+  spinWheel(winIdx, win, spins, dur);
+}
+function rechargeGold(){
+  var mask=document.createElement('div'); mask.className='confirm-mask'; mask.id='confirm-mask';
+  mask.innerHTML='<div class="confirm-box"><div class="confirm-msg">充值非绑定金币</div><input id="recharge-input" class="recharge-input" type="number" min="1" placeholder="请输入充值金额"><div class="confirm-actions"><button class="btn cbtn c-ok">确定</button><button class="btn cbtn c-no">取消</button></div></div>';
+  document.body.appendChild(mask);
+  var inp=mask.querySelector('#recharge-input');
+  mask.querySelector('.c-ok').onclick=function(){ var n=parseInt(inp.value,10); if(!n||n<=0){ toast('请输入有效金额'); return; } mask.remove(); CURRENCY.gold+=n; renderCurrency(); renderGem(); updateLotteryGold(); saveGame(); toast('已充值 '+n.toLocaleString()+' 金币'); };
+  mask.querySelector('.c-no').onclick=function(){ mask.remove(); };
+  mask.addEventListener('click',function(e){ if(e.target===mask) mask.remove(); });
+  setTimeout(function(){ inp.focus(); },60);
+}
+function runLottery10(){
+  if(lotteryBusy){ toast('轮盘转动中，请稍候…'); return; }
+  if(CURRENCY.gold<100000000){ toast('金币不足（需1亿）'); return; }
+  CURRENCY.gold-=100000000; renderCurrency(); updateLotteryGold();
+  lotteryBusy=true;
+  var results=[];
+  for(var k=0;k<10;k++){
+    LOTTERY_COUNT++;
+    var total=0, acc=0, win=LOTTERY[0], winIdx=0;
+    if(LOTTERY_COUNT>=100){ var pr=lotteryRarePool(); win=pr.item; winIdx=pr.idx; LOTTERY_COUNT=0; }
+    else {
+      LOTTERY.forEach(function(s){ total+=s.prob; });
+      var r=Math.random()*total;
+      for(var i=0;i<LOTTERY.length;i++){ acc+=LOTTERY[i].prob; if(r<acc){ win=LOTTERY[i]; winIdx=i; break; } }
+      if(win.prob<0.01) LOTTERY_COUNT=0;
+    }
+    results.push({win:win, idx:winIdx});
+  }
+  saveLotteryCount(); updatePity();
+  /* 轮盘转一次，落点对应第1个结果；10个奖品逐个结算展示 */
+  spinWheel(results[0].idx, results[0].win, 38, 28000, results);   /* 10连抽：与满充能一致的28秒/38圈 */
 }
 function initLottery(){
   var wb=document.getElementById('wheel-btn');
   if(!wb || wb.__bound) return;
   wb.__bound=true;
-  wb.addEventListener('click', runLottery);
+  wb.addEventListener('pointerdown', lotStartCharge);
+  wb.addEventListener('pointerup', lotEndCharge);
+  wb.addEventListener('pointerleave', lotEndCharge);
+  wb.addEventListener('pointercancel', lotEndCharge);
   var bk=document.getElementById('lottery-back');
   if(bk) bk.addEventListener('click', function(){ location.hash='#main'; });
-  renderWheel(); buildLegend(); updateLotteryGold();
+  var x10=document.getElementById('lottery-x10');
+  if(x10 && !x10.__bound){ x10.__bound=true; x10.addEventListener('click', runLottery10); }
+  var rc=document.getElementById('lottery-recharge');
+  if(rc && !rc.__bound){ rc.__bound=true; rc.addEventListener('click', rechargeGold); }
+  renderWheel(); buildLegend(); updateLotteryGold(); loadLotteryCount(); updatePity(); loadLotteryFree();
 }
-function updateLotteryGold(){ var g=document.getElementById('lottery-gold'); if(g) g.textContent=CURRENCY.gold.toLocaleString(); }
+function updateLotteryGold(){ var g=document.getElementById('lottery-gold'); if(g){ g.textContent=CURRENCY.gold.toLocaleString(); fitMoney(g, CURRENCY.gold); } }
 function buildLegend(){
   var box=document.getElementById('lottery-legend'); if(!box) return;
   box.innerHTML='';
   LOTTERY.forEach(function(s){
     var d=document.createElement('div'); d.className='lg-item';
-    d.innerHTML='<span class="lg-dot" style="background:'+s.color+'"></span>'+s.label;
+    d.innerHTML='<span class="lg-dot" style="background:'+s.color+'"></span><span class="lg-name">'+s.label+'</span><span class="lg-p">'+fmtProb(s.prob)+'</span>';
     box.appendChild(d);
   });
 }
@@ -3670,12 +3891,12 @@ function doLoot(){
 
 /* ============ 寻宝系统：模拟打怪升级 / 掉落宝物金币 ============ */
 var DUNGEONS=[
-  { name:'雕俱星座', lv:52, mode:'bound', ambient:'bound', tag:'绑定金币', bossName:'雕俱星主', monName:'雕俱守卫', color:'#7a86b8', atk:0.35, hp:6, bossAtk:1.9 },
-  { name:'水龙巢穴', lv:59, mode:'loot', ambient:'water', tag:'武器·魔翼', bossName:'范特西玛', monName:'水龙精英', color:'#4fc4c0', atk:0.55, hp:7, bossAtk:1.8 },
-  { name:'无限深渊', lv:60, mode:'gem', ambient:'gem', tag:'全部宝石', bossName:'深渊之主', monName:'深渊魔物', color:'#a04fd4', atk:0.70, hp:8, bossAtk:1.8 },
-  { name:'克里普特王座', lv:60, mode:'godcard', ambient:'crown', tag:'天神牌子', bossName:'王座霸主', monName:'王座卫士', color:'#a58ad6', atk:0.78, hp:8.5, bossAtk:1.72 },
-  { name:'奥利森废墟', lv:57, mode:'jewelry', ambient:'jewelry', tag:'首饰', bossName:'废墟王座', monName:'废墟怨灵', color:'#e0a24f', atk:0.85, hp:9, bossAtk:1.7 },
-  { name:'沙漠之渊', lv:58, mode:'armor', ambient:'desert', tag:'防具', bossName:'沙渊巨兽', monName:'沙渊猎手', color:'#d4643c', atk:1.10, hp:11, bossAtk:1.6 }
+  { name:'雕俱星座', lv:52, monLv:1, mode:'bound', ambient:'bound', tag:'绑定金币', bossName:'雕俱星主', monName:'雕俱守卫', color:'#7a86b8', atk:0.35, hp:6, bossAtk:1.9 },
+  { name:'水龙巢穴', lv:59, monLv:20, mode:'loot', ambient:'water', tag:'武器·魔翼', bossName:'范特西玛', monName:'水龙精英', color:'#4fc4c0', atk:0.55, hp:7, bossAtk:1.8 },
+  { name:'无限深渊', lv:60, monLv:35, mode:'gem', ambient:'gem', tag:'全部宝石', bossName:'深渊之主', monName:'深渊魔物', color:'#a04fd4', atk:0.70, hp:8, bossAtk:1.8 },
+  { name:'克里普特王座', lv:60, monLv:45, mode:'godcard', ambient:'crown', tag:'天神牌子', bossName:'王座霸主', monName:'王座卫士', color:'#a58ad6', atk:0.78, hp:8.5, bossAtk:1.72 },
+  { name:'奥利森废墟', lv:57, monLv:50, mode:'jewelry', ambient:'jewelry', tag:'首饰', bossName:'废墟王座', monName:'废墟怨灵', color:'#e0a24f', atk:0.85, hp:9, bossAtk:1.7 },
+  { name:'沙漠之渊', lv:58, monLv:58, mode:'armor', ambient:'desert', tag:'防具', bossName:'沙渊巨兽', monName:'沙渊猎手', color:'#d4643c', atk:1.10, hp:11, bossAtk:1.6 }
 ];
 var TR={ dungeon:0, isBoss:false, hp:0, maxHp:0, patk:0, pdef:0, attrDef:false, attr:'无', absorb:0,
   kill:0, killToBoss:20, auto:false, timer:null, regen:null, revTimer:null, revCount:0, suppressLog:false, atkTick:0, monAtkCoef:0.1,
@@ -3713,11 +3934,11 @@ function trSyncChar(){
    雕俱星座小怪实力 ≈ 角色(Lv-5) 裸装属性的 80%；每个副本等效等级 +2.5 级，并再乘 1.1^dungeon 难度系数 */
 function trMonStats(){
   var d=DUNGEONS[TR.dungeon];
-  var el=Math.max(1, TR.level-5+Math.round(TR.dungeon*2.5));   /* 等效怪物等级：雕俱≈Lv-5（最低1级），沙漠≈Lv+8 */
+  var el=Math.max(1, d.monLv||1);                           /* 怪物等级=副本固定等级，不随角色等级/属性变化 */
   var ba=Math.round(65+(el+9)*1.5);                         /* 裸装物攻基准 */
   var bl=Math.round(153+(el-1)*100+(el+9)*5.3);             /* 裸装血量基准 */
   var bd=Math.round(30+(el+9));                             /* 裸装物防基准 */
-  var rl=Math.round(153+(TR.level-1)*100+(TR.level+9)*5.3); /* 裸装角色Lv血量基准（等级关联，不随角色属性） */
+  var rl=Math.round(153+(el-1)*100+(el+9)*5.3);             /* 怪物血量基准=该等级裸装血量 */
   var diff=Math.pow(1.1,TR.dungeon);                        /* 副本难度：雕俱星座最低，右侧每个高10% */
   var atk=Math.max(6, Math.round(ba*TR.monAtkCoef*diff*(TR.isBoss?5:1)));   /* 攻击系数0.05~0.18；Boss：攻击为小怪5倍 */
   var mhp=Math.max(60, Math.round(rl*5*diff*(TR.isBoss?10:1))); /* 小怪血量=裸装角色Lv血量×5；Boss=小怪×10 */
@@ -3746,6 +3967,7 @@ function trGainExp(monLv, af, isBoss){
   exp=Math.round(exp*Math.pow(1.1,TR.dungeon));   /* 副本难度加成：右侧比前一个副本高 10%，雕俱星座最低 */
   if(isBoss) exp*=60;   /* Boss 经验显著奖励：该副本小怪 60 倍（击杀耗时×DPS 校准） */
   if(Date.now()<SUN_UNTIL) exp*=2;   /* 太阳：打怪经验翻倍 */
+  if(Date.now()<MEGA_SUN_UNTIL) exp*=5;   /* 超级大太阳：打怪经验5倍 */
   TR.exp+=exp;
   if(!TR.suppressLog) trLog('获得经验 <b class="lg-gold">+'+exp.toLocaleString()+'</b>');   /* 显示本次获取经验 */
   var oldLv=TR.level;
@@ -4022,7 +4244,7 @@ function trKillMon(){
     if(TR.isBoss) trLog('<b class="lg-boss">击败 BOSS '+d.bossName+'</b>');
   }
   if(!got) trLog('没有收获');
-  trGainExp(TR.level, TR.isBoss?d.bossAtk:d.atk, TR.isBoss);   /* 怪物等级=角色等级 */
+  trGainExp((DUNGEONS[TR.dungeon].monLv||1), TR.isBoss?d.bossAtk:d.atk, TR.isBoss);   /* 经验按怪物固定等级 */
   trMonDie();
   if(TR.isBoss) trBossLoot();
   renderTrStats();
@@ -4079,8 +4301,8 @@ function trAtk(){
       else { md=Math.max(0, roleHitDamage(s.atk)||0); TR.hp-=md; trFloat(md,false); }   /* 命中：0也显示 */
     }
     renderChar();
+    if(TR.hp<=0){ TR.hp=0; renderChar(); startRevive(); }   /* 反击后死亡才触发自动复活 */
   });
-  if(TR.hp<=0){ TR.hp=0; renderChar(); startRevive(); }
 }
 function startRevive(){
   if(TR.revTimer) clearInterval(TR.revTimer);
@@ -4114,7 +4336,7 @@ function renderMon(){
   var sc0=document.getElementById('tr-scene'); if(sc0) sc0.setAttribute('data-ambient', d.ambient||'');
   var m=document.getElementById('tr-monster'); if(m){ m.innerHTML=monsterSVG(d.color,TR.isBoss); m.className='tr-monster'+(TR.isBoss?' boss':''); }
   var nm=document.getElementById('tr-mon-name'); if(nm) nm.textContent=TR.isBoss?d.bossName:d.monName;
-  var lv=document.getElementById('tr-mon-lv'); if(lv) lv.textContent='Lv.'+TR.level+(TR.isBoss?' · BOSS':'');
+  var lv=document.getElementById('tr-mon-lv'); if(lv) lv.textContent='Lv.'+(d.monLv||1)+(TR.isBoss?' · BOSS':'');
   var fill=document.getElementById('tr-mon-hp'), num=document.getElementById('tr-mon-hpnum');
   var pct=TR.monMax?Math.max(0,Math.min(100,TR.monHp/TR.monMax*100)):100;
   if(fill){ fill.style.width=pct+'%'; fill.classList.toggle('low',pct<25); }
@@ -4130,6 +4352,10 @@ function renderBuff(){
   if(Date.now()<SUN_UNTIL){
     var sleft=Math.max(0,Math.ceil((SUN_UNTIL-Date.now())/1000));
     h+='<div class="tr-buff" title="太阳：打怪经验翻倍"><img src="logos/太阳.png"><span class="tm">'+sleft+'s</span></div>';
+  }
+  if(Date.now()<MEGA_SUN_UNTIL){
+    var mleft=Math.max(0,Math.ceil((MEGA_SUN_UNTIL-Date.now())/1000));
+    h+='<div class="tr-buff" title="超级大太阳：打怪经验5倍"><img src="logos/太阳.png"><span class="tm">'+mleft+'s</span></div>';
   }
   b.innerHTML=h;
 }
@@ -4154,7 +4380,9 @@ function trSetAuto(on){
   var was=TR.auto;
   TR.auto=on;
   var b=document.getElementById('tr-auto'); if(b){ b.classList.toggle('on',on); b.textContent=on?'挂机中':'挂机'; }
-  if(on){ if(TR.timer) clearTimeout(TR.timer); (function loop(){ if(!TR.auto) return; trAtk(); TR.timer=setTimeout(loop,charAtkSpeed()); })(); }
+  if(on){ if(TR.timer) clearTimeout(TR.timer);
+    OFFLINE.sampleGold=CURRENCY.gold; OFFLINE.sampleBound=CURRENCY.bound; OFFLINE.sampleExp=TR.exp; OFFLINE.winStart=Date.now(); OFFLINE.winGold=0; OFFLINE.winBound=0; OFFLINE.winExp=0; OFFLINE.goldRate=0; OFFLINE.boundRate=0; OFFLINE.expRate=0;
+    (function loop(){ if(!TR.auto) return; trAtk(); sampleOffline(); TR.timer=setTimeout(loop,charAtkSpeed()); })(); }
   else { if(TR.timer){ clearTimeout(TR.timer); TR.timer=null; } }
   if(on){ trLog('开始挂机刷取…'); }
   else if(was){ trLog('停止挂机'); }
@@ -4194,7 +4422,7 @@ function initTreasureUI(){
 function stopTreasure(){ trSetAuto(false); OFFLINE.dur=0; OFFLINE.pending=false; if(OFFLINE.expireTimer){ clearTimeout(OFFLINE.expireTimer); OFFLINE.expireTimer=null; } offlineHide(); }   /* 离开寻宝页彻底清空离线补偿状态 */
 
 /* ============ 离线时长补算掉落 ============ */
-var OFFLINE={ hiddenAt:0, dur:0, pending:false, expireTimer:null };
+var OFFLINE={ hiddenAt:0, dur:0, pending:false, expireTimer:null, sampleGold:0, sampleBound:0, sampleExp:0, winStart:0, winGold:0, winBound:0, winExp:0, goldRate:0, boundRate:0, expRate:0 };
 function offlineShow(){
   var bar=document.getElementById('offline-bar'); if(!bar) return;
   var txt=document.getElementById('offline-txt');
@@ -4214,22 +4442,50 @@ function offlineScheduleExpire(){
     if(OFFLINE.pending){ OFFLINE.dur=0; OFFLINE.pending=false; offlineHide(); }
   },60000);
 }
+function sampleOffline(){
+  if(OFFLINE.sampleGold===0 && OFFLINE.sampleBound===0 && OFFLINE.sampleExp===0 && OFFLINE.winStart===0){ return; }
+  var now=Date.now();
+  OFFLINE.winGold+=Math.max(0,CURRENCY.gold-OFFLINE.sampleGold);
+  OFFLINE.winBound+=Math.max(0,CURRENCY.bound-OFFLINE.sampleBound);
+  OFFLINE.winExp+=Math.max(0,TR.exp-OFFLINE.sampleExp);
+  OFFLINE.sampleGold=CURRENCY.gold; OFFLINE.sampleBound=CURRENCY.bound; OFFLINE.sampleExp=TR.exp;
+  if(now-OFFLINE.winStart>=30000){
+    var secs=(now-OFFLINE.winStart)/1000;
+    OFFLINE.goldRate=OFFLINE.winGold/secs; OFFLINE.boundRate=OFFLINE.winBound/secs; OFFLINE.expRate=OFFLINE.winExp/secs;
+    OFFLINE.winGold=0; OFFLINE.winBound=0; OFFLINE.winExp=0; OFFLINE.winStart=now;
+  }
+}
 function applyOffline(){
   if(!OFFLINE.pending || OFFLINE.dur<=0) return;
   OFFLINE.pending=false;
   if(OFFLINE.expireTimer){ clearTimeout(OFFLINE.expireTimer); OFFLINE.expireTimer=null; }
-  var dur=OFFLINE.dur, n=Math.floor(dur/680);
-  OFFLINE.dur=0; offlineHide();
-  var g0=CURRENCY.gold, b0=CURRENCY.bound, x0=TR.exp, lv0=TR.level;
-  if(!TR.maxHp) trSyncChar();
-  TR.suppressLog=true;
-  for(var i=0;i<n;i++){ if(TR.revTimer || TR.hp<=0) break; trAtk(); }
-  TR.suppressLog=false;
-  var parts=[];
-  if(CURRENCY.gold>g0) parts.push('金币 +'+((CURRENCY.gold-g0)/10000).toFixed(1)+'万');
-  if(CURRENCY.bound>b0) parts.push('绑定金币 +'+((CURRENCY.bound-b0)/10000).toFixed(1)+'万');
-  if(TR.level>lv0) parts.push('升至 Lv.'+TR.level);
+  var dur=OFFLINE.dur; OFFLINE.dur=0; offlineHide();
+  var secs=Math.max(0.5,dur/1000);
+  /* 速率不足（挂机未满30秒）时用当前窗口累积兜底 */
+  var el=Date.now()-OFFLINE.winStart;
+  var goldRate=OFFLINE.goldRate, boundRate=OFFLINE.boundRate, expRate=OFFLINE.expRate;
+  if(el>0 && goldRate<=0 && boundRate<=0 && expRate<=0){
+    goldRate=OFFLINE.winGold/(el/1000); boundRate=OFFLINE.winBound/(el/1000); expRate=OFFLINE.winExp/(el/1000);
+  }
+  var d=DUNGEONS[TR.dungeon]||DUNGEONS[0];
+  var isBound=d.mode==='bound';
+  var gGain=Math.floor(secs*(isBound?boundRate:goldRate)*0.8);
+  var eGain=Math.floor(secs*expRate*0.8);
+  var lv0=TR.level;
+  if(gGain>0){ if(isBound) CURRENCY.bound+=gGain; else CURRENCY.gold+=gGain; renderCurrency(); }
+  if(eGain>0){
+    TR.suppressLog=true;
+    TR.exp+=eGain;
+    while(TR.level<60 && TR.exp>=TR.reqExp){ TR.exp-=TR.reqExp; TR.level++; TR.reqExp=trReqExp(TR.level); CHARACTER.info.level=TR.level; }
+    recalcCharacter(); renderAttrs(); trSyncChar(); renderChar();
+    if(TR.level>lv0) TR.hp=TR.maxHp;
+    TR.suppressLog=false;
+  }
   saveGame();
+  var parts=[];
+  if(gGain>0) parts.push((isBound?'绑定金币':'金币')+' +'+(gGain/10000).toFixed(1)+'万');
+  if(eGain>0) parts.push('经验 +'+eGain.toLocaleString());
+  if(TR.level>lv0) parts.push('升至 Lv.'+TR.level);
   toast('离线补偿完成');
   trLog('离线补算：'+(parts.length?parts.join('，'):'无收获'));
 }
@@ -4247,18 +4503,20 @@ document.addEventListener('visibilitychange', function(){
 var SAVE_KEY='shenqi_save_v1';
 var POTION_UNTIL=0;   /* 神圣药水生效截止时间戳（0=未生效） */
 var SUN_UNTIL=0;   /* 太阳生效截止时间戳：打怪经验翻倍12小时（0=未生效） */
+var MEGA_SUN_UNTIL=0;   /* 超级大太阳生效截止时间戳：打怪经验5倍2小时（0=未生效） */
 setInterval(function(){ if(window.location.hash==='#treasure' && Date.now()<POTION_UNTIL) renderBuff(); },1000);
 function usePotion(slotEl){
   var idx=parseInt(slotEl.getAttribute('data-slot'),10);
   var it=bag[currentTab][idx]; if(!it) return;
   if(it.type==='sun_potion'){
-    confirmDialog('使用太阳？<br>打怪获取经验翻倍，持续 12 小时', function(ok2){
+    var isMega=!!it.mega, nm=isMega?'超级大太阳':'太阳', multi=isMega?5:2, hours=isMega?2:12;
+    confirmDialog('使用'+nm+'？<br>打怪获取经验×'+multi+'，持续 '+hours+' 小时', function(ok2){
       if(!ok2) return;
       it.count=(it.count||1)-1;
       if(it.count<=0){ bag[currentTab][idx]=null; }
-      SUN_UNTIL=Date.now()+12*60*60*1000;
+      if(isMega) MEGA_SUN_UNTIL=Date.now()+2*60*60*1000; else SUN_UNTIL=Date.now()+12*60*60*1000;
       renderBag(); saveGame();
-      toast('太阳生效！打怪经验翻倍，持续12小时');
+      toast(nm+'生效！打怪经验×'+multi+'，持续'+hours+'小时');
     });
     return;
   }
@@ -4279,7 +4537,7 @@ function saveGame(){
       v:1, bag:bag, equipState:equipState, currency:CURRENCY,
       loadedGods:LOADED_GODS, formation:GOD.formation,
       itemIdCounter:itemIdCounter, currentTab:currentTab,
-      characterLevel:CHARACTER.info.level, trExp:TR.exp, potionUntil:POTION_UNTIL, sunUntil:SUN_UNTIL, perm:PERM
+      characterLevel:CHARACTER.info.level, trExp:TR.exp, potionUntil:POTION_UNTIL, sunUntil:SUN_UNTIL, megaSunUntil:MEGA_SUN_UNTIL, perm:PERM
     }));
   }catch(e){}
 }
@@ -4307,6 +4565,7 @@ function loadGame(){
   if(typeof s.trExp==='number') TR.exp=s.trExp;
   if(typeof s.potionUntil==='number') POTION_UNTIL=s.potionUntil;
   if(typeof s.sunUntil==='number') SUN_UNTIL=s.sunUntil;
+  if(typeof s.megaSunUntil==='number') MEGA_SUN_UNTIL=s.megaSunUntil;
   if(s.perm){ PERM.力量=s.perm.力量||0; PERM.敏捷=s.perm.敏捷||0; PERM.体质=s.perm.体质||0; PERM.精神=s.perm.精神||0; PERM.智力=s.perm.智力||0; PERM.幸运=s.perm.幸运||0; PERM.hp=s.perm.hp||0; }
   return true;
 }
@@ -4332,11 +4591,12 @@ function doReset(){
   GOD.selected = null; GOD.upTarget = null; GOD.page = 1;
   CURRENCY.gold = 0; CURRENCY.bound = 0;
   CHARACTER.info.level = 1; TR.level = 1; TR.exp = 0; TR.reqExp = 100;
-  POTION_UNTIL = 0; SUN_UNTIL = 0;   /* 初始化清空药水效果 */
+  POTION_UNTIL = 0; SUN_UNTIL = 0; MEGA_SUN_UNTIL = 0;   /* 初始化清空药水效果 */
   PERM = {力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0};   /* 初始化清空永久属性 */
   itemIdCounter = 1;
   LOTTERY_LOG = [];   /* 初始化清空抽奖记录 */
-  try{ localStorage.removeItem('shenqi_lottery_log'); }catch(e){}
+  try{ localStorage.removeItem('shenqi_lottery_log'); localStorage.removeItem('shenqi_lottery_count'); }catch(e){}
+  LOTTERY_COUNT=0;
   renderLotteryLog();
   recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); renderCurrency();
   saveGame();
