@@ -46,6 +46,7 @@ body.show-home{align-items:flex-start;justify-content:flex-start;background:#191
     calc(env(safe-area-inset-bottom,0px) + 6px)
     calc(env(safe-area-inset-left,0px) + 10px);
   max-width:360px;margin:0 auto;   /* 收窄页面：6 列背包凹槽贴近 46px，显示紧凑 */
+body.show-home .stage{max-width:460px;}   /* 首页：手机满宽、电脑端适中 */
 }
 /* 竞技页：加宽舞台，内容更舒展 */
 body.show-arena .stage{max-width:460px;}
@@ -962,9 +963,12 @@ body.show-god .stage{max-width:680px;}
 .tr-ch-line .tr-exp{flex:1;height:9px;border:1px solid #3a342c;border-radius:4px;overflow:hidden;background:#0c0a08;position:relative;}
 .tr-exp-fill{height:100%;background:linear-gradient(180deg,#ffd33a,#b8860b);transition:width .3s ease;}
 .tr-exp-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;text-shadow:0 1px 1px #000;font-variant-numeric:tabular-nums;}
-body.show-treasure .stage{display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;}
-#view-treasure .tr-battle .tr-scene{height:200px;}
-#view-treasure .tr-log{height:160px;}
+body.show-treasure .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 4px);}   /* 副本秘境：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
+body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 4px);}   /* 无尽试炼：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
+#view-treasure .tr-battle .tr-scene{height:240px;}
+#view-trial .tr-battle .tr-scene{height:240px;}
+#view-trial .tr-log{height:190px;}
+#view-treasure .tr-log{height:190px;}
 @keyframes trFloat{0%{opacity:0;transform:translateY(6px);}20%{opacity:1;}100%{opacity:0;transform:translateY(-22px);}}
 /* 桌面端天神阵位/升级凹槽：与背包凹槽(46px)一致；材料槽40px */
 #god-form .slot{width:46px;height:46px;}
@@ -1114,8 +1118,8 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
 .forge-body{position:relative;overflow-y:auto;}
 .forge-inline{margin:0 auto;}
 .wings-pane{min-height:300px;display:flex;align-items:center;justify-content:center;color:#8a8375;font-size:15px;letter-spacing:2px;}
-#view-arena{width:100%;max-height:calc(100vh - 66px);overflow-y:auto;box-sizing:border-box;}
-#view-achievement{width:100%;max-height:calc(100vh - 66px);overflow-y:auto;box-sizing:border-box;}
+#view-arena{width:100%;max-height:calc(100vh - env(safe-area-inset-top,0px) - 66px);overflow-y:auto;box-sizing:border-box;}   /* 计入顶部安全区，避免被状态栏遮挡 */
+#view-achievement{width:100%;max-height:calc(100vh - env(safe-area-inset-top,0px) - 66px);overflow-y:auto;box-sizing:border-box;}   /* 计入顶部安全区 */
 .arena-body{padding:8px 10px;}
 .arena-hero{background:linear-gradient(180deg,#282a2a,#262320);border:1px solid #685F55;border-radius:8px;padding:10px 12px;margin-bottom:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
 .arena-title2{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0 6px;}
@@ -1172,7 +1176,7 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
 .arena-log .r{color:#ff6a5a;}
 .arena-log .c{color:#7CFC7C;}
 #view-gem .pgtabs{display:none;}
-.hub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;padding:20px 16px;max-width:340px;margin:0 auto;}
+.hub-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:12px;max-width:100%;margin:0 auto;}   /* 卡片间距=边缘间距=12px，铺满首页舞台 */
 .hub-grid.hub2{grid-template-columns:repeat(2,1fr);}
 .hub-card{background:linear-gradient(160deg,#2c261f,#181411);border:1px solid #6C6253;border-radius:14px;padding:30px 10px;text-align:center;color:#e0b900;font-size:17px;letter-spacing:3px;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.38);transition:transform .25s cubic-bezier(.22,1,.36,1);user-select:none;-webkit-user-select:none;}
 .hub-card:active{transform:scale(.95);}
@@ -1563,7 +1567,7 @@ body.show-treasure .stage{display:flex;flex-direction:column;justify-content:cen
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="treasure-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
-      <h1>寻宝</h1>
+      <h1>副本秘境</h1>
     </header>
     <div class="sys-body">
       <div id="offline-bar" style="display:none">
@@ -2045,7 +2049,17 @@ var LOOT_POOL = buildLootPool();
 })();
 
 /* 兜底：整页固定，禁止下拉刷新；但放行可滚动容器（寻宝副本横滚、日志纵滚）以支持原生触摸滚动 */
-document.addEventListener('touchmove', function(e){ if (window.__allowNativeScroll) return; if (e.cancelable) e.preventDefault(); }, { passive:false });
+document.addEventListener('touchmove', function(e){
+  if (window.__allowNativeScroll) return;
+  /* 若触摸点在可滚动容器（overflow auto/scroll）内且确实可滚动，允许原生滚动，不禁 */
+  var el=e.target;
+  while(el && el!==document && el!==document.body){
+    var st=getComputedStyle(el);
+    if((st.overflowY==='auto'||st.overflowY==='scroll'||st.overflowY==='overlay') && el.scrollHeight>el.clientHeight+2){ return; }
+    el=el.parentNode;
+  }
+  if (e.cancelable) e.preventDefault();
+}, { passive:false });
 
 
 var $ = function(s){ return document.querySelector(s); };
@@ -3866,7 +3880,8 @@ function applyRoute(){
   document.body.classList.toggle('show-lottery', lot);         /* 抽奖页加宽舞台 */
   document.body.classList.toggle('show-attrs', attrs);   /* 属性页加宽舞台 */
   document.body.classList.toggle('show-god', god||wanshou);   /* 天神页（含万法归宗聚合页）宽屏两栏 */
-  document.body.classList.toggle('show-treasure', trs);   /* 寻宝页垂直居中 */
+  document.body.classList.toggle('show-treasure', trs);   /* 副本秘境 */
+  document.body.classList.toggle('show-trial', tl);   /* 无尽试炼 */
   document.body.classList.toggle('show-arena', arena);   /* 竞技页加宽舞台 */
   document.body.classList.toggle('show-ach', ach);   /* 成就页满宽 */
   var map = {
