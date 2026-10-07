@@ -49,13 +49,16 @@ body.show-home{align-items:flex-start;justify-content:flex-start;background:#191
 body.show-home .stage{max-width:460px;}   /* 首页：手机满宽、电脑端适中 */
 }
 /* 竞技页：加宽舞台，内容更舒展 */
-body.show-arena .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;}   /* 竞技页：垂直居中 */
-body.show-ach .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;}   /* 成就页：垂直居中 */
+body.show-arena .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 10px);}   /* 竞技页：垂直居中，顶部安全 10px */
+body.show-ach .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 10px);}   /* 成就页：垂直居中，顶部安全 10px */
 body.show-shop .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 4px);}   /* 商店：同副本秘境垂直居中 */
+/* 神兵锻冶/万法归宗聚合页：垂直居中 + 顶部安全，内容限高内部滚动 */
+body.show-forge .stage,body.show-wanshou .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 4px);}
+#view-forge .forge-body,#view-wanshou .forge-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 118px);}
 /* 属性页单独加宽 50px：窗口约 390px，主页面不受影响 */
 body.show-attrs .stage{max-width:410px;}
 /* 抽奖页：加宽舞台容纳轮盘 */
-body.show-lottery .stage{max-width:404px;}
+body.show-lottery .stage{max-width:404px;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 10px);}   /* 幸运轮盘：顶部安全 10px */
 /* 天神页：电脑宽屏加宽舞台以左右分栏，手机保持单列不超屏幕宽 */
 body.show-god .stage{max-width:680px;}
 @media(max-width:480px){ body.show-god .stage{max-width:100%;} }
@@ -964,7 +967,7 @@ body.show-god .stage{max-width:680px;}
 .tr-ch-line .tr-exp{flex:1;height:9px;border:1px solid #3a342c;border-radius:4px;overflow:hidden;background:#0c0a08;position:relative;}
 .tr-exp-fill{height:100%;background:linear-gradient(180deg,#ffd33a,#b8860b);transition:width .3s ease;}
 .tr-exp-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;text-shadow:0 1px 1px #000;font-variant-numeric:tabular-nums;}
-body.show-treasure .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 4px);}   /* 副本秘境：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
+body.show-treasure .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 14px);}   /* 副本秘境：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
 body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 4px);}   /* 无尽试炼：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
 #view-treasure .tr-battle .tr-scene{height:240px;}
 #view-trial .tr-battle .tr-scene{height:240px;}
@@ -3887,6 +3890,8 @@ function applyRoute(){
   document.body.classList.toggle('show-arena', arena);   /* 竞技页加宽舞台 */
   document.body.classList.toggle('show-shop', shop);   /* 商店垂直居中 */
   document.body.classList.toggle('show-ach', ach);   /* 成就页满宽 */
+  document.body.classList.toggle('show-forge', forge);   /* 神兵锻冶垂直居中 */
+  document.body.classList.toggle('show-wanshou', wanshou);   /* 万法归宗垂直居中 */
   var map = {
     '#view-home':    home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||arena||forge||wanshou||main||ach),
     '#view-main':    main,
@@ -4363,7 +4368,7 @@ function renderHome(){
   var grid=document.getElementById('home-grid');
   if(grid && !grid.__b){
     grid.__b=true;
-    var items=[{name:'物品背包',ico:'bag',ct:'装备 · 背包',hash:'#main'},{name:'神兵锻冶',ico:'anvil',ct:'强化 · 洗炼 · 宝石',hash:'#forge'},{name:'万法归宗',ico:'star',ct:'天神 · 翅膀',hash:'#wanshou'},{name:'副本秘境',ico:'sword',ct:'组队刷宝',hash:'#treasure'},{name:'无尽试炼',ico:'tower',ct:'层层挑战',hash:'#trial'},{name:'竞技系统',ico:'user',ct:'决斗竞技',hash:'#arena'},{name:'玄鉴抽奖',ico:'wheel',ct:'幸运轮盘',hash:'#lottery'},{name:'万宝商阁',ico:'shop',ct:'买卖交易',hash:'#shop'},{name:'成就系统',ico:'gem',ct:'敬请期待',hash:'#achievement'}];
+    var items=[{name:'物品背包',ico:'bag',ct:'装备 · 背包',hash:'#main'},{name:'神兵锻冶',ico:'anvil',ct:'强化 · 洗炼 · 宝石',hash:'#forge'},{name:'万法归宗',ico:'star',ct:'天神 · 翅膀',hash:'#wanshou'},{name:'副本秘境',ico:'sword',ct:'组队刷宝',hash:'#treasure'},{name:'无尽试炼',ico:'tower',ct:'层层挑战',hash:'#trial'},{name:'竞技系统',ico:'user',ct:'决斗竞技',hash:'#arena'},{name:'玄鉴抽奖',ico:'wheel',ct:'幸运轮盘',hash:'#lottery'},{name:'万宝商阁',ico:'shop',ct:'买卖交易',hash:'#shop'},{name:'成就系统',ico:'gem',ct:'荣耀 · 称号 · 徽章',hash:'#achievement'}];
     grid.innerHTML=items.map(function(it,i){ return '<div class="home-card" data-hash="'+it.hash+'" style="--i:'+i+'"><div class="home-ico">'+(HOME_ICONS[it.ico]||'')+'</div><div class="home-cn">'+it.name+'</div><div class="home-ct">'+it.ct+'</div></div>'; }).join('');
     grid.addEventListener('click',function(e){ var c=e.target.closest('.home-card'); if(c){ var h2=c.getAttribute('data-hash'); if(h2) location.hash=h2; } });
   }
