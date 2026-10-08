@@ -41,7 +41,7 @@ body.show-home{align-items:flex-start;justify-content:flex-start;background:#191
 .stage{
   width:100%;box-sizing:border-box;
   padding:
-    calc(env(safe-area-inset-top,0px) + 4px)
+    calc(1.5rem + env(safe-area-inset-top,0px))
     calc(env(safe-area-inset-right,0px) + 10px)
     calc(env(safe-area-inset-bottom,0px) + 6px)
     calc(env(safe-area-inset-left,0px) + 10px);
@@ -49,16 +49,16 @@ body.show-home{align-items:flex-start;justify-content:flex-start;background:#191
 body.show-home .stage{max-width:460px;}   /* 首页：手机满宽、电脑端适中 */
 }
 /* 竞技页：加宽舞台，内容更舒展 */
-body.show-arena .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 竞技页：垂直居中，顶部安全 10px */
-body.show-ach .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 成就页：垂直居中，顶部安全 10px */
-body.show-shop .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 商店：同副本秘境垂直居中 */
+body.show-arena .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 竞技页：垂直居中，顶部安全 10px */
+body.show-ach .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 成就页：垂直居中，顶部安全 10px */
+body.show-shop .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 商店：同副本秘境垂直居中 */
 /* 神兵锻冶/万法归宗聚合页：垂直居中 + 顶部安全，内容限高内部滚动 */
-body.show-forge .stage,body.show-wanshou .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}
+body.show-forge .stage,body.show-wanshou .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}
 #view-forge .forge-body,#view-wanshou .forge-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 118px);}
 /* 属性页单独加宽 50px：窗口约 390px，主页面不受影响 */
-body.show-attrs .stage{max-width:410px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}
+body.show-attrs .stage{max-width:410px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}
 /* 抽奖页：加宽舞台容纳轮盘 */
-body.show-lottery .stage{max-width:404px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 幸运轮盘：顶部安全 10px */
+body.show-lottery .stage{max-width:404px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 幸运轮盘：顶部安全 10px */
 /* 天神页：电脑宽屏加宽舞台以左右分栏，手机保持单列不超屏幕宽 */
 body.show-god .stage{max-width:680px;}
 @media(max-width:480px){ body.show-god .stage{max-width:100%;} }
@@ -1003,8 +1003,8 @@ body.show-god .stage{max-width:680px;}
 .tr-ch-line .tr-exp{flex:1;height:9px;border:1px solid #3a342c;border-radius:4px;overflow:hidden;background:#0c0a08;position:relative;}
 .tr-exp-fill{height:100%;background:linear-gradient(180deg,#ffd33a,#b8860b);transition:width .3s ease;}
 .tr-exp-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;text-shadow:0 1px 1px #000;font-variant-numeric:tabular-nums;}
-body.show-treasure .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 副本秘境：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
-body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 无尽试炼：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
+body.show-treasure .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 副本秘境：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
+body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 无尽试炼：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
 #view-treasure .tr-battle .tr-scene{height:240px;}
 #view-trial .tr-battle .tr-scene{height:240px;}
 #view-trial .tr-log{height:190px;}
@@ -6016,7 +6016,7 @@ renderTabs();
 renderBag();
 renderAttrs();
 renderCurrency();
-history.replaceState(null, '', location.href.split('#')[0]);
+history.replaceState(null, '', location.pathname + location.search + location.hash);   /* 保留锚点，使 route() 能识别 #forge/#wanshou 等目标页（刷新/直开链接不空白） */
 route();          /* 进入主页并重算角色属性 */
 bindEvents();})();
 
