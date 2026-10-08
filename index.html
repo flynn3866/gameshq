@@ -21,21 +21,37 @@
   -webkit-user-drag:none;}      /* 禁图片/元素拖拽 */
 img{-webkit-user-drag:none;}
 img::selection,img::-moz-selection{background:transparent;}
+:root{
+  --bg-body:#57524C;            /* body 桌面背景 */
+  --bg-home:radial-gradient(600px 220px at 50% -60px,rgba(201,162,75,.10),transparent 70%),radial-gradient(420px 220px at 50% 115%,rgba(176,131,47,.07),transparent 70%),linear-gradient(180deg,#4A433C,#2B2620);   /* 首页背景：透亮暖灰棕+顶部冷金微光+底部暖氛围 */
+  --panel-grad:radial-gradient(rgba(240,226,200,.016) 1px,transparent 1.5px) 0 0/24px 24px,linear-gradient(180deg,#2A2621,#171512);  /* 面板：曜石铁锈棕+微噪点 */
+  --border:#6A6254;             /* 通用描边 */
+  --border-lite:#71684F;        /* 次级描边 */
+  --gold:#C9A24B;               /* 暗冷金 */
+  --gold-bright:#D6B56A;        /* 冷亮金 */
+  --gold-deep:#8A6B2E;          /* 深冷金 */
+  --warm:#B0832F;               /* 铁锈金（辅助） */
+  --text-hi:#E8DECA;            /* 暖纸白主文字 */
+  --text:#BDB29B;               /* 暖灰次文字 */
+}
+.btn:hover{border-color:#C77A2E;box-shadow:0 0 6px rgba(199,122,46,.22);}   /* 暖橙 hover 反馈 */
+.forge-tab:active,.god-li:active,.pick:active,.arena-opp:active{transform:scale(.96);}   /* 按压反馈统一：补齐 tab/列表行/下拉项 */
 html,body{height:100%;}
 body{
   position:fixed;left:0;top:0;width:100%;height:100%;
   overflow:hidden;                 /* 整页固定，不晃动、不滚动 */
   overscroll-behavior:none;        /* 禁止下拉刷新/回弹 */
   display:flex;flex-direction:column;align-items:center;justify-content:center;   /* 内容整体垂直居中 */
-  background:#57524C;
-  color:#e7e1d2;
+  background:var(--bg-body);
+  color:var(--text-hi);
+  font-variant-numeric:tabular-nums;   /* 所有数值等宽，大额不跳动 */
   font-family:"PingFang SC","Microsoft YaHei","Heiti SC",sans-serif;
   -webkit-font-smoothing:antialiased;
   user-select:none;
 }
 
 /* 首页（大厅）：深墨画布 + 顶部对齐，白卡浮于其上，低调大气 */
-body.show-home{align-items:flex-start;justify-content:flex-start;background:#191614;}
+body.show-home{align-items:flex-start;justify-content:flex-start;background:var(--bg-home);}
 
 /* ===== 舞台：物品栏所在，与手机边缘留小间隔 ===== */
 .stage{
@@ -64,28 +80,31 @@ body.show-god .stage{max-width:680px;}
 @media(max-width:480px){ body.show-god .stage{max-width:100%;} }
 
 /* ===== 全局背包折叠条（统一二级页顶部） ===== */
-.g-bag-bar{display:flex;align-items:center;justify-content:space-between;height:34px;margin:8px 0 10px;padding:0 8px;border:1px solid #6D6354;border-radius:6px;background:linear-gradient(180deg,#2a2622,#1f1b19);}
+.g-bag-bar{display:flex;align-items:center;justify-content:space-between;height:34px;margin:8px 0 10px;padding:0 8px;border:1px solid var(--border);border-radius:6px;background:linear-gradient(180deg,#2a2622,#1f1b19);}
 .g-bag-gold{font-size:12px;color:#e0b45a;font-weight:500;white-space:nowrap;}
 .g-bag-tit{font-size:12px;color:#b3a99a;letter-spacing:2px;}
-.g-bag-btn{font-size:12px;color:#e7e1d2;background:linear-gradient(180deg,#3A352F,#241f1b);border:1px solid #6D6354;border-radius:5px;padding:3px 10px;cursor:pointer;}
+.g-bag-btn{font-size:12px;color:var(--text-hi);background:linear-gradient(180deg,#3A352F,#241f1b);border:1px solid var(--border);border-radius:5px;padding:3px 10px;cursor:pointer;}
 .g-bag-btn:active{transform:scale(.96);}
 /* ===== 全局背包浮层 ===== */
-#fb-mask{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;}
+#fb-mask{position:fixed;inset:0;background:rgba(0,0,0,.28);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;}   /* 遮罩淡色，不遮挡后方场景 */
 #fb-mask.show{opacity:1;pointer-events:auto;}
-#float-bag{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%);width:min(300px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:linear-gradient(180deg,#3A352F,#151210);border:1px solid #6D6354;border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.65);z-index:81;padding:8px;display:none;}
-.g-bag-attr{font-size:12px;color:#E0B900;font-weight:500;white-space:nowrap;cursor:pointer;letter-spacing:1px;}
-#attr-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%);width:min(300px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:linear-gradient(180deg,#3A352F,#151210);border:1px solid #6D6354;border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.65);z-index:81;padding:8px;display:none;color:#cfc6b8;}
-#attr-float .af-head{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 8px;border-bottom:1px solid #3a352f;font-size:14px;letter-spacing:2px;color:#E0B900;}
+#float-bag{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%);width:min(300px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:var(--panel-grad);border:1px solid #6D6354;border-radius:10px;box-shadow:0 14px 38px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.07);   /* 浮层外发光+顶部内高光 */z-index:81;padding:8px;display:none;}
+.g-bag-attr{font-size:12px;color:#C9A24B;font-weight:500;white-space:nowrap;cursor:pointer;letter-spacing:1px;}
+#attr-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%);width:min(300px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:var(--panel-grad);border:1px solid #6D6354;border-radius:10px;box-shadow:0 14px 38px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.07);   /* 浮层外发光+顶部内高光 */z-index:81;padding:8px;display:none;color:#cfc6b8;}
+#attr-float .af-head{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 8px;border-bottom:1px solid #3a352f;font-size:14px;letter-spacing:2px;color:#C9A24B;}
 #attr-float .af-x{cursor:pointer;font-size:18px;line-height:1;color:#cfc6b8;padding:0 2px;background:transparent;border:none;}
-#attr-float .af-body{padding:10px 2px 2px;}
+#attr-float @keyframes floatIn{from{opacity:0;transform:translateX(-50%) scale(.96);}to{opacity:1;transform:translateX(-50%) scale(1);}}
+#float-bag,#attr-float{animation:floatIn .2s ease-out;}   /* 浮层出入：缩放.96+淡入0.2s 统一 */
+.af-body{padding:10px 2px 2px;}
 #attr-float .af-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 10px;margin-bottom:8px;}
 #attr-float .af-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;}   /* 与属性页一致：每行两列 */
+#attr-float .af-grid2 .af-full{grid-column:1/-1;}   /* 生命值/战力各占整行 */
 #attr-float .af-cell{display:flex;justify-content:space-between;font-size:12px;line-height:18px;}
-#attr-float .af-cell b{font-weight:400;color:#E0B900;letter-spacing:1px;}
+#attr-float .af-cell b{font-weight:400;color:#C9A24B;letter-spacing:1px;}
 #attr-float .af-cell span{color:#f2ede4;font-weight:300;}
 #attr-float .af-div{height:1px;background:#3a352f;margin:8px 0;}
 #attr-float .af-row{display:flex;justify-content:space-between;font-size:12px;line-height:22px;}
-#attr-float .af-row b{font-weight:400;color:#E0B900;letter-spacing:1px;}
+#attr-float .af-row b{font-weight:400;color:#C9A24B;letter-spacing:1px;}
 #attr-float .af-row span{color:#f2ede4;font-weight:300;}
 #float-bag.open{display:block;}
 .fb-head{display:flex;align-items:center;justify-content:space-between;padding:0 2px 6px;border-bottom:1px solid #6D6354;margin-bottom:6px;}
@@ -100,7 +119,7 @@ body.show-god .stage{max-width:680px;}
 #float-bag .slot{width:100%;aspect-ratio:1;}
 /* ===== 物品栏整体窗口：边框 + 紧收外阴影 ===== */
 .window{
-  background:linear-gradient(180deg,#3A352F,#151210);
+  background:var(--panel-grad);
   border:1px solid #6D6354;
   border-radius:8px;
   box-shadow:0 2px 7px rgba(0,0,0,.5);
@@ -113,7 +132,7 @@ body.show-god .stage{max-width:680px;}
   height:26px;margin:10px 0 10px;position:relative;   /* 顶部返回标题条：文字与上边界、下快捷导航之间各 10px 间距 */
 }
 .topbar::before,.topbar::after{content:"";flex:1;height:1px;
-  background:linear-gradient(90deg,transparent,#6D6354,transparent);}
+  background:linear-gradient(90deg,transparent,var(--border),transparent);}
 .topbar h1{
   position:relative;z-index:1;
   font-size:17px;font-weight:600;letter-spacing:2px;padding:0 16px;
@@ -293,7 +312,7 @@ body.show-god .stage{max-width:680px;}
   position:relative;
   height:30px;border-radius:6px;
   display:flex;align-items:center;justify-content:center;
-  font-size:14px;letter-spacing:2px;color:#e7e1d2;
+  font-size:14px;letter-spacing:2px;color:var(--text-hi);
   background:linear-gradient(180deg,#1d1b19,#121110);
   border:1px solid #000;
   box-shadow:
@@ -318,7 +337,7 @@ body.show-god .stage{max-width:680px;}
   transform:translateX(-50%) translateY(-12px);
   background:rgba(12,11,10,.94);
   border:1px solid #6D6354;
-  color:#e7e1d2;font-size:13px;letter-spacing:1px;
+  color:var(--text-hi);font-size:13px;letter-spacing:1px;
   padding:9px 16px;border-radius:6px;
   box-shadow:0 4px 14px rgba(0,0,0,.6);
   opacity:0;pointer-events:none;
@@ -335,7 +354,7 @@ body.show-god .stage{max-width:680px;}
   border:1px solid #6D6354;border-radius:8px;padding:18px 16px;
   box-shadow:0 8px 24px rgba(0,0,0,.6);
 }
-.confirm-msg{font-size:13px;color:#e7e1d2;line-height:1.6;text-align:center;margin-bottom:16px;}
+.confirm-msg{font-size:13px;color:var(--text-hi);line-height:1.6;text-align:center;margin-bottom:16px;}
 .confirm-actions{display:flex;gap:10px;justify-content:center;}
 .confirm-actions .cbtn{flex:1;max-width:110px;height:32px;font-size:13px;letter-spacing:2px;}
 .confirm-actions .c-ok{color:#f0e2b8;}
@@ -397,7 +416,7 @@ body.show-god .stage{max-width:680px;}
 .c-pair{
   flex:1;display:flex;justify-content:space-between;align-items:baseline;gap:8px;
 }
-.c-pair .cl{font-size:13px;color:#E0B900;font-weight:500;}
+.c-pair .cl{font-size:13px;color:#C9A24B;font-weight:500;}
 .c-pair .cv{font-size:14px;color:#ffffff;font-weight:300;font-variant-numeric:tabular-nums;}
 /* 第二部分每列的值所在格背景铺满整列 */
 #attr-alloc .cv{
@@ -413,13 +432,13 @@ body.show-god .stage{max-width:680px;}
 }
 .c-val3 .base,.c-val3 .bonus{font-size:14px;font-weight:300;font-variant-numeric:tabular-nums;}
 .c-val3 .base{text-align:right;color:#ffffff;}
-.c-val3 .bonus{text-align:left;color:#E0B900;}
+.c-val3 .bonus{text-align:left;color:#C9A24B;}
 .c-val3 .plus{text-align:center;color:#8a8171;font-size:12px;padding:0 6px;}
 .alloc-points{
   display:flex;justify-content:space-between;align-items:baseline;gap:8px;
   margin-top:2px;padding:9px 0 2px;border-top:1px solid rgba(109,99,84,.22);
 }
-.alloc-points .cl{font-size:13px;color:#E0B900;font-weight:500;}
+.alloc-points .cl{font-size:13px;color:#C9A24B;font-weight:500;}
 .alloc-points b{font-weight:300;color:#ffffff;font-variant-numeric:tabular-nums;}
 .combat-divider{
   height:1px;margin:10px 16px;
@@ -441,6 +460,19 @@ body.show-god .stage{max-width:680px;}
 .page-title .c2{color:#EA4335;}
 .page-title .c3{color:#FBBC05;}
 .page-title .c4{color:#34A853;}
+.page-title .flame{
+  position:relative;z-index:0;
+  background:linear-gradient(180deg,#fff7e0 0%,#ffe39a 15%,#ffb03a 38%,#ff7a1e 58%,#ff4d00 78%,#c2270a 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:0 0 6px rgba(255,160,40,.9),0 0 14px rgba(255,90,0,.55),0 0 26px rgba(255,60,0,.30),0 1px 2px rgba(0,0,0,.5);
+  animation:flameFlick 1.5s ease-in-out infinite;animation-delay:calc(var(--i)*.14s);
+}
+@keyframes flameFlick{
+  0%,100%{opacity:1;transform:translateY(1px) scaleY(1)}
+  20%{opacity:.9;transform:translateY(0px) scaleY(1.06)}
+  45%{opacity:1;transform:translateY(1px) scaleY(.97)}
+  70%{opacity:.94;transform:translateY(0px) scaleY(1.04)}
+}
 
 /* ===== 页面转场：顶级体验（打开 / 返回统一过渡） ===== */
 /* 备用方案（不支持 View Transitions 的浏览器）：进入页滑动淡入 */
@@ -451,10 +483,10 @@ body.show-god .stage{max-width:680px;}
 }
 /* View Transitions：旧页淡出左滑、新页淡入右进，丝滑切换 */
 ::view-transition-old(root){
-  animation:vtOut .24s ease-in both;
+  animation:vtOut .18s ease-out both;
 }
 ::view-transition-new(root){
-  animation:vtIn .3s ease-out both;
+  animation:vtIn .32s ease-out both;
 }
 @keyframes vtOut{
   from{opacity:1;}
@@ -504,7 +536,7 @@ body.show-god .stage{max-width:680px;}
 .rate-line{display:flex;justify-content:space-between;align-items:baseline;padding:3px 2px;border-bottom:1px solid rgba(109,99,84,.1);}
 .rate-line:last-child{border-bottom:none;}
 .rate-line .rl{font-size:12px;color:#cfc4a8;}
-.rate-line b{font-size:14px;color:#E0B900;font-weight:500;font-variant-numeric:tabular-nums;}
+.rate-line b{font-size:14px;color:#C9A24B;font-weight:500;font-variant-numeric:tabular-nums;}
 .sys-strip{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 4px;-webkit-overflow-scrolling:touch;}
 .sys-strip .pick{flex:0 0 auto;width:46px;height:46px;}
 /* 选择面板内的小凹槽 */
@@ -539,9 +571,9 @@ body.show-god .stage{max-width:680px;}
 /* 天神总属性两列 */
 #god-attrs .c-row,#god-attrs2 .c-row{padding:2px 0;}
 #god-attrs .c-pair .cl,#god-attrs2 .c-pair .cl{font-size:12px;color:#ffffff;}
-#god-attrs .c-pair .cv,#god-attrs2 .c-pair .cv{font-size:13px;color:#E0B900;}
+#god-attrs .c-pair .cv,#god-attrs2 .c-pair .cv{font-size:13px;color:#C9A24B;}
 /* 「天神总属性」「可转化属性」标题：居中 + 与属性页标题同色 */
-#god-formation .sys-title.god-at-title{justify-content:center;color:#E0B900;}
+#god-formation .sys-title.god-at-title{justify-content:center;color:#C9A24B;}
 
 /* ===== 天神页两栏布局 ===== */
 .god-frame{
@@ -603,7 +635,7 @@ body.show-god .stage{max-width:680px;}
 }
 .picker.show{transform:translateY(0);}
 .picker-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:6px;border-bottom:1px solid rgba(109,99,84,.2);}
-.picker-head span{font-size:13px;color:#e7e1d2;letter-spacing:1px;}
+.picker-head span{font-size:13px;color:var(--text-hi);letter-spacing:1px;}
 .picker-close{background:transparent;border:none;color:#8a8375;font-size:18px;padding:0 2px;cursor:pointer;}
 .picker-grid{display:flex;flex-wrap:wrap;gap:8px;padding-top:8px;overflow-y:auto;}
 .picker-grid .pick{width:48px;height:48px;}
@@ -809,15 +841,15 @@ body.show-god .stage{max-width:680px;}
 .tr-dungeons::-webkit-scrollbar{display:none;}
 .tr-dun{flex:0 0 auto;width:96px;border:1px solid #6D6354;border-radius:6px;padding:5px 6px;text-align:center;
   background:linear-gradient(180deg,#1E1C1B,#171412);cursor:pointer;position:relative;transition:border-color .15s,box-shadow .15s;}
-.tr-dun.on{border-color:#E0B900;box-shadow:0 0 8px rgba(224,185,0,.35),inset 0 0 6px rgba(224,185,0,.12);}
+.tr-dun.on{border-color:#C9A24B;box-shadow:0 0 8px rgba(201,162,75,.35),inset 0 0 6px rgba(201,162,75,.12);}
 .tr-dun-name{font-size:12px;color:#fff;letter-spacing:1px;margin-bottom:2px;}
 .tr-dun-lv{font-size:10px;color:#8a8375;}
-.tr-dun-tag{display:inline-block;margin-top:3px;font-size:9px;color:#E0B900;border:1px solid rgba(224,185,0,.4);border-radius:3px;padding:0 4px;}
+.tr-dun-tag{display:inline-block;margin-top:3px;font-size:9px;color:#C9A24B;border:1px solid rgba(201,162,75,.4);border-radius:3px;padding:0 4px;}
 /* 战斗场景 */
 .tr-battle{border:1px solid #5A5550;border-radius:6px;overflow:hidden;background:linear-gradient(180deg,#171311,#0d0b0a);}
-.tr-scene{position:relative;height:200px;overflow:hidden;--dust:224,185,0;
+.tr-scene{position:relative;height:200px;overflow:hidden;--dust:201,162,75;
   background:
-  radial-gradient(120px 90px at 70% 22%,rgba(224,185,0,.10),transparent 60%),
+  radial-gradient(120px 90px at 70% 22%,rgba(201,162,75,.10),transparent 60%),
   radial-gradient(160px 120px at 30% 20%,rgba(120,40,160,.14),transparent 65%),
   linear-gradient(180deg,#0e0b0a,#16110e);transition:background 1.2s ease;}
 /* 副本专属氛围：漂浮粒子层（纯CSS，随副本变色） */
@@ -870,10 +902,10 @@ body.show-god .stage{max-width:680px;}
 @keyframes trDebris{0%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1;}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.1) rotate(var(--r));opacity:0;}}
 .tr-monhead{position:absolute;left:50%;top:6px;transform:translateX(calc(-50% + 50px));display:flex;gap:6px;align-items:center;z-index:2;white-space:nowrap;}
 .tr-mon-name{font-size:12px;color:#fff;letter-spacing:1px;text-shadow:0 1px 2px #000;}
-.tr-mon-lv{font-size:10px;color:#E0B900;}
+.tr-mon-lv{font-size:10px;color:#C9A24B;}
 .tr-scene .tr-bar{position:absolute;left:50%;top:26px;transform:translateX(calc(-50% + 50px));width:150px;z-index:2;}
 .tr-bar{position:relative;height:8px;border:1px solid #3a342c;border-radius:4px;overflow:hidden;background:#0c0a08;}
-.tr-bar-fill{height:100%;width:100%;border-radius:3px;background:linear-gradient(180deg,#ff5c3d,#b82012);transition:width .18s ease;}
+.tr-bar-fill{height:100%;width:100%;border-radius:3px;background:linear-gradient(180deg,#ff5c3d,#b82012);box-shadow:inset 0 1px 0 rgba(255,255,255,.28);transition:width .18s ease;}   /* 顶部光泽 */
 .tr-bar-fill.low{background:linear-gradient(180deg,#ff3d2c,#7c0e05);}
 .tr-bar-txt{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;text-shadow:0 1px 1px #000;font-variant-numeric:tabular-nums;}
 /* 角色状态 */
@@ -885,7 +917,7 @@ body.show-god .stage{max-width:680px;}
 .tr-buff img{width:20px;height:20px;object-fit:contain;filter:drop-shadow(0 0 4px rgba(80,220,150,.85));}
 .tr-buff .tm{position:absolute;left:50%;top:100%;transform:translateX(-50%);font-size:8px;line-height:1;color:#cfeeda;text-shadow:0 1px 2px #000;white-space:nowrap;}
 @keyframes trBuffPulse{0%,100%{filter:drop-shadow(0 0 3px rgba(80,220,150,.55));}50%{filter:drop-shadow(0 0 7px rgba(80,220,150,.95));}}
-.tr-ch-num{font-size:11px;color:#E0B900;font-variant-numeric:tabular-nums;}
+.tr-ch-num{font-size:11px;color:#C9A24B;font-variant-numeric:tabular-nums;}
 .tr-char .tr-bar.ch{flex:1;}
 .tr-char .tr-bar-fill.ch{background:linear-gradient(180deg,#4fc46a,#1e7a36);}
 /* 商店页 */
@@ -904,10 +936,10 @@ body.show-god .stage{max-width:680px;}
 .shop-row .shop-info{flex:1;min-width:0;}
 .shop-row .shop-name{font-size:12px;color:#f0e2b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .shop-row .shop-sub{font-size:10px;color:#8a8375;margin-top:2px;}
-.shop-row .shop-price{font-size:12px;color:#E0B900;white-space:nowrap;flex:0 0 auto;}
+.shop-row .shop-price{font-size:12px;color:#C9A24B;white-space:nowrap;flex:0 0 auto;}
 .shop-row .shop-sell{flex:0 0 auto;}
 .shop-row .shop-sell.btn{height:26px;padding:0 12px;font-size:11px;border-radius:5px;}
-.shop-row .shop-buy.btn{height:26px;padding:0 12px;font-size:11px;border-radius:5px;background:linear-gradient(180deg,#3a2c12,#241b08);border-color:#E0B900;color:#ffdf6b;box-shadow:0 0 6px rgba(224,185,0,.25);}
+.shop-row .shop-buy.btn{height:26px;padding:0 12px;font-size:11px;border-radius:5px;background:linear-gradient(180deg,#3a2c12,#241b08);border-color:#C9A24B;color:#D6C07A;box-shadow:0 0 6px rgba(201,162,75,.25);}
 .shop-empty{color:#8a8375;font-size:12px;text-align:center;padding:30px 0;}
 /* 离线补偿条 */
 #offline-bar{display:flex;align-items:center;gap:8px;margin:6px 0;padding:6px 10px;border:1px solid #6C6253;border-radius:6px;background:linear-gradient(180deg,#2a241d,#181411);}
@@ -916,14 +948,14 @@ body.show-god .stage{max-width:680px;}
 /* 攻击 / 挂机按钮 */
 .tr-ctl{display:flex;gap:10px;justify-content:center;padding:6px 0;background:linear-gradient(180deg,#191513,#100d0b);border:1px solid #5A5550;border-radius:6px;margin-top:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
 .tr-ctl .btn.sys-ok{flex:0 0 auto;width:auto;max-width:172px;margin:0;padding:0 30px;height:34px;letter-spacing:2px;font-size:15px;white-space:nowrap;box-sizing:border-box;}
-.tr-ctl .btn.sys-ok.on{background:linear-gradient(180deg,#3a2c12,#241b08);border-color:#E0B900;color:#ffdf6b;box-shadow:0 0 8px rgba(224,185,0,.35);}
+.tr-ctl .btn.sys-ok.on{background:linear-gradient(180deg,#3a2c12,#241b08);border-color:#C9A24B;color:#D6C07A;box-shadow:0 0 8px rgba(201,162,75,.35);}
 /* 掉落统计折叠面板 */
 .tr-stats{position:relative;margin:0 0 4px;}
 .tr-stats-bar{width:100%;display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid #6C6253;border-radius:6px;background:linear-gradient(180deg,#2a241d,#181411);cursor:pointer;color:#f0e2b8;font-size:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
-.tr-ss-ico{color:#E0B900;font-size:10px;}
+.tr-ss-ico{color:#C9A24B;font-size:10px;}
 .tr-ss-t{letter-spacing:2px;}
 .tr-ss-sum{flex:1;text-align:right;font-size:11px;color:#8a8375;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.tr-ss-caret{color:#E0B900;font-size:10px;transition:transform .25s;}
+.tr-ss-caret{color:#C9A24B;font-size:10px;transition:transform .25s;}
 .tr-stats.open .tr-ss-caret{transform:rotate(180deg);}
 .tr-stats-panel{position:absolute;left:0;right:0;top:100%;z-index:40;margin-top:4px;display:none;border:1px solid #6C6253;border-radius:6px;background:rgba(15,12,10,.98);box-shadow:0 8px 22px rgba(0,0,0,.65);padding:8px 10px;max-height:52vh;overflow-y:auto;}
 .tr-stats.open .tr-stats-panel{display:block;}
@@ -932,10 +964,10 @@ body.show-god .stage{max-width:680px;}
 .tr-ss-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
 .tr-ss-cell{display:flex;align-items:baseline;gap:6px;justify-content:center;padding:7px 4px;border:1px solid #5A5550;border-radius:5px;background:linear-gradient(180deg,#191513,#100d0b);}
 .tr-ss-cell b{font-size:15px;color:#fff;font-variant-numeric:tabular-nums;}
-.tr-ss-cell b.g{color:#E0B900;}
+.tr-ss-cell b.g{color:#C9A24B;}
 .tr-ss-cell b.r{color:#ffd700;}
 .tr-ss-cell i{font-style:normal;font-size:10px;color:#8a8375;}
-.tr-ss-sub{margin:9px 2px 5px;font-size:11px;color:#E0B900;letter-spacing:2px;border-bottom:1px solid rgba(224,185,0,.2);padding-bottom:3px;}
+.tr-ss-sub{margin:9px 2px 5px;font-size:11px;color:#C9A24B;letter-spacing:2px;border-bottom:1px solid rgba(201,162,75,.2);padding-bottom:3px;}
 .tr-ss-dun{display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:11px;color:#f0e2b8;}
 .tr-ss-dun span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tr-ss-dun em{font-style:normal;font-size:10px;color:#8a8375;}
@@ -961,16 +993,16 @@ body.show-god .stage{max-width:680px;}
 @keyframes trSpin{to{transform:rotate(360deg);}}
 @keyframes trPulse{0%,100%{opacity:.45;transform:scale(.85);}50%{opacity:1;transform:scale(1.18);}}
 /* Boss 战利品结算条 */
-.tr-loot{position:fixed;left:50%;top:18%;transform:translateX(-50%);width:min(300px,86vw);z-index:60;border:1px solid #E0B900;border-radius:8px;background:linear-gradient(180deg,rgba(22,17,10,.97),rgba(12,9,6,.98));box-shadow:0 0 34px rgba(224,185,0,.45),inset 0 0 18px rgba(224,185,0,.08);padding:10px 12px;animation:trLootIn .4s ease;}
+.tr-loot{position:fixed;left:50%;top:18%;transform:translateX(-50%);width:min(300px,86vw);z-index:60;border:1px solid #C9A24B;border-radius:8px;background:linear-gradient(180deg,rgba(22,17,10,.97),rgba(12,9,6,.98));box-shadow:0 0 34px rgba(201,162,75,.45),inset 0 0 18px rgba(201,162,75,.08);padding:10px 12px;animation:trLootIn .4s ease;}
 @keyframes trLootIn{0%{opacity:0;transform:translateX(-50%) scale(.7);}100%{opacity:1;transform:translateX(-50%) scale(1);}}
 .tr-loot.out{transition:opacity .5s,transform .5s;opacity:0;transform:translateX(-50%) translateY(-18px);}
-.tr-loot-title{text-align:center;font-size:16px;font-weight:bold;letter-spacing:8px;color:#E0B900;text-shadow:0 0 14px rgba(255,200,0,.65);margin-bottom:8px;}
+.tr-loot-title{text-align:center;font-size:16px;font-weight:bold;letter-spacing:8px;color:#C9A24B;text-shadow:0 0 14px rgba(255,200,0,.65);margin-bottom:8px;}
 .tr-loot-body{max-height:42vh;overflow-y:auto;}
 .tr-loot-body::-webkit-scrollbar{width:4px;}
 .tr-loot-body::-webkit-scrollbar-thumb{background:#3a342c;border-radius:2px;}
 .tr-loot-item{display:flex;align-items:center;gap:8px;padding:4px 6px;font-size:12px;color:#f0e2b8;opacity:0;animation:trLootRow .35s ease forwards;border-bottom:1px dashed rgba(145,138,95,.22);}
 .tr-loot-item:last-child{border-bottom:none;}
-.tr-loot-item i{width:5px;height:5px;border-radius:50%;background:#E0B900;box-shadow:0 0 6px #E0B900;flex:0 0 auto;}
+.tr-loot-item i{width:5px;height:5px;border-radius:50%;background:#C9A24B;box-shadow:0 0 6px #C9A24B;flex:0 0 auto;}
 @keyframes trLootRow{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:translateX(0);}}
 /* 掉落动画 */
 .tr-drop{position:absolute;top:-26px;width:34px;height:34px;display:flex;align-items:center;justify-content:center;
@@ -988,12 +1020,12 @@ body.show-god .stage{max-width:680px;}
 .tr-log::-webkit-scrollbar{width:4px;}
 .tr-log::-webkit-scrollbar-thumb{background:#3a342c;border-radius:2px;}
 .tr-logline{color:#a89c88;animation:trLogIn .3s ease;line-height:1.7;word-break:break-word;}
-.tr-logline b{color:#E0B900;font-weight:normal;}
+.tr-logline b{color:#C9A24B;font-weight:normal;}
 .tr-logline .lg-gold{color:#ffd700;}
 .tr-logline .lg-item{color:#7ee08a;}
 .tr-logline .lg-boss{color:#ff7b5c;}
 @keyframes trLogIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
-#revive-tip,#tl-revive-tip{position:fixed;left:50%;top:44%;transform:translateX(-50%);z-index:9999;background:rgba(205,205,205,.16);color:#e7e1d2;padding:9px 20px;border-radius:8px;border:1px solid rgba(225,225,225,.28);backdrop-filter:blur(4px);font-size:14px;letter-spacing:1px;text-align:center;pointer-events:none;display:none;box-shadow:0 4px 18px rgba(0,0,0,.4);white-space:nowrap;}
+#revive-tip,#tl-revive-tip{position:fixed;left:50%;top:44%;transform:translateX(-50%);z-index:9999;background:rgba(205,205,205,.16);color:var(--text-hi);padding:9px 20px;border-radius:8px;border:1px solid rgba(225,225,225,.28);backdrop-filter:blur(4px);font-size:14px;letter-spacing:1px;text-align:center;pointer-events:none;display:none;box-shadow:0 4px 18px rgba(0,0,0,.4);white-space:nowrap;}
 /* 受击飘字 */
 .tr-float{position:absolute;font-size:15px;font-weight:bold;color:#ffd33a;text-shadow:0 0 6px rgba(255,120,30,.6);z-index:5;pointer-events:none;
   animation:trFloat 1s ease-out forwards;}
@@ -1005,8 +1037,8 @@ body.show-god .stage{max-width:680px;}
 .tr-exp-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;text-shadow:0 1px 1px #000;font-variant-numeric:tabular-nums;}
 body.show-treasure .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 副本秘境：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
 body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 无尽试炼：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
-#view-treasure .tr-battle .tr-scene{height:240px;}
-#view-trial .tr-battle .tr-scene{height:240px;}
+#view-treasure .tr-battle .tr-scene{height:240px;background:radial-gradient(150px 110px at 62% 16%,rgba(230,150,70,.18),transparent 62%),radial-gradient(150px 110px at 30% 22%,rgba(201,162,75,.10),transparent 65%),linear-gradient(180deg,#120d08,#181209);}   /* 副本秘境：暖橙氛围 */
+#view-trial .tr-battle .tr-scene{height:240px;background:radial-gradient(150px 110px at 62% 16%,rgba(205,70,45,.20),transparent 62%),radial-gradient(150px 110px at 30% 22%,rgba(201,162,75,.10),transparent 65%),linear-gradient(180deg,#130b09,#1a100c);}   /* 无尽试炼：暗红氛围 */
 #view-trial .tr-log{height:190px;}
 #view-treasure .tr-log{height:190px;}
 @keyframes trFloat{0%{opacity:0;transform:translateY(6px);}20%{opacity:1;}100%{opacity:0;transform:translateY(-22px);}}
@@ -1054,7 +1086,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .lottery-x10 #lottery-recharge{min-width:88px;font-size:13px;letter-spacing:1px;}
 .lottery-x10 .btn:active{transform:translateY(1px);}
 .lot-gold-fx{position:fixed;top:34%;left:50%;z-index:10000;pointer-events:none;opacity:0;text-align:center;}
-.lot-gold-fx .lg-gold{font-size:28px;color:#ffd93d;font-weight:700;letter-spacing:3px;text-shadow:0 0 16px #ffb700,0 0 42px rgba(255,205,0,.75);white-space:nowrap;}
+.lot-gold-fx .lg-gold{font-size:28px;color:#D6B56A;font-weight:700;letter-spacing:3px;text-shadow:0 0 16px #ffb700,0 0 42px rgba(255,205,0,.75);white-space:nowrap;}
 .lot-gold-fx .lg-gold i{font-style:normal;display:block;font-size:13px;color:#ffe9a8;font-weight:400;margin-top:2px;letter-spacing:4px;}
 .lot-gold-fx.on{animation:goldFx 1.7s cubic-bezier(.2,.6,.3,1) forwards;}
 @keyframes goldFx{0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}16%{opacity:1;transform:translate(-50%,-54%) scale(1.16);}68%{opacity:1;transform:translate(-50%,-56%) scale(1);}100%{opacity:0;transform:translate(-50%,-64%) scale(1);}}
@@ -1063,20 +1095,20 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .lot-item-fx .li-name{font-size:12px;color:#ffe9a8;margin-top:5px;text-shadow:0 0 8px rgba(255,210,100,.9);white-space:nowrap;}
 .lot-item-fx.on{animation:itemFx 1.6s cubic-bezier(.3,.7,.4,1) forwards;}
 @keyframes itemFx{0%{opacity:0;transform:translate(-50%,0) scale(.6);}12%{opacity:1;transform:translate(-50%,12%) scale(1.12);}66%{opacity:1;transform:translate(-50%,26%) scale(1);}100%{opacity:0;transform:translate(-50%,72%) scale(.85);}}
-.lottery-cost b{color:#E0B900;font-weight:600;}
+.lottery-cost b{color:#C9A24B;font-weight:600;}
   border:1px solid #8a7c66;border-radius:8px;color:#fff;cursor:pointer;}
 .drop-item{position:absolute;left:50%;top:50%;width:54px;height:54px;margin-left:-27px;margin-top:-27px;
   border-radius:12px;background:linear-gradient(#3a352f,#1F1B19);border:1px solid #8a7c66;
   display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;
-  box-shadow:0 0 16px rgba(224,185,0,.35), 0 4px 10px rgba(0,0,0,.6);z-index:8;
+  box-shadow:0 0 16px rgba(201,162,75,.35), 0 4px 10px rgba(0,0,0,.6);z-index:8;
   animation:dropFall 1.1s ease-in forwards;}
 @keyframes dropFall{0%{transform:translate(-50%,-50%) scale(.5);opacity:1;}
   55%{transform:translate(-50%,30%) scale(1.15);opacity:1;}
   100%{transform:translate(-50%,150%) scale(.85);opacity:0;}}
 .lottery-head{display:flex;justify-content:space-between;align-items:center;width:min(352px,86vw);font-size:13px;color:#d9d2c4;letter-spacing:1px;}
-.lottery-head b{color:#E0B900;font-weight:600;font-size:15px;}
+.lottery-head b{color:#C9A24B;font-weight:600;font-size:15px;}
 .lottery-head span:first-child{text-align:left;}
-.lottery-head #lottery-pity-num{color:#ffd93d;font-size:12px;font-weight:600;text-align:right;}
+.lottery-head #lottery-pity-num{color:#D6B56A;font-size:12px;font-weight:600;text-align:right;}
 /* 轴轮齿轮：在轮盘内随转，黑金属质感 */
 .wheel-gear{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:126px;height:126px;border-radius:50%;z-index:4;pointer-events:none;
   background:radial-gradient(circle, #3c3c3c, #0f0f0f 80%);
@@ -1094,18 +1126,18 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .charge-overlay{position:fixed;top:29%;left:50%;transform:translateX(-50%);width:96px;height:6px;border-radius:3px;
   background:rgba(0,0,0,.6);border:1px solid #b09a70;z-index:60;pointer-events:none;overflow:hidden;opacity:0;transition:opacity .16s;}
 .charge-overlay.on{opacity:1;}
-.charge-overlay .charge-fill{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd93d,#ff9f2b);border-radius:3px;box-shadow:0 0 8px rgba(255,200,80,.7);transition:width .1s linear;}
+.charge-overlay .charge-fill{display:block;height:100%;width:0;background:linear-gradient(90deg,#D6B56A,#ff9f2b);border-radius:3px;box-shadow:0 0 8px rgba(255,200,80,.7);transition:width .1s linear;}
 .charge-overlay .charge-txt{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);color:#ffe9b0;font-size:11px;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.9);white-space:nowrap;}
 .wheel-btn:active{transform:translate(-50%,-50%) scale(.96);}
 .wheel-wrap .wheel{box-shadow:inset 0 0 0 2px #2e2822, inset 0 0 0 8px #4c3f2e, inset 0 0 26px rgba(0,0,0,.6), inset 0 2px 5px rgba(255,240,205,.4), inset 0 -8px 13px rgba(0,0,0,.6), 0 0 0 3px #241f1a, 0 0 26px rgba(201,162,39,.3), 0 0 30px rgba(0,0,0,.6);border:5px solid #7a6a4a;}
 .lottery-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:5px 12px;max-width:322px;margin:4px auto 8px;}
 .lottery-legend .lg-item{font-size:11px;color:#cfc4ae;display:flex;align-items:center;gap:4px;white-space:nowrap;}
 .lottery-legend .lg-dot{width:8px;height:8px;border-radius:50%;flex:none;}
-.lottery-legend .lg-p{color:#ffd93d;min-width:38px;text-align:right;}
+.lottery-legend .lg-p{color:#D6B56A;min-width:38px;text-align:right;}
 .lg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:#cfc8ba;}
 .lg-dot{width:12px;height:12px;border-radius:3px;border:1px solid rgba(255,255,255,.3);}
 .lottery-log-wrap{width:min(352px,86vw);margin:2px auto 0;}   /* 与轮盘同宽对齐，左右居中 */
-.ll-title{font-size:12px;color:#E0B900;letter-spacing:2px;text-align:center;margin-bottom:6px;}
+.ll-title{font-size:12px;color:#C9A24B;letter-spacing:2px;text-align:center;margin-bottom:6px;}
 .cfetti{position:fixed;top:38%;left:50%;z-index:9999;pointer-events:none;opacity:0;border-radius:2px;
   box-shadow:0 0 5px rgba(255,255,255,.45);animation:cf 2.6s ease-out forwards;}
 @keyframes cf{
@@ -1131,7 +1163,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 #view-home{background:transparent;min-height:100vh;width:100%;box-sizing:border-box;padding:24px 12px 34px;animation:tabFadeIn .32s ease-out both;}
 @keyframes tabFadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .home-hero{position:relative;background:#ffffff;border-radius:20px;box-shadow:0 5px 16px rgba(0,0,0,.14);padding:17px 18px;display:flex;align-items:center;margin-bottom:16px;border:1px solid #ece5d4;cursor:pointer;}
-.home-hero .hh-ico{width:46px;height:46px;border-radius:14px;background:#f6efdd;border:1px solid #e6d6ae;box-shadow:inset 0 1px 0 #fff;display:flex;align-items:center;justify-content:center;flex:none;}
+.home-hero .hh-ico{width:46px;height:46px;border-radius:14px;background:#f6efdd;border:1px solid #e6d6ae;box-shadow:inset 0 1px 0 #fff, 0 0 10px rgba(201,162,75,.30);display:flex;align-items:center;justify-content:center;flex:none;}   /* 头像金色微光 */
 .home-hero .hh-ico img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;}
 .home-hero .hh-main{flex:1;margin-left:15px;min-width:0;}
 .home-hero .hh-name{font-size:21px;color:#211a10;font-weight:700;letter-spacing:2px;}
@@ -1155,7 +1187,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .forge-nav{display:flex;gap:6px;justify-content:center;padding:4px 10px 10px;}
 #view-main{max-width:360px;margin:0 auto;}   /* 物品背包：保持紧凑 360px，不受全局加宽影响 */
 .forge-tab{flex:1;max-width:82px;height:30px;border:1px solid #685F55;border-radius:6px;background:linear-gradient(180deg,#232120,#161413);color:#8a8375;font-size:14px;letter-spacing:1px;cursor:pointer;}
-.forge-tab.on{background:linear-gradient(180deg,#3a2c12,#241b08);border-color:#E0B900;color:#ffdf6b;box-shadow:0 0 8px rgba(224,185,0,.25);}
+.forge-tab.on{background:linear-gradient(180deg,#3a2c12,#241b08);border-color:#C9A24B;color:#D6C07A;box-shadow:0 0 8px rgba(201,162,75,.25);}
 .forge-body{position:relative;overflow-y:auto;}
 .forge-inline{margin:0 auto;}
 .wings-pane{min-height:300px;display:flex;align-items:center;justify-content:center;color:#8a8375;font-size:15px;letter-spacing:2px;}
@@ -1164,23 +1196,23 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .arena-body{padding:8px 10px;}
 .arena-hero{background:linear-gradient(180deg,#282a2a,#262320);border:1px solid #685F55;border-radius:8px;padding:10px 12px;margin-bottom:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
 .arena-title2{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 6px;padding:0 2px;}   /* 称号左对齐、卸下/戴上按钮右对齐 */
-.arena-title2 .atn{font-size:12px;color:#ffd93d;letter-spacing:1px;}
+.arena-title2 .atn{font-size:12px;color:#D6B56A;letter-spacing:1px;}
 .arena-title2 .atn-medal{color:#D84AA0;font-weight:600;}
 .arena-toggle{flex:none;padding:0 10px;height:22px;font-size:11px;color:#f0e2b8;background:linear-gradient(180deg,#1d1b19,#121110);border:1px solid #685F55;border-radius:4px;cursor:pointer;}
-.arena-rn{font-size:19px;color:#ffdf6b;font-weight:600;letter-spacing:3px;text-align:center;text-shadow:0 0 10px rgba(224,185,0,.35);}
+.arena-rn{font-size:19px;color:#D6C07A;font-weight:600;letter-spacing:3px;text-align:center;text-shadow:0 0 10px rgba(201,162,75,.35);}
 .arena-meta{display:flex;justify-content:space-around;margin:7px 0 8px;font-size:12px;color:#8a8375;}
 .arena-meta b{color:#f0e2b8;font-weight:400;font-variant-numeric:tabular-nums;}
 .arena-bar{height:8px;background:#161513;border-radius:4px;overflow:hidden;border:1px solid #3a342c;}
-.arena-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a97f1e,#ffdf6b);box-shadow:0 0 6px rgba(255,215,0,.5);}
+.arena-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a97f1e,#D6C07A);box-shadow:0 0 6px rgba(255,215,0,.5);}
 .arena-sec{background:linear-gradient(180deg,#262320,#1f1b19);border:1px solid #685F55;border-radius:8px;padding:8px 10px;margin-bottom:10px;}
-.arena-title{font-size:13px;color:#E0B900;letter-spacing:2px;margin-bottom:6px;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:4px;}
+.arena-title{font-size:13px;color:#C9A24B;letter-spacing:2px;margin-bottom:6px;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);padding-bottom:4px;}
 .arena-opps{display:flex;flex-direction:column;gap:6px;}
 .arena-opp{display:flex;align-items:center;gap:8px;padding:6px 8px;background:#212020;border:1px solid #3a342c;border-radius:6px;}
 .arena-opp .op-ico{width:34px;height:34px;flex:none;border-radius:6px;background:#1F1B19;border:1px solid #5E5E5E;display:flex;align-items:center;justify-content:center;color:#8a8375;font-size:17px;box-shadow:inset 0 2px 5px rgba(0,0,0,.6);}
 .arena-opp .op-info{flex:1;min-width:0;}
 .arena-opp .op-n{font-size:13px;color:#f0e2b8;}
 .arena-opp .op-r{font-size:10px;color:#8a8375;margin-top:1px;}
-.arena-opp .op-pw{font-size:10px;color:#ffdf6b;margin-top:1px;}
+.arena-opp .op-pw{font-size:10px;color:#D6C07A;margin-top:1px;}
 .arena-opp .op-n-boss{color:#D84AA0;text-shadow:0 0 8px rgba(216,74,160,.6);}
 .arena-opp.boss{border-color:#7a3f6e;background:linear-gradient(180deg,#2a2026,#1d161b);}
 .arena-opp .op-t{font-size:10px;color:#ff9a3c;margin-top:2px;}
@@ -1195,25 +1227,27 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .af-hero,.af-enemy{flex:1;text-align:center;}
 .af-n{font-size:13px;color:#f0e2b8;letter-spacing:1px;}
 .af-hp{height:10px;background:#161513;border:1px solid #3a342c;border-radius:5px;overflow:hidden;margin:5px 0;}
-.af-hp i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#8a2,#a33);transition:width .28s;}
+.af-hp i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#8a2,#a33);box-shadow:inset 0 1px 0 rgba(255,255,255,.28);transition:width .28s;}   /* 顶部光泽，与副本/试炼血条统一 */
 .af-hp.enemy i{background:linear-gradient(90deg,#5a8,#3a6);}
 .af-hpt{font-size:10px;color:#8a8375;}
 .af-vs{flex:none;font-size:22px;color:#8a8375;text-shadow:0 0 8px rgba(0,0,0,.6);}
-.af-dmg{position:absolute;top:14px;font-size:17px;color:#ff6a5a;font-weight:700;text-shadow:0 0 8px rgba(255,90,60,.8);pointer-events:none;animation:afFloat .9s ease-out forwards;}
-.af-dmg.heal{color:#ffd93d;}
+.af-dmg{position:absolute;top:14px;font-size:15px;font-weight:700;color:#ff6a5a;text-shadow:0 0 6px rgba(255,90,60,.6);pointer-events:none;animation:afFloat .9s ease-out forwards;}   /* 与 tr-float 同一伤害飘字层级 */
+.af-dmg.crit{font-size:22px;color:#ffd700;text-shadow:0 0 12px rgba(255,170,0,.95),0 0 4px #ff6600;}
+.af-dmg.heal{color:#D6B56A;}
 .af-dmg.miss{color:#8a8375;font-size:13px;}
 @keyframes afFloat{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-26px) scale(1.15);}}
 .af-wait{color:#8a8375;font-size:13px;text-align:center;padding:34px 0;letter-spacing:1px;}
 .arena-reward{display:flex;flex-direction:column;gap:6px;}
 .ar-min{font-style:normal;color:#a89d88;font-size:10px;margin-left:3px;}
 .ar-item{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:#212020;border:1px solid #3a342c;border-radius:6px;font-size:12px;color:#8a8375;}
+.ar-item.got{border-color:#d8b46a;box-shadow:0 0 10px rgba(216,180,106,.3);}   /* 已达成段位金辉光 */
 .ar-item .t{color:#f0e2b8;}
 .ar-item.done{opacity:.55;}
-.ar-item .bt{flex:none;padding:0 10px;height:24px;border-radius:5px;font-size:11px;background:linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #E0B900;color:#ffdf6b;cursor:pointer;}
+.ar-item .bt{flex:none;padding:0 10px;height:24px;border-radius:5px;font-size:11px;background:linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #C9A24B;color:#D6C07A;cursor:pointer;}
 .arena-log{background:#1f1b19;border:1px solid #685F55;border-radius:8px;padding:8px 10px;height:120px;overflow-y:auto;font-size:11px;color:#8a8375;line-height:1.7;}
 .arena-log::-webkit-scrollbar{width:4px;}
-.arena-log .t{color:#ffdf6b;}
-.arena-log .g{color:#ffd93d;}
+.arena-log .t{color:#D6C07A;}
+.arena-log .g{color:#D6B56A;}
 .arena-log .r{color:#ff6a5a;}
 .arena-log .c{color:#7CFC7C;}
 #view-gem .pgtabs{display:none;}
@@ -1232,12 +1266,12 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .quick-slot{width:36px;height:36px;border:1px solid #6c6253;background:#1f1b19;border-radius:7px;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 7px rgba(0,0,0,.6);}
 .quick-slot.empty{background:#181512;border-color:#3a352f;box-shadow:none;}
 .quick-slot img{width:28px;height:28px;}
-.quick-slot .qnum{position:absolute;right:1px;bottom:0;font-size:9px;color:#ffd93d;font-weight:700;}
+.quick-slot .qnum{position:absolute;right:1px;bottom:0;font-size:9px;color:#D6B56A;font-weight:700;}
 .ach-body{padding:8px 12px 14px;}
 .ach-sec-title{margin:10px 2px 6px;font-size:13px;letter-spacing:2px;color:#d8b46a;text-shadow:0 0 8px rgba(216,180,106,.5);}
 .ach-list{display:flex;flex-direction:column;gap:7px;}
-.ach-card{background:linear-gradient(180deg,#1d1916,#15110d);border:1px solid #3a352f;border-left:3px solid #3a352f;border-radius:9px;padding:9px 12px;}
-.ach-card.got{border-color:#6c6253;border-left:3px solid #d8b46a;background:linear-gradient(180deg,#221c15,#19130c);}
+.ach-card{background:linear-gradient(180deg,#1d1916,#15110d);border:1px solid #3a352f;border-left:3px solid #3a352f;border-radius:9px;padding:9px 12px;filter:grayscale(.6);opacity:.82;}   /* 未解锁去饱和灰 */
+.ach-card.got{border-color:#d8b46a;border-left:3px solid #f5d998;background:linear-gradient(180deg,#221c15,#19130c);box-shadow:0 0 12px rgba(216,180,106,.35);filter:none;opacity:1;}   /* 已解锁金光描边+辉光 */
 .ach-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .ach-name{font-size:18px;font-weight:700;letter-spacing:1px;color:#e8e0d0;}
 .ach-cond{font-size:11px;color:#9a8f7c;margin-top:3px;}
@@ -1248,7 +1282,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 <body>
 <div class="stage">
   <div id="view-home">
-    <div class="page-title"><span class="c1">晓</span><span class="c2">夜</span><span class="c3">之</span><span class="c4">歌</span></div>
+    <div class="page-title"><span class="flame" style="--i:0">晓</span><span class="flame" style="--i:1">夜</span><span class="flame" style="--i:2">之</span><span class="flame" style="--i:3">歌</span></div>
     <div class="home-hero">
       <div class="hh-ico"><img src="logos/头像.png" alt="头像"></div>
       <div class="hh-main">
@@ -2640,10 +2674,10 @@ function fitMoney(el, n){
 }
 function renderCurrency(){
   var gt = $('#gold-trade'), gb = $('#gold-bind');
-  gt.textContent = CURRENCY.gold.toLocaleString();
+  gt.textContent = fmtWan(CURRENCY.gold);
   gt.style.color = getCurrencyStyle(CURRENCY.gold);
   fitMoney(gt, CURRENCY.gold);
-  gb.textContent = CURRENCY.bound.toLocaleString();
+  gb.textContent = fmtWan(CURRENCY.bound);
   gb.style.color = getCurrencyStyle(CURRENCY.bound);
   fitMoney(gb, CURRENCY.bound);
   saveGame();
@@ -2731,8 +2765,10 @@ function renderAttrFloat(){
   var B=CHARACTER.base||{};
   var C={}; (CHARACTER.combat||[]).forEach(function(x){ C[x.k]=x.v; });
   var items=[['力量',B.力量],['敏捷',B.敏捷],['体质',B.体质],['精神',B.精神],['智力',B.智力],['幸运',B.幸运],
-    ['物理攻击',C['物理攻击']],['物理防御',C['物理防御']],['攻击属性',C['攻击属性']],['防御属性',C['防御属性']]];
-  body.innerHTML='<div class="af-grid2">'+items.map(function(p){ return '<div class="af-cell"><b>'+p[0]+'</b><span>'+p[1]+'</span></div>'; }).join('')+'</div>';
+    ['物理攻击',C['物理攻击']],['物理防御',C['物理防御']],['攻击属性',C['攻击属性']],['防御属性',C['防御属性']]];   /* 前10项两列 */
+  body.innerHTML='<div class="af-grid2">'+items.map(function(p){ return '<div class="af-cell"><b>'+p[0]+'</b><span>'+p[1]+'</span></div>'; }).join('')
+    +'<div class="af-cell af-full"><b>生命值</b><span>'+C['生命值']+'</span></div>'
+    +'<div class="af-cell af-full"><b>战力</b><span>'+fmtWan(rolePower())+'</span></div></div>';   /* 生命值、战力各占整行 */
 }   /* 每行两列，与属性页一致 */
 (function initAttrFloat(){
   document.addEventListener('click', function(e){ var b=e.target.closest ? e.target.closest('.g-attr-open') : null; if(b){ openAttrFloat(); } }, false);
@@ -4144,9 +4180,16 @@ function tlSpawn(){
 function tlRenderMon(){ var f=document.getElementById('tl-mon-hp'); if(f){ var p=T.monMax?T.monHp/T.monMax*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-mon-hpnum'); if(n) n.textContent=Math.max(0,T.monHp)+'/'+T.monMax; }
 function tlRenderChar(){ var f=document.getElementById('tl-ch-hp'); if(f){ var p=T.maxHp?T.hp/T.maxHp*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-ch-hpnum'); if(n) n.textContent=Math.max(0,T.hp)+'/'+T.maxHp; var lv=document.getElementById('tl-lv'); if(lv) lv.textContent='Lv.'+TR.level; }
 function tlLog(html){ var l=document.getElementById('tl-log'); if(!l) return; var d=document.createElement('div'); d.className='tl-log-line'; d.innerHTML='<span style="color:#5c5548">['+new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})+']</span>'+html; l.insertBefore(d,l.firstChild); while(l.children.length>40) l.lastChild.remove(); }
+function fmtDmg(n){
+  n = Math.round(Number(n)||0);
+  var s = n<0?'-':'', a = Math.abs(n);
+  if(a>=1e8) return s+(a/1e8).toFixed(1).replace(/\.0$/,'')+'亿';
+  if(a>=1e4) return s+(a/1e4).toFixed(1).replace(/\.0$/,'')+'万';
+  return ''+n;
+}
 function tlFloat(n,isMon,crit,miss){
   var s=document.getElementById('tl-scene'); if(!s) return;
-  var el=document.createElement('div'); el.className='tr-float'+(isMon?' mon':'')+(crit?' crit':'')+(miss?' miss':''); el.textContent=miss?'MISS':(crit?('暴击 '+n):(n===0?'0':('-'+n)));
+  var el=document.createElement('div'); el.className='tr-float'+(isMon?' mon':'')+(crit?' crit':'')+(miss?' miss':''); el.textContent=miss?'MISS':(crit?('暴击 '+fmtDmg(n)):(n===0?'0':('-'+fmtDmg(n))));
   el.style.left=isMon?(58+Math.random()*10)+'%':(5+Math.random()*12)+'%';   /* 与寻宝统一：怪物受击在怪物头上(右)、角色受击在左下角 */
   el.style.top=isMon?(44+Math.random()*10)+'%':(80+Math.random()*10)+'%';
   s.appendChild(el); setTimeout(function(){ el.remove(); },1000);
@@ -4383,6 +4426,7 @@ var ARENA_RANKS=[
  {n:'传说',min:8000000,hp:320000,atk:2300,def:950,rev:100000000}
 ];
 var ARENA_NAMES=['铁壁·雷蒙','疾风·影','狂刃·煞','赤焰·刑天','冰霜·赫兰','暗影·洛','雷霆·裁决','鬼面·魇'];
+var ARENA_COLORS=['#CD7F32','#C0C0C0','#FFD700','#D5E8F0','#C3A6FF','#D84AA0','#A56BFF'];   /* 段位色：青铜/白银/黄金/白金/钻石/王者/传说 */
 var ARENA={ score:0, win:0, lose:0, streak:0, _rank:0, titleOn:true, killBoss:0, medalOn:true, opps:[], oppIdx:-1, hpP:0, hpO:0, tP:0, tO:0, timer:null, fight:false, lastDaily:'', logs:[] };
 function arenaRank(){ for(var i=ARENA_RANKS.length-1;i>=0;i--){ if(ARENA.score>=ARENA_RANKS[i].min) return i; } return 0; }
 function arenaNext(){ var r=arenaRank()+1; return r<ARENA_RANKS.length?ARENA_RANKS[r]:null; }
@@ -4407,16 +4451,16 @@ function arenaLog(msg,cls){ ARENA.logs.unshift({t:Date.now(),m:msg,c:cls||''}); 
 function renderArena(){
   var r=arenaRank(), rk=ARENA_RANKS[r], nx=arenaNext();
   var el=$('#arena-rank'); if(el) el.textContent=rk.n;
-  if($('#arena-score')) $('#arena-score').textContent=ARENA.score;
+  if($('#arena-score')) $('#arena-score').textContent=fmtWan(ARENA.score);
   if($('#arena-streak')) $('#arena-streak').textContent=ARENA.streak;
   var tot=ARENA.win+ARENA.lose; if($('#arena-wr')) $('#arena-wr').textContent=tot?Math.round(ARENA.win/tot*100)+'%':'--';
   if($('#arena-pw')) $('#arena-pw').textContent=fmtWan(rolePower());
   var p=0; if(nx) p=Math.round((ARENA.score-rk.min)/(nx.min-rk.min)*100);
   var bar=$('#arena-progress'); if(bar) bar.style.width=Math.min(100,p)+'%';
   var tt=arenaTitle(), tr=$('#arena-title-row'), tn=$('#arena-title-name'), tb=$('#arena-title-btn');
-  if(tt){ if(tr) tr.style.display='flex'; if(tn) tn.textContent=tt.n;   /* 段位称号：仅显示名称，特性详见成就系统 */ if(tb) tb.textContent=ARENA.titleOn?'卸下':'戴上'; if(tb&&!tb.__b){ tb.__b=true; tb.addEventListener('click',function(){ ARENA.titleOn=!ARENA.titleOn; saveGame(); recalcCharacter(); renderArena(); renderCurrency(); toast(ARENA.titleOn?'已戴上'+arenaTitle().n+'称号':'已卸下'+arenaTitle().n+'称号'); }); } } else { if(tr) tr.style.display='none'; }
+  if(tt){ if(tr) tr.style.display='flex'; if(tn) tn.innerHTML='<i style="display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:1px;background:'+ARENA_COLORS[arenaRank()]+';box-shadow:0 0 6px '+ARENA_COLORS[arenaRank()]+'"></i>'+tt.n;   /* 段位称号：色条前缀+名称，特性详见成就系统 */ if(tb) tb.textContent=ARENA.titleOn?'卸下':'戴上'; if(tb&&!tb.__b){ tb.__b=true; tb.addEventListener('click',function(){ ARENA.titleOn=!ARENA.titleOn; saveGame(); recalcCharacter(); renderArena(); renderCurrency(); toast(ARENA.titleOn?'已戴上'+arenaTitle().n+'称号':'已卸下'+arenaTitle().n+'称号'); }); } } else { if(tr) tr.style.display='none'; }
   var mk=ARENA.killBoss>=1, mr=$('#arena-medal-row'), mn=$('#arena-medal-name'), mb=$('#arena-medal-btn');
-  if(mk){ if(mr) mr.style.display='flex'; if(mn) mn.textContent='徽章·万军取首级';   /* 特性详见成就系统 */ if(mb) mb.textContent=ARENA.medalOn?'卸下':'戴上'; if(mb&&!mb.__b){ mb.__b=true; mb.addEventListener('click',function(){ ARENA.medalOn=!ARENA.medalOn; saveGame(); recalcCharacter(); renderArena(); toast(ARENA.medalOn?'已戴上万军取首级徽章':'已卸下万军取首级徽章'); }); } } else { if(mr) mr.style.display='none'; }
+  if(mk){ if(mr) mr.style.display='flex'; if(mn) mn.innerHTML='<i style="display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px;vertical-align:1px;background:#D84AA0;box-shadow:0 0 6px #D84AA0"></i>徽章·万军取首级';   /* 特性详见成就系统 */ if(mb) mb.textContent=ARENA.medalOn?'卸下':'戴上'; if(mb&&!mb.__b){ mb.__b=true; mb.addEventListener('click',function(){ ARENA.medalOn=!ARENA.medalOn; saveGame(); recalcCharacter(); renderArena(); toast(ARENA.medalOn?'已戴上万军取首级徽章':'已卸下万军取首级徽章'); }); } } else { if(mr) mr.style.display='none'; }
   if(ARENA.fight===false){ var f=$('#arena-fight'); if(f&&f.getAttribute('data-end')!=='1'){ f.innerHTML='<div class="af-wait">选择对手 · 决出高下</div>'; f.removeAttribute('data-end'); } }
   if(ARENA.opps.length===0) rollOpps();
   renderArenaReward();
@@ -4468,7 +4512,7 @@ function renderArenaReward(){
   var r=arenaRank();
   var ac=['#CD7F32','#C0C0C0','#FFD700','#D5E8F0','#C3A6FF','#D84AA0','#A56BFF'];   /* 段位颜色：青铜/白银/黄金/白金/钻石/王者/传说 */
   for(var i=0;i<ARENA_RANKS.length;i++){ var rk=ARENA_RANKS[i];
-    h+='<div class="ar-item"><span style="color:'+ac[i]+'">'+rk.n+' <em class="ar-min">'+fmtWan(rk.min)+'</em></span><span class="t">'+fmtWan(rk.rev)+' 金币</span><span>'+(ARENA.score>=rk.min?'<span class="c">已达成</span>':(r===i?'当前段':'--'))+'</span></div>';
+    var _done=ARENA.score>=rk.min; h+='<div class="ar-item'+(_done?' got':'')+'"><span style="color:'+ac[i]+'">'+rk.n+' <em class="ar-min">'+fmtWan(rk.min)+'</em></span><span class="t">'+fmtWan(rk.rev)+' 金币</span><span>'+( _done?'<span class="c">已达成</span>':(r===i?'当前段':'--'))+'</span></div>';
   }
   el.innerHTML=h;
   var db=$('#arena-daily'); if(db&&!db.__b){ db.__b=true; db.addEventListener('click',function(){
@@ -4494,7 +4538,7 @@ function startFight(idx){
   ARENA.timer=setInterval(function(){ arenaStep(o,s,pInt,oInt); },60);
 }
 function setHp(w,cur,max){ var el=$('#af-hp-'+w); if(!el) return; var b=el.querySelector('i'); b.style.width=Math.max(0,Math.round(cur/max*100))+'%'; var t=$('#af-hpt-'+w); if(t) t.textContent=Math.max(0,Math.round(cur))+' / '+max; }
-function floatDmg(val,side,miss){ var f=$('#arena-fight'); if(!f) return; var d=document.createElement('div'); d.className='af-dmg'+(miss?' miss':''); d.textContent=val; d.style.left=side==='hero'?'16%':'72%'; d.style.transform='translateX(-50%)'; f.appendChild(d); setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); },950); }
+function floatDmg(val,side,miss){ var f=$('#arena-fight'); if(!f) return; var d=document.createElement('div'); d.className='af-dmg'+(miss?' miss':'')+((''+val).indexOf('暴击')>=0?' crit':''); d.textContent=val; d.style.left=side==='hero'?'16%':'72%'; d.style.transform='translateX(-50%)'; f.appendChild(d); setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); },950); }
 function arenaStep(o,s,pInt,oInt){
   if(!ARENA.fight){ if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.timer=null; } return; }
   ARENA.tP+=60; ARENA.tO+=60;
@@ -4512,13 +4556,13 @@ function playerHit(o,s){
   if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0){ var hl=Math.max(1,Math.round(dmg*0.05)); if(ARENA.hpP<s.hp){ ARENA.hpP=Math.min(s.hp,ARENA.hpP+hl); setHp('p',ARENA.hpP,s.hp); arenaHeal(hl); } }   /* 伊泰安项链：攻击5%吸血 */
   if(o.traits){ for(var ti=0;ti<o.traits.length;ti++){ var tt=o.traits[ti];
     if(tt.fx==='dmgred'||tt.fx==='armor') dmg=Math.round(dmg*(1-tt.val));   /* 对手减伤 */
-    else if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0&&ARENA.hpP>0){ ARENA.hpP-=rb; if(ARENA.hpP<0)ARENA.hpP=0; setHp('p',ARENA.hpP,s.hp); floatDmg('-'+rb,'hero',false); if(ARENA.hpP<=0) return endFight('lose',o); } }   /* 反弹 */
+    else if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0&&ARENA.hpP>0){ ARENA.hpP-=rb; if(ARENA.hpP<0)ARENA.hpP=0; setHp('p',ARENA.hpP,s.hp); floatDmg('-'+fmtDmg(rb),'hero',false); if(ARENA.hpP<=0) return endFight('lose',o); } }   /* 反弹 */
   } }
   ARENA.hpO-=dmg; setHp('o',ARENA.hpO,o.hp);
-  floatDmg((isCrit?'暴击 ':'')+dmg,'enemy',false);
+  floatDmg((isCrit?'暴击 ':'')+fmtDmg(dmg),'enemy',false);
   if(ARENA.hpO<=0) return endFight('win',o);
 }
-function arenaHeal(n){ var f=document.getElementById('arena-fight'); if(!f)return; var d=document.createElement('div'); d.className='af-dmg'; d.textContent='+'+n; d.style.color='#3dff6e'; d.style.textShadow='0 0 6px rgba(40,230,90,.7)'; d.style.left='16%'; d.style.transform='translateX(-50%)'; f.appendChild(d); setTimeout(function(){ if(d.parentNode)d.parentNode.removeChild(d); },950); }
+function arenaHeal(n){ var f=document.getElementById('arena-fight'); if(!f)return; var d=document.createElement('div'); d.className='af-dmg'; d.textContent='+'+fmtDmg(n); d.style.color='#3dff6e'; d.style.textShadow='0 0 6px rgba(40,230,90,.7)'; d.style.left='16%'; d.style.transform='translateX(-50%)'; f.appendChild(d); setTimeout(function(){ if(d.parentNode)d.parentNode.removeChild(d); },950); }
 function oppHit(o,s){
   var miss=(Math.random()*100)<(s.agi>2000?20:(s.agi>1000?10:4));
   if(miss){ floatDmg('MISS','hero',true); return; }
@@ -4532,8 +4576,8 @@ function oppHit(o,s){
   var crit=bm.crit; if(crit) dmg*=2;
   if(o.boss&&ARENA.hpO<o.hp*0.3) dmg*=2;
   if(ISET>=5){ if(crit) dmg=Math.round(dmg*0.9); dmg=Math.round(dmg*0.9); }
-  ARENA.hpP-=dmg; setHp('p',ARENA.hpP,s.hp); floatDmg((crit?'暴击 ':'')+dmg,'hero',false);
-  arenaLog('你受到 <span class="c">'+dmg+'</span> 伤害'+(crit?'（暴击）':''));
+  ARENA.hpP-=dmg; setHp('p',ARENA.hpP,s.hp); floatDmg((crit?'暴击 ':'')+fmtDmg(dmg),'hero',false);
+  arenaLog('你受到 <span class="c">'+fmtDmg(dmg)+'</span> 伤害'+(crit?'（暴击）':''));
   if(bm.lifesteal>0&&ARENA.hpO<o.hp){ ARENA.hpO=Math.min(o.hp,ARENA.hpO+Math.round(dmg*bm.lifesteal)); setHp('o',ARENA.hpO,o.hp); }   /* 对手吸血 */
   if(bm.stun){ ARENA.stunUntil=Date.now()+2000; arenaLog('对手击晕了你，2秒无法行动'); }   /* 击晕 */
   if(ARENA.hpP<=0) return endFight('lose',o);
@@ -4550,7 +4594,7 @@ function endFight(res,o){
       var sc=Math.round(5000*ratioPow), gold=Math.round(200000000*ratioPow);
       sc=Math.min(sc,50000); gold=Math.min(gold,10000000000);
       ARENA.score+=sc; CURRENCY.gold+=gold;
-      if(f){ f.setAttribute('data-end','1'); f.innerHTML='<div class="af-wait" style="color:#D84AA0;font-size:19px;letter-spacing:2px;text-shadow:0 0 12px rgba(216,74,160,.8);">万军取首级！</div><div class="af-wait" style="font-size:12px;color:#ffd93d;">击杀敌方首领 · 战力×'+ratio.toFixed(1)+'<br>+'+sc+'积分 · +'+fmtWan(gold)+'金币</div>'; }
+      if(f){ f.setAttribute('data-end','1'); f.innerHTML='<div class="af-wait" style="color:#D84AA0;font-size:19px;letter-spacing:2px;text-shadow:0 0 12px rgba(216,74,160,.8);">万军取首级！</div><div class="af-wait" style="font-size:12px;color:#D6B56A;">击杀敌方首领 · 战力×'+ratio.toFixed(1)+'<br>+'+sc+'积分 · +'+fmtWan(gold)+'金币</div>'; }
       arenaLog('击杀敌方首领 <span class="t">'+o.n+'</span>！<span class="c">+'+sc+'积分 +'+fmtWan(gold)+'金币</span>');
       checkRankUp();
     } else if(o.ri>=ARENA._rank){
@@ -4561,7 +4605,7 @@ function endFight(res,o){
       var sc=Math.round(baseS*seg*ratioPow), gold=Math.round(baseG*seg*ratioPow);
       sc=Math.max(10,Math.min(sc,3000)); gold=Math.max(100000,Math.min(gold,200000000));
       ARENA.score+=sc; CURRENCY.gold+=gold;
-      if(f){ f.setAttribute('data-end','1'); f.innerHTML='<div class="af-wait" style="color:#7CFC7C;font-size:18px;letter-spacing:2px;">决斗胜利</div><div class="af-wait" style="font-size:12px;color:#ffd93d;">'+segTxt+' · 战力×'+ratio.toFixed(1)+'<br>+'+sc+'积分 · +'+fmtWan(gold)+'金币</div>'; }
+      if(f){ f.setAttribute('data-end','1'); f.innerHTML='<div class="af-wait" style="color:#7CFC7C;font-size:18px;letter-spacing:2px;">决斗胜利</div><div class="af-wait" style="font-size:12px;color:#D6B56A;">'+segTxt+' · 战力×'+ratio.toFixed(1)+'<br>+'+sc+'积分 · +'+fmtWan(gold)+'金币</div>'; }
       arenaLog('战胜 <span class="t">'+o.n+'</span>（'+segTxt+'·战力×'+ratio.toFixed(1)+'）<span class="c">+'+sc+'积分 +'+fmtWan(gold)+'金币</span>');
       checkRankUp();
     } else {
@@ -4585,7 +4629,7 @@ function stopArenaFight(){ if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.ti
 function renderHome(){
   var ab=document.getElementById('arena-back'); if(ab&&!ab.__b){ ab.__b=true; ab.addEventListener('click',function(){ location.hash='#home'; }); }
   var n2=document.getElementById('home-name'); if(n2) n2.textContent='谜团';
-  var s2=document.getElementById('home-sub'); if(s2) s2.textContent=CHARACTER.info.cls+' · Lv.'+CHARACTER.info.level+' · 战力 '+fmtWan(rolePower());
+  var s2=document.getElementById('home-sub'); if(s2){ var _tta=arenaTitle(); var _cs=ARENA_COLORS[arenaRank()]; s2.innerHTML=CHARACTER.info.cls+' · Lv.'+CHARACTER.info.level+' · 战力 '+fmtWan(rolePower())+(_tta?('<i style="display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;background:'+_cs+';box-shadow:0 0 6px '+_cs+'"></i>'+_tta.n):''); }
   var a2=document.getElementById('home-awards'); if(a2){ var tt=arenaTitle(), tc={璀璨星钻:'#C3A6FF',荣耀王者:'#D84AA0',战神:'#A56BFF'}[tt?tt.n:''], aw=[]; if(tt&&tc) aw.push('<span style="color:'+tc+';">'+tt.n+'</span>'); if(ARENA.killBoss>=1) aw.push('<span style="color:#D84AA0;">万军取首级</span>'); a2.innerHTML=aw.join('　'); }
   var grid=document.getElementById('home-grid');
   if(grid && !grid.__b){
@@ -4755,7 +4799,7 @@ function spinWheel(idx, win, spins, durMs, x10results){
 }
 function celebrateConfetti(){
   /* 中大奖（概率<=1%）庆祝：从屏幕中部喷出彩色纸带与星点，四散飘落 */
-  var cols=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff9f68','#c56cf0','#f368e0','#20bf6b','#ffb347','#00d2ff'];
+  var cols=['#ff6b6b','#D6B56A','#6bcb77','#4d96ff','#ff9f68','#c56cf0','#f368e0','#20bf6b','#ffb347','#00d2ff'];
   for(var i=0;i<64;i++){
     var c=document.createElement('div'); c.className='cfetti';
     c.style.background=cols[Math.floor(Math.random()*cols.length)];
@@ -4788,7 +4832,7 @@ function showDrops(win, x10results){
       }, i*1100);
     });
     setTimeout(function(){
-      renderCurrency(); renderBag(); saveGame();
+      renderCurrency(); renderBag(); saveGame(); updateLotteryGold();   /* 同步剩余金币（10连抽中奖加币） */
       lotteryBusy=false;
       toast('10连抽完成，请查看获奖记录');
     }, x10results.length*1000);
@@ -4860,11 +4904,10 @@ function runLottery(charge){
 }
 function rechargeGold(){
   var mask=document.createElement('div'); mask.className='confirm-mask'; mask.id='confirm-mask';
-  mask.innerHTML='<div class="confirm-box"><div class="confirm-msg">充值非绑定金币</div><input id="recharge-input" class="recharge-input" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="15" placeholder="请输入充值金额"><div class="confirm-actions"><button class="btn cbtn c-ok">确定</button><button class="btn cbtn c-no">取消</button></div></div>';
+  mask.innerHTML='<div class="confirm-box"><div class="confirm-msg">充值非绑定金币</div><input id="recharge-input" class="recharge-input" type="text" maxlength="15" placeholder="请输入充值金额"><div class="confirm-actions"><button class="btn cbtn c-ok">确定</button><button class="btn cbtn c-no">取消</button></div></div>';
   document.body.appendChild(mask);
   var inp=mask.querySelector('#recharge-input');
   if(inp){ inp.addEventListener('focus',function(){ window.__allowNativeScroll=true; }); inp.addEventListener('blur',function(){ window.__allowNativeScroll=false; }); }
-  inp.addEventListener('input',function(){ this.value=this.value.replace(/[^0-9]/g,'').slice(0,15); });
   mask.querySelector('.c-ok').onclick=function(){ var n=parseInt(inp.value,10); if(!n||n<=0){ toast('请输入有效金额'); return; } mask.remove(); CURRENCY.gold+=n; renderCurrency(); renderGem(); updateLotteryGold(); saveGame(); toast('已充值 '+n.toLocaleString()+' 金币'); };
   mask.querySelector('.c-no').onclick=function(){ mask.remove(); };
   mask.addEventListener('click',function(e){ if(e.target===mask) mask.remove(); });
@@ -5006,7 +5049,7 @@ function lvSuppress(diff){   /* 等级压制系数：等级差≥10 触发，从
   if(a<10) return 1;
   return 10*Math.pow(2,(a-10)/5);
 }
-function fmtWan(n){ if(n>=10000){ var w=n/10000; return (w%1===0?Math.floor(w):(Math.floor(w*10)/10))+'万'; } return ''+n; }   /* 过万显示：x.x万 */
+function fmtWan(n){ if(n>=100000000){ var y=n/100000000; return (y%1===0?Math.floor(y):(Math.floor(y*10)/10))+'亿'; } if(n>=10000){ var w=n/10000; return (w%1===0?Math.floor(w):(Math.floor(w*10)/10))+'万'; } return ''+n; }   /* 过万 x.x万、过亿 x.x亿 */
 function battlePower(atk,def,hp,agi){ return Math.max(0, Math.round(atk*3 + def*2 + hp/200 + agi)); }   /* 统一战力：攻×3+防×2+血/200+敏 */
 function rolePower(){   /* 四维为基准，恒定类机制折算（属性攻防/强20减伤/伤害吸收），概率类不折 */
   var hp=parseInt(CHARACTER.combat[0].v,10)||0, atk=parseInt(CHARACTER.combat[1].v,10)||0, def=parseInt(CHARACTER.combat[5].v,10)||0;
@@ -5143,7 +5186,7 @@ function addMonthSeal(n){ try{ var j={month:monthKey(), n:getMonthSeal()+n}; loc
 
 function triggerLegendFX(){
   var flash=document.createElement('div'); flash.className='lg-flash'; document.body.appendChild(flash);
-  var cols=['#ff5e57','#ffd93d','#7cfc7c','#5bc0ff','#c86bff','#ff9a3c','#f06bb4','#a5ff90','#ff8fd9','#6fd6ff'];
+  var cols=['#ff5e57','#D6B56A','#7cfc7c','#5bc0ff','#c86bff','#ff9a3c','#f06bb4','#a5ff90','#ff8fd9','#6fd6ff'];
   for(var i=0;i<70;i++){ var c=document.createElement('div'); c.className='lg-confetti'; c.style.left=Math.random()*100+'vw'; c.style.background=cols[Math.floor(Math.random()*cols.length)]; c.style.animationDuration=(2+Math.random()*3)+'s'; c.style.animationDelay=(Math.random()*1.2)+'s'; document.body.appendChild(c); }
   var words=['运气逆天','天选之子','欧气爆棚','鸿运当头','福星高照','天命所归','神级运气','幸运之神','逆天改命','大吉大利','紫气东来','人品爆发','时来运转','福气满满','天降鸿运','无双欧皇','天命之选','财神附体','福星转世','祥瑞降临','天之骄子','欧皇附体','气运加身','吉星高照','鸿运齐天','祥云瑞气','福缘深厚','天命垂青','欧气护体','好运连连','锦鲤附体','心想事成','福运当头','紫微高照','如虎添翼','东风已至','时来天地','万象更新','一鸣惊人','名震四方','注定不凡','紫微帝星','福星入命','八方来财'];
   var sizes=[16,20,24,28,32,38];
@@ -5350,7 +5393,7 @@ function trCritRate(){
 }
 function trFloat(n,isMon,crit,miss){
   var s=document.getElementById('tr-scene'); if(!s) return;
-  var el=document.createElement('div'); el.className='tr-float'+(isMon?' mon':'')+(crit?' crit':'')+(miss?' miss':''); el.textContent=miss?'MISS':(crit?('暴击 '+n):(n===0?'0':('-'+n)));
+  var el=document.createElement('div'); el.className='tr-float'+(isMon?' mon':'')+(crit?' crit':'')+(miss?' miss':''); el.textContent=miss?'MISS':(crit?('暴击 '+fmtDmg(n)):(n===0?'0':('-'+fmtDmg(n))));
   el.style.left=isMon?(58+Math.random()*10)+'%':(5+Math.random()*12)+'%';
   el.style.top=isMon?(44+Math.random()*10)+'%':(80+Math.random()*10)+'%';
   s.appendChild(el); setTimeout(function(){ el.remove(); },1000);
@@ -5980,6 +6023,7 @@ function doReset(){
   LOTTERY_LOG = [];   /* 初始化清空抽奖记录 */
   try{ localStorage.removeItem('shenqi_lottery_log'); localStorage.removeItem('shenqi_lottery_count'); }catch(e){}
   LOTTERY_COUNT=0;
+  LOTTERY_FREE = LOTTERY_FREE_MAX; saveLotteryFree();   /* 初始化重置每日免费抽奖次数为上限 */
   renderLotteryLog();
   recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); renderCurrency();
   saveGame();
