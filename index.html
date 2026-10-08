@@ -49,16 +49,16 @@ body.show-home{align-items:flex-start;justify-content:flex-start;background:#191
 body.show-home .stage{max-width:460px;}   /* 首页：手机满宽、电脑端适中 */
 }
 /* 竞技页：加宽舞台，内容更舒展 */
-body.show-arena .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 10px);}   /* 竞技页：垂直居中，顶部安全 10px */
-body.show-ach .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 10px);}   /* 成就页：垂直居中，顶部安全 10px */
-body.show-shop .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 4px);}   /* 商店：同副本秘境垂直居中 */
+body.show-arena .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 竞技页：垂直居中，顶部安全 10px */
+body.show-ach .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 成就页：垂直居中，顶部安全 10px */
+body.show-shop .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 商店：同副本秘境垂直居中 */
 /* 神兵锻冶/万法归宗聚合页：垂直居中 + 顶部安全，内容限高内部滚动 */
-body.show-forge .stage,body.show-wanshou .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 4px);}
+body.show-forge .stage,body.show-wanshou .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}
 #view-forge .forge-body,#view-wanshou .forge-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 118px);}
 /* 属性页单独加宽 50px：窗口约 390px，主页面不受影响 */
-body.show-attrs .stage{max-width:410px;}
+body.show-attrs .stage{max-width:410px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}
 /* 抽奖页：加宽舞台容纳轮盘 */
-body.show-lottery .stage{max-width:404px;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 10px);}   /* 幸运轮盘：顶部安全 10px */
+body.show-lottery .stage{max-width:404px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 幸运轮盘：顶部安全 10px */
 /* 天神页：电脑宽屏加宽舞台以左右分栏，手机保持单列不超屏幕宽 */
 body.show-god .stage{max-width:680px;}
 @media(max-width:480px){ body.show-god .stage{max-width:100%;} }
@@ -73,6 +73,20 @@ body.show-god .stage{max-width:680px;}
 #fb-mask{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;}
 #fb-mask.show{opacity:1;pointer-events:auto;}
 #float-bag{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%);width:min(300px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:linear-gradient(180deg,#3A352F,#151210);border:1px solid #6D6354;border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.65);z-index:81;padding:8px;display:none;}
+.g-bag-attr{font-size:12px;color:#E0B900;font-weight:500;white-space:nowrap;cursor:pointer;letter-spacing:1px;}
+#attr-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%);width:min(300px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:linear-gradient(180deg,#3A352F,#151210);border:1px solid #6D6354;border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.65);z-index:81;padding:8px;display:none;color:#cfc6b8;}
+#attr-float .af-head{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 8px;border-bottom:1px solid #3a352f;font-size:14px;letter-spacing:2px;color:#E0B900;}
+#attr-float .af-x{cursor:pointer;font-size:18px;line-height:1;color:#cfc6b8;padding:0 2px;background:transparent;border:none;}
+#attr-float .af-body{padding:10px 2px 2px;}
+#attr-float .af-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 10px;margin-bottom:8px;}
+#attr-float .af-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;}   /* 与属性页一致：每行两列 */
+#attr-float .af-cell{display:flex;justify-content:space-between;font-size:12px;line-height:18px;}
+#attr-float .af-cell b{font-weight:400;color:#E0B900;letter-spacing:1px;}
+#attr-float .af-cell span{color:#f2ede4;font-weight:300;}
+#attr-float .af-div{height:1px;background:#3a352f;margin:8px 0;}
+#attr-float .af-row{display:flex;justify-content:space-between;font-size:12px;line-height:22px;}
+#attr-float .af-row b{font-weight:400;color:#E0B900;letter-spacing:1px;}
+#attr-float .af-row span{color:#f2ede4;font-weight:300;}
 #float-bag.open{display:block;}
 .fb-head{display:flex;align-items:center;justify-content:space-between;padding:0 2px 6px;border-bottom:1px solid #6D6354;margin-bottom:6px;}
 .fb-head span{font-size:15px;color:#fff;font-weight:600;letter-spacing:2px;}
@@ -622,10 +636,10 @@ body.show-god .stage{max-width:680px;}
 .tt-gold{color:rgb(244,243,1);}
 
 /* ===== 宝石页（参考旧系统：边框卡片、40px 渐变槽、绿色选中、成功率三行、分页箭头、一屏固定） ===== */
-#view-gem{width:296px;margin:0 auto;height:auto;max-height:calc(100vh - 66px);}   /* 宽度≈凹槽+边距；高度随内容到按钮结束，最多一屏 */
+#view-gem{width:296px;margin:0 auto;height:auto;}   /* 宽度≈凹槽+边距；高度随内容，超出由内容区滚动，避免 iOS 100vh 裁剪 */
 #view-gem .topbar{margin-bottom:16px;}   /* 标题与下方内容拉开间距 */
-#view-enhance{width:296px;margin:0 auto;height:auto;max-height:calc(100vh - 66px);}   /* 与宝石页同宽：凹槽与边界间距≈凹槽间距 */
-#view-refine{width:296px;margin:0 auto;height:auto;max-height:calc(100vh - 66px);}   /* 洗炼页，同强化页 */
+#view-enhance{width:296px;margin:0 auto;height:auto;}   /* 与宝石页同宽：凹槽与边界间距≈凹槽间距 */
+#view-refine{width:296px;margin:0 auto;height:auto;}   /* 洗炼页，同强化页 */
 #view-refine .gem-slotrow{justify-content:space-evenly;}
 #refine-mats-r1{margin-bottom:6px;}
 .ref-attr{font-size:10px;color:#e0b900;line-height:1.15;text-align:center;display:block;}
@@ -989,8 +1003,8 @@ body.show-god .stage{max-width:680px;}
 .tr-ch-line .tr-exp{flex:1;height:9px;border:1px solid #3a342c;border-radius:4px;overflow:hidden;background:#0c0a08;position:relative;}
 .tr-exp-fill{height:100%;background:linear-gradient(180deg,#ffd33a,#b8860b);transition:width .3s ease;}
 .tr-exp-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;text-shadow:0 1px 1px #000;font-variant-numeric:tabular-nums;}
-body.show-treasure .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 14px);}   /* 副本秘境：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
-body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justify-content:center;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 4px);}   /* 无尽试炼：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
+body.show-treasure .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 副本秘境：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
+body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;min-height:100vh;box-sizing:border-box;padding-top:calc(max(env(safe-area-inset-top,0px),26px) + 8px)}   /* 无尽试炼：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
 #view-treasure .tr-battle .tr-scene{height:240px;}
 #view-trial .tr-battle .tr-scene{height:240px;}
 #view-trial .tr-log{height:190px;}
@@ -1149,7 +1163,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 #view-achievement{width:100%;max-height:calc(100vh - env(safe-area-inset-top,0px) - 76px);overflow-y:auto;box-sizing:border-box;}   /* 计入顶部安全区 */
 .arena-body{padding:8px 10px;}
 .arena-hero{background:linear-gradient(180deg,#282a2a,#262320);border:1px solid #685F55;border-radius:8px;padding:10px 12px;margin-bottom:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
-.arena-title2{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0 6px;}
+.arena-title2{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 6px;padding:0 2px;}   /* 称号左对齐、卸下/戴上按钮右对齐 */
 .arena-title2 .atn{font-size:12px;color:#ffd93d;letter-spacing:1px;}
 .arena-title2 .atn-medal{color:#D84AA0;font-weight:600;}
 .arena-toggle{flex:none;padding:0 10px;height:22px;font-size:11px;color:#f0e2b8;background:linear-gradient(180deg,#1d1b19,#121110);border:1px solid #685F55;border-radius:4px;cursor:pointer;}
@@ -1250,7 +1264,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 
     <!-- ===== 顶栏：物品栏（白字） ===== -->
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="main-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>物品栏</h1></header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
 
     <!-- ===== 第一部分：装备面板 ===== -->
     <section class="panel equip-panel"><div id="equip" class="equip"></div></section>
@@ -1284,7 +1298,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   <!-- ===== 二级页面：神兵锻冶（聚合：强化/洗炼/宝石） ===== -->
   <div class="window sys" id="view-forge">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="forge-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>神兵锻冶</h1></header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="forge-nav">
       <button class="forge-tab on" data-tab="gem">镶嵌</button>
       <button class="forge-tab" data-tab="extract">拆卸</button>
@@ -1296,7 +1310,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   <!-- ===== 二级页面：万法归宗（聚合：天神/翅膀） ===== -->
   <div class="window sys" id="view-wanshou">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="wanshou-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>万法归宗</h1></header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="forge-nav">
       <button class="forge-tab on" data-tab="god">天神</button>
       <button class="forge-tab" data-tab="wings">翅膀</button>
@@ -1308,7 +1322,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   <!-- ===== 二级页面：竞技系统 ===== -->
   <div class="window sys" id="view-arena">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="arena-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>竞技系统</h1></header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body arena-body">
       <div class="arena-hero">
         <div class="arena-rn" id="arena-rank">青铜</div>
@@ -1343,7 +1357,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   <!-- ===== 二级页面：成就系统 ===== -->
   <div class="window sys" id="view-achievement">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="ach-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>成就系统</h1></header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body ach-body">
       <div class="ach-sec-title">段位</div>
       <div class="ach-list" id="ach-ranks"></div>
@@ -1362,7 +1376,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       </button>
       <h1>角色属性</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="attrs-body">
       <!-- 第一部分：角色信息 -->
       <div class="info-panel">
@@ -1392,7 +1406,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="enhance-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>强化</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body gem-body">
       <div class="gem-sec gem-target-sec">
         <div class="enh-name" id="enh-name"></div>
@@ -1430,7 +1444,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="refine-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>洗炼</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body gem-body">
       <div class="gem-sec gem-target-sec">
         <div class="enh-name" id="refine-name"></div>
@@ -1464,7 +1478,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="gem-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>宝石</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body gem-body">
       <div class="pgtabs"><button class="pgtab on" data-mode="embed">镶嵌</button><button class="pgtab" data-mode="extract">拆卸</button></div>
       <div class="gem-pane" id="gem-embed">
@@ -1528,7 +1542,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="god-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>天神之力</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body">
       <div class="god-head">
         <div class="god-titlebar">天神列表</div>
@@ -1606,7 +1620,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="treasure-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>副本秘境</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body">
       <div id="offline-bar" style="display:none">
         <span id="offline-txt"></span>
@@ -1655,7 +1669,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="trial-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>无尽试炼</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body">
       <div class="tl-banner" id="tl-banner">第 <b>1</b> 层</div>
       <div class="tl-best" id="tl-best"></div>
@@ -1687,7 +1701,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="shop-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>商店</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body">
       <div class="pgtabs" style="margin-bottom:6px;">
         <button class="pgtab on" data-sm="system">系统商店</button>
@@ -1708,7 +1722,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="lottery-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>幸运轮盘</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body">
       <div class="lottery-panel">
         <div class="lottery-head"><span>剩余金币：<b id="lottery-gold">0</b></span><span id="lottery-pity-num"></span></div>
@@ -2641,7 +2655,7 @@ function ensureBagBar(viewEl){
   if(!viewEl) return;
   if(viewEl.querySelector('.g-bag-bar')) return;
   var bar=document.createElement('div'); bar.className='g-bag-bar';
-  bar.innerHTML='<span class="g-bag-gold" id="g-bar-gold">金币 0</span><span class="g-bag-tit">背包</span><button class="g-bag-btn" id="g-bar-open">查看背包 (<span id="g-bar-count">0</span>)</button>';
+  bar.innerHTML='<button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn" id="g-bar-open">查看背包 (<span id="g-bar-count">0</span>)</button>';
   var top=viewEl.querySelector('.topbar');
   if(top){ top.parentNode.insertBefore(bar, top.nextSibling); }
   else { viewEl.insertBefore(bar, viewEl.firstChild); }
@@ -2649,12 +2663,13 @@ function ensureBagBar(viewEl){
   syncBagBar();
 }
 function syncBagBar(){   /* 更新所有静态背包条（按 class，避免多 view 同名 id 冲突） */
-  var c=0; for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it) c+=(it.count||1); }
+  var c=0; for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it) c++; }   /* 只计占用凹槽数，不叠加数量 */
   var gs=document.querySelectorAll('.g-bag-gold'); for(var j=0;j<gs.length;j++) gs[j].textContent='金币 '+CURRENCY.gold.toLocaleString();
   var cs=document.querySelectorAll('.g-bar-count'); for(var k=0;k<cs.length;k++) cs[k].textContent=c;
 }
 var FLOAT_TAB=0;
 function openFloatBag(){
+  closeAttrFloat();   /* 属性浮层与背包浮层互斥 */
   FLOAT_TAB=0; renderFloatBag();
   var fb=$('#float-bag'); if(fb){
     var bars=document.querySelectorAll('.g-bag-bar'), bar=null;
@@ -2684,7 +2699,7 @@ function renderFloatBag(){
   document.addEventListener('click', function(e){ var b=e.target.closest ? e.target.closest('.g-bar-open') : null; if(b){ openFloatBag(); } }, false);   /* 静态背包条：点击查看背包 */
   document.addEventListener('click', function(e){ var fb=$('#float-bag'); if(fb && fb.classList.contains('open') && !fb.contains(e.target)) closeFloatBag(); }, true);   /* capture：点击浮层外必收起 */
   var mk=$('#fb-mask'); if(mk) mk.addEventListener('click', closeFloatBag);
-  var cl=$('#fb-close'); if(cl) cl.addEventListener('click', closeFloatBag);
+  document.addEventListener('click', function(e){ var c=e.target.closest ? e.target.closest('#fb-close') : null; if(c) closeFloatBag(); }, false);   /* 委托绑定：不依赖浮层 HTML 就绪时机 */
 
   var grid=$('#fb-grid'); if(grid) grid.addEventListener('click', function(e){
     var s=e.target.closest ? e.target.closest('.slot') : null; if(!s) return;
@@ -2692,6 +2707,37 @@ function renderFloatBag(){
     if(it.type==='potion'||it.type==='sun_potion'){ doPotionAction(it,FLOAT_TAB,i); renderFloatBag(); }
     else { var x=(e.clientX||8), y=(e.clientY||8); showTooltipAt(it, Math.min(x, innerWidth-190), Math.min(y, innerHeight-160)); }
   });
+})();
+/* ============ 角色属性折叠浮层（背包条左侧"角色属性"入口，300px） ============ */
+function openAttrFloat(){
+  closeFloatBag();   /* 与背包浮层互斥 */
+  recalcCharacter();
+  renderAttrFloat();
+  var af=$('#attr-float');
+  if(af){
+    var bars=document.querySelectorAll('.g-bag-bar'), bar=null;
+    for(var i=0;i<bars.length;i++){ if(bars[i].offsetWidth>0){ bar=bars[i]; break; } }
+    af.style.top=(bar ? (bar.getBoundingClientRect().bottom+4) : 52) + 'px';
+    af.style.display='block';
+  }
+  var mk=$('#fb-mask'); if(mk) mk.classList.add('show');
+}
+function closeAttrFloat(){
+  var af=$('#attr-float'); if(af) af.style.display='none';
+  var mk=$('#fb-mask'); if(mk) mk.classList.remove('show');
+}
+function renderAttrFloat(){
+  var body=$('#af-body'); if(!body) return;
+  var B=CHARACTER.base||{};
+  var C={}; (CHARACTER.combat||[]).forEach(function(x){ C[x.k]=x.v; });
+  var items=[['力量',B.力量],['敏捷',B.敏捷],['体质',B.体质],['精神',B.精神],['智力',B.智力],['幸运',B.幸运],
+    ['物理攻击',C['物理攻击']],['物理防御',C['物理防御']],['攻击属性',C['攻击属性']],['防御属性',C['防御属性']]];
+  body.innerHTML='<div class="af-grid2">'+items.map(function(p){ return '<div class="af-cell"><b>'+p[0]+'</b><span>'+p[1]+'</span></div>'; }).join('')+'</div>';
+}   /* 每行两列，与属性页一致 */
+(function initAttrFloat(){
+  document.addEventListener('click', function(e){ var b=e.target.closest ? e.target.closest('.g-attr-open') : null; if(b){ openAttrFloat(); } }, false);
+  document.addEventListener('click', function(e){ var af=$('#attr-float'); if(af && af.style.display==='block' && !af.contains(e.target)) closeAttrFloat(); }, true);
+  document.addEventListener('click', function(e){ var c=e.target.closest ? e.target.closest('#af-close') : null; if(c) closeAttrFloat(); }, false);   /* 委托绑定：不依赖浮层 HTML 就绪时机 */
 })();
 /* ============ 点击式 Tooltip（手机：点击显示、点击其他处隐藏、防屏幕遮挡） ============ */
 var ttEl = document.getElementById('tooltip');
@@ -4564,15 +4610,16 @@ function switchWanshouTab(tab){
 }
 function mountWanshou(){
   var body=document.getElementById('wanshou-body'); if(!body) return;
-  if(!body.__m){
-    body.__m=true;
-    var god=document.getElementById('view-god');
-    if(god){ god.classList.add('forge-inline'); god.style.display='none'; body.appendChild(god);
-      var tb=god.querySelector('.topbar'); if(tb){ tb.style.display='none'; var nb=god.querySelector('.g-bag-bar'); if(nb) nb.style.display='none'; } }
-    var nav=document.querySelector('#view-wanshou .forge-nav');
-    if(nav&&!nav.__b){ nav.__b=true; nav.addEventListener('click',function(e){ var t=e.target.closest('.forge-tab'); if(t) switchWanshouTab(t.getAttribute('data-tab')); }); }
-    var bk=document.getElementById('wanshou-back'); if(bk&&!bk.__b){ bk.__b=true; bk.addEventListener('click',function(){ location.hash='#home'; }); }
+  /* 幂等重挂：每次进入都确保天神页在内容区内 + 强制 display */
+  var god=document.getElementById('view-god');
+  if(god){
+    if(god.parentNode!==body){ god.classList.add('forge-inline'); body.appendChild(god); }
+    god.style.display='none';
+    var tb=god.querySelector('.topbar'); if(tb){ tb.style.display='none'; var nb=god.querySelector('.g-bag-bar'); if(nb) nb.style.display='none'; }
   }
+  var nav=document.querySelector('#view-wanshou .forge-nav');
+  if(nav&&!nav.__b){ nav.__b=true; nav.addEventListener('click',function(e){ var t=e.target.closest('.forge-tab'); if(t) switchWanshouTab(t.getAttribute('data-tab')); }); }
+  var bk=document.getElementById('wanshou-back'); if(bk&&!bk.__b){ bk.__b=true; bk.addEventListener('click',function(){ location.hash='#home'; }); }
   switchWanshouTab(WANSHOU_TAB);
 }
 var FORGE_TAB='gem';
@@ -4593,17 +4640,18 @@ function switchForgeTab(tab){
 }
 function mountForge(){
   var body=document.getElementById('forge-body'); if(!body) return;
-  if(!body.__m){
-    body.__m=true;
-    ['view-enhance','view-refine','view-gem'].forEach(function(id){
-      var w=document.getElementById(id);
-      if(w){ w.classList.add('forge-inline'); w.style.display='none'; body.appendChild(w);
-        var tb=w.querySelector('.topbar'); if(tb){ tb.style.display='none'; var nb=w.querySelector('.g-bag-bar'); if(nb) nb.style.display='none'; } }
-    });
-    var nav=document.querySelector('#view-forge .forge-nav');
-    if(nav&&!nav.__b){ nav.__b=true; nav.addEventListener('click',function(e){ var t=e.target.closest('.forge-tab'); if(t) switchForgeTab(t.getAttribute('data-tab')); }); }
-    var bk=document.getElementById('forge-back'); if(bk&&!bk.__b){ bk.__b=true; bk.addEventListener('click',function(){ location.hash='#home'; }); }
-  }
+  /* 幂等重挂：每次进入都确保子页在内容区内 + 强制 display，避免手机端一次性移动失败后主体不显示 */
+  ['view-enhance','view-refine','view-gem'].forEach(function(id){
+    var w=document.getElementById(id);
+    if(w){
+      if(w.parentNode!==body){ w.classList.add('forge-inline'); body.appendChild(w); }
+      w.style.display='none';
+      var tb=w.querySelector('.topbar'); if(tb){ tb.style.display='none'; var nb=w.querySelector('.g-bag-bar'); if(nb) nb.style.display='none'; }
+    }
+  });
+  var nav=document.querySelector('#view-forge .forge-nav');
+  if(nav&&!nav.__b){ nav.__b=true; nav.addEventListener('click',function(e){ var t=e.target.closest('.forge-tab'); if(t) switchForgeTab(t.getAttribute('data-tab')); }); }
+  var bk=document.getElementById('forge-back'); if(bk&&!bk.__b){ bk.__b=true; bk.addEventListener('click',function(){ location.hash='#home'; }); }
   switchForgeTab(FORGE_TAB);
 }
 route.first = true;
@@ -4615,7 +4663,7 @@ window.addEventListener('hashchange', route);
 var LOTTERY=[
   {label:'谢谢参与',short:'谢谢',prob:0.14,color:'#3a352f',apply:function(){}},
   {label:'300万金币',short:'300万',prob:0.15,color:'#8a5a2b',apply:function(){CURRENCY.gold+=3000000;}},
-  {label:'全属性+10~20',short:'全属性+10~20',prob:0.107,color:'#4f7da0',apply:function(){addPerm(10+Math.floor(Math.random()*11),0);}},
+  {label:'全属性+10~50',short:'全属性+10~50',prob:0.107,color:'#4f7da0',apply:function(){this._addVal=10+Math.floor(Math.random()*41); addPerm(this._addVal,0);}},   /* 轮盘显示区间 10~50；日志/结果显示真实附加值 */
   {label:'神符碎片',short:'神符碎片',prob:0.07,color:'#e2b04f',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=1; addStackable(g); }},
   {label:'神力碎片',short:'神力碎片',prob:0.06,color:'#6fa8dc',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; addStackable(g); }},
   {label:'1亿金币',short:'1亿',prob:0.11,color:'#f2c51e',apply:function(){CURRENCY.gold+=100000000;}},
@@ -4752,7 +4800,7 @@ function showDrops(win, x10results){
   win.apply();
   updateLotteryGold();   /* 同步刷新轮盘上方剩余金币（中奖加币等） */
   lotteryLog([win]);
-  toast('抽中：'+win.label);
+  toast('抽中：'+(win._addVal!==undefined?win.label.replace(/\+\d+~\d+$/,'+'+win._addVal):win.label));
   renderCurrency(); renderBag(); saveGame();
   lotteryBusy=false;
 }
@@ -4873,7 +4921,7 @@ function buildLegend(){
 function lotteryLog(items){
   var t=new Date();
   var ts=('0'+t.getHours()).slice(-2)+':'+('0'+t.getMinutes()).slice(-2)+':'+('0'+t.getSeconds()).slice(-2);
-  LOTTERY_LOG.unshift({ts:ts, items:items.map(function(s){ return {n:s.label+(s._n>1?' ×'+s._n:''), c:s.color}; })});
+  LOTTERY_LOG.unshift({ts:ts, items:items.map(function(s){ var nm=(s._addVal!==undefined?s.label.replace(/\+\d+~\d+$/,'+'+s._addVal):s.label); return {n:nm+(s._n>1?' ×'+s._n:''), c:s.color}; })});
   if(LOTTERY_LOG.length>10) LOTTERY_LOG.length=10;   /* 仅保留最新10条 */
   try{ localStorage.setItem('shenqi_lottery_log', JSON.stringify(LOTTERY_LOG)); }catch(e){}
   renderLotteryLog();
@@ -5979,6 +6027,10 @@ bindEvents();})();
   <div class="fb-gold"><span>金币</span><b id="fb-gold">0</b></div>
   <div class="bag-tabs" id="fb-tabs"></div>
   <div class="fb-grid" id="fb-grid"></div>
+</div>
+<div id="attr-float">
+  <div class="af-head"><span>角色属性</span><button id="af-close" class="af-x" aria-label="关闭">×</button></div>
+  <div class="af-body" id="af-body"></div>
 </div>
 </body>
 </html>
