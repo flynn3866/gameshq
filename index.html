@@ -110,7 +110,7 @@ body.show-god .stage{max-width:680px;}
 /* ===== 顶栏：物品栏（白字） ===== */
 .topbar{
   display:flex;align-items:center;justify-content:center;
-  height:26px;margin-bottom:2px;position:relative;
+  height:26px;margin:10px 0 10px;position:relative;   /* 顶部返回标题条：文字与上边界、下快捷导航之间各 10px 间距 */
 }
 .topbar::before,.topbar::after{content:"";flex:1;height:1px;
   background:linear-gradient(90deg,transparent,#6D6354,transparent);}
@@ -4321,6 +4321,8 @@ function route(){
   if (god) WANSHOU_TAB='god';
   var view = home ? '#view-home' : (forge||enh||refine||gem) ? '#view-forge' : (wanshou||god) ? '#view-wanshou' : attrs ? '#view-attrs' : trs ? '#view-treasure' : shop ? '#view-shop' : lot ? '#view-lottery' : tl ? '#view-trial' : arena ? '#view-arena' : ach ? '#view-achievement' : main ? '#view-main' : '#view-home';   /* 默认首页=游戏大厅；强化/洗炼/宝石并入神兵锻冶 */
   /* 背包条静态默认显示（CSS display:flex），不随 route 显隐 */
+  var needMount = (view==='#view-forge'||view==='#view-wanshou');
+  if(needMount){ if(view==='#view-forge') mountForge(); else mountWanshou(); }   /* 先同步挂载子面板（含 move 节点）→ transition/首屏快照已含内容，规避 Safari 异步过渡竞态致子面板不显示 */
   var changed = view !== route.last;
   route.last = view;
   if (changed && !route.first){
@@ -4338,8 +4340,6 @@ function route(){
   }
   if (lot) setTimeout(function(){ renderWheel(); buildLegend(); updateLotteryGold(); loadLotteryLog(); loadLotteryCount(); updatePity(); loadLotteryFree(); }, 80);   /* 每次进入抽奖页刷新轮盘/概率图例/剩余金币/抽奖记录/保底进度/免费次数 */
   if (view==='#view-home') renderHome();   /* 显示大厅（含空 hash 默认首页）即渲染卡片 */
-  if (view==='#view-forge') mountForge();   /* 神兵锻冶：把强化/洗炼/宝石移入内容区并切到当前 tab */
-  if (view==='#view-wanshou') mountWanshou();   /* 万法归宗：把天神页移入内容区 */
   if (view==='#view-achievement') renderAchievement();
   route.first = false;
 }
@@ -4605,7 +4605,7 @@ function switchWanshouTab(tab){
   var nav=document.querySelector('#view-wanshou .forge-nav');
   if(nav){ Array.prototype.forEach.call(nav.querySelectorAll('.forge-tab'),function(x){ x.classList.toggle('on', x.getAttribute('data-tab')===tab); }); }
   var god=document.getElementById('view-god'), wp=document.getElementById('wings-pane');
-  if(tab==='god'){ if(god){ god.style.display='block'; GOD.reset(); renderGod(); } if(wp) wp.style.display='none'; }
+  if(tab==='god'){ if(god){ god.style.display='block'; void god.offsetHeight;   /* iPhone Safari 强制重排 */ GOD.reset(); renderGod(); } if(wp) wp.style.display='none'; }
   else { if(god) god.style.display='none'; if(wp) wp.style.display='flex'; }
 }
 function mountWanshou(){
@@ -4631,7 +4631,7 @@ function switchForgeTab(tab){
   ['view-enhance','view-refine','view-gem'].forEach(function(id){ var w=document.getElementById(id); if(w) w.style.display='none'; });
   var map={gem:'view-gem',extract:'view-gem',enhance:'view-enhance',refine:'view-refine'};
   var w=document.getElementById(map[tab]); if(w){
-    w.style.display='block';
+    w.style.display='block'; void w.offsetHeight;   /* iPhone Safari：display:none→block 后强制重排，避免子面板不渲染 */
     if(tab==='gem'){ GEM.reset(); GEM.mode='embed'; renderGem(); }
     else if(tab==='extract'){ GEM.reset(); GEM.mode='extract'; renderGem(); }
     else if(tab==='enhance'){ ENH.reset(); renderEnhance(); }
@@ -4679,10 +4679,10 @@ var LOTTERY=[
 var wheelAngle=0, lotteryBusy=false;   /* lotteryBusy：轮盘转动中禁止连点 */
 var LOTTERY_LOG=[];   /* 抽奖记录（持久，保留最新10条） */
 var LOTTERY_COUNT=0;   /* 保底计数：累计100次必中一次稀有档 */
-var LOTTERY_FREE_MAX=3, LOTTERY_FREE=0;   /* 每日免费抽奖次数 */
+var LOTTERY_FREE_MAX=10, LOTTERY_FREE=0;   /* 每日免费抽奖次数 */
 function loadLotteryFree(){
   var d=new Date(), key=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
-  try{ var o=JSON.parse(localStorage.getItem('shenqi_lottery_free')||'{}'); if(o.date===key){ LOTTERY_FREE=Math.min(o.n,3); } else { LOTTERY_FREE=3; saveLotteryFree(); } }catch(e){ LOTTERY_FREE=3; }
+  try{ var o=JSON.parse(localStorage.getItem('shenqi_lottery_free')||'{}'); if(o.date===key){ LOTTERY_FREE=Math.min(o.n,10); } else { LOTTERY_FREE=10; saveLotteryFree(); } }catch(e){ LOTTERY_FREE=10; }
   updateLotteryFree();
 }
 function saveLotteryFree(){ var d=new Date(), key=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); try{ localStorage.setItem('shenqi_lottery_free', JSON.stringify({date:key,n:LOTTERY_FREE})); }catch(e){} }
