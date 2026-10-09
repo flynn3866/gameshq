@@ -4805,7 +4805,7 @@ function renderOppList(){
     var _ac=['#CD7F32','#C0C0C0','#FFD700','#D5E8F0','#C3A6FF','#D84AA0','#A56BFF'];
     var rankTxt=o.boss?(o.tier==='god'?'<span style="color:#B08CFF;text-shadow:0 0 8px rgba(150,90,255,.6);font-weight:700">传说·神级</span>':'<span style="color:#B08CFF;text-shadow:0 0 8px rgba(150,90,255,.6);font-weight:700">传说·首领</span>'):(o.rank?'<span style="color:'+_ac[Math.min(o.ri||0,_ac.length-1)]+'">'+o.rank.n+'</span>':'');
     var _fi=ARENA.fight&&ARENA.oppIdx===idx, _lk=ARENA.fight;
-    return '<div class="arena-opp'+(o.boss?' boss':'')+(_fi?' fighting':'')+'"><div class="op-ico"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 19 19 5"/><path d="M15 4h5v5l-3 2-4-4z"/><path d="M5 19l4-1-3-3z"/></svg></div><div class="op-info">'+on+'<div class="op-r">'+rankTxt+' · 难度 '+o.diff+' · 战力 '+fmtWan(oppEffectivePower(o))+' · 血 '+fmtWan(o.hp)+'</div>'+t+'</div><button class="op-btn'+(_fi?' on':'')+'" data-i="'+idx+'"'+(_lk?' disabled':'')+'>'+(_fi?'挑战中':'挑战')+'</button></div>';
+    return '<div class="arena-opp'+(o.boss?' boss':'')+(_fi?' fighting':'')+'"><div class="op-ico"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 19 19 5"/><path d="M15 4h5v5l-3 2-4-4z"/><path d="M5 19l4-1-3-3z"/></svg></div><div class="op-info">'+on+'<div class="op-r">'+rankTxt+' · 难度 '+o.diff+' · 战力 '+fmtWan(oppEffectivePower(o))+' · 血 '+fmtWan(oppEffHp(o))+'</div>'+t+'</div><button class="op-btn'+(_fi?' on':'')+'" data-i="'+idx+'"'+(_lk?' disabled':'')+'>'+(_fi?'挑战中':'挑战')+'</button></div>';
   }).join('');
   if(!el.__b){ el.__b=true; el.addEventListener('click',function(e){ var b=e.target.closest('.op-btn'); if(b&&!b.disabled) startFight(parseInt(b.getAttribute('data-i'))); }); }
 }
@@ -5409,7 +5409,17 @@ function oppEffectivePower(o){   /* 对手显示战力≈实战力：折算等�
   var tp=foeVsRoleTier(_tier, charTierIdx());  /* 阶位压制：高阶+10%伤害/低阶-10% */
   var atk=o.atk*coef*lvMul*tp.m;               /* 等效攻击：×Boss系数×等级压制×阶位伤害 */
   var def=o.def*lvMul*(1-tp.ig);               /* 等效防御：×等级压制；被高阶无视防御→略降 */
-  return Math.round(battlePower(atk, def, o.hp, s.agi));
+  var hp=o.hp*coef*lvMul*tp.m;                 /* 等效血量：与攻击同系数放大，避免显示战力虚高于血量 */
+  return Math.round(battlePower(atk, def, hp, s.agi));
+}
+function oppEffHp(o){
+  var s=arenaStat();
+  var gap=(o.level||1)-CHARACTER.info.level; var lvMul=1;
+  if(gap>=10) lvMul=lvSuppress(gap); else if(gap<=-10) lvMul=0.5;
+  var _tier=o.tier==='god'?5:(o.tier==='lord'?4:(o.boss?4:arenaTierOfRank(o.ri||0)));
+  var coef=o.boss?bossAtkCoef(_tier):1;
+  var tp=foeVsRoleTier(_tier, charTierIdx());
+  return Math.round(o.hp*coef*lvMul*tp.m);
 }
 function rolePower(){   /* 四维为基准，恒定类机制折算（属性攻防/强20减伤/伤害吸收），概率类不折 */
   var hp=parseInt(CHARACTER.combat[0].v,10)||0, atk=parseInt(CHARACTER.combat[1].v,10)||0, def=parseInt(CHARACTER.combat[5].v,10)||0;
