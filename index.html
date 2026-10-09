@@ -4326,7 +4326,8 @@ function genTraitCount(tier){   /* 特性数量按阶位：一般0~1、中等1~2
 function traitText(trs){ if(!trs||!trs.length) return ''; var a=[]; for(var i=0;i<trs.length;i++) a.push(trs[i].n); return a.join('·'); }
 function applyBossArmor(trs,hp,def,tier){ for(var i=0;i<trs.length;i++) if(trs[i].fx==='armor'){ hp=Math.round(hp*(1+0.5+0.2*tier)); def=Math.round(def*(1+0.4+0.15*tier)); break; } return {hp:hp,def:def}; }
 function traitStrength(n){ if(!n||n<=0) return 1; return 10*Math.pow(1.25,n-1); }   /* 有特性强度≥×10，特性越多越强：1个×10、2个×12.5、3个×15.6、4个×19.5、5个×24.4… */
-function bossTierOfDungeon(d){ return d>=6?5:(d>=4?3:(d>=2?2:1)); }   /* 神之幻境=神级、沙漠=传说、中段=高等将领、低段=中等将领 */
+function dungeonBossTraitStr(dungeon,n){ var ts=traitStrength(n); var cap=[2,3,5,10,0,0,0][dungeon]; if(!cap) return ts; return Math.min(ts,cap); }   /* 低阶副本Boss特性放大降权：雕俱×2、水龙×3、中段×5、传说×10、神之幻境原值 */
+function bossTierOfDungeon(d){ return d>=6?5:(d>=4?3:(d>=2?2:(d>=1?1:0))); }   /* 神之幻境=神级、高段=传说、中段=高等将领、水龙=中等、雕俱星座=一般 */
 function bossTierOfLayer(l){ return l>=100?5:(l>=70?4:(l>=40?3:(l>=20?2:1))); }
 function arenaTierOfRank(k){ return k>=6?5:(k>=5?4:(k>=4?3:(k>=2?2:1))); }
 function bossHitMods(trs, mhp){   /* Boss 攻击角色时：按特性调整伤害/效果 */
@@ -5472,10 +5473,14 @@ function trMonStats(){
   }
   var agi=TR.isBoss?Math.round(bossBase*0.5):(10+(el-1)*5);   /* 怪物敏捷：小怪=裸装el敏捷；Boss敏捷=基础属性×0.5（神级百万以上） */
   if(TR.isElite){ atk=Math.round(atk*3); mhp=Math.round(mhp*3); def=Math.round(def*3); }   /* 精英怪：攻防血×3 */
-  if(TR.isBoss&&TR.traits&&TR.traits.length){ var _ts=traitStrength(TR.traits.length); atk=Math.round(atk*_ts); mhp=Math.round(mhp*_ts); def=Math.round(def*_ts); }   /* 有特性Boss强度≥×10，特性越多越强 */
+  if(TR.isBoss&&TR.traits&&TR.traits.length){ var _ts=TR.dungeon>=6?traitStrength(TR.traits.length):dungeonBossTraitStr(TR.dungeon,TR.traits.length); atk=Math.round(atk*_ts); mhp=Math.round(mhp*_ts); def=Math.round(def*_ts); }   /* 副本Boss特性放大：低阶降权，神之幻境原值 */
   var _mPow=battlePower(atk,mhp,def,agi);   /* 叠加前怪物战力 */
-  var _mMul=TR.isBoss?(TR.bossTier>=5?1000:(TR.bossTier>=4?500:200)):5;   /* 防秒杀倍率：小怪×5，首领以下×200、首领×500、神级×1000 */
-  mhp += _mPow*_mMul;   /* 避免秒杀：生命值=原计算值+怪物战力×倍率 */
+  if(TR.isBoss && TR.dungeon<6){   /* 低阶副本Boss血量=该副本小怪血×连续倍率（随副本递增），避免战力爆炸；神之幻境保持地狱级 */
+    mhp = Math.max(mhp, Math.round(bl*5*diff*([50000,70000,100000,140000,200000,300000][TR.dungeon]||50000)));
+  } else {
+    var _mMul=TR.isBoss?(TR.bossTier>=5?1000:(TR.bossTier>=4?500:200)):5;   /* 防秒杀倍率：小怪×5，首领以下×200、首领×500、神级×1000 */
+    mhp += _mPow*_mMul;   /* 避免秒杀：生命值=原计算值+怪物战力×倍率 */
+  }
   return {atk:atk, hp:mhp, def:def, agi:agi};
 }
 /* 角色受击伤害：先被物理防御抵挡 → 属性防御再减30% → 防具伤害吸收累加抵消 */
@@ -5503,6 +5508,7 @@ function trGainExp(monLv, af, isBoss){
   else if(monLv<50){ exp=Math.round((1000+(monLv-40)/10*9000)*(0.9+af)); } /* 40~50：1000~10000 */
   else { exp=Math.round((10000+(monLv-50)/10*40000)*(0.9+af)); }          /* 50~60：1万~5万 */
   exp=Math.round(exp*Math.pow(1.1,Math.min(5,TR.dungeon))*(TR.dungeon>=6?2:1));   /* 副本难度加成：右侧高10%，神之幻境=沙漠×2 */
+  var _ov=monLv-TR.level; if(_ov>0) exp=Math.round(exp*Math.pow(1.15,Math.min(_ov,10)));   /* 越级打怪经验加成：怪物等级每高于角色1级+15%，封顶10级约×4.05（一分辛苦一分收获） */
   if(isBoss) exp*=60;   /* Boss 经验显著奖励：该副本小怪 60 倍（击杀耗时×DPS 校准） */
   if(Date.now()<SUN_UNTIL) exp*=2;   /* 太阳：打怪经验翻倍 */
   if(Date.now()<MEGA_SUN_UNTIL) exp*=5;   /* 超级大太阳：打怪经验5倍 */
