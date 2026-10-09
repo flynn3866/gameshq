@@ -1405,6 +1405,8 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="ach-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>成就系统</h1></header>
     <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body ach-body">
+      <div class="ach-sec-title">阶位 · 角色 / 怪物</div>
+      <div class="ach-list" id="ach-tiers"></div>
       <div class="ach-sec-title">段位</div>
       <div class="ach-list" id="ach-ranks"></div>
       <div class="ach-sec-title">称号</div>
@@ -1861,40 +1863,40 @@ var ITEM_BLUEPRINTS = {
   /* --- 可穿戴装备 --- */
   epicOgdenHelmet: {
     name:"史诗 奥格顿头盔", type:"helmet", img:"logos/史诗 奥格顿头盔.png",
-    enhanceLevel:0, defense:25, resistance:12, attribute:"无",
-    maxHp:500, maxVitality:500, strength:5, agility:0, constitution:5,
+    enhanceLevel:0, defense:125000, resistance:60000, attribute:"无",
+    maxHp:2500000, maxVitality:2500000, strength:25000, agility:0, constitution:25000,
     intelligence:0, spirit:0, luck:0, damageAbsorption:0,
     price:18888888, durability:"1000/1000", category:"头盔", equipLevel:55,
     gemSlots:Array(6).fill(null)
   },
   epicOgdenChest: {
     name:"史诗 奥格顿胸甲", type:"chest", img:"logos/史诗 奥格顿胸甲.png",
-    enhanceLevel:0, defense:38, resistance:18, attribute:"无",
-    maxHp:750, maxVitality:750, strength:5, agility:4, constitution:9,
+    enhanceLevel:0, defense:190000, resistance:90000, attribute:"无",
+    maxHp:3750000, maxVitality:3750000, strength:25000, agility:20000, constitution:45000,
     intelligence:0, spirit:0, luck:0, damageAbsorption:0,
     price:18888888, durability:"1200/1200", category:"胸甲", equipLevel:59,
     gemSlots:Array(6).fill(null)
   },
   epicOgdenGloves: {
     name:"史诗 奥格顿护手", type:"gloves", img:"logos/史诗 奥格顿护手.png",
-    enhanceLevel:0, defense:18, resistance:8, attribute:"无",
-    maxHp:300, maxVitality:300, strength:9, agility:0, constitution:9,
+    enhanceLevel:0, defense:90000, resistance:40000, attribute:"无",
+    maxHp:1500000, maxVitality:1500000, strength:45000, agility:0, constitution:45000,
     intelligence:0, spirit:0, luck:0, damageAbsorption:0,
     price:18888888, durability:"800/800", category:"护手", equipLevel:57,
     gemSlots:Array(6).fill(null)
   },
   epicOgdenLeggings: {
     name:"史诗 奥格顿护腿", type:"leggings", img:"logos/史诗 奥格顿护腿.png",
-    enhanceLevel:0, defense:28, resistance:14, attribute:"无",
-    maxHp:600, maxVitality:600, strength:9, agility:9, constitution:0,
+    enhanceLevel:0, defense:140000, resistance:70000, attribute:"无",
+    maxHp:3000000, maxVitality:3000000, strength:45000, agility:45000, constitution:0,
     intelligence:0, spirit:0, luck:0, damageAbsorption:0,
     price:18888888, durability:"1000/1000", category:"护腿", equipLevel:56,
     gemSlots:Array(6).fill(null)
   },
   epicOgdenBoots: {
     name:"史诗 奥格顿长鞋", type:"boots", img:"logos/史诗 奥格顿长鞋.png",
-    enhanceLevel:0, defense:20, resistance:10, attribute:"无",
-    maxHp:400, maxVitality:400, strength:0, agility:9, constitution:9,
+    enhanceLevel:0, defense:100000, resistance:50000, attribute:"无",
+    maxHp:2000000, maxVitality:2000000, strength:0, agility:45000, constitution:45000,
     intelligence:0, spirit:0, luck:0, damageAbsorption:0,
     price:18888888, durability:"900/900", category:"护鞋", equipLevel:55,
     gemSlots:Array(6).fill(null)
@@ -1941,15 +1943,15 @@ var ITEM_BLUEPRINTS = {
   },
   demonWings: {
     name:"魔翼", type:"weapon", img:"logos/魔翼.png",
-    strength:48, agility:0, constitution:0, intelligence:0, spirit:0, luck:0,
-    physicalAttack:168, attackSpeed:"最快",
+    strength:240000, agility:0, constitution:0, intelligence:0, spirit:0, luck:0,
+    physicalAttack:840000, attackSpeed:"最快",
     price:18888888, durability:"2600/2600", category:"武器", equipLevel:59,
     gemSlots:Array(5).fill(null)
   },
   legendWings: {
     name:"传说 魔翼", type:"weapon", img:"logos/魔翼.png",
-    strength:100, agility:100, constitution:100, intelligence:100, spirit:100, luck:100,
-    physicalAttack:666, attackSpeed:"最快",
+    strength:5000000, agility:5000000, constitution:5000000, intelligence:5000000, spirit:5000000, luck:5000000,
+    physicalAttack:33300000, attackSpeed:"最快",
     price:1000000000, durability:"3600/3600", category:"武器", equipLevel:80,
     gemSlots:Array(6).fill(null)
   },
@@ -2810,8 +2812,8 @@ function renderAttrFloat(){
   var C={}; (CHARACTER.combat||[]).forEach(function(x){ C[x.k]=x.v; });
   var items=[['力量',B.力量],['敏捷',B.敏捷],['体质',B.体质],['精神',B.精神],['智力',B.智力],['幸运',B.幸运],
     ['物理攻击',C['物理攻击']],['物理防御',C['物理防御']],['攻击属性',C['攻击属性']],['防御属性',C['防御属性']]];   /* 前10项两列 */
-  body.innerHTML='<div class="af-grid2">'+items.map(function(p){ return '<div class="af-cell"><b>'+p[0]+'</b><span>'+p[1]+'</span></div>'; }).join('')
-    +'<div class="af-cell af-full"><b>生命值</b><span>'+C['生命值']+'</span></div>'
+  body.innerHTML='<div class="af-grid2">'+items.map(function(p){ return '<div class="af-cell"><b>'+p[0]+'</b><span>'+fmtWan(p[1])+'</span></div>'; }).join('')
+    +'<div class="af-cell af-full"><b>生命值</b><span>'+fmtWan(C['生命值'])+'</span></div>'
     +'<div class="af-cell af-full"><b>战力</b><span>'+fmtWan(rolePower())+'</span></div></div>';   /* 生命值、战力各占整行 */
 }   /* 每行两列，与属性页一致 */
 (function initAttrFloat(){
@@ -2852,25 +2854,25 @@ function buildTooltip(item){
     if (isA){ var enhAbs=armorEnhAbs(item.enhanceLevel||0);
       if((item.damageAbsorption||0)+enhAbs>0) h+='<div class="tt-o">伤害 吸收 +'+Math.round(enhAbs*100)+'%</div>'; }   /* 强化吸收%显示 */
     h += '<div class="tt-gap"></div>';
-    if (isW){ if(item.physicalAttack!==undefined) h+='<div class="tt-y">攻击力 '+item.physicalAttack+'</div>'; h+='<div class="tt-w">攻击速度一般</div>'; }
+    if (isW){ if(item.physicalAttack!==undefined) h+='<div class="tt-y">攻击力 '+fmtWan(item.physicalAttack)+'</div>'; h+='<div class="tt-w">攻击速度一般</div>'; }
     if (isA){ var alv=item.enhanceLevel||0;
       if(alv>=15) h+='<div class="tt-purple">抗暴率 +3%</div>';
       if(alv>=18) h+='<div class="tt-purple">暴击伤害减免 +3%</div>';
       if(alv>=20) h+='<div class="tt-purple">最终伤害减免 +3%</div>';
-      if(item.defense!==undefined) h+='<div class="tt-w">防御力 '+item.defense+'</div>'; if(item.resistance!==undefined) h+='<div class="tt-w">抵抗力 '+item.resistance+'</div>'; }
+      if(item.defense!==undefined) h+='<div class="tt-w">防御力 '+fmtWan(item.defense)+'</div>'; if(item.resistance!==undefined) h+='<div class="tt-w">抵抗力 '+fmtWan(item.resistance)+'</div>'; }
     var gemAttr=(item.gemAttributes&&item.gemAttributes.additionalAttribute)||'无';
     if (gemAttr!=='无' && (isW||item.type==='chest')) h+='<div class="tt-y">'+gemAttr+' I</div>';
-    if (item.maxHp||(item.washAttrs&&item.washAttrs.生命>0)){ var rfhp=(item.washAttrs&&item.washAttrs.生命>0)?' <span class="tt-rf">+ '+item.washAttrs.生命+'</span>':''; h+='<div class="tt-y">最大生命值 + '+(item.maxHp||0)+rfhp+'</div>'; }
-    if (item.maxVitality||(item.washAttrs&&item.washAttrs.活力>0)){ var rfv=(item.washAttrs&&item.washAttrs.活力>0)?' <span class="tt-rf">+ '+item.washAttrs.活力+'</span>':''; h+='<div class="tt-y">最大活力值 + '+(item.maxVitality||0)+rfv+'</div>'; }
+    if (item.maxHp||(item.washAttrs&&item.washAttrs.生命>0)){ var rfhp=(item.washAttrs&&item.washAttrs.生命>0)?' <span class="tt-rf">+ '+fmtWan(item.washAttrs.生命)+'</span>':''; h+='<div class="tt-y">最大生命值 + '+fmtWan(item.maxHp||0)+rfhp+'</div>'; }
+    if (item.maxVitality||(item.washAttrs&&item.washAttrs.活力>0)){ var rfv=(item.washAttrs&&item.washAttrs.活力>0)?' <span class="tt-rf">+ '+fmtWan(item.washAttrs.活力)+'</span>':''; h+='<div class="tt-y">最大活力值 + '+fmtWan(item.maxVitality||0)+rfv+'</div>'; }
     ['力量','敏捷','体质','智力','精神','幸运'].forEach(function(n){
       var key={'力量':'strength','敏捷':'agility','体质':'constitution','智力':'intelligence','精神':'spirit','幸运':'luck'}[n];
-      var rf=(item.washAttrs&&item.washAttrs[n]>0)?' <span class="tt-rf">+ '+item.washAttrs[n]+'</span>':'';
-      if (item[key]||rf) h+='<div class="tt-y">'+n+' + '+(item[key]||0)+rf+'</div>';
+      var rf=(item.washAttrs&&item.washAttrs[n]>0)?' <span class="tt-rf">+ '+fmtWan(item.washAttrs[n])+'</span>':'';
+      if (item[key]||rf) h+='<div class="tt-y">'+n+' + '+fmtWan(item[key]||0)+rf+'</div>';
     });
-    if (isA && item.gemDamageAbsorption) h+='<div class="tt-y">伤害吸收 + '+item.gemDamageAbsorption+'</div>';
+    if (isA && item.gemDamageAbsorption) h+='<div class="tt-y">伤害吸收 + '+fmtWan(item.gemDamageAbsorption)+'</div>';
     if (!isJ) h+='<div class="tt-y">锻造值 230/230</div>';
     h+='<div class="tt-w">等级：'+(item.equipLevel||'—')+'</div><div class="tt-gap"></div>';
-    if (item.price!==undefined) h+='<div style="color:'+getCurrencyStyle(item.price)+'">购买价格：'+item.price.toLocaleString()+'</div>';
+    if (item.price!==undefined) h+='<div style="color:'+getCurrencyStyle(item.price)+'">购买价格：'+fmtWan(item.price)+'</div>';
     if (item.durability!==undefined) h+='<div class="tt-w">持久度：'+item.durability+'</div>';
     h+='<div class="tt-gap"></div>';
     if (item.category && !isJ) h+='<div><span class="tt-b">种类：</span><span class="tt-w">'+(isW?'双手类':'')+item.category+'</span></div>';
@@ -3021,7 +3023,7 @@ function openPicker(title, items, cb){
 function closePicker(){ pickerEl.classList.remove('show'); pickerMask.classList.remove('show'); pickerCb=null; }
 
 /* ===== 角色阶位（对应Boss阶位，按6大基础属性最高项判定） ===== */
-var CHAR_TIERS=[{n:'锐凡',m:500},{n:'半神',m:5000},{n:'神灵',m:10000},{n:'真神',m:200000},{n:'神王',m:1000000},{n:'大帝',m:50000000}];
+var CHAR_TIERS=[{n:'锐凡',m:500},{n:'半神',m:10000},{n:'神灵',m:100000},{n:'真神',m:3000000},{n:'神王',m:80000000},{n:'大帝',m:1000000000}];
 function charTierIdx(){
   var m=0; ['力量','敏捷','体质','精神','智力','幸运'].forEach(function(k){ var v=(CHARACTER.base?CHARACTER.base[k]:0)+(CHARACTER.bonus?CHARACTER.bonus[k]:0); if(v>m)m=v; });
   for(var i=CHAR_TIERS.length-1;i>=0;i--) if(m>=CHAR_TIERS[i].m) return i;
@@ -3104,6 +3106,9 @@ function recalcCharacter(){
     {k:'防御属性',v:dattr},{k:'射击防御',v:String(Math.round(pdef*0.96))},
     {k:'攻击速度',v:'最快'},{k:'移动速度',v:equipState['mount']?'神速':'最快'}
   ];
+  var _pow0=rolePower();   /* 叠加前战力（避免连锁放大） */
+  hp=(parseInt(CHARACTER.combat[0].v,10)||0)+_pow0*10000;   /* 避免秒杀：生命值=原计算值+角色战力×1万 */
+  CHARACTER.combat[0].v=String(hp);
   if (document.getElementById('view-attrs').style.display!=='none') renderAttrs();
 }
 
@@ -3150,7 +3155,7 @@ function rollRefine(n, full){
     if(used[idx]) continue;
     used[idx]=true;
     var isBig=(pool[idx]==='生命'||pool[idx]==='活力');
-    attrs[pool[idx]]=isBig?(full?(900+Math.floor(Math.random()*5)*100):(Math.floor(Math.random()*14)*100)):(full?Math.floor(70+Math.random()*30):Math.floor(Math.random()*100));   /* 生命/活力为整百 */
+    attrs[pool[idx]]=isBig?(full?(Math.round((9990000-Math.pow(Math.random(),2.5)*8990000)/100)*100):(Math.floor(Math.random()*14)*100)):(full?Math.round(9990000-Math.pow(Math.random(),2.5)*8990000):Math.floor(Math.random()*100));   /* 完整卷轴：基础属性100万~1亿、生命/活力100万~10亿(整百)，大概率接近最高；生命/活力为整百 */
     m++;
   }
   return attrs;
@@ -3188,7 +3193,7 @@ function renderRefine(){
     var parts=[];
     if(REFINE.equip && REFINE.equip.washAttrs){
       var wr=REFINE.equip.washAttrs;
-      for(var oi=0; oi<order.length; oi++){ var k=order[oi]; if(wr[k]>0) parts.push('<span>'+k+' +'+wr[k]+'</span>'); }
+      for(var oi=0; oi<order.length; oi++){ var k=order[oi]; if(wr[k]>0) parts.push('<span>'+k+' +'+fmtWan(wr[k])+'</span>'); }
     }
     $res.innerHTML=parts.join('')||'<span class="refr-none">—</span>';
   }
@@ -3625,8 +3630,8 @@ function godAttrsRows(){
   var rows=function(obj){
     var h='';
     [['力量','敏捷'],['体质','精神'],['智力','幸运'],['攻击力','防御力'],['抵抗力',null]].forEach(function(p){
-      h+='<div class="c-row"><span class="c-pair"><span class="cl">'+p[0]+'</span><span class="cv">'+obj[p[0]]+'</span></span>'
-        +(p[1]?'<span class="c-pair"><span class="cl">'+p[1]+'</span><span class="cv">'+obj[p[1]]+'</span></span>':'<span></span>')+'</div>';
+      h+='<div class="c-row"><span class="c-pair"><span class="cl">'+p[0]+'</span><span class="cv">'+fmtWan(obj[p[0]])+'</span></span>'
+        +(p[1]?'<span class="c-pair"><span class="cl">'+p[1]+'</span><span class="cv">'+fmtWan(obj[p[1]])+'</span></span>':'<span></span>')+'</div>';
     });
     return h;
   };
@@ -3970,8 +3975,8 @@ function cRows(arr){
   for (var i = 0; i < arr.length; i += 2){
     var a = arr[i], b = arr[i+1];
     h += '<div class="c-row">'
-      + '<span class="c-pair"><span class="cl">' + a.k + '</span><span class="cv">' + a.v + '</span></span>'
-      + (b ? '<span class="c-pair"><span class="cl">' + b.k + '</span><span class="cv">' + b.v + '</span></span>'
+      + '<span class="c-pair"><span class="cl">' + a.k + '</span><span class="cv">' + fmtWan(a.v) + '</span></span>'
+      + (b ? '<span class="c-pair"><span class="cl">' + b.k + '</span><span class="cv">' + fmtWan(b.v) + '</span></span>'
            : '<span></span>')
       + '</div>';
   }
@@ -3988,9 +3993,9 @@ function renderAttrs(){
       return '<span class="c-pair">'
         + '<span class="cl">' + a + '</span>'
         + '<span class="c-val3">'
-        + '<span class="base">' + (CHARACTER.base[a]||0) + '</span>'
+        + '<span class="base">' + fmtWan(CHARACTER.base[a]||0) + '</span>'
         + '<span class="plus">+</span>'
-        + '<span class="bonus">' + (CHARACTER.bonus[a]||0) + '</span>'
+        + '<span class="bonus">' + fmtWan(CHARACTER.bonus[a]||0) + '</span>'
         + '</span></span>';
     }
     return '<div class="c-row">' + cell(p[0]) + cell(p[1]) + '</div>';
@@ -4246,13 +4251,16 @@ function tlMonStats(){
   var def=Math.max(5, Math.round(bd*5*diff));     /* 防御系数5 */
   if(isBoss){   /* 试炼BOSS：统一按阶位全属性区间折算（10层中等→100层神级），与副本/竞技同口径，含每层难度 */
     var _tier=bossTierOfLayer(T.layer)||1;
-    var _trs=[[400,1000],[1000,8000],[8000,50000],[50000,500000],[500000,2000000],[2000000,100000000]];
+    var _trs=[[1000,20000],[20000,200000],[200000,2000000],[2000000,30000000],[30000000,1000000000],[1000000000,10000000000]];
     var _r=_trs[_tier]||[1000,8000];
     var _base=_r[0]+Math.random()*(_r[1]-_r[0]);
     atk=Math.max(20,Math.round(_base*0.3*diff));
     mhp=Math.max(100,Math.round(_base*6*diff));
     def=Math.max(10,Math.round(_base*0.12*diff));
   }
+  var _tAgi=isBoss?(Math.round(_base*0.5)||0):(10+(elv-1)*5);
+  var _tPow=battlePower(atk,mhp,def,_tAgi);   /* 叠加前怪物战力 */
+  mhp += _tPow*10000;   /* 避免秒杀：生命值=原计算值+怪物战力×1万 */
   return {lv:elv, atk:atk, hp:mhp, def:def, isBoss:isBoss};
 }
 function tlSpawn(){
@@ -4487,6 +4495,23 @@ function route(){
 function renderAchievement(){
   var bk=document.getElementById('ach-back'); if(bk&&!bk.__b){ bk.__b=true; bk.addEventListener('click',function(){ location.hash=''; }); }
   var rk=arenaRank(), score=ARENA.score, fmt=fmtWan;
+  var tierList=[
+    {r:'锐凡',  rm:500,        b:'一般',     br:'1000 ~ 2万'},
+    {r:'半神',  rm:10000,      b:'中等将领', br:'2万 ~ 20万'},
+    {r:'神灵',  rm:100000,     b:'高等将领', br:'20万 ~ 200万'},
+    {r:'真神',  rm:3000000,    b:'传说',     br:'200万 ~ 3000万'},
+    {r:'神王',  rm:80000000,   b:'首领',     br:'3000万 ~ 100亿'},
+    {r:'大帝',  rm:1000000000, b:'神级',     br:'100亿 ~ 1000亿'}
+  ];
+  var cTier=charTierIdx();
+  var tel2=document.getElementById('ach-tiers');
+  if(tel2){ var th='';
+    for(var ti=0;ti<tierList.length;ti++){ var tt=tierList[ti], tg=ti<=cTier;
+      th+='<div class="ach-card'+(tg?' got':'')+'"><div class="ach-top"><span class="ach-name">角色 · '+tt.r+'</span><span class="ach-name" style="color:#D8B46A">怪物 · '+tt.b+'</span></div>'
+        +'<div class="ach-cond">角色达标：最高基础属性 ≥ '+fmt(tt.rm)+'</div>'
+        +'<div class="ach-attr">怪物基础属性：'+tt.br+'</div></div>'; }
+    tel2.innerHTML=th;
+  }
   var el=document.getElementById('ach-ranks');
   if(el){
     var h='';
@@ -4531,18 +4556,18 @@ function arenaNext(){ var r=arenaRank()+1; return r<ARENA_RANKS.length?ARENA_RAN
 var ARENA_BOSSES=['深渊之主·灾厄','虚空霸主·泽维尔','炼狱魔皇·焚天','冥渊之王·噬灭','混沌魔神·始墟','末日龙王·湮星'];
 function makeBossOpp(){   /* 神级boss：基础属性200万~1亿，攻/血/防/敏按系数折算，战力随之上亿 */
   var s=arenaStat();
-  var base=2000000+Math.random()*98000000;
+  var base=1000000000+Math.random()*9000000000;   /* 神级：10亿~100亿 */
   var atk=Math.round(base*0.3), def=Math.round(base*0.12), hp=Math.round(base*6), agi=Math.round(base*0.5);
   var trs=genBossTraits(5,genTraitCount(5),genTraitCount(5));   /* 神级：7~12个特性 */
-  var ab=applyBossArmor(trs,hp,def,5); hp=ab.hp; def=ab.def;
+  var ab=applyBossArmor(trs,hp,def,5); hp=ab.hp; def=ab.def; var _bpw=battlePower(atk,def,hp,agi); hp+=_bpw*10000;   /* 神级boss避免秒杀：生命值=原计算值+战力×1万 */
   return { n:ARENA_BOSSES[Math.floor(Math.random()*ARENA_BOSSES.length)], diff:'地狱', boss:true, tier:'god', traits:trs, traitText:traitText(trs), rank:ARENA_RANKS[ARENA_RANKS.length-1], ri:ARENA_RANKS.length-1, di:8, level:(80+Math.floor(Math.random()*6)), hp:hp, atk:atk, def:def, agi:agi, pw:battlePower(atk,def,hp,agi) };
 }
 function makeLordOpp(){   /* 首领级boss：基础属性50万~200万，弱于神级（70级、4~6特性） */
   var s=arenaStat();
-  var base=500000+Math.random()*1500000;
+  var base=30000000+Math.random()*970000000;   /* 首领：3000万~10亿 */
   var atk=Math.round(base*0.3), def=Math.round(base*0.12), hp=Math.round(base*6), agi=Math.round(base*0.5);
   var trs=genBossTraits(3,genTraitCount(3),genTraitCount(3));
-  var ab=applyBossArmor(trs,hp,def,3); hp=ab.hp; def=ab.def;
+  var ab=applyBossArmor(trs,hp,def,3); hp=ab.hp; def=ab.def; var _bpw=battlePower(atk,def,hp,agi); hp+=_bpw*10000;   /* 首领boss避免秒杀：生命值=原计算值+战力×1万 */
   return { n:ARENA_BOSSES[Math.floor(Math.random()*ARENA_BOSSES.length)], diff:'地狱', boss:true, tier:'lord', traits:trs, traitText:traitText(trs), rank:ARENA_RANKS[ARENA_RANKS.length-1], ri:ARENA_RANKS.length-1, di:8, level:(70+Math.floor(Math.random()*8)), hp:hp, atk:atk, def:def, agi:agi, pw:battlePower(atk,def,hp,agi) };
 }
 function arenaTitle(){ if(ARENA.score>=ARENA_RANKS[6].min) return {n:'战神',all:500,hp:50000}; if(ARENA.score>=ARENA_RANKS[5].min) return {n:'荣耀王者',all:100,hp:10000}; if(ARENA.score>=ARENA_RANKS[4].min) return {n:'璀璨星钻',all:10,hp:1000}; return null; }
@@ -4588,6 +4613,9 @@ function makeOpp(k,c){
   var hp=Math.round(rk.hp*c), atk=Math.round(rk.atk*c), def=Math.round(rk.def*c);
   var trs=Math.random()<0.7?genBossTraits(arenaTierOfRank(k),1,3):[];   /* 按段位阶位生成1~3个特性 */
   if(trs.length){ var ab=applyBossArmor(trs,hp,def,arenaTierOfRank(k)); hp=ab.hp; def=ab.def; }
+  var _oAgi=Math.round((1+k*8)*3+10);   /* 对手自身敏捷（等级派生，不随角色属性） */
+  var _opw=battlePower(atk,def,hp,_oAgi);   /* 叠加前对手战力（用对手自身属性，避免被角色敏捷放大导致血量倒挂） */
+  hp += _opw*10000;   /* 避免秒杀：生命值=原计算值+对手战力×1万 */
   return { n:ARENA_NAMES[Math.floor(Math.random()*ARENA_NAMES.length)]+'（'+rk.n+'）', diff:diffName(c), traits:trs, traitText:traitText(trs), rank:rk, ri:k, di:c, level:(1+k*8), hp:hp, atk:atk, def:def, pw:battlePower(atk,def,hp,s.agi) };
 }
 function renderOppList(){
@@ -4597,7 +4625,7 @@ function renderOppList(){
     var on=o.boss?'<div class="op-n op-n-boss">'+o.n+'</div>':'<div class="op-n">'+o.n+'</div>';
     var _ac=['#CD7F32','#C0C0C0','#FFD700','#D5E8F0','#C3A6FF','#D84AA0','#A56BFF'];
     var rankTxt=o.boss?(o.tier==='god'?'<span style="color:#B08CFF;text-shadow:0 0 8px rgba(150,90,255,.6);font-weight:700">传说·神级</span>':'<span style="color:#B08CFF;text-shadow:0 0 8px rgba(150,90,255,.6);font-weight:700">传说·首领</span>'):(o.rank?'<span style="color:'+_ac[Math.min(o.ri||0,_ac.length-1)]+'">'+o.rank.n+'</span>':'');
-    return '<div class="arena-opp'+(o.boss?' boss':'')+'"><div class="op-ico"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 19 19 5"/><path d="M15 4h5v5l-3 2-4-4z"/><path d="M5 19l4-1-3-3z"/></svg></div><div class="op-info">'+on+'<div class="op-r">'+rankTxt+' · 难度 '+o.diff+' · 战力 '+fmtWan(o.pw)+' · 血 '+fmtWan(o.hp)+'</div>'+t+'</div><button class="op-btn" data-i="'+idx+'">挑战</button></div>';
+    return '<div class="arena-opp'+(o.boss?' boss':'')+'"><div class="op-ico"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 19 19 5"/><path d="M15 4h5v5l-3 2-4-4z"/><path d="M5 19l4-1-3-3z"/></svg></div><div class="op-info">'+on+'<div class="op-r">'+rankTxt+' · 难度 '+o.diff+' · 战力 '+fmtWan(oppEffectivePower(o))+' · 血 '+fmtWan(o.hp)+'</div>'+t+'</div><button class="op-btn" data-i="'+idx+'">挑战</button></div>';
   }).join('');
   if(!el.__b){ el.__b=true; el.addEventListener('click',function(e){ var b=e.target.closest('.op-btn'); if(b) startFight(parseInt(b.getAttribute('data-i'))); }); }
 }
@@ -5181,6 +5209,19 @@ function lvSuppress(diff){   /* 等级压制系数：等级差≥10 触发，从
 function fmtWan(n){ if(n>=100000000){ var y=n/100000000; return (y%1===0?Math.floor(y):(Math.floor(y*10)/10))+'亿'; } if(n>=10000){ var w=n/10000; return (w%1===0?Math.floor(w):(Math.floor(w*10)/10))+'万'; } return ''+n; }   /* 过万 x.x万、过亿 x.x亿 */
 function bossAtkCoef(t){ return [1,2,3.5,5,7,8][t]||1; }   /* Boss攻击阶位系数1~8：一般~神级，神级最高 */
 function battlePower(atk,def,hp,agi){ return Math.max(0, Math.round(atk*3 + def*2 + hp/200 + agi)); }   /* 统一战力：攻×3+防×2+血/200+敏 */
+function oppEffectivePower(o){   /* 对手显示战力≈实战力：折算等级压制/阶位压制/Boss系数，随角色成长实时变化 */
+  var s=arenaStat();
+  var gap=(o.level||1)-CHARACTER.info.level;   /* 等级压制：差距≥10触发 */
+  var lvMul=1;
+  if(gap>=10) lvMul=lvSuppress(gap);           /* 对手高10级：攻防被等级压制放大 */
+  else if(gap<=-10) lvMul=0.5;                 /* 对手低10级：攻防减半 */
+  var _tier=o.tier==='god'?5:(o.tier==='lord'?4:(o.boss?4:arenaTierOfRank(o.ri||0)));
+  var coef=o.boss?bossAtkCoef(_tier):1;        /* Boss攻击阶位系数（普通对手×1） */
+  var tp=foeVsRoleTier(_tier, charTierIdx());  /* 阶位压制：高阶+10%伤害/低阶-10% */
+  var atk=o.atk*coef*lvMul*tp.m;               /* 等效攻击：×Boss系数×等级压制×阶位伤害 */
+  var def=o.def*lvMul*(1-tp.ig);               /* 等效防御：×等级压制；被高阶无视防御→略降 */
+  return Math.round(battlePower(atk, def, o.hp, s.agi));
+}
 function rolePower(){   /* 四维为基准，恒定类机制折算（属性攻防/强20减伤/伤害吸收），概率类不折 */
   var hp=parseInt(CHARACTER.combat[0].v,10)||0, atk=parseInt(CHARACTER.combat[1].v,10)||0, def=parseInt(CHARACTER.combat[5].v,10)||0;
   var agi=(CHARACTER.base.敏捷||0)+(CHARACTER.bonus.敏捷||0);
@@ -5223,7 +5264,7 @@ function trMonStats(){
   }
   var bossBase=0;
   if(TR.isBoss){                                            /* Boss：全属性按阶位区间（基础属性折算攻/血/防，含特性前） */
-    var _trs=[[400,1000],[1000,8000],[8000,50000],[50000,500000],[500000,2000000],[2000000,100000000]];
+    var _trs=[[1000,20000],[20000,200000],[200000,2000000],[2000000,30000000],[30000000,1000000000],[1000000000,10000000000]];
     var _r=_trs[TR.bossTier]||[400,1000];
     bossBase=_r[0]+Math.random()*(_r[1]-_r[0]);   /* 基础属性：一般400~1000 … 神级200万~1亿 */
     atk=Math.max(20,Math.round(bossBase*0.3*diff));
@@ -5232,6 +5273,8 @@ function trMonStats(){
   }
   var agi=TR.isBoss?Math.round(bossBase*0.5):(10+(el-1)*5);   /* 怪物敏捷：小怪=裸装el敏捷；Boss敏捷=基础属性×0.5（神级百万以上） */
   if(TR.isElite){ atk=Math.round(atk*3); mhp=Math.round(mhp*3); def=Math.round(def*3); }   /* 精英怪：攻防血×3 */
+  var _mPow=battlePower(atk,mhp,def,agi);   /* 叠加前怪物战力 */
+  mhp += _mPow*10000;   /* 避免秒杀：生命值=原计算值+怪物战力×1万 */
   return {atk:atk, hp:mhp, def:def, agi:agi};
 }
 /* 角色受击伤害：先被物理防御抵挡 → 属性防御再减30% → 防具伤害吸收累加抵消 */
