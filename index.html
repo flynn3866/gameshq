@@ -4395,6 +4395,7 @@ function tlLog(html){ var l=document.getElementById('tl-log'); if(!l) return; va
 function fmtDmg(n){
   n = Math.round(Number(n)||0);
   var s = n<0?'-':'', a = Math.abs(n);
+  if(a>=1e12) return s+(a/1e12).toFixed(1).replace(/\.0$/,'')+'万亿';
   if(a>=1e8) return s+(a/1e8).toFixed(1).replace(/\.0$/,'')+'亿';
   if(a>=1e4) return s+(a/1e4).toFixed(1).replace(/\.0$/,'')+'万';
   return ''+n;
