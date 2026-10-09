@@ -407,7 +407,7 @@ body.show-god .stage{max-width:680px;}
 .attrs-panel{
   background:linear-gradient(180deg,#282A2A,#262320);
   border:1px solid #5A5550;border-radius:6px;
-  padding:4px 16px 8px;
+  padding:4px 12px 8px;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
 }
 .panel-title{
@@ -420,31 +420,31 @@ body.show-god .stage{max-width:680px;}
 }
 /* 分配属性点 / 战斗属性 统一行：两列各占一半，标题左对齐、值右对齐 */
 .c-row{
-  display:flex;align-items:center;gap:30px;
+  display:flex;align-items:center;gap:14px;
   padding:8px 0;border-bottom:1px solid rgba(109,99,84,.12);
 }
 .c-row:last-child{border-bottom:none;}
 .c-pair{
-  flex:1;display:flex;justify-content:space-between;align-items:baseline;gap:8px;
+  flex:1;display:flex;justify-content:space-between;align-items:baseline;gap:4px;min-width:0;
 }
-.c-pair .cl{font-size:13px;color:#C9A24B;font-weight:500;}
-.c-pair .cv{font-size:14px;color:#ffffff;font-weight:300;font-variant-numeric:tabular-nums;}
+.c-pair .cl{flex:none;font-size:13px;color:#C9A24B;font-weight:500;}
+.c-pair .cv{min-width:0;font-size:12px;color:#ffffff;font-weight:300;font-variant-numeric:tabular-nums;}
 /* 第二部分每列的值所在格背景铺满整列 */
 #attr-alloc .cv{
-  flex:1;
+  flex:1;min-width:0;
   background:#161618;
-  padding:2px 9px;border-radius:4px;
-  text-align:right;
+  padding:2px 8px;border-radius:4px;
+  text-align:right;white-space:nowrap;
 }
 /* 第二部分 6 属性：3 行 2 列布局不变，每个属性值格为整体背景格，内部三部分：基础 | + | 附加 */
 .c-val3{
-  flex:1;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
-  background:#161618;padding:2px 9px;border-radius:4px;
+  flex:1;min-width:0;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
+  background:#161618;padding:2px 8px;border-radius:4px;
 }
-.c-val3 .base,.c-val3 .bonus{font-size:14px;font-weight:300;font-variant-numeric:tabular-nums;}
+.c-val3 .base,.c-val3 .bonus{font-size:10px;font-weight:300;font-variant-numeric:tabular-nums;white-space:nowrap;}
 .c-val3 .base{text-align:right;color:#ffffff;}
 .c-val3 .bonus{text-align:left;color:#C9A24B;}
-.c-val3 .plus{text-align:center;color:#8a8171;font-size:12px;padding:0 6px;}
+.c-val3 .plus{text-align:center;color:#8a8171;font-size:12px;padding:0 3px;}
 .alloc-points{
   display:flex;justify-content:space-between;align-items:baseline;gap:8px;
   margin-top:2px;padding:9px 0 2px;border-top:1px solid rgba(109,99,84,.22);
@@ -1391,14 +1391,14 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div class="arena-fight" id="arena-fight">
         <div class="af-wait">选择对手 · 决出高下</div>
       </div>
+      <div class="arena-sec">
+        <div class="arena-title">战斗日志</div>
+        <div class="arena-log" id="arena-log"></div>
+      </div>
       <div class="quick-bar" id="quick-bar-arena"></div>
       <div class="arena-sec">
         <div class="arena-title">竞技奖励</div>
         <div class="arena-reward" id="arena-reward"></div>
-      </div>
-      <div class="arena-sec">
-        <div class="arena-title">战斗日志</div>
-        <div class="arena-log" id="arena-log"></div>
       </div>
     </div>
   </div>
@@ -5261,6 +5261,7 @@ function monsterSVG(color, boss){
 }
 /* 读取角色战斗属性与减伤数据（防御 + 属性防御30% + 防具伤害吸收累加） */
 function trSyncChar(){
+  if(typeof recalcCharacter==='function') recalcCharacter();   /* 同步前先重算角色属性到 combat，确保血/攻/防为最新（穿戴/药水/升级/阶位） */
   var hp=parseInt((CHARACTER.combat[0]||{}).v||153), patk=parseInt((CHARACTER.combat[1]||{}).v||65);
   var pdef=parseInt((CHARACTER.combat[5]||{}).v||30);
   TR.level=Math.max(1, CHARACTER.info.level||1);
@@ -5285,7 +5286,7 @@ function lvSuppress(diff){   /* 等级压制系数：等级差≥10 触发，从
   if(a<10) return 1;
   return 10*Math.pow(2,(a-10)/5);
 }
-function fmtWan(n){ if(n>=100000000){ var y=n/100000000; return (y%1===0?Math.floor(y):(Math.floor(y*10)/10))+'亿'; } if(n>=10000){ var w=n/10000; return (w%1===0?Math.floor(w):(Math.floor(w*10)/10))+'万'; } return ''+n; }   /* 过万 x.x万、过亿 x.x亿 */
+function fmtWan(n){ if(n>=1000000000000){ var t=n/1000000000000; return (t%1===0?Math.floor(t):(Math.floor(t*10)/10))+'万亿'; } if(n>=100000000){ var y=n/100000000; return (y%1===0?Math.floor(y):(Math.floor(y*10)/10))+'亿'; } if(n>=10000){ var w=n/10000; return (w%1===0?Math.floor(w):(Math.floor(w*10)/10))+'万'; } return ''+n; }   /* 过万 x.x万、过亿 x.x亿、过万亿 x.x万亿 */
 function bossAtkCoef(t){ return [1,2,3.5,5,7,8][t]||1; }   /* Boss攻击阶位系数1~8：一般~神级，神级最高 */
 function battlePower(atk,def,hp,agi){ return Math.max(0, Math.round(atk*3 + def*2 + hp/200 + agi)); }   /* 统一战力：攻×3+防×2+血/200+敏 */
 function oppEffectivePower(o){   /* 对手显示战力≈实战力：折算等级压制/阶位压制/Boss系数，随角色成长实时变化 */
@@ -6331,7 +6332,7 @@ renderTabs();
 renderBag();
 renderAttrs();
 renderCurrency();
-history.replaceState(null, '', location.pathname + location.search + location.hash);   /* 保留锚点，使 route() 能识别 #forge/#wanshou 等目标页（刷新/直开链接不空白） */
+history.replaceState(null, '', location.pathname + location.search);   /* 刷新/直开一律清掉锚点，回到打开主页，避免二级页刷新时数据未就绪导致数字错误 */
 route();          /* 进入主页并重算角色属性 */
 bindEvents();})();
 
