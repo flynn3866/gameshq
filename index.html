@@ -88,6 +88,17 @@ body.show-god .stage{max-width:680px;}
 /* ===== 全局背包浮层 ===== */
 #fb-mask{position:fixed;inset:0;background:rgba(0,0,0,.28);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;}   /* 遮罩淡色，不遮挡后方场景 */
 #fb-mask.show{opacity:1;pointer-events:auto;}
+#view-home{position:relative;}
+#home-settings{position:absolute;top:calc(env(safe-area-inset-top,0px) + 26px);right:12px;z-index:20;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.07);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#fff;cursor:pointer;transition:transform .2s,background .2s;box-shadow:0 2px 8px rgba(0,0,0,.28);}
+#home-settings:active{transform:scale(.92);}
+#settings-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 72px);transform:translateX(-50%) translateY(-12px) scale(.97);transform-origin:center top;width:min(320px,calc(100% - 24px));background:linear-gradient(180deg,#26221c,#1a1714);border:1px solid #4a4034;border-radius:16px;padding:16px 14px;z-index:120;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 12px 40px rgba(0,0,0,.5);}
+#settings-float.open{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0) scale(1);}
+#settings-float .sf-title{color:#e8d5a0;font-weight:600;font-size:15px;text-align:center;margin-bottom:14px;}
+#settings-float .sf-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 6px;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer;}
+#settings-float .sf-item:last-child{border-bottom:none;}
+#settings-float .sf-item:active{transform:scale(.96);}
+#settings-float .sf-item .sf-name{color:#fff;font-size:14px;flex:none;}
+#settings-float .sf-item .sf-go{color:#8a7c66;font-size:12px;text-align:right;}
 #float-bag{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%);width:min(300px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:var(--panel-grad);border:1px solid #6D6354;border-radius:10px;box-shadow:0 14px 38px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.07);   /* 浮层外发光+顶部内高光 */z-index:81;padding:8px;display:none;}
 .g-bag-attr{font-size:12px;color:#C9A24B;font-weight:500;white-space:nowrap;cursor:pointer;letter-spacing:1px;}
 #attr-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%);width:min(300px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:var(--panel-grad);border:1px solid #6D6354;border-radius:10px;box-shadow:0 14px 38px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.07);   /* 浮层外发光+顶部内高光 */z-index:81;padding:8px;display:none;color:#cfc6b8;}
@@ -1287,6 +1298,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 <body>
 <div class="stage">
   <div id="view-home">
+    <button id="home-settings" aria-label="设置"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
     <div class="page-title"><span class="flame" style="--i:0">晓</span><span class="flame" style="--i:1">夜</span><span class="flame" style="--i:2">之</span><span class="flame" style="--i:3">歌</span></div>
     <div class="home-hero">
       <div class="hh-ico"><img src="logos/头像.png" alt="头像"></div>
@@ -1326,12 +1338,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       </div>
     </div>
     <div class="divider"></div>
-    <div class="actions" id="actions">
-      <div class="act-row c2">
-        <button class="btn" data-act="初始化">初始化</button>
-        <button class="btn" data-act="GM生成">GM生成</button>
-      </div>
-    </div>
+    <div class="actions" id="actions"></div>
 
   </div>
   <!-- ===== 二级页面：神兵锻冶（聚合：强化/洗炼/宝石） ===== -->
@@ -2083,6 +2090,15 @@ function refreshItemToBlueprint(item){
       return true;
     }
   }
+  var _sg=ITEM_BLUEPRINTS.statGems||[];   /* 宝石蓝图在 statGems 数组内（6级/海伦/混沌等），顶层遍历不到，需单独匹配 */
+  for(var gi=0; gi<_sg.length; gi++){ if(_sg[gi] && _sg[gi].name===item.name){
+    var keep2={};
+    for(var j2=0;j2<ITEM_INSTANCE_KEYS.length;j2++){ var kk2=ITEM_INSTANCE_KEYS[j2]; if(item[kk2]!==undefined) keep2[kk2]=item[kk2]; }
+    var fresh2=createItem(_sg[gi],{id:item.id});
+    for(var kk3 in keep2) fresh2[kk3]=keep2[kk3];
+    for(var f2 in fresh2) item[f2]=fresh2[f2];
+    return true;
+  } }
   return false;
 }
 function syncItemsFromBlueprints(){
@@ -2802,6 +2818,20 @@ function renderAttrFloat(){
   document.addEventListener('click', function(e){ var b=e.target.closest ? e.target.closest('.g-attr-open') : null; if(b){ openAttrFloat(); } }, false);
   document.addEventListener('click', function(e){ var af=$('#attr-float'); if(af && af.style.display==='block' && !af.contains(e.target)) closeAttrFloat(); }, true);
   document.addEventListener('click', function(e){ var c=e.target.closest ? e.target.closest('#af-close') : null; if(c) closeAttrFloat(); }, false);   /* 委托绑定：不依赖浮层 HTML 就绪时机 */
+})();
+/* ============ 设置浮层（主页右上角图标）：刷新旧物品 / 初始化 / GM生成 ============ */
+function openSettings(){ closeFloatBag(); closeAttrFloat(); var sf=$('#settings-float'); if(sf) sf.classList.add('open'); var mk=$('#fb-mask'); if(mk) mk.classList.add('show'); }
+function closeSettings(){ var sf=$('#settings-float'); if(sf) sf.classList.remove('open'); var mk=$('#fb-mask'); if(mk) mk.classList.remove('show'); }
+(function initSettings(){
+  document.addEventListener('click', function(e){ var b=e.target.closest?e.target.closest('#home-settings'):null; if(b){ e.preventDefault(); openSettings(); } }, false);
+  document.addEventListener('click', function(e){ var sf=$('#settings-float'); if(sf && sf.classList.contains('open') && !sf.contains(e.target)) closeSettings(); }, true);
+  document.addEventListener('click', function(e){
+    var it=e.target.closest?e.target.closest('.sf-item'):null; if(!it) return;
+    var act=it.getAttribute('data-sf');
+    if(act==='refresh'){ var n=syncItemsFromBlueprints(); recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); syncBagBar(); applyCharTier(); toast('已刷新 '+(n||0)+' 件旧物品为最新属性'); closeSettings(); }
+    else if(act==='reset'){ confirmDialog('确认初始化？<br>所有数据将回到初始状态（等级1、装备/背包/物品清空、金币归0）', function(ok){ if(ok){ closeSettings(); doReset(); } }); }
+    else if(act==='gm'){ confirmDialog('确认GM生成？<br>将生成全部物品并发放金币（各1亿）', function(ok){ if(ok){ closeSettings(); doInit(); } }); }
+  }, false);
 })();
 /* ============ 点击式 Tooltip（手机：点击显示、点击其他处隐藏、防屏幕遮挡） ============ */
 var ttEl = document.getElementById('tooltip');
@@ -3668,9 +3698,7 @@ function loadGodFromBag(item, p, i){
     bag[p][i]=null;
     LOADED_GODS.push(item);
     renderBag();
-    /* 自动打开天神页，显示加载结果 */
-    if(location.hash!=='#god') location.hash='#god';
-    else renderGod();
+    /* 停留在当前页面，不自动跳转到天神页；左列可稍后在天神页查看 */
     toast('已加载 '+item.name+' 到天神系统');
   });
 }
@@ -6190,6 +6218,12 @@ bindEvents();})();
 <div id="attr-float">
   <div class="af-head"><span>谜团</span><span class="char-tier" id="attr-tier"></span><button id="af-close" class="af-x" aria-label="关闭">×</button></div>
   <div class="af-body" id="af-body"></div>
+</div>
+<div id="settings-float">
+  <div class="sf-title">设置</div>
+  <div class="sf-item" data-sf="refresh"><span class="sf-name">刷新旧物品</span><span class="sf-go">按最新蓝图更新背包/装备属性</span></div>
+  <div class="sf-item" data-sf="reset"><span class="sf-name">初始化</span><span class="sf-go">回到初始状态</span></div>
+  <div class="sf-item" data-sf="gm"><span class="sf-name">GM生成</span><span class="sf-go">生成全部物品+金币</span></div>
 </div>
 </body>
 </html>
