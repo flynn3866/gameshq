@@ -4661,13 +4661,14 @@ function tlMonDie(){   /* 与寻宝 trMonDie 完全一致：崩解碎片 */
   }
 }
 function tlKill(){
+  if(T._killing) return; T._killing=true;
   tlLog('<b style="color:#e8503a">击败 '+(T.isBoss?'试炼BOSS':'守卫')+' 第'+T.layer+'层</b>');
-  var _od=TR.dungeon; TR.dungeon=0; trGainExp(T.monLv||82, T.isBoss?2:(T.monAtk||0.2), T.isBoss); TR.dungeon=_od;   /* 试炼获得角色经验：不受副本难度加成，与副本统一 */
+  var _od=TR.dungeon; if(T.isBoss){ TR.dungeon=0; trGainExp(T.monLv||82, 2, true); } else { var _pi=-1; for(var _q=0;_q<DUNGEONS.length;_q++){ if(DUNGEONS[_q].mode==='phantom'){ _pi=_q; break; } } TR.dungeon=_pi; trGainExp(_pi>=0?DUNGEONS[_pi].monLv:79, _pi>=0?(DUNGEONS[_pi].atk||2.2):2.2, false); } TR.dungeon=_od;   /* 试炼小怪经验=神之幻境一致；Boss 保留原逻辑 */
   tlMonDie();
   if(T.isBoss && bossTierOfLayer(T.layer)>=5 && charTierIdx()<5 && ARENA.killGod<1){ unlockGodMedal(); tlLog('<b style="color:#e8503a">越级击杀神级Boss，获得徽章·屠神者！真实伤害+10%</b>'); }   /* 屠神者：低阶位越级击杀神级Boss */
   if(T.layer%10===0){ tlGift(); }
   if(T.layer>=150){ tlUnlockMedal('s150'); } else if(T.layer>=100){ tlUnlockMedal('s100'); } else if(T.layer>=50){ tlUnlockMedal('s50'); }   /* 无尽试炼徽章：通关50/100/150关 */
-  setTimeout(function(){ T.layer++; tlSaveBest(); tlSpawn(); }, 600);
+  setTimeout(function(){ T.layer++; tlSaveBest(); tlSpawn(); T._killing=false; }, 600);
 }
 function tlStartRevive(){
   var tip=document.getElementById('tl-revive-tip'); if(tip){ tip.textContent='你被击败了，10秒后自动复活…'; tip.style.display='block'; }
@@ -4722,8 +4723,9 @@ function renderTrialRewards(){
 }
 function initTrial(){
   if(typeof T==='undefined') return;
+  tlLoadBest(); var best=document.getElementById('tl-best'); if(best) best.textContent='最高纪录：第 '+(T.best||0)+' 层';   /* 每次进入刷新最高纪录显示 */
   if(T.started){ tlSyncChar(); return; }
-  T.started=true; tlLoadBest(); T.layer=(T.best||0)+1;   /* 从历史最高已通关层+1继续，刷新保留，不从头 */
+  T.started=true; T.layer=(T.best||0)+1;   /* 从历史最高已通关层+1继续，刷新保留，不从头 */
   tlSyncChar();
   renderTrialRewards();
   var best=document.getElementById('tl-best'); if(best) best.textContent='最高纪录：第 '+(T.best||0)+' 层';
@@ -5105,6 +5107,8 @@ function endFight(res,o){
       if(f){ f.setAttribute('data-end','1'); f.innerHTML='<div class="af-wait" style="color:#D84AA0;font-size:19px;letter-spacing:2px;text-shadow:0 0 12px rgba(216,74,160,.8);">万军取首级！</div><div class="af-wait" style="font-size:12px;color:#D6B56A;">击杀敌方首领 · 战力×'+ratio.toFixed(1)+'<br>+'+sc+'积分 · +'+fmtWan(gold)+'金币</div>'; }
       arenaLog('击杀敌方首领 <span class="t">'+o.n+'</span>！<span class="c">+'+sc+'积分 +'+fmtWan(gold)+'金币</span>');
   if(o.tier==='god' && arenaRank()<6 && ARENA.killGod<1){ unlockGodMedal(); arenaLog('<b class="lg-boss">越级击杀神级Boss，获得徽章·屠神者！真实伤害+10%</b>'); }   /* 屠神者：低段位越级击杀神级Boss */
+  if(o.tier==='god'){ var _yipool=['yitaiNecklace','yitaiRing','yitaiBracelet'].filter(function(k){ return ITH_LEFT[k]>0; }); if(_yipool.length && Math.random()<0.05){ var _yik=_yipool[Math.floor(Math.random()*_yipool.length)]; ITH_LEFT[_yik]--; var _yi=mkLoot(ITEM_BLUEPRINTS[_yik]); var _yf=addStackable(_yi); if(!_yf){ arenaLog('<b class="lg-item">神级Boss掉落：'+_yi.name+'</b>'); toast('神级Boss掉落：'+_yi.name+'！'); triggerLegendFX(); saveGame(); } else { arenaLog('神级Boss掉落：'+_yi.name+'（背包已满）'); } } }   /* 竞技击杀神级Boss：5%概率掉落伊泰安首饰（唯一性，掉完绝版） */
+  if(o.tier==='god' && Math.random()<0.01){ var _lw=mkLoot(ITEM_BLUEPRINTS.legendWings); var _lf=addStackable(_lw); if(!_lf){ arenaLog('<b class="lg-item">神级Boss掉落：'+_lw.name+'</b>'); toast('神级Boss掉落：'+_lw.name+'！'); triggerLegendFX(); saveGame(); } else { arenaLog('神级Boss掉落：'+_lw.name+'（背包已满）'); } }   /* 竞技击杀神级Boss：1%概率掉落传说魔翼 */
       checkRankUp();
     } else if(o.ri>=ARENA._rank){
       ARENA.streak++;
@@ -5849,7 +5853,7 @@ function trRollDrop(){
     /* 海伦宝石：小怪0.1%、BOSS20%（随机一种） */
     if(Math.random()<(TR.isBoss?0.20:0.001)){ var hl=ITEM_BLUEPRINTS.statGems.filter(function(x){ return x.type==='helen_gem'; }); if(hl.length) out.push(mkLoot(hl[Math.floor(Math.random()*hl.length)])); } }
   else if(d.mode==='loot'){ if(TR.isBoss && Math.random()<0.10){ out.push(mkLoot(ITEM_BLUEPRINTS.demonWings)); } }
-  else if(d.mode==='phantom'){ if(TR.isBoss && getMonthLegend()<2 && Math.random()<0.05){ var ps=[ITEM_BLUEPRINTS.legendOgdenHelmet,ITEM_BLUEPRINTS.legendOgdenChest,ITEM_BLUEPRINTS.legendOgdenGloves,ITEM_BLUEPRINTS.legendOgdenLeggings,ITEM_BLUEPRINTS.legendOgdenBoots]; out.push(mkLoot(ps[Math.floor(Math.random()*ps.length)])); addMonthLegend(1); } }   /* 神之幻境 BOSS 5% 传说奥格顿随机一件；每月限掉2件，无保底 */
+  else if(d.mode==='phantom'){ if(TR.isBoss && Math.random()<0.01){ var ps=[ITEM_BLUEPRINTS.legendOgdenHelmet,ITEM_BLUEPRINTS.legendOgdenChest,ITEM_BLUEPRINTS.legendOgdenGloves,ITEM_BLUEPRINTS.legendOgdenLeggings,ITEM_BLUEPRINTS.legendOgdenBoots]; out.push(mkLoot(ps[Math.floor(Math.random()*ps.length)])); } }   /* 神之幻境 BOSS 1% 传说奥格顿随机一件，无月限 */
   else if(d.mode==='gem'){
     /* 5级/6级普通属性宝石池（不含专注宝石）与专注宝石池 */
     var pool5=[], pool6=[], focus5=[], focus6=[];
@@ -6414,7 +6418,7 @@ function initTreasureUI(){
     '首饰（BOSS 30%、小怪0.001%）、BOSS镶嵌/拆卸锤20%、海伦宝石（小怪0.1%）',
     '防具（小怪0.001%、BOSS 50%）、海伦宝石（小怪0.1%、BOSS 20%）',
     '升级专用：怪物79~83级、经验全场最高（无BOSS，海量升级经验）',
-    'BOSS：金币1亿100%（神级10亿）、传说奥格顿套装5%（月限2件）、寂灭之息药剂（小怪0.00001%、BOSS 0.1%，仅在线）'
+    'BOSS：金币1亿100%（神级10亿）、传说奥格顿套装1%、寂灭之息药剂（小怪0.00001%、BOSS 0.1%，仅在线）'
   ];
   var ds=document.getElementById('tr-dungeons');
   if(ds) ds.addEventListener('click',function(e){ var t=e.target.closest('.tr-dun'); if(!t) return; TR.dungeon=+t.getAttribute('data-i'); TR.kill=0; TR.isBoss=false; TR.hp=TR.maxHp; ithStart(); trPhantomTimer(); trSpawnMon(); renderTreasure(); trLog('进入 <b>'+DUNGEONS[TR.dungeon].name+'</b>，可掉落：'+trDropsInfo[TR.dungeon]); });
