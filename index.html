@@ -899,7 +899,8 @@ body.show-god .stage{max-width:680px;}
   background:linear-gradient(180deg,#241d17,#0c0907);border-top:1px solid rgba(145,138,95,.25);}
 .tr-drop-layer{position:absolute;inset:0;pointer-events:none;z-index:3;}
 .tr-arrow{position:absolute;z-index:5;width:16px;height:16px;color:#ffd27a;font-size:15px;line-height:16px;text-align:center;text-shadow:0 0 7px rgba(255,180,60,.95);pointer-events:none;will-change:transform;transform-origin:center;}
-.tr-monster{position:absolute;left:50%;top:calc(60% + 10px);transform:translate(calc(-50% + 50px),-46%);z-index:2;transition:filter .12s,transform .12s;}
+.tr-monster{position:absolute;right:75px;top:calc(60% + 10px);transform:translateY(-46%);z-index:2;transition:filter .12s,transform .12s;}   /* 右移基准距右75px */
+.tr-monster svg{width:150px;height:auto;display:block;}   /* 怪物图像=血条宽、右边缘与血条右边缘对齐 → 中心=血条中心，不超出血条边缘 */
 .tr-monster svg{width:72px;height:72px;}
 .tr-monster.hit{filter:brightness(2.4) saturate(0.2);transform:translate(calc(-50% + 50px),-46%) scale(.96);}
 .tr-monster svg{display:block;width:76px;height:auto;filter:drop-shadow(0 6px 14px rgba(0,0,0,.7));}
@@ -912,7 +913,7 @@ body.show-god .stage{max-width:680px;}
 @keyframes trFlame{0%{opacity:0;}25%{opacity:1;}100%{opacity:0;transform:translate(-50%,-75px) scale(1.25);}}
 /* 怪物死亡：本体崩解 + 碎片飞散 */
 .tr-monster.die{animation:trMonDie .7s ease-out forwards;}
-@keyframes trMonDie{0%{transform:translate(calc(-50% + 50px),-46%) scale(1);opacity:1;filter:brightness(2.4);}100%{transform:translate(calc(-50% + 50px),-46%) scale(0) rotate(40deg);opacity:0;}}
+@keyframes trMonDie{0%{transform:translateY(-46%) scale(1);opacity:1;filter:brightness(2.4);}100%{transform:translateY(-46%) scale(0) rotate(40deg);opacity:0;}}   /* 死亡动画匹配当前定位（right:75px），在怪物实际位置消失 */
 .tr-scene.boss-in{animation:trBossRed 1.2s ease;}
 @keyframes trBossRed{0%{filter:brightness(1);}15%{filter:brightness(1.6) saturate(1.7);}40%{filter:brightness(.85) saturate(2.2);}100%{filter:brightness(1);}}
 .tr-boss-veil{position:fixed;inset:0;z-index:998;pointer-events:none;background:#000;animation:trVeil .7s ease forwards;}
@@ -927,10 +928,20 @@ body.show-god .stage{max-width:680px;}
 @keyframes trBossBanner{0%{opacity:0;transform:translateX(-50%) scale(2.2);filter:blur(6px);}25%{opacity:1;transform:translateX(-50%) scale(1);filter:blur(0);}80%{opacity:1;}100%{opacity:0;transform:translateX(-50%) scale(.95);}}
 .tr-debris{position:absolute;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:3;transform:translate(-50%,-50%);opacity:1;animation:trDebris .75s ease-out forwards;}
 @keyframes trDebris{0%{transform:translate(-50%,-50%) scale(1) rotate(0);opacity:1;}100%{transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(.1) rotate(var(--r));opacity:0;}}
-.tr-monhead{position:absolute;left:50%;top:6px;transform:translateX(calc(-50% + 50px));display:flex;gap:6px;align-items:center;z-index:2;white-space:nowrap;}
+.tr-monhead{position:absolute;right:30px;top:6px;width:150px;display:flex;gap:6px;align-items:center;justify-content:center;z-index:2;white-space:nowrap;}   /* 名字整体相对血条居中（容器=血条宽） */
 .tr-mon-name{font-size:12px;color:#fff;letter-spacing:1px;text-shadow:0 1px 2px #000;}
 .tr-mon-lv{font-size:10px;color:#C9A24B;}
-.tr-scene .tr-bar{position:absolute;left:50%;top:26px;transform:translateX(calc(-50% + 50px));width:150px;z-index:2;}
+.tr-mon-tier{position:absolute;right:30px;top:36px;width:150px;z-index:2;white-space:nowrap;text-align:center;font-size:10px;color:#C9A24B;letter-spacing:1px;text-shadow:0 1px 2px #000;}   /* 阶位整体相对血条居中（容器=血条宽） */
+.tr-rolecard{position:absolute;left:10px;top:6px;z-index:3;display:flex;flex-direction:column;gap:2px;align-items:flex-start;padding:6px 20px;border:1px solid #7a3f6e;background:linear-gradient(180deg,#2a2026,#1d161b);border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.45);}   /* 卡片长度加长20px */
+.tr-rolecard-l1{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#fff;text-shadow:0 1px 2px #000;letter-spacing:1px;}
+  .tr-rolecard-id{display:flex;flex-direction:column;gap:1px;align-items:flex-start;}
+  .tr-rolecard-name{font-size:12px;color:#D84AA0;text-shadow:0 0 8px rgba(216,74,160,.6);}
+.tr-rolecard-nl{display:flex;align-items:baseline;gap:4px;}
+.tr-rolecard-lv{font-size:9px;color:#C9A24B;font-weight:600;letter-spacing:0;text-shadow:0 1px 2px #000;}
+.tr-rolecard-l1 img{width:27px;height:27px;border-radius:50%;border:1px solid rgba(255,255,255,.4);object-fit:cover;box-shadow:0 1px 3px rgba(0,0,0,.5);}
+.tr-rolecard-tier{display:block;font-size:9px;font-weight:700;letter-spacing:1px;color:#B08CFF;text-shadow:0 0 8px rgba(150,90,255,.6);}   /* 阶位：神级Boss淡紫光晕 */
+.tr-rolecard-power{font-size:10px;color:#d8c89a;letter-spacing:1px;text-shadow:0 1px 2px #000;}
+.tr-scene .tr-bar{position:absolute;right:30px;top:26px;width:150px;z-index:2;}
 .tr-bar{position:relative;height:8px;border:1px solid #3a342c;border-radius:4px;overflow:hidden;background:#0c0a08;}
 .tr-bar-fill{height:100%;width:100%;border-radius:3px;background:linear-gradient(180deg,#ff5c3d,#b82012);box-shadow:inset 0 1px 0 rgba(255,255,255,.28);transition:width .18s ease;}   /* 顶部光泽 */
 .tr-bar-fill.low{background:linear-gradient(180deg,#ff3d2c,#7c0e05);}
@@ -1712,6 +1723,10 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div class="tr-dungeons" id="tr-dungeons"></div>
       <div class="tr-battle">
         <div class="tr-scene" id="tr-scene">
+          <div class="tr-rolecard" id="tr-rolecard">
+            <div class="tr-rolecard-l1"><img src="logos/头像.png" alt=""><div class="tr-rolecard-id"><div class="tr-rolecard-nl"><div class="tr-rolecard-name">谜团</div><span class="tr-rolecard-lv" id="tr-rolecard-lv"></span></div><div class="tr-rolecard-tier" id="tr-rolecard-tier"></div></div></div>
+            <div class="tr-rolecard-power" id="tr-rolecard-power"></div>
+          </div>
           <div class="tr-drop-layer" id="tr-drop-layer"></div>
           <div class="tr-monster" id="tr-monster"></div>
           <div class="tr-monhead">
@@ -1719,6 +1734,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
             <span class="tr-mon-lv" id="tr-mon-lv"></span>
           </div>
           <div class="tr-bar"><div class="tr-bar-fill" id="tr-mon-hp"></div><span class="tr-bar-txt" id="tr-mon-hpnum"></span></div>
+          <div class="tr-mon-tier" id="tr-mon-tier"></div>
           <div class="tr-buffs" id="tr-buffs"></div>
         </div>
         <div class="tr-char">
@@ -1751,6 +1767,10 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div class="tr-battle">
         <div class="tr-scene" id="tl-scene">
           <div class="tr-drop-layer" id="tl-drop-layer"></div>
+          <div class="tr-rolecard">
+            <div class="tr-rolecard-l1"><img src="logos/头像.png" alt=""><div class="tr-rolecard-id"><div class="tr-rolecard-nl"><div class="tr-rolecard-name">谜团</div><span class="tr-rolecard-lv" id="tl-rolecard-lv"></span></div><div class="tr-rolecard-tier" id="tl-rolecard-tier"></div></div></div>
+            <div class="tr-rolecard-power" id="tl-rolecard-power"></div>
+          </div>
           <div class="tr-monster" id="tl-monster"></div>
           <div class="tr-monhead"><span class="tr-mon-name" id="tl-mon-name"></span><span class="tr-mon-lv" id="tl-mon-lv"></span></div>
           <div class="tr-bar"><div class="tr-bar-fill" id="tl-mon-hp"></div><span class="tr-bar-txt" id="tl-mon-hpnum"></span></div>
@@ -2906,7 +2926,7 @@ function buildTooltip(item){
     if (isA){ var enhAbs=armorEnhAbs(item.enhanceLevel||0);
       if((item.damageAbsorption||0)+enhAbs>0) h+='<div class="tt-o">伤害 吸收 +'+Math.round(enhAbs*100)+'%</div>'; }   /* 强化吸收%显示 */
     h += '<div class="tt-gap"></div>';
-    if (isW){ if(item.physicalAttack!==undefined) h+='<div class="tt-y">攻击力 '+fmtWan(item.physicalAttack)+'</div>'; h+='<div class="tt-w">攻击速度一般</div>'; }
+    if (isW){ if(item.physicalAttack!==undefined) h+='<div class="tt-y">攻击力 '+fmtWan(item.physicalAttack)+'</div>'; h+='<div class="tt-w">攻击速度一般</div>'; if(String(item.name).indexOf('传说 魔翼')>=0){ var _wr=Math.min(0.30,0.05+0.0125*(item.enhanceLevel||0)); h+='<div class="tt-purple">真实伤害 +'+Math.round(_wr*100)+'%</div>'; } }   /* 仅传说级魔翼真实伤害（强0=5%→强20=30%），史诗不显示 */
     if (isA){ var alv=item.enhanceLevel||0;
       if(alv>=15) h+='<div class="tt-purple">抗暴率 +3%</div>';
       if(alv>=18) h+='<div class="tt-purple">暴击伤害减免 +3%</div>';
@@ -3136,6 +3156,7 @@ function recalcCharacter(){
   /* 属性换算：基础属性 + 附加属性（装备+天神）共同参与 */
   var A={力量:base.力量+bonus.力量,敏捷:base.敏捷+bonus.敏捷,体质:base.体质+bonus.体质,精神:base.精神+bonus.精神,智力:base.智力+bonus.智力,幸运:base.幸运+bonus.幸运};
   if(OG>=3){ var _ac=OG>=4?1.5:1.1; A.力量=Math.floor(A.力量*_ac); A.敏捷=Math.floor(A.敏捷*_ac); A.体质=Math.floor(A.体质*_ac); A.精神=Math.floor(A.精神*_ac); A.智力=Math.floor(A.智力*_ac); A.幸运=Math.floor(A.幸运*_ac); }   /* 传说奥格顿3件全属性+10%/4件+50% */
+  if(tt2&&ARENA.titleOn&&tt2.pct>0){ A.力量=Math.floor(A.力量*(1+tt2.pct)); A.敏捷=Math.floor(A.敏捷*(1+tt2.pct)); A.体质=Math.floor(A.体质*(1+tt2.pct)); A.精神=Math.floor(A.精神*(1+tt2.pct)); A.智力=Math.floor(A.智力*(1+tt2.pct)); A.幸运=Math.floor(A.幸运*(1+tt2.pct)); }   /* 战神称号：全属性+10% */
   var strengthAttackBonus=Math.floor(A.力量*1.3);                      /* 1力量=1.3物理攻击 */
   var agilityAttackBonus=Math.floor(A.敏捷*0.2), agilityHpBonus=Math.floor(A.敏捷*0.3);   /* 1敏捷=0.2物攻+0.3生命 */
   var constitutionHpBonus=A.体质*5, constitutionDefenseBonus=A.体质;    /* 1体质=5生命+1物防 */
@@ -3146,6 +3167,7 @@ function recalcCharacter(){
   var pdef=basePdef+constitutionDefenseBonus;
   var mdef=baseMdef+spiritMagicDefenseBonus;
   if(OG>=3){ var _dc=OG>=4?1.5:1.2; hp=Math.floor(hp*_dc); vitality=Math.floor(vitality*_dc); pdef=Math.floor(pdef*_dc); mdef=Math.floor(mdef*_dc); }   /* 传说奥格顿3件生命活力防御+20%/4件+50% */
+  if(tt2&&ARENA.titleOn&&tt2.pct>0){ hp=Math.floor(hp*(1+tt2.pct)); vitality=Math.floor(vitality*(1+tt2.pct)); }   /* 战神称号：生命活力+10% */
   /* 攻击属性=武器槽宝石附加；防御属性=胸甲槽宝石附加 */
   var attr='无', dattr='无';
   if(equipState['weapon']&&equipState['weapon'].gemAttributes&&equipState['weapon'].gemAttributes.additionalAttribute) attr=equipState['weapon'].gemAttributes.additionalAttribute;
@@ -3184,7 +3206,7 @@ function toggleAchieveMedal(k){ if(k==='titleOn'){ ARENA.titleOn=!ARENA.titleOn;
 function godMedalAtk(){ return (ARENA.killGod>=1&&ARENA.godMedalOn)?0.10:0; }   /* 屠神者徽章：真实伤害+10%（戴上生效） */
 function unlockGodMedal(){ if(ARENA.killGod>=1) return; ARENA.killGod=1; saveGame(); renderArena(); toast('获得徽章·屠神者！真实伤害+10%'); }
 function roleTierAtk(){ var i=charTierIdx(), ig=0, tr=0; if(i>=5){ ig=0.20; tr=0.20; } else if(i>=4){ ig=0.08; tr=0.08; } else if(i>=3){ ig=0.05; } return {ig:ig,tr:tr}; }   /* 角色阶位攻击特性：真神无视防御5%、神王8%+真实伤害8%、大帝20%+真实伤害20%（其他阶位无） */
-function titleAtk(){ if(!ARENA.titleOn) return {ig:0,tr:0}; var t=arenaTitle(); if(!t) return {ig:0,tr:0}; var ig=0,tr=0; if(t.n==='战神'){ ig=0.10; tr=0.10; } else if(t.n==='荣耀王者'){ ig=0.05; } return {ig:ig,tr:tr}; }   /* 称号攻击特性：荣耀王者无视防御5%、战神无视防御10%+真实伤害10%（戴上生效） */
+function titleAtk(){ if(!ARENA.titleOn) return {ig:0,tr:0,ls:0}; var t=arenaTitle(); if(!t) return {ig:0,tr:0,ls:0}; return {ig:t.ig,tr:t.tr,ls:t.ls}; }   /* 称号攻击特性累加：星钻吸血30%、王者无视防御5%、战神无视防御10%+真实伤害10%（戴上生效） */
 function wingRealPct(){ var w=equipState['weapon']; return (w&&String(w.name).indexOf('魔翼')>=0)?Math.min(0.30,0.05+0.0125*(w.enhanceLevel||0)):0; }   /* 传说魔翼：真实伤害 强化0=5%、强20=30%（线性+1.25%/级） */
 function armorEnhAbs(level){
   if(level<=0||level>=ARMOR_ENH_ABS.length) return 0;
@@ -4391,7 +4413,7 @@ function tlSpawn(){
   tlRenderMon(); tlRenderChar();
 }
 function tlRenderMon(){ var f=document.getElementById('tl-mon-hp'); if(f){ var p=T.monMax?T.monHp/T.monMax*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-mon-hpnum'); if(n) n.textContent=fmtWan(Math.max(0,T.monHp))+'/'+fmtWan(T.monMax); }
-function tlRenderChar(){ var f=document.getElementById('tl-ch-hp'); if(f){ var p=T.maxHp?T.hp/T.maxHp*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-ch-hpnum'); if(n) n.textContent=fmtWan(Math.max(0,T.hp))+'/'+fmtWan(T.maxHp); var lv=document.getElementById('tl-lv'); if(lv) lv.textContent='Lv.'+TR.level; }
+function tlRenderChar(){ var f=document.getElementById('tl-ch-hp'); if(f){ var p=T.maxHp?T.hp/T.maxHp*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-ch-hpnum'); if(n) n.textContent=fmtWan(Math.max(0,T.hp))+'/'+fmtWan(T.maxHp); var lv=document.getElementById('tl-lv'); if(lv) lv.textContent='Lv.'+TR.level; var _lv=document.getElementById('tl-rolecard-lv'); if(_lv) _lv.textContent='Lv.'+TR.level; var _t=document.getElementById('tl-rolecard-tier'); if(_t) _t.textContent=CHAR_TIERS[charTierIdx()].n; var _p=document.getElementById('tl-rolecard-power'); if(_p) _p.textContent='战力 '+fmtWan(rolePower()); }
 function tlLog(html){ var l=document.getElementById('tl-log'); if(!l) return; var d=document.createElement('div'); d.className='tl-log-line'; d.innerHTML='<span style="color:#5c5548">['+new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})+']</span>'+html; l.insertBefore(d,l.firstChild); while(l.children.length>40) l.lastChild.remove(); }
 function fmtDmg(n){
   n = Math.round(Number(n)||0);
@@ -4660,7 +4682,7 @@ function renderAchievement(){
     {c:'传说魔翼',e:'全属性各+500万、物理攻击+3330万、攻速最快、6凹槽、需80级；真实伤害 强化0=5%/强20=30%(线性)；强20 物理攻击+1471'},
     {c:'天神满级 5重5星',e:'释放该天神牌子100%全属性；上阵主阵位100%附加、副阵位50%'},
     {c:'强化+20(防具)',e:'每件 强化吸收10%(5件累加封顶90%)、每件-9%最终伤害(5件-45%)；tooltip：抗暴率+3%(强15)/暴伤减免+3%(强18)/最终伤害减免+3%(强20)'},
-    {c:'竞技称号',e:'璀璨星钻 全属性+10 生命活力+1000；荣耀王者 全属性+100/生命活力+10000、无视防御+5%；战神 全属性+500/生命活力+50000、无视防御+10%、真实伤害+10%(戴上生效)'},
+    {c:'竞技称号',e:'效果累加(戴上生效)：璀璨星钻 全属性+10万·生命活力+10万·攻击吸血30%；荣耀王者 全属性+110万·生命活力+110万·无视防御5%(含星钻)；战神 全属性+110万再+10%·生命活力+110万再+10%·无视防御15%·真实伤害10%(含前两档)'},
     {c:'徽章·万军取首级',e:'攻击无视对方10%防御(戴上即生效)'},
     {c:'魔灵统御首饰',e:'项链 全属性+900；戒指 全属性+600；手镯 全属性+500(单件生效，无套装加成)'},
     {c:'等级压制',e:'等级差≥10级触发：等级高的一方攻防×10，每多5级再翻倍(差距越大压制越强)'},
@@ -4684,7 +4706,7 @@ function renderAchievement(){
         +'<div class="ach-attr">段位挑战奖励 '+fmt(r.rev)+' 金币 · 对手攻防血量随段位提升</div></div>'; }
     el.innerHTML=h;
   }
-  var td=[{n:'璀璨星钻',rk:4,c:'#C3A6FF',attr:'全属性+10 · 生命活力+1000'},{n:'荣耀王者',rk:5,c:'#D84AA0',attr:'全属性+100 · 生命活力+10000'},{n:'战神',rk:6,c:'#A56BFF',attr:'全属性+500 · 生命活力+50000'}];
+  var td=[{n:'璀璨星钻',rk:4,c:'#C3A6FF',attr:'全属性+10万·生命活力+10万·吸血30%'},{n:'荣耀王者',rk:5,c:'#D84AA0',attr:'全属性+110万·生命活力+110万·无视防御5%(含星钻)'},{n:'战神',rk:6,c:'#A56BFF',attr:'全属性+110万再+10%·生命活力+110万再+10%·无视防御15%·真实伤害10%(含前两档)'}];
   var tel=document.getElementById('ach-titles');
   if(tel){
     var _ct=arenaTitle()?arenaTitle().n:'';
@@ -4747,7 +4769,7 @@ function makeLordOpp(){   /* 首领级boss：基础属性50万~200万，弱于�
   var ab=applyBossArmor(trs,hp,def,3); hp=ab.hp; def=ab.def; var _tstr=traitStrength(trs.length); hp=Math.round(hp*_tstr); def=Math.round(def*_tstr); atk=Math.round(atk*_tstr); var _bpw=battlePower(atk,def,hp,agi); hp+=_bpw*500;   /* 首领boss避免秒杀：生命值=原计算值+战力×500 */
   return { n:ARENA_BOSSES[Math.floor(Math.random()*ARENA_BOSSES.length)], diff:'地狱', boss:true, tier:'lord', traits:trs, traitText:traitText(trs), rank:ARENA_RANKS[ARENA_RANKS.length-1], ri:ARENA_RANKS.length-1, di:8, level:(70+Math.floor(Math.random()*8)), hp:hp, atk:atk, def:def, agi:agi, pw:battlePower(atk,def,hp,agi) };
 }
-function arenaTitle(){ if(ARENA.score>=ARENA_RANKS[6].min) return {n:'战神',all:500,hp:50000}; if(ARENA.score>=ARENA_RANKS[5].min) return {n:'荣耀王者',all:100,hp:10000}; if(ARENA.score>=ARENA_RANKS[4].min) return {n:'璀璨星钻',all:10,hp:1000}; return null; }
+function arenaTitle(){ if(ARENA.score>=ARENA_RANKS[6].min) return {n:'战神',all:1100000,hp:1100000,pct:0.10,ls:0.30,ig:0.15,tr:0.10}; if(ARENA.score>=ARENA_RANKS[5].min) return {n:'荣耀王者',all:1100000,hp:1100000,pct:0,ls:0.30,ig:0.05,tr:0}; if(ARENA.score>=ARENA_RANKS[4].min) return {n:'璀璨星钻',all:100000,hp:100000,pct:0,ls:0.30,ig:0,tr:0}; return null; }   /* 称号效果累加：战神拥有星钻+王者全部（all固定、pct百分比、ls吸血、ig无视防御、tr真实伤害） */
 function attackInterval(agi){ if(agi<200) return 1280; if(agi<=1000) return 800; if(agi<=1500) return 500; return 300; }
 function arenaStat(){
   recalcCharacter(); var C=CHARACTER;
@@ -4880,7 +4902,7 @@ function playerHit(o,s){
   var isCrit=(Math.random()*100)<crit;
   if(isCrit) dmg*=2;
   if(o.trait&&(o.trait.fx==='pdef'||o.trait.fx==='boss')) dmg=Math.round(dmg*0.7);
-  if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0){ var hl=Math.max(1,Math.round(dmg*0.05)); if(ARENA.hpP<s.hp){ ARENA.hpP=Math.min(s.hp,ARENA.hpP+hl); setHp('p',ARENA.hpP,s.hp); arenaHeal(hl); } }   /* 伊泰安项链：攻击5%吸血 */
+  var _ls3=(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0?0.05:0)+titleAtk().ls; if(_ls3>0){ var hl=Math.max(1,Math.round(dmg*_ls3)); if(ARENA.hpP<s.hp){ ARENA.hpP=Math.min(s.hp,ARENA.hpP+hl); setHp('p',ARENA.hpP,s.hp); arenaHeal(hl); } }   /* 攻击吸血：伊泰安5%+称号吸血30%(星钻及以上) */
   if(o.traits){ for(var ti=0;ti<o.traits.length;ti++){ var tt=o.traits[ti];
     if(tt.fx==='dmgred'||tt.fx==='armor') dmg=Math.round(dmg*(1-tt.val));   /* 对手减伤 */
     else if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0&&ARENA.hpP>0){ ARENA.hpP-=rb; if(ARENA.hpP<0)ARENA.hpP=0; setHp('p',ARENA.hpP,s.hp); floatDmg('-'+fmtDmg(rb),'hero',false); if(ARENA.hpP<=0) return endFight('lose',o); } }   /* 反弹 */
@@ -5500,7 +5522,14 @@ function roleHitDamage(monAtk){
   var _d=Math.max(0, Math.round(afterDef*(1-TR.absorbPct)-TR.absorb));   /* 再减强化吸收%（乘算）+专注宝石固定吸收 */
   return Math.max(_d, Math.round(raw*0.10));   /* 总减伤封顶90%：保底10%原始伤害 */
 }
-function trReqExp(lv){ return Math.floor((lv*lv*190 + lv*120)*800); }   /* 每级所需经验：floor((L²×190 + L×120)×800) */
+function trReqExp(lv){ var e=Math.floor((lv*lv*190 + lv*120)*800); return (lv>50? e*100 : e); }   /* 每级所需经验：floor((L²×190 + L×120)×800)；50级以上经验×100 */
+function trExpScale(monLv){   /* 等级差经验系数：同等级×1；越级每高1级+15%(封顶10级)；刷低级怪每低1级×0.7，低10级起为0（仅经验） */
+  var d=monLv-TR.level;
+  if(d>0) return Math.pow(1.15,Math.min(d,10));
+  if(d===0) return 1;
+  var low=-d; if(low>=10) return 0;
+  return Math.pow(0.7,low);
+}
 function trGainExp(monLv, af, isBoss){
   var exp;
   if(monLv<30){ exp=Math.round(5+(monLv-1)/29*95); }                       /* 30级前：5~100，等级越高经验越高 */
@@ -5508,8 +5537,9 @@ function trGainExp(monLv, af, isBoss){
   else if(monLv<50){ exp=Math.round((1000+(monLv-40)/10*9000)*(0.9+af)); } /* 40~50：1000~10000 */
   else { exp=Math.round((10000+(monLv-50)/10*40000)*(0.9+af)); }          /* 50~60：1万~5万 */
   exp=Math.round(exp*Math.pow(1.1,Math.min(5,TR.dungeon))*(TR.dungeon>=6?2:1));   /* 副本难度加成：右侧高10%，神之幻境=沙漠×2 */
-  var _ov=monLv-TR.level; if(_ov>0) exp=Math.round(exp*Math.pow(1.15,Math.min(_ov,10)));   /* 越级打怪经验加成：怪物等级每高于角色1级+15%，封顶10级约×4.05（一分辛苦一分收获） */
+  exp=Math.round(exp*trExpScale(monLv));   /* 等级差调整：同等级×1、越级加成、刷低级怪递减至0（一分辛苦一分收获，仅经验） */
   if(isBoss) exp*=60;   /* Boss 经验显著奖励：该副本小怪 60 倍（击杀耗时×DPS 校准） */
+  if(TR.isElite) exp=Math.round(exp*3);   /* 精英经验：战力×3 → 经验×3 */
   if(Date.now()<SUN_UNTIL) exp*=2;   /* 太阳：打怪经验翻倍 */
   if(Date.now()<MEGA_SUN_UNTIL) exp*=5;   /* 超级大太阳：打怪经验5倍 */
   TR.exp+=exp;
@@ -5738,7 +5768,7 @@ function trSpawnMon(){
   }
   TR.traits = TR.isBoss ? genBossTraits(TR.bossTier,genTraitCount(TR.bossTier),genTraitCount(TR.bossTier)) : null;   /* Boss 按阶位生成特性，数量随阶位 */
   TR.monAtkCoef=triAtkCoef();   /* 本只怪攻击系数（0.05~0.18，0.1概率最大） */
-  var s=trMonStats(); if(TR.isBoss&&TR.traits){ var __ab=applyBossArmor(TR.traits,s.hp,s.def,bossTierOfDungeon(TR.dungeon)); s.hp=__ab.hp; s.def=__ab.def; } TR.monMax=s.hp; TR.monHp=s.hp;
+  var s=trMonStats(); if(TR.isBoss&&TR.traits){ var __ab=applyBossArmor(TR.traits,s.hp,s.def,bossTierOfDungeon(TR.dungeon)); s.hp=__ab.hp; s.def=__ab.def; } TR.monMax=s.hp; TR.monHp=s.hp; TR.monPower=battlePower(s.atk,s.hp,s.def,s.agi);   /* 记录怪物战力用于Boss阶位行显示 */
   renderMon(); renderChar();
   if(TR.isBoss) trBossEnter();
 }
@@ -5783,8 +5813,9 @@ function trCritRate(){
 function trFloat(n,isMon,crit,miss){
   var s=document.getElementById('tr-scene'); if(!s) return;
   var el=document.createElement('div'); el.className='tr-float'+(isMon?' mon':'')+(crit?' crit':'')+(miss?' miss':''); el.textContent=miss?'MISS':(crit?('暴击 '+fmtDmg(n)):(n===0?'0':('-'+fmtDmg(n))));
-  el.style.left=isMon?(58+Math.random()*10)+'%':(5+Math.random()*12)+'%';
-  el.style.top=isMon?(44+Math.random()*10)+'%':(80+Math.random()*10)+'%';
+  if(isMon){ var _mm=document.getElementById('tr-monster'), _sr=document.getElementById('tr-scene'); if(_mm&&_sr){ var _mrr=_mm.getBoundingClientRect(), _srr=_sr.getBoundingClientRect(); var _cx=_mrr.left+_mrr.width/2-_srr.left+Math.random()*8-4, _cy=_mrr.top-_srr.top-10+Math.random()*8; s.appendChild(el); var _ew=el.offsetWidth||0; el.style.left=(_cx-_ew/2)+'px'; el.style.top=_cy+'px'; setTimeout(function(){ el.remove(); },1000); return; } }
+  el.style.left=(isMon?(58+Math.random()*10):(5+Math.random()*12))+'%';
+  el.style.top=(isMon?(44+Math.random()*10):(80+Math.random()*10))+'%';
   s.appendChild(el); setTimeout(function(){ el.remove(); },1000);
 }
 function trHealFloat(n){ var s=document.getElementById('tr-scene'); if(!s)return; var el=document.createElement('div'); el.className='tr-float heal'; el.textContent='+'+n; el.style.left=(5+Math.random()*12)+'%'; el.style.top=(74+Math.random()*8)+'%'; s.appendChild(el); setTimeout(function(){ el.remove(); },1000); }
@@ -5907,7 +5938,7 @@ function trKillMon(){
   TR.bossLoot=[];   /* 本次击杀清空，Boss 死亡时才结算其当场战利品 */
   if(TR.isBoss && TR.bossTier>=5 && charTierIdx()<5 && ARENA.killGod<1){ unlockGodMedal(); trLog('<b class="lg-boss">越级击杀神级Boss，获得徽章·屠神者！真实伤害+10%</b>'); }   /* 屠神者：低阶位越级击杀神级Boss */
   if(d.mode==='bound'){
-    var bg=10000+Math.floor(Math.random()*90000); var bpct=80-(bg-10000)/90000*(80-30); if(Math.random()*100<bpct){ CURRENCY.bound+=bg; TR.stats.gold+=bg; renderCurrency(); trDropAnim(null); trLog('雕俱守卫掉落 <b class="lg-gold">绑定金币 '+bg.toLocaleString()+'</b>'); got=true; if(TR.isBoss) TR.bossLoot.push('绑定金币 '+bg.toLocaleString()); }
+    var bg=10000+Math.floor(Math.random()*90000); var bpct=TR.isElite?100:(80-(bg-10000)/90000*(80-30)); if(TR.isElite) bg=Math.min(Math.round(bg*1.5),100000); if(Math.random()*100<bpct){ CURRENCY.bound+=bg; TR.stats.gold+=bg; renderCurrency(); trDropAnim(null); trLog('雕俱守卫掉落 <b class="lg-gold">绑定金币 '+bg.toLocaleString()+'</b>'); got=true; if(TR.isBoss) TR.bossLoot.push('绑定金币 '+bg.toLocaleString()); }
     /* 神力碎片：数量1-8，掉落概率10%~60%（数量越多概率越低），小怪每日累计最多300 */
     var wt=[60,30,16,9,5,3,2,1], ts2=0, q2, n=1, acc2=0;
     for(q2=0;q2<8;q2++) ts2+=wt[q2];
@@ -5925,7 +5956,7 @@ function trKillMon(){
     /* 非绑定金币：0.1% 掉1亿；否则 1万~100万，金额越大概率越小(80%~8%) */
     if(d.mode==='phantom' && TR.isBoss){ var bg=TR.bossType==='god'?1000000000:100000000; CURRENCY.gold+=bg; TR.stats.gold+=bg; renderCurrency(); trDropAnim(null); trLog('掉落 <b class="lg-gold">金币 '+bg.toLocaleString()+'</b>'); got=true; trRare({name:'金币 '+(TR.bossType==='god'?'10亿':'1亿')}); TR.bossLoot.push('金币 '+bg.toLocaleString()); }   /* 神之幻境 BOSS：首领1亿、神级10亿金币 */
     else if(Math.random()<0.001){ CURRENCY.gold+=100000000; TR.stats.gold+=100000000; renderCurrency(); trDropAnim(null); trLog('掉落 <b class="lg-gold">金币 100,000,000</b>'); got=true; trRare({name:'金币 1亿'}); if(TR.isBoss) TR.bossLoot.push('金币 100,000,000'); }
-    else { var g=10000+Math.floor(Math.random()*990000); var pct=80-(g-10000)/990000*(80-8); if(Math.random()*100<pct){ CURRENCY.gold+=g; TR.stats.gold+=g; renderCurrency(); trDropAnim(null); trLog('掉落 <b class="lg-gold">金币 '+g.toLocaleString()+'</b>'); got=true; if(TR.isBoss) TR.bossLoot.push('金币 '+g.toLocaleString()); } }
+    else { var _gm=[10000,20000,30000,40000,50000,60000][TR.dungeon]||10000, _gx=[200000,400000,600000,800000,1000000,1000000][TR.dungeon]||200000; var g=_gm+Math.floor(Math.random()*(_gx-_gm+1)); if(TR.isElite) g=Math.min(Math.round(g*1.5),_gx); var pct=TR.isElite?100:(80-(g-_gm)/(_gx-_gm)*(80-8)); if(Math.random()*100<pct){ CURRENCY.gold+=g; TR.stats.gold+=g; renderCurrency(); trDropAnim(null); trLog('掉落 <b class="lg-gold">金币 '+g.toLocaleString()+'</b>'); got=true; if(TR.isBoss) TR.bossLoot.push('金币 '+g.toLocaleString()); } }
     var drops=trRollDrop();
     drops.forEach(function(item){ if(item){ got=true; addStackable(item); var rare=isRareDrop(item); trDropAnim(item.img,itemQuality(item)); trLog('掉落 <b class="lg-item">'+item.name+'</b>'); TR.stats.drop++; TR.stats.per[TR.dungeon].drop++; if(rare){ TR.stats.rare++; TR.stats.recent.unshift({name:item.name,time:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})}); if(TR.stats.recent.length>5) TR.stats.recent.pop(); } if(TR.isBoss) TR.bossLoot.push(item.name); } });
     if(TR.isElite){ var xd=trRollDrop(); xd.forEach(function(item){ if(item){ got=true; addStackable(item); trDropAnim(item.img,itemQuality(item)); trLog('精英掉落 <b class="lg-item">'+item.name+'</b>'); TR.stats.drop++; TR.stats.per[TR.dungeon].drop++; if(isRareDrop(item)){ TR.stats.rare++; } } }); }   /* 精英怪：额外多一档掉落 */
@@ -6014,7 +6045,7 @@ function trAtk(){
   if(OG>=5) dmg=Math.round(dmg*1.1);   /* 5件：+10%最终伤害加成 */
   dmg=Math.round(dmg);                                           /* 取消伤害封顶 */
   if(!TR.isBoss){ var ymv=DUNGEONS[TR.dungeon].monLv; if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0&&ymv<=TR.level&&Math.random()<0.01){ dmg=TR.monHp; trLog('<b class="lg-boss">伊泰安项链触发秒杀！</b>'); } }   /* 伊泰安项链：1%概率秒杀等级≤角色的小怪，对boss无效 */
-  if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0){ var hl=Math.max(1,Math.round(dmg*0.05)); if(TR.hp<TR.maxHp){ TR.hp=Math.min(TR.maxHp,TR.hp+hl); trHealFloat(hl); } }   /* 伊泰安项链：攻击5%吸血 */
+  var _ls2=(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0?0.05:0)+titleAtk().ls; if(_ls2>0){ var hl=Math.max(1,Math.round(dmg*_ls2)); if(TR.hp<TR.maxHp){ TR.hp=Math.min(TR.maxHp,TR.hp+hl); trHealFloat(hl); } }   /* 攻击吸血：伊泰安5%+称号吸血30%(星钻及以上) */
   if((wingRealPct()>0||_rt.tr>0||_ta.tr>0||_tm.tr>0||godMedalAtk()>0)&&TR.monMax) dmg=Math.round(dmg+TR.monMax*(wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk()));   /* 真实伤害：魔翼+阶位+称号+无尽徽章+屠神者（目标血量%） */
   if(TR.traits){ for(var ti=0;ti<TR.traits.length;ti++){ var tt=TR.traits[ti];
     if(tt.fx==='dmgred'||tt.fx==='armor') dmg=Math.round(dmg*(1-tt.val));   /* Boss 减伤 */
@@ -6051,7 +6082,14 @@ function trAtk(){
 }
 function startRevive(){
   if(TR.revTimer) clearInterval(TR.revTimer);
-  TR.monHp=TR.monMax; renderMon();   /* 角色死亡，当前未死亡怪物血量回满 */
+  if(TR.isBoss){   /* 角色死亡：本次未击杀Boss，Boss逃遁消失、重新刷小怪（等下次刷新Boss） */
+    TR.isBoss=false; TR.isElite=false; TR.bossType=null; TR.bossTier=0; TR.traits=null; TR.hiddenBoss=null; TR.forceBoss=null;
+    clearTimeout(TR.spawnTimer);
+    trLog('<b style="color:#ff7a6b">未能击杀 BOSS，BOSS 已逃遁，小怪重新刷新…</b>');
+    trSpawnMon();
+  } else {
+    TR.monHp=TR.monMax; renderMon();   /* 角色死亡，当前未死亡怪物血量回满 */
+  }
   /* 死亡掉落当前等级经验条10%，直到经验为0；等级不掉 */
   var lose=Math.round(TR.reqExp*0.10);
   if(lose>0 && TR.exp>0){
@@ -6095,6 +6133,7 @@ function renderMon(){
   var m=document.getElementById('tr-monster'); if(m){ m.innerHTML=monsterSVG(TR.isElite?'#e0b44a':d.color,TR.isBoss); m.className='tr-monster'+(TR.isBoss?' boss':'')+(TR.isElite?' elite':''); }
   var nm=document.getElementById('tr-mon-name'); if(nm) nm.textContent=TR.isBoss?d.bossName:(TR.isElite?d.monName+'·精英':d.monName);
   var lv=document.getElementById('tr-mon-lv'); if(lv) lv.textContent='Lv.'+(d.monLv||1)+(TR.isBoss?' · BOSS':(TR.isElite?' · 精英':''));
+  var tier=document.getElementById('tr-mon-tier'); if(tier){ tier.textContent=TR.isBoss?((BOSS_TIERS[TR.bossTier]||'')+' · 战力 '+fmtWan(TR.monPower||0)):''; }   /* Boss 阶位+战力（血条下方） */
   var fill=document.getElementById('tr-mon-hp'), num=document.getElementById('tr-mon-hpnum');
   var pct=TR.monMax?Math.max(0,Math.min(100,TR.monHp/TR.monMax*100)):100;
   if(fill){ fill.style.width=pct+'%'; fill.classList.toggle('low',pct<25); if(TR.isElite) fill.style.background='linear-gradient(90deg,#b8860b,#ffd700)'; }
@@ -6127,6 +6166,9 @@ function renderChar(){
   var ef=document.getElementById('tr-exp-fill'), en=document.getElementById('tr-exp-num');
   if(ef){ var pp=TR.reqExp?TR.exp/TR.reqExp*100:0; ef.style.width=Math.max(0,Math.min(100,pp))+'%'; }
   if(en) en.textContent=TR.level>=80?'MAX':(TR.exp+'/'+TR.reqExp);
+  var _rlv=document.getElementById('tr-rolecard-lv'); if(_rlv) _rlv.textContent='Lv.'+TR.level;   /* 角色等级 */
+  var _rt1=document.getElementById('tr-rolecard-tier'); if(_rt1) _rt1.textContent=CHAR_TIERS[charTierIdx()].n;   /* 当前阶位 */
+  var _rp1=document.getElementById('tr-rolecard-power'); if(_rp1) _rp1.textContent='战力 '+fmtWan(rolePower());   /* 角色战力 */
   renderBuff();
 }
 function renderTreasure(){
