@@ -332,6 +332,10 @@ body.show-god .stage{max-width:680px;}
 .slot.has-item.q-blue::after{box-shadow:inset 0 0 0 1px rgba(79,196,192,.75),0 0 7px rgba(79,196,192,.35);}
 .slot.has-item.q-gold::after{box-shadow:inset 0 0 0 1px rgba(255,215,0,.85),0 0 10px rgba(255,215,0,.5);}
 .slot.has-item.q-purple::after{box-shadow:inset 0 0 0 1px rgba(181,107,255,.9),0 0 13px rgba(181,107,255,.6);}
+.picker-grid .pick.q-blue::after,.picker-grid .pick.q-gold::after,.picker-grid .pick.q-purple::after{content:'';position:absolute;inset:0;border-radius:5px;pointer-events:none;z-index:1;}   /* 选择列表凹槽品质特效，与背包统一 */
+.picker-grid .pick.q-blue::after{box-shadow:inset 0 0 0 1px rgba(79,196,192,.75),0 0 7px rgba(79,196,192,.35);}
+.picker-grid .pick.q-gold::after{box-shadow:inset 0 0 0 1px rgba(255,215,0,.85),0 0 10px rgba(255,215,0,.5);}
+.picker-grid .pick.q-purple::after{box-shadow:inset 0 0 0 1px rgba(181,107,255,.9),0 0 13px rgba(181,107,255,.6);}
 
 /* ===== 下部：金币 + 分割线 + 按钮 ===== */
 .money{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 4px 0;}
@@ -414,6 +418,7 @@ body.show-god .stage{max-width:680px;}
 /* ===== 二级页面：角色属性（参考游戏属性面板布局） ===== */
 .attrs{display:none;padding:4px 0 10px;}   /* 覆盖 .window 的左右内边距，让面板贴近页面边线 */
 .attrs-body{padding:2px 2px 12px;}
+#view-attrs .attrs-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 104px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}   /* 属性页手机上可上下滚动（顶部标题条+快捷导航固定，内容区滚动） */
 .attrs .topbar{justify-content:center;}
 .attrs .back-arrow{
   position:absolute;left:2px;top:50%;transform:translateY(-50%);
@@ -1652,7 +1657,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div class="pgtabs"><button class="pgtab on" data-mode="embed">镶嵌</button><button class="pgtab" data-mode="extract">拆卸</button></div>
       <div class="gem-pane" id="gem-embed">
         <div class="gem-sec gem-target-sec">
-          <div class="enh-name"></div>
+          <div class="enh-name" id="gem-name"></div>
           <div class="gem-main"><div class="slot tt-slot" id="gem-equip"></div></div>
           <div class="gem-subtitle">需要镶嵌的道具</div>
         </div>
@@ -1678,7 +1683,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       </div>
       <div class="gem-pane" id="gem-extract" style="display:none;">
         <div class="gem-sec gem-target-sec">
-          <div class="enh-name"></div>
+          <div class="enh-name" id="gemx-name"></div>
           <div class="gem-main"><div class="slot tt-slot" id="gemx-equip"></div></div>
           <div class="gem-subtitle">需要拆卸的道具</div>
         </div>
@@ -2212,7 +2217,7 @@ function createItem(blueprint, overrides){
   return item;
 }
 /* ===== 蓝图同步：扫描背包/装备栏，name命中蓝图则深拷贝覆盖，保留实例字段（旧物品实时更新到新属性） ===== */
-var ITEM_INSTANCE_KEYS=['id','count','maxStack','enhanceLevel','gemSlots','gemAttributes','washAttrs','durability','bound'];
+var ITEM_INSTANCE_KEYS=['id','count','maxStack','enhanceLevel','gemSlots','gemAttributes','washAttrs','gemBonus','durability','bound'];
 function refreshItemToBlueprint(item){
   if(!item || !item.name) return false;
   for(var k in ITEM_BLUEPRINTS){
@@ -3048,7 +3053,7 @@ function buildTooltip(item){
   if (eq.indexOf(item.type)>=0){
     h += '<div class="tt-name '+(itemQuality(item)==='purple'?'tt-purple':'')+'">'+item.name+(item.enhanceLevel>0?' ['+item.enhanceLevel+']':'')+'</div>';
     if (isA){ var enhAbs=armorEnhAbs(item.enhanceLevel||0);
-      if((item.damageAbsorption||0)+enhAbs>0) h+='<div class="tt-o">伤害 吸收 +'+Math.round(enhAbs*100)+'%</div>'; }   /* 强化吸收%显示 */
+      if((item.damageAbsorption||0)+enhAbs>0) h+='<div class="tt-o">伤害 吸收 +'+fmtWan(enhAbs+(item.damageAbsorption||0))+'</div>'; }   /* 伤害吸收固定值（强化+装备）显示 */
     h += '<div class="tt-gap"></div>';
     if (isW){ if(item.physicalAttack!==undefined) h+='<div class="tt-y">攻击力 '+fmtWan(item.physicalAttack)+'</div>'; h+='<div class="tt-w">攻击速度一般</div>'; if(String(item.name).indexOf('传说 魔翼')>=0){ var _wr=Math.min(0.30,0.05+0.0125*(item.enhanceLevel||0)); h+='<div class="tt-purple">真实伤害 +'+Math.round(_wr*100)+'%</div>'; } }   /* 仅传说级魔翼真实伤害（强0=5%→强20=30%），史诗不显示 */
     if (isA){ var alv=item.enhanceLevel||0;
@@ -3065,7 +3070,7 @@ function buildTooltip(item){
       var rf=(item.washAttrs&&item.washAttrs[n]>0)?' <span class="tt-rf">+ '+fmtWan(item.washAttrs[n])+'</span>':'';
       if (item[key]||rf) h+='<div class="tt-y">'+n+' + '+fmtWan(item[key]||0)+rf+'</div>';
     });
-    if (isA && item.gemDamageAbsorption) h+='<div class="tt-y">伤害吸收 + '+fmtWan(item.gemDamageAbsorption)+'</div>';
+    if (isA && item.gemBonus&&item.gemBonus.伤害吸收) h+='<div class="tt-y">伤害吸收 + '+fmtWan(item.gemBonus.伤害吸收)+'</div>';
     if (!isJ) h+='<div class="tt-y">锻造值 230/230</div>';
     h+='<div class="tt-w">等级：'+(item.equipLevel||'—')+'</div><div class="tt-gap"></div>';
     if (item.price!==undefined) h+='<div style="color:'+getCurrencyStyle(item.price)+'">购买价格：'+fmtWan(item.price)+'</div>';
@@ -3208,7 +3213,7 @@ var pickerCb=null;
 function openPicker(title, items, cb){
   pickerTitle.textContent=title; pickerGrid.innerHTML=''; pickerCb=cb;
   (items||[]).forEach(function(it){
-    var d=document.createElement('div'); d.className='pick';
+    var d=document.createElement('div'); d.className='pick q-'+itemQuality(it);
     d.innerHTML=(it.img?'<img src="'+it.img+'" alt="'+it.name+'">':'')+(it.count>1?'<span class="qty">'+it.count+'</span>':'');
     d._item=it;
     d.addEventListener('click', function(){ if (pickerCb) pickerCb(it); });
@@ -3249,6 +3254,7 @@ function recalcCharacter(){
     bonus.力量+=e.strength||0; bonus.敏捷+=e.agility||0; bonus.体质+=e.constitution||0;
     bonus.精神+=e.spirit||0; bonus.智力+=e.intelligence||0; bonus.幸运+=e.luck||0;
     baseHp+=e.maxHp||0; baseVitality+=e.maxVitality||0; basePatk+=e.physicalAttack||0; basePdef+=e.defense||0; baseMdef+=e.resistance||0;
+    if(e.gemBonus){ var _gb=e.gemBonus; bonus.力量+=_gb.力量||0; bonus.敏捷+=_gb.敏捷||0; bonus.体质+=_gb.体质||0; bonus.精神+=_gb.精神||0; bonus.智力+=_gb.智力||0; bonus.幸运+=_gb.幸运||0; baseHp+=_gb.生命||0; baseVitality+=_gb.活力||0; basePatk+=_gb.物理攻击||0; basePdef+=_gb.防御||0; baseMdef+=_gb.抵抗力||0; }
     if(e.type==='weapon'){
       var _el=e.enhanceLevel||0;
       if(String(e.name).indexOf('传说 魔翼')>=0){ basePatk+=(WEAPON_ENH_ATK[_el]||0)*10000; }   /* 传说魔翼：强化攻击加成 = 基础表×10000 */
@@ -3339,8 +3345,8 @@ function roleTierAtk(){ var i=charTierIdx(), ig=0, tr=0; if(i>=5){ ig=0.20; tr=0
 function titleAtk(){ if(!ARENA.titleOn) return {ig:0,tr:0,ls:0}; var t=arenaTitle(); if(!t) return {ig:0,tr:0,ls:0}; return {ig:t.ig,tr:t.tr,ls:t.ls}; }   /* 称号攻击特性累加：星钻吸血30%、王者无视防御5%、战神无视防御10%+真实伤害10%（戴上生效） */
 function wingRealPct(){ var w=equipState['weapon']; return (w&&String(w.name).indexOf('传说 魔翼')>=0)?Math.min(0.30,0.05+0.0125*(w.enhanceLevel||0)):0; }   /* 传说魔翼：真实伤害 强化0=5%、强20=30%（线性+1.25%/级） */
 function armorEnhAbs(level){
-  if(level<=0||level>=ARMOR_ENH_ABS.length) return 0;
-  return 0.01+0.09*Math.pow((level-1)/19,2);   /* 强化吸收%：强1=1%、强10≤3%、强15≤5.6%、强20=10%（平方曲线） */
+  var t={1:20000,2:60000,3:80000,4:140000,5:190000,6:260000,7:360000,8:440000,9:560000,10:660000,11:800000,12:950000,13:1120000,14:1300000,15:1550000,16:1760000,17:2040000,18:2340000,19:2660000,20:3000000};
+  return t[level]||0;   /* 防具强化伤害吸收固定值：强1=2万…强20=300万 */
 }
 function isArmorType(t){ return t==='helmet'||t==='chest'||t==='gloves'||t==='leggings'||t==='boots'||t==='shield'||t==='cloak'; }
 var EQUIPPABLE={helmet:1,chest:1,gloves:1,leggings:1,boots:1,weapon:1,shield:1,necklace:1,ring:1,bracelet:1,cloak:1};
@@ -3360,13 +3366,14 @@ ENH.reset=function(){ this.equip=null; this.mats=[null,null,null,null,null,null]
 var REFINE={ equip:null, material:null };
 REFINE.reset=function(){ this.equip=null; this.material=null; };
 function countStack(type){ var n=0; for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.type===type) n+=(it.count||1); } return n; }
-function rollRefine(n, full){
+function rollRefine(n, full, maxAll){
   var pool=['力量','敏捷','体质','智力','精神','幸运','生命','活力'];
   var used={}, attrs={}, m=0;
   while(m<n && m<8){
     var idx=Math.floor(Math.random()*8);
     if(used[idx]) continue;
     used[idx]=true;
+    if(maxAll){ attrs[pool[idx]]=9990000; m++; continue; }   /* 全最高：洗出的每条属性都=区间最高值9990000 */
     var isBig=(pool[idx]==='生命'||pool[idx]==='活力');
     attrs[pool[idx]]=isBig?(full?(Math.round((9990000-Math.pow(Math.random(),2.5)*8990000)/100)*100):(Math.floor(Math.random()*14)*100)):(full?Math.round(9990000-Math.pow(Math.random(),2.5)*8990000):Math.floor(Math.random()*100));   /* 完整卷轴：基础属性100万~1亿、生命/活力100万~10亿(整百)，大概率接近最高；生命/活力为整百 */
     m++;
@@ -3376,8 +3383,8 @@ function rollRefine(n, full){
 function renderRefine(){
   var eq=$('#refine-equip');
   eq.innerHTML=REFINE.equip?'<img class="item-img" src="'+REFINE.equip.img+'" alt="">':'<span class="hint">选择装备</span>';
-  var nm=$('#refine-name'); nm.innerHTML=REFINE.equip?REFINE.equip.name+(REFINE.equip.enhanceLevel>0?' ['+REFINE.equip.enhanceLevel+']':''):'';
-  eq.classList.toggle('has-item',!!REFINE.equip); eq._item=REFINE.equip;
+  var nm=$('#refine-name'); nm.innerHTML=REFINE.equip?REFINE.equip.name+(REFINE.equip.enhanceLevel>0?' ['+REFINE.equip.enhanceLevel+']':''):''; nm.style.color=REFINE.equip?ttNameColor(REFINE.equip):'';
+  eq.classList.toggle('has-item',!!REFINE.equip); eq.classList.remove('q-blue','q-gold','q-purple'); if(REFINE.equip) eq.classList.add('q-'+itemQuality(REFINE.equip)); eq._item=REFINE.equip;
   var scrolls=[{t:'normal_scroll',n:'属性卷轴',img:'logos/属性卷轴.png'},{t:'full_scroll',n:'完整的属性卷轴',img:'logos/完整的属性卷轴.png'}];
   ['refine-mats-r1','refine-mats-r2'].forEach(function(rid,ri){
     var $m=document.getElementById(rid); $m.innerHTML='';
@@ -3422,9 +3429,11 @@ function doRefine(){
   if(full){ var rr=Math.random(); n = rr<0.55 ? 8 : (rr<0.8 ? 7 : 3+Math.floor(Math.random()*4)); }   /* 完整卷轴3~8条，倾向最多条，可洗炼全部8项 */
   else { n = Math.floor(Math.random()*4); }   /* 属性卷轴0~3条 */
   consumeStack(found,1);
-  REFINE.equip.washAttrs=rollRefine(n, full);
+  var maxAll = full && Math.random()<0.01;   /* 完整卷轴 1% 概率洗出全部属性区间最高值 */
+  REFINE.equip.washAttrs=rollRefine(n, full, maxAll);
   playSoundEffect('embedSuccess');
-  toast('洗炼成功：附加 '+n+' 条属性');
+  if(maxAll){ toast('神迹降临！所有属性洗出区间最高值！'); triggerLegendFX(); }
+  else toast('洗炼成功：附加 '+n+' 条属性');
   renderBag(); renderRefine(); recalcCharacter();
 }
 function consumeStack(it,n){
@@ -3437,7 +3446,8 @@ function renderEnhance(){
   eq.innerHTML = ENH.equip ? '<img class="item-img" src="'+ENH.equip.img+'" alt="">' : '<span class="hint">选择装备</span>';
   var nm=$('#enh-name');
   nm.innerHTML = ENH.equip ? ENH.equip.name+(ENH.equip.enhanceLevel>0?' ['+ENH.equip.enhanceLevel+']':'') : '';
-  eq.classList.toggle('has-item', !!ENH.equip);
+  nm.style.color = ENH.equip ? ttNameColor(ENH.equip) : '';
+  eq.classList.toggle('has-item', !!ENH.equip); eq.classList.remove('q-blue','q-gold','q-purple'); if(ENH.equip) eq.classList.add('q-'+itemQuality(ENH.equip));
   eq._item=ENH.equip;
   /* 1. 可使用的道具（6 材料凹槽） */
   var m=$('#enh-mats'); m.innerHTML='';
@@ -3608,20 +3618,32 @@ function sameTypeExists(eq,gem){
   return false;
 }
 function applyGemAttrs(eq,gem){
-  if(gem.name.indexOf('混沌')>=0){ ['strength','agility','constitution','intelligence','spirit','luck'].forEach(function(s){ eq[s]=(eq[s]||0)+168; }); }
+  if(!eq.gemBonus) eq.gemBonus={力量:0,敏捷:0,体质:0,智力:0,精神:0,幸运:0,生命:0,活力:0,物理攻击:0,防御:0,抵抗力:0,伤害吸收:0};
+  var gb=eq.gemBonus;
+  if(gem.name.indexOf('混沌')>=0){ gb.力量+=168; gb.敏捷+=168; gb.体质+=168; gb.智力+=168; gb.精神+=168; gb.幸运+=168; }
   else if(gem.stat&&gem.value){
-    var map={'力量':'strength','敏捷':'agility','体质':'constitution','智力':'intelligence','精神':'spirit','幸运':'luck','生命值':'maxHp','物理攻击':'physicalAttack','攻击力':'physicalAttack','防御':'defense','抵抗力':'resistance'};
-    var es=map[gem.stat]; if(es) eq[es]=(eq[es]||0)+gem.value;
-    if(gem.name.indexOf('专注')>=0) eq.gemDamageAbsorption=(eq.gemDamageAbsorption||0)+gem.value;
+    var map={'力量':'力量','敏捷':'敏捷','体质':'体质','智力':'智力','精神':'精神','幸运':'幸运','生命值':'生命','物理攻击':'物理攻击','攻击力':'物理攻击','防御':'防御','抵抗力':'抵抗力'};
+    var es=map[gem.stat]; if(es) gb[es]+=gem.value;
+    if(gem.name.indexOf('专注')>=0) gb.伤害吸收+=gem.value;
   }
   if(gem.attribute){ eq.gemAttributes=eq.gemAttributes||{}; eq.gemAttributes.additionalAttribute=gem.attribute; if(eq.type==='weapon') eq.attribute=gem.attribute; }
 }
 function removeGemAttrs(eq,gem){
+  if(eq.gemBonus){
+    var gb=eq.gemBonus;
+    if(gem.name.indexOf('混沌')>=0){ gb.力量=Math.max(0,gb.力量-168); gb.敏捷=Math.max(0,gb.敏捷-168); gb.体质=Math.max(0,gb.体质-168); gb.智力=Math.max(0,gb.智力-168); gb.精神=Math.max(0,gb.精神-168); gb.幸运=Math.max(0,gb.幸运-168); }
+    else if(gem.stat&&gem.value){
+      var map={'力量':'力量','敏捷':'敏捷','体质':'体质','智力':'智力','精神':'精神','幸运':'幸运','生命值':'生命','物理攻击':'物理攻击','攻击力':'物理攻击','防御':'防御','抵抗力':'抵抗力'};
+      var es=map[gem.stat]; if(es&&gb[es]!==undefined) gb[es]=Math.max(0,gb[es]-gem.value);
+      if(gem.name.indexOf('专注')>=0&&gb.伤害吸收!==undefined) gb.伤害吸收=Math.max(0,gb.伤害吸收-gem.value);
+    }
+  } else {
   if(gem.name.indexOf('混沌')>=0){ ['strength','agility','constitution','intelligence','spirit','luck'].forEach(function(s){ if(eq[s]) eq[s]=Math.max(0,eq[s]-168); }); }
   else if(gem.stat&&gem.value){
     var map={'力量':'strength','敏捷':'agility','体质':'constitution','智力':'intelligence','精神':'spirit','幸运':'luck','生命值':'maxHp','物理攻击':'physicalAttack','攻击力':'physicalAttack','防御':'defense','抵抗力':'resistance'};
     var es=map[gem.stat]; if(es&&eq[es]!==undefined) eq[es]=Math.max(0,eq[es]-gem.value);
     if(gem.name.indexOf('专注')>=0&&eq.gemDamageAbsorption!==undefined) eq.gemDamageAbsorption=Math.max(0,eq.gemDamageAbsorption-gem.value);
+  }
   }
   if(gem.attribute){
     var has=(eq.gemSlots||[]).some(function(g,i){ return g&&g!==gem&&g.attribute; });
@@ -3636,7 +3658,9 @@ function renderGemEmbed(){
   /* 道具槽：图片正常显示（与背包一致的内凹阴影） */
   var eq=$('#gem-equip');
   eq.innerHTML = GEM.equip ? '<img class="item-img" src="'+GEM.equip.img+'" alt="">' : '<span class="hint">选择装备</span>';
+  eq.classList.toggle('has-item', !!GEM.equip); eq.classList.remove('q-blue','q-gold','q-purple'); if(GEM.equip) eq.classList.add('q-'+itemQuality(GEM.equip));
   eq._item=GEM.equip;
+  var _gn=$('#gem-name'); if(_gn){ _gn.innerHTML=GEM.equip?GEM.equip.name+(GEM.equip.enhanceLevel>0?' ['+GEM.equip.enhanceLevel+']':''):''; _gn.style.color=GEM.equip?ttNameColor(GEM.equip):''; }
   /* 镶嵌的宝石：固定 6 槽；装备槽不足 6 时多余槽禁用（参考旧系统） */
   var gs=$('#gem-slots'); gs.innerHTML='';
   var slots=GEM.equip?(GEM.equip.gemSlots||[]):[];
@@ -3702,7 +3726,9 @@ function renderGemEmbed(){
 function renderGemExtract(){
   var eq=$('#gemx-equip');
   eq.innerHTML=GEM.xequip?'<img class="item-img" src="'+GEM.xequip.img+'" alt="">':'<span class="hint">选择装备</span>';
+  eq.classList.toggle('has-item', !!GEM.xequip); eq.classList.remove('q-blue','q-gold','q-purple'); if(GEM.xequip) eq.classList.add('q-'+itemQuality(GEM.xequip));
   eq._item=GEM.xequip;
+  var _gx=$('#gemx-name'); if(_gx){ _gx.innerHTML=GEM.xequip?GEM.xequip.name+(GEM.xequip.enhanceLevel>0?' ['+GEM.xequip.enhanceLevel+']':''):''; _gx.style.color=GEM.xequip?ttNameColor(GEM.xequip):''; }
   /* 已镶嵌宝石：固定 6 槽；多余槽禁用 */
   var gs=$('#gemx-slots'); gs.innerHTML='';
   var slots=GEM.xequip?(GEM.xequip.gemSlots||[]):[];
@@ -4228,6 +4254,16 @@ function renderAttrs(){
         :'<div class="tt-empty">当前暂无生效特性</div>');
   }
 }
+function finalDR(){ var dr=0; if(ISET>=5) dr+=0.30; if(OG>=5) dr+=0.10; var enhN=0; for(var ek in equipState){ var ee=equipState[ek]; if(ee&&(ee.enhanceLevel||0)>=20) enhN++; } dr+=Math.min(0.30,enhN*0.03); return Math.min(0.90,dr); }   /* 最终伤害减免：伊泰安30%+奥格顿10%+强20每件3%（去×9%换算），封顶90% */
+function calcHit(A,D){   /* 统一伤害结算（角色/怪物/Boss 同一套）：命中→有效防御→主伤害→真伤→合计→增伤→终减→吸收 */
+  var eDef=Math.max((D.def||0)*(1-(A.ig||0)),0);              /* 有效防御=承受者防御×(1-攻击者无视防御) */
+  var main=(A.atk||0)*(1 - eDef/(eDef+600));                  /* 主伤害=攻击×(1-减伤率)，减伤率=有效防御/(有效防御+600) */
+  main*=(1-(D.mdef||0));                                      /* 铁壁血盾：承受者主伤害减伤%，只作用主伤害，不影响真伤 */
+  var real=((A.realAtk||A.atk)||0)*(A.real||0);               /* 真伤=攻击力×真伤%，跳过防御 */
+  var total=(main+real)*(1+(A.add||0));                       /* 合计基础伤害×(1+增伤%) */
+  total*=(1-(D.fdr||0));                                      /* ×(1-承受者最终伤害减免%) */
+  return Math.max(total-(D.abs||0),0);                        /* 减承受者伤害吸收(固定值)，不小于0 */
+}
 /* ============ 角色当前生效特性汇总（属性页/浮层展示，与战斗计算同源） ============ */
 function roleTraits(){
   var _rt=roleTierAtk(), _ta=titleAtk(), _tm=tMedalAtk(), gm=godMedalAtk(), wm=wingRealPct();
@@ -4255,22 +4291,27 @@ function roleTraits(){
   if(TLM.s100.got&&TLM.s100.on) tl.push('名震八方徽章+10%');
   if(TLM.s150.got&&TLM.s150.on) tl.push('执掌乾坤徽章+20%');
   var tr=Math.min(0.9,wm+_rt.tr+_ta.tr+_tm.tr+gm);
-  if(tr>0) out.push({n:'真实伤害',d:'每次攻击附加目标最大血量'+pct(tr)+'的伤害。提供：'+jn(tl),p:pct(tr)});
+  if(tr>0) out.push({n:'真实伤害',d:'每次攻击附加攻击力'+pct(tr)+'的真实伤害（跳过防御，受最终伤害减免削减）。提供：'+jn(tl),p:pct(tr)});
   /* 固定来源特性 */
   var enhN=0, abp=0, ab=0, atr=false, dattr=false;
-  for(var ek in equipState){ var ee=equipState[ek]; if(ee){ if((ee.enhanceLevel||0)>=20) enhN++; if(isArmorType(ee.type)){ abp+=armorEnhAbs(ee.enhanceLevel||0); ab+=(ee.damageAbsorption||0); } } }
+  for(var ek in equipState){ var ee=equipState[ek]; if(ee){ if((ee.enhanceLevel||0)>=20) enhN++; if(isArmorType(ee.type)){ ab+=armorEnhAbs(ee.enhanceLevel||0); ab+=(ee.damageAbsorption||0); } ab+=(ee.gemDamageAbsorption||0); } }
   abp=Math.min(0.9,abp);
   if(equipState['weapon']&&equipState['weapon'].gemAttributes&&equipState['weapon'].gemAttributes.additionalAttribute) atr=true;
   if(equipState['armor']&&equipState['armor'].gemAttributes&&equipState['armor'].gemAttributes.additionalAttribute) dattr=true;
   if(ISET>=5) out.push({n:'暴击伤害减免',d:'受暴击时暴击伤害降低30%。提供：伊泰安首饰5件',p:'30%'});
-  var fd=Math.min(0.9,(ISET>=5?0.30:0)+(OG>=5?0.10:0)+enhN*0.09);
-  if(fd>0){ var fl=[]; if(ISET>=5) fl.push('伊泰安首饰5件+30%'); if(OG>=5) fl.push('传说奥格顿5件+10%'); if(enhN>0) fl.push('强化+20防具'+enhN+'件+'+pct(enhN*0.09)); out.push({n:'最终伤害减免',d:'受到的最终伤害降低'+pct(fd)+'。提供：'+jn(fl),p:pct(fd)}); }
+  var fd=Math.min(0.9,(ISET>=5?0.30:0)+(OG>=5?0.10:0)+enhN*0.03);
+  if(fd>0){ var fl=[]; if(ISET>=5) fl.push('伊泰安首饰5件+30%'); if(OG>=5) fl.push('传说奥格顿5件+10%'); if(enhN>0) fl.push('强化+20防具'+enhN+'件+'+pct(enhN*0.03)); out.push({n:'最终伤害减免',d:'受到的最终伤害降低'+pct(fd)+'。提供：'+jn(fl),p:pct(fd)}); }
   if(OG>=5) out.push({n:'最终伤害加成',d:'造成的最终伤害提高10%。提供：传说奥格顿5件',p:'10%'});
+  if(tt&&titleAtk().ls>0) out.push({n:'攻击吸血',d:'攻击恢复造成伤害'+pct(titleAtk().ls)+'的生命。提供：'+tt.n+'称号',p:pct(titleAtk().ls)});   /* 称号吸血：璀璨星钻10%（戴上生效） */
   if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0){ out.push({n:'攻击吸血',d:'攻击恢复造成伤害10%的生命。提供：伊泰安项链',p:'10%'}); out.push({n:'秒杀小怪',d:'1%概率秒杀等级≤自身的普通小怪(对Boss无效)。提供：伊泰安项链',p:'1%'}); }
   if(OG>=5) out.push({n:'免疫负面',d:'50%概率免疫流血/中毒/眩晕/减速。提供：传说奥格顿5件',p:'50%'});
   if(atr) out.push({n:'属性攻击',d:'物理攻击等效+30%。提供：武器镶嵌攻击宝石',p:'30%'});
   if(dattr) out.push({n:'属性防御',d:'受到的伤害降低30%。提供：胸甲镶嵌防御宝石',p:'30%'});
-  if(abp>0||ab>0){ var sl=[]; if(abp>0) sl.push('防具强化吸收+'+pct(abp)); if(ab>0) sl.push('专注宝石固定吸收+'+fmtWan(ab)); out.push({n:'伤害吸收',d:'抵消受到的固定伤害。提供：'+jn(sl),p:pct(abp)}); }
+  var enh15=0, enh18=0;
+  for(var _ek in equipState){ var _ee=equipState[_ek]; if(_ee&&isArmorType(_ee.type)){ var _el=_ee.enhanceLevel||0; if(_el>=15) enh15++; if(_el>=18) enh18++; } }
+  if(enh15>0) out.push({n:'抗暴率',d:'受到的暴击率降低3%。提供：防具强化+15('+enh15+'件)',p:'3%'});
+  if(enh18>0) out.push({n:'暴击伤害减免',d:'受暴击时暴击伤害降低3%。提供：防具强化+18('+enh18+'件)',p:'3%'});
+  if(ab>0){ var sl=[]; sl.push('防具强化+专注宝石等固定吸收累计+'+fmtWan(ab)); out.push({n:'伤害吸收',d:'抵消受到的固定伤害。提供：'+jn(sl),p:fmtWan(ab)}); }
   return out;
 }
 
@@ -4455,7 +4496,7 @@ var BOSS_TRAITS=[
   {fx:'lifesteal',n:'吸血',     base:.05,step:.06,max:.50,m:'攻击吸血5%~50%'},
   {fx:'pbreak',   n:'破防',     base:.10,step:.08,max:.50,m:'降低目标防御10%~50%'},
   {fx:'ignore',   n:'无视防御', base:.15,step:.09,max:.60,m:'15%~60%概率无视防御'},
-  {fx:'armor',    n:'铁壁血盾', base:.06,step:.05,max:.35,m:'减伤6%~35%，体型血厚'},
+  {fx:'armor',    n:'铁壁血盾', base:.06,step:.05,max:.35,m:'主伤害减伤6%~35%（只作用主伤害、不影响真伤），体型血厚'},
   {fx:'fury',     n:'狂暴',     base:.10,step:.10,max:.60,m:'伤害+10%~60%'},
   {fx:'reflect',  n:'反弹',     base:.10,step:.06,max:.45,m:'反弹10%~45%伤害'},
   {fx:'stun',     n:'击晕',     base:.05,step:.05,max:.35,m:'击晕5%~35%'},
@@ -4464,7 +4505,7 @@ var BOSS_TRAITS=[
   {fx:'bleed',    n:'流血',     base:.03,step:.02,max:.15,m:'流血伤害(血量)3%~15%'},
   {fx:'patk',     n:'伤害加成', base:.10,step:.06,max:.50,m:'伤害+10%~50%'},
   {fx:'true',     n:'真实伤害', base:.03,step:.02,max:.12,m:'真实伤害(血量)3%~12%'},
-  {fx:'dmgred',   n:'伤害减免', base:.05,step:.04,max:.30,m:'减免伤害5%~30%'}
+  {fx:'dmgred',   n:'最终伤害减免', base:.05,step:.04,max:.30,m:'最终伤害减免5%~30%（怪物上限50%）'}
 ];
 function bossTraitVal(fx,tier){ var t=null; for(var i=0;i<BOSS_TRAITS.length;i++) if(BOSS_TRAITS[i].fx===fx){ t=BOSS_TRAITS[i]; break; } if(!t)return 0; return Math.min(t.max, t.base+tier*t.step); }
 function genBossTraits(tier,minN,maxN){   /* tier 0~5；随机 minN~maxN 个不同特性 */
@@ -4505,6 +4546,25 @@ function bossHitMods(trs, mhp){   /* Boss 攻击角色时：按特性调整伤�
     else if(t.fx==='poison'||t.fx==='bleed') res.add+=Math.round(mhp*t.val);
   }
   return res;
+}
+function monTraitAtk(trs, monAtk){   /* 怪物攻击特性→统一结算攻击者参数（主流游戏口径）：增伤/真伤/穿透/破防喂入 calcHit 的 A；暴击/吸血/晕/减速/毒/流血/反弹为结算外效果 */
+  var A={atk:monAtk, realAtk:monAtk, ig:0, real:0, add:0};
+  var bm={crit:false, lifesteal:0, stun:false, slow:0, poison:0, bleed:0, reflect:0};
+  if(trs){ for(var i=0;i<trs.length;i++){ var t=trs[i];
+    if(t.fx==='patk'||t.fx==='fury') A.add+=t.val;                 /* 伤害加成/狂暴 → 增伤（合计×，累计不覆盖） */
+    else if(t.fx==='true') A.real+=t.val;                          /* 真实伤害 → 攻击×% 真伤（跳过防御，被最终伤害减免削减） */
+    else if(t.fx==='ignore') A.ig+=t.val;                          /* 无视防御 → 百分比穿透（只作用主伤害有效防御） */
+    else if(t.fx==='pbreak') A.ig+=t.val;                          /* 破防 → 降低目标防御% */
+    else if(t.fx==='crit') bm.crit=bm.crit||Math.random()<t.val;   /* 暴击 */
+    else if(t.fx==='lifesteal') bm.lifesteal=Math.max(bm.lifesteal,t.val);
+    else if(t.fx==='stun') bm.stun=Math.random()<t.val;
+    else if(t.fx==='slow') bm.slow=Math.max(bm.slow,t.val);
+    else if(t.fx==='poison') bm.poison=Math.max(bm.poison,t.val);
+    else if(t.fx==='bleed') bm.bleed=Math.max(bm.bleed,t.val);
+    else if(t.fx==='reflect') bm.reflect=Math.max(bm.reflect,t.val);
+  } }
+  A.ig=Math.min(0.9, A.ig);   /* 无视防御+破防合计封顶90%（统一机制封顶体系） */
+  return {A:A, bm:bm};
 }
 /* 统一页面转场：打开 / 返回均带过渡，后续新增页面接入 hash 路由即自动沿用 */
 /* ============ 无尽试炼系统 ============ */
@@ -4575,11 +4635,14 @@ function tlCharDmg(){
   var atk=TR.patk; if(TR.attrDef && TR.attr!=='无') atk=Math.round(atk*1.3);
   var lvd=TR.level-T.monLv; var pS=(lvd>=10)?lvSuppress(lvd):(lvd<=-10?0.5:1);
   var _rt=roleTierAtk(); var _ta=titleAtk(); var _tm=tMedalAtk();   /* 角色阶位+称号+无尽徽章攻击特性 */
-  var dmg=Math.round(atk*atk/(atk+T.monDef*(ISET>=5?0.7:1)*(1-_rt.ig-_ta.ig-_tm.ig))*pS);   /* 伊泰安5件30%+阶位+称号+无尽徽章无视防御 */
+  var _ig=_rt.ig+_ta.ig+_tm.ig+(ISET>=5?0.3:0)+(ARENA.killBoss>=1&&ARENA.medalOn?0.1:0);   /* 角色无视防御：阶位+称号+徽章+伊泰安（只作用主伤害有效防御） */
+  var _rl=wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk();   /* 角色真实伤害% */
+  var _add=(OG>=5?0.1:0);   /* 增伤乘区：奥格顿5件+10% */
   var crit=Math.random()<trCritRate(), weak=Math.random()<0.05;
-  if(weak){ dmg*=2; if(crit) dmg*=1.1; } if(crit) dmg*=2;
+  var _critMul=(weak&&crit)?(2*1.1*2):(crit?2:(weak?2:1));   /* 弱×2、暴×2、同发×4.4（只作用主伤害） */
+  var _mFdr=0,_mmDef=0; if(T.traits){ for(var _tq=0;_tq<T.traits.length;_tq++){ var _tv=T.traits[_tq]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(怪物)：dmgred→最终伤害减免(作用合计,上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
+  var dmg=Math.round(calcHit({atk:atk*pS*_critMul, realAtk:atk, ig:_ig, real:_rl, add:_add}, {def:T.monDef, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, abs:0}));   /* 统一结算：主伤害(有效防御+等级压制+暴击弱点)+真伤→增伤→怪物终减→吸收 */
   if(!T.isBoss && equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0 && T.monLv<=TR.level && Math.random()<0.01){ dmg=T.monHp; tlLog('<b style="color:#c86bff">伊泰安项链触发秒杀！</b>'); }   /* 伊泰安项链：1%概率秒杀等级≤角色的小怪，对boss无效 */
-  if((wingRealPct()>0||_rt.tr>0||_ta.tr>0||_tm.tr>0||godMedalAtk()>0)&&T.monMax) dmg=Math.round(dmg+T.monMax*(wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk()));   /* 真实伤害：魔翼+阶位+称号+无尽徽章+屠神者（目标血量%） */
   return {d:dmg, crit:crit, miss:Math.random()<0.02, weak:weak};
 }
 function tlShootArrow(cb){   /* 与寻宝 trShootArrow 一致：从场景左下角发射箭矢飞向怪物，到达后回调 */
@@ -4599,20 +4662,16 @@ function tlShootArrow(cb){   /* 与寻宝 trShootArrow 一致：从场景左下�
   anim.onfinish=function(){ if(a.parentNode) a.remove(); if(cb) cb(); };
   anim.oncancel=function(){ if(a.parentNode) a.remove(); };
 }
-function tlRoleHit(monAtk){
+function tlRoleHit(monAtk){   /* 试炼怪物攻击角色：统一结算（怪物特性喂入 calcHit 攻击者参数） */
   var lvd=TR.level-T.monLv;
   var pS=(lvd>=10)?lvSuppress(lvd):(lvd<=-10?0.5:1);
   var mS=(lvd<=-10)?lvSuppress(-lvd):(lvd>=10?0.5:1);   /* 试炼等级压制正常生效（需80级后才能挑战） */
   var raw=monAtk*(T.isBoss?bossAtkCoef(bossTierOfLayer(T.layer)):1)*mS*(0.55+Math.random()*0.4);   /* Boss攻击乘阶位系数1~10（神级最高），小怪×1 */
-  var _pb=0; if(T.traits){ for(var _pi=0;_pi<T.traits.length;_pi++) if(T.traits[_pi].fx==='pbreak') _pb=Math.max(_pb,T.traits[_pi].val); }   /* 破防：降低目标防御10%~50% */
-  var pd=TR.pdef*pS*(Date.now()<POTION_UNTIL?2:1)*(1-_pb);
-  var after=raw*(pd/(pd+500));
-  if(TR.attrDef) after*=0.7;
-  var enhN=0; for(var ek in equipState){ var ee=equipState[ek]; if(ee&&(ee.enhanceLevel||0)>=20) enhN++; }
-  if(enhN>0) after*=(1-enhN*0.09);
-  if(ISET>=5) after*=0.7;   /* 伊泰安5件：最终伤害减免+30% */
-  var _d=Math.max(0, Math.round(after*(1-TR.absorbPct)-TR.absorb));
-  return Math.max(_d, Math.round(raw*0.10));   /* 总减伤封顶90%：保底10%原始伤害 */
+  var _ma=monTraitAtk(T.traits, raw);   /* 怪物增伤/真伤/无视防御/破防→A；暴击/吸血/晕/减速/毒/流血/反弹→bm */
+  var fdr=Math.min(0.9, (TR.attrDef?0.3:0)+finalDR());              /* 承受者(角色)最终伤害减免：属性防御30%+装备，封顶90% */
+  var dmg=Math.round(calcHit({atk:_ma.A.atk*(_ma.bm.crit?(ISET>=5?1.4:2):1), realAtk:_ma.A.realAtk, ig:_ma.A.ig, real:_ma.A.real, add:_ma.A.add}, {def:TR.pdef*pS*(Date.now()<POTION_UNTIL?2:1), fdr:fdr, abs:TR.absorb}));   /* 统一结算：主伤害(有效防御+暴击)→真伤→增伤→终减→吸收 */
+  dmg=Math.max(dmg, Math.round(raw*0.10));   /* 总减伤封顶90%：保底10%原始伤害 */
+  return {d:dmg, raw:raw, bm:_ma.bm};
 }
 function tlMonInterval(){ return (T.monLv<=30)?4000:1300; }
 var ITH_LEFT={yitaiNecklace:1,yitaiRing:2,yitaiBracelet:2};   /* 伊泰安首饰：全服务器唯一，项链1/戒指2/手镯2共5件，掉完不再掉落 */
@@ -4688,10 +4747,8 @@ function tlTick(){
       if(r.miss){ tlFloat('MISS',true,false,true); }
       else {
         if(T.traits){ for(var ti=0;ti<T.traits.length;ti++){ var tt=T.traits[ti];
-          if(tt.fx==='dmgred'||tt.fx==='armor') r.d=Math.round(r.d*(1-tt.val));   /* 试炼 Boss 减伤 */
-          else if(tt.fx==='reflect'){ var rb=Math.round(r.d*tt.val); if(rb>0){ T.hp-=rb; if(T.hp<0)T.hp=0; tlFloat(rb,false); tlRenderChar(); if(T.hp<=0){ T.hp=0; tlRenderChar(); tlStartRevive(); return; } } }   /* 反弹 */
+          if(tt.fx==='reflect'){ var rb=Math.round(r.d*tt.val); if(rb>0){ T.hp-=rb; if(T.hp<0)T.hp=0; tlFloat(rb,false); tlRenderChar(); if(T.hp<=0){ T.hp=0; tlRenderChar(); tlStartRevive(); return; } } }   /* 反弹（减伤特性已并入 calcHit 终减；OG增伤已并入） */
         } }
-        if(OG>=5) r.d=Math.round(r.d*1.1);   /* 5件：+10%最终伤害加成 */
       if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0){ var hl=Math.max(1,Math.round(r.d*0.05)); if(T.hp<T.maxHp){ T.hp=Math.min(T.maxHp,T.hp+hl); tlHealFloat(hl); } }
         var _sl=(r.crit&&r.weak)?2:((r.crit||r.weak)?1:0); T.monHp-=r.d; tlFloat(r.d,true,r.crit); var m=document.getElementById('tl-monster'); if(m){ m.classList.add('hit'); setTimeout(function(){ if(m) m.classList.remove('hit'); },100); } if(_sl){ var mm=document.getElementById('tl-monster'); if(mm) shakeMonster(mm,_sl); addMonCardShake('tl',_sl); }
       }
@@ -4704,15 +4761,12 @@ function tlTick(){
     var miss=Math.random()<0.02;
     if(miss){ tlFloat('MISS',false,false,true); }
     else {
-      var bm=bossHitMods(T.traits,T.maxHp);
-      var b0=Math.max(0,tlRoleHit(T.monAtk));
-      if(bm.ignore) b0=Math.max(b0,Math.round(T.monAtk*0.5));
-      var md=Math.max(0,Math.round(b0*bm.mul))+(ogImmune()?0:bm.add); if(bm.crit) md=Math.round(md*(ISET>=5?1.4:2));   /* 暴击(伊泰安5件减30%暴击伤害) */
-      if(OG>=5) md=Math.round(md*0.9);   /* 5件：+10%最终伤害减免 */
+      var _rh=tlRoleHit(T.monAtk);   /* 统一结算已含怪物增伤/真伤/穿透/暴击 */
+      var md=Math.max(0,_rh.d)+(ogImmune()?0:Math.round(T.maxHp*(_rh.bm.poison+_rh.bm.bleed)));   /* 中毒/流血(按目标血量%状态伤害，5件50%免疫负面) */
       T.hp-=md; tlFloat(md,false); tlRenderChar();
-      if(bm.lifesteal>0&&T.monHp<T.monMax){ T.monHp=Math.min(T.monMax,T.monHp+Math.round(md*bm.lifesteal)); tlRenderMon(); }
-      if(bm.stun && !ogImmune()){ T.stunUntil=Date.now()+2000; tlLog('被击晕，2秒无法攻击'); }
-      if(bm.slow && !ogImmune()){ T.slowUntil=Date.now()+4000; T.slowAmt=bm.slow; }   /* 5件50%免疫负面状态 */
+      if(_rh.bm.lifesteal>0&&T.monHp<T.monMax){ T.monHp=Math.min(T.monMax,T.monHp+Math.round(md*_rh.bm.lifesteal)); tlRenderMon(); }
+      if(_rh.bm.stun && !ogImmune()){ T.stunUntil=Date.now()+2000; tlLog('被击晕，2秒无法攻击'); }
+      if(_rh.bm.slow && !ogImmune()){ T.slowUntil=Date.now()+4000; T.slowAmt=_rh.bm.slow; }   /* 5件50%免疫负面状态 */
     }
     if(T.hp<=0){ T.hp=0; tlRenderChar(); tlStartRevive(); }
   }
@@ -4802,7 +4856,7 @@ function renderAchievement(){
     tel2.innerHTML=th;
   }
   /* 特性图鉴：动态读取 BOSS_TRAITS，随代码更新自动保持最新 */
-  var TRAIT_STARS={crit:4,lifesteal:3,pbreak:2,ignore:5,armor:4,fury:4,reflect:4,stun:4,poison:3,slow:3,bleed:3,patk:4,true:5,dmgred:4};
+  var TRAIT_STARS={crit:4,lifesteal:3,pbreak:4,ignore:5,armor:4,fury:4,reflect:4,stun:4,poison:3,slow:3,bleed:3,patk:4,true:5,dmgred:5};   /* 威胁度：穿透/真伤/终减★5；暴击/铁壁/狂暴/反弹/击晕/增伤/破防★4；吸血/毒/减速/流血★3 */
   var ttel=document.getElementById('ach-traits');
   if(ttel){ var _all=[];
     for(var ti=0;ti<BOSS_TRAITS.length;ti++){ var tr=BOSS_TRAITS[ti]; _all.push({n:tr.n,m:tr.m,s:TRAIT_STARS[tr.fx]||3}); }
@@ -4824,7 +4878,7 @@ function renderAchievement(){
     {c:'伊泰安项链（单件）',rows:['攻击带 10% 吸血','1% 概率秒杀等级≤角色的小怪'],note:'对 Boss 无效'},
     {c:'传说魔翼',rows:['全属性各 +500万、物理攻击 +500万、攻速最快、6凹槽、需 80 级','真实伤害：强化 0=5%、强化 20=30%（线性）'],note:'强化 20：物理攻击 +1471万'},
     {c:'天神满级 5重5星',rows:['释放该天神牌子 100% 全属性','上阵主阵位 100% 附加、副阵位 50%']},
-    {c:'强化 +20（防具）',rows:['每件强化吸收 10%（5件累加封顶 90%）','每件 -9% 最终伤害（5件 -45%）'],note:'tooltip 追加：抗暴率 +3%（强15）/ 暴伤减免 +3%（强18）/ 最终伤害减免 +3%（强20）'},
+    {c:'强化 +20（防具）',rows:['每件伤害吸收 300万（固定值，5件累加）','每件 -3% 最终伤害（5件 -15%）'],note:'tooltip 追加：抗暴率 +3%（强15）/ 暴伤减免 +3%（强18）/ 最终伤害减免 +3%（强20）'},
     {c:'竞技称号',rows:['璀璨星钻：全属性 +10万·生命活力 +10万·攻击吸血 10%','荣耀王者：全属性 +100万·生命活力 +100万·无视防御 5%','战神：全属性 +10%·生命活力 +10%·无视防御 10%·真实伤害 10%'],note:'戴上当前段位称号仅附加其自身效果'},
     {c:'徽章·万军取首级',rows:['攻击无视对方 10% 防御'],note:'戴上即生效'},
     {c:'魔灵统御首饰',rows:['项链：全属性 +900','戒指：全属性 +600','手镯：全属性 +500'],note:'单件生效，无套装加成'},
@@ -5042,19 +5096,17 @@ function playerHit(o,s){
   var lvR=gap>=10?lvSuppress(gap):(gap<=-10?0.5:1);
   var _ft=foeTierOf(o), _tp2=roleVsFoeTier(charTierIdx(), _ft);   /* 阶位压制 */
   var _rt=roleTierAtk(); var _ta=titleAtk(); var _tm=tMedalAtk();   /* 角色阶位+称号+无尽徽章攻击特性 */
-  var dmg=Math.max(1,Math.round(s.patk*0.5*lvR-o.def*0.4*(1-(ISET>=5?0.3:0)-(ARENA.killBoss>=1&&ARENA.medalOn?0.1:0))*(1-_tp2.ig)*(1-_rt.ig-_ta.ig-_tm.ig)));   /* 伊泰安5件30%+徽章10%+阶位+称号+无尽徽章无视防御 */
-  dmg=Math.round(dmg*_tp2.m);
   var crit=Math.min(99,Math.max(10,s.luck*0.18));
   var isCrit=(Math.random()*100)<crit;
-  if(isCrit) dmg*=2;
-  if(o.trait&&(o.trait.fx==='pdef'||o.trait.fx==='boss')) dmg=Math.round(dmg*0.7);
+  var _ig=_rt.ig+_ta.ig+_tm.ig+(ISET>=5?0.3:0)+(ARENA.killBoss>=1&&ARENA.medalOn?0.1:0)+_tp2.ig;   /* 角色无视防御：阶位+称号+徽章+伊泰安（只作用主伤害有效防御） */
+  var _rl=wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk();   /* 角色真实伤害% */
+  var _add=(OG>=5?0.1:0)+(_tp2.m-1);   /* 增伤乘区：奥格顿5件+阶位压制 */
+  var _mFdr=0,_mmDef=0; if(o.trait&&(o.trait.fx==='pdef'||o.trait.fx==='boss')) _mFdr+=0.3; if(o.traits){ for(var _tk=0;_tk<o.traits.length;_tk++){ var _tv=o.traits[_tk]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(对手)：dmgred→最终伤害减免(上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
+  var dmg=Math.max(1, Math.round(calcHit({atk:s.patk*lvR*(isCrit?2:1), realAtk:s.patk*lvR, ig:_ig, real:_rl, add:_add}, {def:o.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, abs:0})));   /* 统一结算：主伤害(有效防御+等级压制+暴击)+真伤→增伤→对手终减→吸收 */
   var _ls3=(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls; if(_ls3>0){ var hl=Math.max(1,Math.round(dmg*_ls3)); if(ARENA.hpP<s.hp){ ARENA.hpP=Math.min(s.hp,ARENA.hpP+hl); setHp('p',ARENA.hpP,s.hp); arenaHeal(hl); } }   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上) */
   if(o.traits){ for(var ti=0;ti<o.traits.length;ti++){ var tt=o.traits[ti];
-    if(tt.fx==='dmgred'||tt.fx==='armor') dmg=Math.round(dmg*(1-tt.val));   /* 对手减伤 */
-    else if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0&&ARENA.hpP>0){ ARENA.hpP-=rb; if(ARENA.hpP<0)ARENA.hpP=0; setHp('p',ARENA.hpP,s.hp); floatDmg('-'+fmtDmg(rb),'hero',false); if(ARENA.hpP<=0) return endFight('lose',o); } }   /* 反弹 */
+    if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0&&ARENA.hpP>0){ ARENA.hpP-=rb; if(ARENA.hpP<0)ARENA.hpP=0; setHp('p',ARENA.hpP,s.hp); floatDmg('-'+fmtDmg(rb),'hero',false); if(ARENA.hpP<=0) return endFight('lose',o); } }   /* 反弹（减伤特性已并入 calcHit 终减） */
   } }
-  if(OG>=5) dmg=Math.round(dmg*1.1);   /* 5件：+10%最终伤害加成 */
-  if((wingRealPct()>0||_rt.tr>0||_ta.tr>0||_tm.tr>0||godMedalAtk()>0)) dmg=Math.round(dmg+o.hp*(wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk()));   /* 真实伤害：魔翼+阶位+称号+无尽徽章+屠神者（目标血量%） */
   ARENA.hpO-=dmg; setHp('o',ARENA.hpO,o.hp);
   floatDmg((isCrit?'暴击 ':'')+fmtDmg(dmg),'enemy',false);
   if(ARENA.hpO<=0) return endFight('win',o);
@@ -5070,25 +5122,17 @@ function oppHit(o,s){
   var pR=gap<=-10?lvSuppress(-gap):(gap>=10?0.5:1);   /* 角色防御等级压制倍率（与副本/试炼一致） */
   var tp=foeVsRoleTier(_tier, charTierIdx());   /* 阶位压制：高阶无视低阶10%防御+伤害10%；低阶攻击-10% */
   var raw=o.atk*coef*lvR*tp.m*(0.55+Math.random()*0.4);
-  var _pb=0; if(o.traits){ for(var _pi=0;_pi<o.traits.length;_pi++) if(o.traits[_pi].fx==='pbreak') _pb=Math.max(_pb,o.traits[_pi].val); }   /* 破防：降低目标防御10%~50% */
-  var pd=s.pdef*pR*(Date.now()<POTION_UNTIL?2:1)*(1-tp.ig)*(1-_pb);
-  var after=raw*(pd/(pd+500));   /* 物理防御曲线减伤（与副本/试炼统一） */
-  if(TR.attrDef) after*=0.7;     /* 属性防御-30% */
-  var enhN=0; for(var ek in equipState){ var ee=equipState[ek]; if(ee&&(ee.enhanceLevel||0)>=20) enhN++; }
-  if(enhN>0) after*=(1-enhN*0.09);   /* 强化满20每件-9% */
-  if(ISET>=5) after*=0.7;            /* 伊泰安5件-30% */
-  var dmg=Math.max(0, Math.round(after*(1-TR.absorbPct)-TR.absorb));   /* 减强化吸收%（乘算）与固定伤害吸收 */
+  var _ma=monTraitAtk(o.traits, raw);   /* 对手增伤/真伤/无视防御/破防→A；暴击/吸血/晕/减速/毒/流血/反弹→bm */
+  var fdr=Math.min(0.9, (TR.attrDef?0.3:0)+finalDR());   /* 承受者(角色)最终伤害减免：属性防御30%+装备，封顶90% */
+  var dmg=Math.round(calcHit({atk:_ma.A.atk*(_ma.bm.crit?(ISET>=5?1.4:2):1), realAtk:_ma.A.realAtk, ig:tp.ig+_ma.A.ig, real:_ma.A.real, add:_ma.A.add}, {def:s.pdef*pR*(Date.now()<POTION_UNTIL?2:1), fdr:fdr, abs:TR.absorb}));   /* 统一结算：主伤害(有效防御+暴击)→真伤→增伤→终减→吸收 */
   dmg=Math.max(dmg, Math.round(raw*0.10));   /* 总减伤封顶90%：保底10%原始伤害 */
-  var bm=bossHitMods(o.traits, s.hp);   /* 统一 Boss 特性系统 */
-  if(bm.ignore) dmg=Math.max(dmg, Math.round(raw*0.5));   /* 无视防御 */
-  dmg=Math.round(dmg*bm.mul)+(ogImmune()?0:bm.add);   /* 5件50%免疫中毒/流血/真实 */
-  var crit=bm.crit; if(crit) dmg=Math.round(dmg*(ISET>=5?1.4:2));   /* 暴击(伊泰安5件减30%暴击伤害) */
-  if(OG>=5) dmg=Math.round(dmg*0.9);   /* 5件：+10%最终伤害减免 */
+  if(!ogImmune()) dmg+=Math.round(s.hp*(_ma.bm.poison+_ma.bm.bleed));   /* 中毒/流血(按目标血量%状态伤害，5件50%免疫负面) */
   if(o.boss&&ARENA.hpO<o.hp*0.3) dmg*=2;   /* Boss斩杀线 */
+  var crit=_ma.bm.crit;
   ARENA.hpP-=dmg; setHp('p',ARENA.hpP,s.hp); floatDmg((crit?'暴击 ':'')+fmtDmg(dmg),'hero',false);
   arenaLog('你受到 <span class="c">'+fmtDmg(dmg)+'</span> 伤害'+(crit?'（暴击）':''));
-  if(bm.lifesteal>0&&ARENA.hpO<o.hp){ ARENA.hpO=Math.min(o.hp,ARENA.hpO+Math.round(dmg*bm.lifesteal)); setHp('o',ARENA.hpO,o.hp); }   /* 对手吸血 */
-  if(bm.stun && !ogImmune()){ ARENA.stunUntil=Date.now()+2000; arenaLog('对手击晕了你，2秒无法行动'); }   /* 击晕（5件50%免疫） */
+  if(_ma.bm.lifesteal>0&&ARENA.hpO<o.hp){ ARENA.hpO=Math.min(o.hp,ARENA.hpO+Math.round(dmg*_ma.bm.lifesteal)); setHp('o',ARENA.hpO,o.hp); }   /* 对手吸血 */
+  if(_ma.bm.stun && !ogImmune()){ ARENA.stunUntil=Date.now()+2000; arenaLog('对手击晕了你，2秒无法行动'); }   /* 击晕（5件50%免疫） */
   if(ARENA.hpP<=0) return endFight('lose',o);
 }
 function endFight(res,o){
@@ -5600,9 +5644,9 @@ function trSyncChar(){
   TR.attrDef = ((CHARACTER.combat[6]||{}).v!=='无');
   TR.attr = ((CHARACTER.combat[4]||{}).v||'无');   /* 攻击属性（武器宝石附加） */
   var ab=0, abp=0; for(var k in equipState){ var e=equipState[k]; if(!e) continue;
-    if(isArmorType(e.type)){ ab+=(e.damageAbsorption||0); abp+=armorEnhAbs(e.enhanceLevel||0); }   /* 固定伤害吸收 + 强化吸收%（百分比） */
-    ab+=(e.gemDamageAbsorption||0); }   /* 加专注宝石吸收（累加所有装备） */
-  TR.absorb=ab; TR.absorbPct=Math.min(0.9, abp);   /* 强化吸收%总累加封顶90% */
+    if(isArmorType(e.type)){ ab+=armorEnhAbs(e.enhanceLevel||0); ab+=(e.damageAbsorption||0); }   /* 强化吸收固定值 + 装备固定吸收 */
+    ab+=(e.gemBonus&&e.gemBonus.伤害吸收)||0; }   /* 加专注宝石吸收（累加所有装备） */
+  TR.absorb=ab; TR.absorbPct=Math.min(0.9, abp);   /* 伤害吸收固定值累加；abp=0（已改固定值） */
   if(TR.maxHp>0 && hp>TR.maxHp) TR.hp+=hp-TR.maxHp;   /* 生命上限提升时血量同步提升（穿戴更强装备后进入刷新） */
   if(TR.hp>hp) TR.hp=hp;
   if(TR.hp<=0) TR.hp=hp;
@@ -5649,12 +5693,12 @@ function rolePower(){   /* 四维为基准，恒定类机制折算（属性攻�
   var eqAtk=atk, eqDef=def;
   if(atr!=='无') eqAtk=Math.round(atk*1.3);   /* 属性攻击：+30% → 等效攻击 */
   var red=(dattr!=='无')?0.30:0;               /* 属性防御：-30% */
-  var enhN=0, ab=0, abp=0;
-  for(var ek in equipState){ var ee=equipState[ek]; if(ee){ if((ee.enhanceLevel||0)>=20) enhN++; if(isArmorType(ee.type)){ ab+=(ee.damageAbsorption||0); abp+=armorEnhAbs(ee.enhanceLevel||0); } } }
-  red+=abp;                                        /* 强化吸收%折算减伤 */
-  red+=enhN*0.09; if(red>0.9) red=0.9;          /* 强20每件-9%最终伤害 */
+  var enhN=0, ab=0;
+  for(var ek in equipState){ var ee=equipState[ek]; if(ee){ if((ee.enhanceLevel||0)>=20) enhN++; if(isArmorType(ee.type)){ ab+=armorEnhAbs(ee.enhanceLevel||0); ab+=(ee.damageAbsorption||0); } ab+=(ee.gemDamageAbsorption||0); } }
+  red+=Math.min(0.9,enhN*0.03);                  /* 强20每件-3%最终伤害（5件15%） */
+  if(red>0.9) red=0.9;
   if(red>0) eqDef=Math.round(def/(1-red));       /* 减伤折算等效防御（EHP） */
-  eqDef+=ab;                                     /* 固定伤害吸收折算 */
+  eqDef+=ab;                                     /* 固定伤害吸收合计折算（强化+装备+专注宝石） */
   return battlePower(eqAtk, eqDef, hp, agi);
 }
 function monPower(i){   /* 副本小怪战力（isBoss=false）；攻击系数取期望0.1，避免战力随机波动 */
@@ -5709,21 +5753,17 @@ function trMonStats(){
   return {atk:atk, hp:mhp, def:def, agi:agi};
 }
 /* 角色受击伤害：先被物理防御抵挡 → 属性防御再减30% → 防具伤害吸收累加抵消 */
-function roleHitDamage(monAtk){
+function roleHitDamage(monAtk){   /* 副本怪物攻击角色：统一结算（怪物特性喂入 calcHit 攻击者参数） */
   var __lvd=TR.level-(TR.isBoss?(TR.bossLevel||60):(TR.monLv||(DUNGEONS[TR.dungeon].monLv||1)));   /* 等级压制：差距≥10级，等级高的一方攻防×10 */
   var __pS=(__lvd>=10)?lvSuppress(__lvd):(__lvd<=-10?0.5:1);   /* 角色攻防倍率：压制怪×lvs、被怪压制×0.5 */
   var __mS=(__lvd<=-10)?lvSuppress(-__lvd):(__lvd>=10?0.5:1);   /* 怪物攻防倍率：压制角色×lvs、被角色压制×0.5 */
   var tp=foeVsRoleTier(TR.isBoss?TR.bossTier:-1, charTierIdx());   /* 阶位压制：高阶无视低阶10%防御+伤害10%；低阶攻击-10% */
   var raw=monAtk*(TR.isBoss?bossAtkCoef(TR.bossTier||0):1)*__mS*tp.m*(0.55+Math.random()*0.4);   /* Boss攻击乘阶位系数1~10（神级最高），小怪×1 */
-  var _pb=0; if(TR.traits){ for(var _pi=0;_pi<TR.traits.length;_pi++) if(TR.traits[_pi].fx==='pbreak') _pb=Math.max(_pb,TR.traits[_pi].val); }   /* 破防：降低目标防御10%~50% */
-  var pd=TR.pdef*__pS*(Date.now()<POTION_UNTIL?2:1)*(1-tp.ig)*(1-_pb);       /* 物理防御（药水翻倍；角色压制怪物时×10；阶位压制忽略防御；破防降低防御） */
-  var afterDef=raw*(pd/(pd+500));                                   /* 物理防御减伤：伤害系数=物防/(物防+500)，1000防≈67%、1400防≈74% */
-  if(TR.attrDef) afterDef*=0.7;                                     /* 属性防御再减30% */
-  var enhN=0; for(var ek in equipState){ var ee=equipState[ek]; if(ee && (ee.enhanceLevel||0)>=20) enhN++; }
-  if(enhN>0) afterDef*=(1-enhN*0.09);                               /* 强化满20每件-9%最终伤害（5件满=45%） */
-  if(ISET>=5) afterDef*=0.7;                                          /* 伊泰安5件：最终伤害减免+30% */
-  var _d=Math.max(0, Math.round(afterDef*(1-TR.absorbPct)-TR.absorb));   /* 再减强化吸收%（乘算）+专注宝石固定吸收 */
-  return Math.max(_d, Math.round(raw*0.10));   /* 总减伤封顶90%：保底10%原始伤害 */
+  var _ma=monTraitAtk(TR.traits, raw);   /* 怪物增伤/真伤/无视防御/破防→A；暴击/吸血/晕/减速/毒/流血/反弹→bm */
+  var fdr=Math.min(0.9, (TR.attrDef?0.3:0)+finalDR());              /* 承受者(角色)最终伤害减免：属性防御30%+装备(伊泰安/奥格顿/强20)，封顶90% */
+  var dmg=Math.round(calcHit({atk:_ma.A.atk*(_ma.bm.crit?(ISET>=5?1.4:2):1), realAtk:_ma.A.realAtk, ig:tp.ig+_ma.A.ig, real:_ma.A.real, add:_ma.A.add}, {def:TR.pdef*__pS*(Date.now()<POTION_UNTIL?2:1), fdr:fdr, abs:TR.absorb}));   /* 统一结算：主伤害(有效防御+暴击)→真伤→增伤→终减→吸收 */
+  dmg=Math.max(dmg, Math.round(raw*0.10));   /* 总减伤封顶90%：保底10%原始伤害 */
+  return {d:dmg, raw:raw, bm:_ma.bm};
 }
 function trReqExp(lv){ var e=Math.floor((lv*lv*190 + lv*120)*800); return (lv>50? e*100 : e)*5; }   /* 每级所需经验：floor((L²×190 + L×120)×800)×5；50级以上经验×100 */
 function trExpScale(monLv){   /* 等级差经验系数：同等级×1；越级每高1级+15%(封顶10级)；刷低级怪每低1级×0.7，低10级起为0（仅经验） */
@@ -6053,6 +6093,7 @@ function itemQuality(it){
   if(it.type==='helen_gem'||(it.name.indexOf('专注')>=0&&it.level!==6)||t==='potion'||t==='normal_scroll'||t==='sun_potion') return 'blue';   /* 第二层级：5级专注、药水、属性卷轴、海伦石、太阳 */
   return 'grey';
 }
+function ttNameColor(it){ return (it&&itemQuality(it)==='purple')?'rgb(231,2,231)':'rgb(255,128,0)'; }   /* tooltip 名字同源颜色：传说紫/其他橙 */
 function isRareDrop(it){
   var t=it.type;
   if(isArmorType(t)||t==='weapon'||t==='necklace'||t==='ring'||t==='bracelet'||t==='god_seal'||t==='god_rune') return true;
@@ -6251,24 +6292,21 @@ function trAtk(){
   var __lvd=TR.level-(TR.isBoss?(TR.bossLevel||60):(TR.monLv||(DUNGEONS[TR.dungeon].monLv||1)));   /* 等级压制：差距≥10级，等级高的一方攻防×10 */
   var __pS=(__lvd>=10)?lvSuppress(__lvd):(__lvd<=-10?0.5:1);   /* 角色攻防倍率：压制怪×lvs、被怪压制×0.5 */
   var __mS=(__lvd<=-10)?lvSuppress(-__lvd):(__lvd>=10?0.5:1);   /* 怪物攻防倍率：压制角色×lvs、被角色压制×0.5 */
-  var _pa=TR.patk*__pS*(Date.now()<POTION_UNTIL?2:1)*(0.85+Math.random()*0.3);   /* 攻防比：防御有用，伤害=攻²/(攻+防) */
+  var _pa=TR.patk*__pS*(Date.now()<POTION_UNTIL?2:1)*(0.85+Math.random()*0.3);   /* 角色攻击（等级压制·药水·波动） */
   var __tp=roleVsFoeTier(charTierIdx(), TR.isBoss?TR.bossTier:-1);   /* 阶位压制 */
   var _rt=roleTierAtk(); var _ta=titleAtk(); var _tm=tMedalAtk();   /* 角色阶位+称号+无尽徽章攻击特性 */
-  var dmg=Math.max(6, Math.round(_pa*_pa/(_pa+s.def*__mS*(ISET>=5?0.7:1)*(1-__tp.ig)*(1-_rt.ig-_ta.ig-_tm.ig))));   /* 伊泰安5件30%+阶位+称号无视防御 */
-  dmg=Math.round(dmg*__tp.m);
-  if(TR.attr && TR.attr!=='无') dmg=Math.round(dmg*1.3);   /* 属性攻击：真实伤害+30% */
-  var weak=Math.random()<0.10;                              /* 弱点攻击10%概率 */
-  if(isCrit && weak){ dmg*=4; dmg=Math.round(dmg*1.1); }    /* 暴击+弱点同时：×4 再提升10% */
-  else if(isCrit) dmg*=2;                                   /* 仅暴击翻倍 */
-  else if(weak) dmg*=2;                                     /* 仅弱点翻倍 */
-  if(OG>=5) dmg=Math.round(dmg*1.1);   /* 5件：+10%最终伤害加成 */
-  dmg=Math.round(dmg);                                           /* 取消伤害封顶 */
+  var _atk2=_pa*(TR.attr&&TR.attr!=='无'?1.3:1);   /* 攻击（属性攻击+30%） */
+  var _ig=_rt.ig+_ta.ig+_tm.ig+(ISET>=5?0.3:0)+(ARENA.killBoss>=1&&ARENA.medalOn?0.1:0);   /* 角色无视防御：阶位+称号+徽章+伊泰安（只作用主伤害的有效防御） */
+  var _rl=wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk();   /* 角色真实伤害% */
+  var _add=(OG>=5?0.1:0)+(__tp.m-1);   /* 增伤乘区：奥格顿5件+10% + 阶位压制 */
+  var weak=Math.random()<0.10;   /* 弱点攻击10% */
+  var _critMul=(isCrit&&weak)?(4*1.1):(isCrit?2:(weak?2:1));   /* 暴击/弱点倍率（只作用主伤害） */
+  var _mFdr=0,_mmDef=0; if(TR.traits){ for(var _tj=0;_tj<TR.traits.length;_tj++){ var _tv=TR.traits[_tj]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(怪物)：dmgred→最终伤害减免(作用合计,上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
+  var dmg=Math.max(6, Math.round(calcHit({atk:_atk2*_critMul, realAtk:_atk2, ig:_ig, real:_rl, add:_add}, {def:s.def*__mS, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, abs:0})));   /* 统一结算：主伤害(有效防御+暴击弱点)+真伤→增伤→怪物终减→吸收 */
   if(!TR.isBoss){ var ymv=DUNGEONS[TR.dungeon].monLv; if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0&&ymv<=TR.level&&Math.random()<0.01){ dmg=TR.monHp; trLog('<b class="lg-boss">伊泰安项链触发秒杀！</b>'); } }   /* 伊泰安项链：1%概率秒杀等级≤角色的小怪，对boss无效 */
   var _ls2=(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls; if(_ls2>0){ var hl=Math.max(1,Math.round(dmg*_ls2)); if(TR.hp<TR.maxHp){ TR.hp=Math.min(TR.maxHp,TR.hp+hl); trHealFloat(hl); } }   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上) */
-  if((wingRealPct()>0||_rt.tr>0||_ta.tr>0||_tm.tr>0||godMedalAtk()>0)&&TR.monMax) dmg=Math.round(dmg+TR.monMax*(wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk()));   /* 真实伤害：魔翼+阶位+称号+无尽徽章+屠神者（目标血量%） */
   if(TR.traits){ for(var ti=0;ti<TR.traits.length;ti++){ var tt=TR.traits[ti];
-    if(tt.fx==='dmgred'||tt.fx==='armor') dmg=Math.round(dmg*(1-tt.val));   /* Boss 减伤 */
-    else if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0){ TR.hp-=rb; if(TR.hp<0)TR.hp=0; trFloat(rb,false); renderChar(); if(TR.hp<=0){ TR.hp=0; renderChar(); startRevive(); return; } } }   /* Boss 反弹伤害 */
+    if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0){ TR.hp-=rb; if(TR.hp<0)TR.hp=0; trFloat(rb,false); renderChar(); if(TR.hp<=0){ TR.hp=0; renderChar(); startRevive(); return; } } }   /* Boss 反弹伤害（减伤特性已并入 calcHit 终减） */
   } }
   TR.monHp-=dmg;   /* 先扣血 */
   trShootArrow(function(){   /* 箭到达怪物后：显示掉血/死亡/反击 */
@@ -6283,16 +6321,12 @@ function trAtk(){
       if(TR.level-_mlv>-10 && TR.level-_mlv<10){ var _ad=agi>=1500?0.8:(agi>=600?0.45:(agi>=200?0.15:0.04)); if(_ad>missRate) missRate=_ad; }   /* 等级相近时叠加角色敏捷躲闪 */
       if(Math.random()<missRate){ trFloat(0,false,false,true); }   /* 丢失显示 MISS */
       else {
-        var bm=bossHitMods(TR.traits, TR.maxHp);
-        var _b0=Math.max(0, roleHitDamage(TR.enraged?Math.round(s.atk*2):s.atk)||0);   /* 狂暴攻击×2 */
-        if(bm.ignore) _b0=Math.max(_b0, Math.round(s.atk*0.5));   /* 无视防御 */
-        var md=Math.max(0, Math.round(_b0*bm.mul))+(ogImmune()?0:bm.add);   /* 狂暴/伤害加成/真实/中毒/流血（5件50%免疫负面） */
-        if(bm.crit) md=Math.round(md*(ISET>=5?1.4:2));   /* 暴击(伊泰安5件减30%暴击伤害) */   /* Boss 暴击 */
-        if(OG>=5) md=Math.round(md*0.9);   /* 5件：+10%最终伤害减免 */
+        var _rh=roleHitDamage(TR.enraged?Math.round(s.atk*2):s.atk);   /* 狂暴攻击×2；统一结算已含怪物增伤/真伤/穿透/暴击 */
+        var md=Math.max(0,_rh.d)+(ogImmune()?0:Math.round(TR.maxHp*(_rh.bm.poison+_rh.bm.bleed)));   /* 中毒/流血(按目标血量%状态伤害，5件50%免疫负面) */
         TR.hp-=md; trFloat(md,false);
-        if(bm.lifesteal>0 && TR.monHp<TR.monMax){ TR.monHp=Math.min(TR.monMax, TR.monHp+Math.round(md*bm.lifesteal)); renderMon(); }   /* Boss 吸血 */
-        if(bm.stun && !ogImmune()){ TR.stunUntil=Date.now()+2000; trLog('被击晕，2秒无法攻击'); }   /* 击晕（5件50%免疫） */
-        if(bm.slow && !ogImmune()){ TR.slowUntil=Date.now()+4000; TR.slowAmt=bm.slow; }   /* 减速 */
+        if(_rh.bm.lifesteal>0 && TR.monHp<TR.monMax){ TR.monHp=Math.min(TR.monMax, TR.monHp+Math.round(md*_rh.bm.lifesteal)); renderMon(); }   /* Boss 吸血 */
+        if(_rh.bm.stun && !ogImmune()){ TR.stunUntil=Date.now()+2000; trLog('被击晕，2秒无法攻击'); }   /* 击晕（5件50%免疫） */
+        if(_rh.bm.slow && !ogImmune()){ TR.slowUntil=Date.now()+4000; TR.slowAmt=_rh.bm.slow; }   /* 减速 */
       }   /* 命中：0也显示 */
     }
     renderChar();
