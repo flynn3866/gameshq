@@ -160,10 +160,16 @@ body.show-god .stage{max-width:680px;}
 .fb-gold{display:flex;justify-content:space-between;align-items:center;padding:4px 2px 7px;border-bottom:1px solid #6D6354;margin-bottom:6px;font-size:12px;color:#8a8378;}
 .fb-gold b{color:#e0b45a;font-weight:600;font-size:13px;}
 #fb-close{width:22px;height:22px;line-height:19px;text-align:center;border-radius:50%;background:#3A352F;border:1px solid #6D6354;color:#fff;font-size:15px;cursor:pointer;}
-#float-bag .bag-tabs{display:flex;gap:4px;margin-bottom:6px;}
+#float-bag .bag-tabs{display:flex;gap:4px;margin-bottom:6px;position:static;top:auto;left:auto;right:auto;z-index:auto;}   /* 覆盖主背包页 .bag-tabs 的 absolute，恢复文档流顺序 */
 #float-bag .bag-tab{flex:1;text-align:center;padding:5px 0;background:#1E1C1B;color:#8a8378;font-size:12px;border:1px solid #4a443c;border-radius:5px;cursor:pointer;}
 #float-bag .bag-tab.on{background:#191818;color:#fff;border-color:#6D6354;}
 .fb-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;padding:2px;}
+.fb-wear{margin-bottom:6px;padding:6px 4px;background:linear-gradient(180deg,#211F1D,#161514);border:1px solid #6D6354;border-radius:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 6px 14px rgba(0,0,0,.35);}   /* 穿戴装备区：层次感 */
+.fb-wear-t{font-size:11px;color:#e0b45a;letter-spacing:3px;text-align:center;padding:0 2px 4px;border-bottom:1px dashed rgba(109,99,84,.6);margin-bottom:4px;}   /* 区标题 */
+.fb-wear-grid{display:grid;grid-template-columns:auto auto auto auto;gap:10px;justify-content:center;padding:2px;}   /* gaps >= 10px */   /* 穿戴区：四列居中，环绕布局 */
+.fb-wcell{display:flex;justify-content:center;}
+.fb-wear-grid .slot{width:38px;height:38px;justify-self:center;}
+.fb-wear-grid .slot.small{width:26px;height:26px;}   /* 项链/戒指/手镯/宠物/坐骑等小槽 */
 #float-bag .slot{width:100%;aspect-ratio:1;}
 /* ===== 物品栏整体窗口：边框 + 紧收外阴影 ===== */
 .window{
@@ -1206,6 +1212,8 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   text-shadow:0 1px 2px rgba(0,0,0,.95);letter-spacing:.2px;pointer-events:none;line-height:1.2;}
 .wseg .wprob{font-size:9px;opacity:.95;color:#ffe9b0;}
 .lottery-cost{margin-top:2px;font-size:13px;color:#d9d2c4;}
+.lottery-wallet{display:flex;justify-content:center;align-items:center;gap:6px;margin:6px auto 0;width:min(352px,86vw);padding:4px 0;font-size:13px;color:#d9d2c4;letter-spacing:1px;border-top:1px solid rgba(214,177,110,.18);border-bottom:1px solid rgba(214,177,110,.18);background:linear-gradient(180deg,rgba(48,42,32,.4),rgba(28,24,20,.4));}
+.lottery-wallet b{color:#E8CB74;font-weight:700;font-size:16px;text-shadow:0 0 12px rgba(232,203,116,.5);}
 .recharge-input{width:78%;padding:9px 12px;margin:10px auto 4px;font-size:16px;color:#f0e2b8;background:#161614;border:1px solid #6C6253;border-radius:7px;outline:none;text-align:center;display:block;box-sizing:border-box;}
 .lottery-x10{display:flex;justify-content:center;gap:8px;margin-top:4px;}
 .lottery-x10 .btn{min-width:170px;padding:8px 0;font-size:14px;letter-spacing:2px;background:linear-gradient(180deg,#78694e,#5a4c36);color:#f6e9c0;border:1px solid rgba(214,177,110,.55);border-radius:8px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.16);}
@@ -1231,7 +1239,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 @keyframes dropFall{0%{transform:translate(-50%,-50%) scale(.5);opacity:1;}
   55%{transform:translate(-50%,30%) scale(1.15);opacity:1;}
   100%{transform:translate(-50%,150%) scale(.85);opacity:0;}}
-.lottery-head{display:flex;justify-content:space-between;align-items:center;width:min(352px,86vw);font-size:13px;color:#d9d2c4;letter-spacing:1px;}
+.lottery-head{display:flex;justify-content:flex-end;align-items:center;width:min(352px,86vw);font-size:13px;color:#d9d2c4;letter-spacing:1px;}
 .lottery-head b{color:#E8CB74;font-weight:700;font-size:15px;text-shadow:0 0 10px rgba(232,203,116,.45);}
 .lottery-head span:first-child{text-align:left;}
 .lottery-head #lottery-pity-num{color:#E0B96A;font-size:12px;font-weight:600;text-align:right;text-shadow:0 0 8px rgba(224,185,106,.4);}
@@ -1396,11 +1404,13 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 @keyframes lgWord{0%{transform:translateX(0);opacity:0}4%{opacity:1}100%{transform:translateX(-150vw);opacity:1}}
 .quick-bar{display:flex;gap:6px;padding:6px 10px 10px;justify-content:center;}
 .quick-slot{width:36px;height:36px;border:1px solid #6c6253;background:#1f1b19;border-radius:7px;position:relative;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 7px rgba(0,0,0,.6);}
-.quick-slot.empty{background:#181512;border-color:#3a352f;box-shadow:none;}
+.quick-slot.empty{background:radial-gradient(150% 170% at 50% 30%, #211f1d 0%, #1a1918 45%, #0f0e0d 100%);border-color:#4a443c;box-shadow:inset 0 3px 6px rgba(0,0,0,.85), inset 1px 0 3px rgba(0,0,0,.55), inset -1px 0 3px rgba(0,0,0,.5), inset 0 -1px 2px rgba(255,255,255,.04), 0 1px 1px rgba(0,0,0,.4);}   /* 空槽内凹凹凸感，参考背包空凹槽 */
 .quick-slot img{width:28px;height:28px;}
 .quick-slot .qnum{position:absolute;right:1px;bottom:0;font-size:9px;color:#D6B56A;font-weight:700;}
-.elem-slot-bar{display:flex;justify-content:center;padding:1px 0 8px;}
-.elem-bar{display:flex;gap:12px;align-items:center;background:linear-gradient(180deg,rgba(48,42,32,.55),rgba(30,26,22,.7));border:1px solid rgba(232,214,180,.18);border-radius:8px;padding:5px 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 3px 10px rgba(0,0,0,.5);}
+.elem-slot-bar{display:flex;justify-content:center;padding:2px 0 8px;}
+.elem-cell{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.e-tag{font-size:10px;font-weight:700;line-height:1;text-shadow:0 0 8px currentColor;}   /* 凹槽上方元素标签 */
+.elem-bar{display:flex;gap:30px;align-items:center;background:linear-gradient(180deg,rgba(48,42,32,.55),rgba(30,26,22,.7));border:1px solid rgba(232,214,180,.18);border-radius:8px;padding:5px 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 3px 10px rgba(0,0,0,.5);}
 .elem-sec{display:flex;align-items:center;gap:5px;}
 .elem-sec-t{font-size:11px;font-weight:700;color:#D6B56A;letter-spacing:1px;text-shadow:0 0 6px rgba(214,181,106,.35);margin-right:2px;}
 .elem-slot{width:36px;height:36px;border:1px solid #6c6253;background:#1f1b19;border-radius:7px;display:flex;align-items:center;justify-content:center;position:relative;box-shadow:inset 0 0 7px rgba(0,0,0,.6);cursor:pointer;transition:transform .15s,box-shadow .15s,border-color .15s;}
@@ -1408,8 +1418,8 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .elem-slot.has:hover{border-color:#a9905f;box-shadow:inset 0 0 7px rgba(0,0,0,.6),0 0 9px rgba(214,181,106,.25);}
 .elem-slot.active{border-color:#E8C46A;box-shadow:inset 0 0 7px rgba(0,0,0,.6),0 0 13px rgba(232,196,106,.6),0 0 0 1px rgba(232,196,106,.4);background:linear-gradient(180deg,rgba(232,196,106,.14),rgba(30,26,20,.9));}
 .elem-slot.active .e-sup{color:#2a2012;background:linear-gradient(180deg,#F6DD83,#D6B56A);border-color:#E8C46A;box-shadow:0 0 7px rgba(232,196,106,.6);}
-.elem-slot.empty{background:#181512;border-color:#3a352f;box-shadow:none;}
-.elem-slot img{width:28px;height:28px;border-radius:3px;}
+.elem-slot.empty{background:radial-gradient(150% 170% at 50% 30%, #211f1d 0%, #1a1918 45%, #0f0e0d 100%);border-color:#4a443c;box-shadow:inset 0 3px 6px rgba(0,0,0,.85), inset 1px 0 3px rgba(0,0,0,.55), inset -1px 0 3px rgba(0,0,0,.5), inset 0 -1px 2px rgba(255,255,255,.04), 0 1px 1px rgba(0,0,0,.4);}   /* 空槽内凹凹凸感，参考背包空凹槽 */
+.elem-slot img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain;border-radius:3px;}   /* 图标撑满凹槽，四周留白与其他槽一致 */
 .elem-slot .e-el{font-size:11px;font-weight:700;text-shadow:0 0 8px currentColor;}
 .elem-slot .e-sup{position:absolute;right:-6px;top:-6px;font-size:8px;color:#D6B56A;background:#1f1b19;border:1px solid #6c6253;border-radius:7px;padding:0 3px;line-height:13px;box-shadow:0 1px 3px rgba(0,0,0,.5);}
 .ach-body{padding:8px 12px 14px;}
@@ -1932,7 +1942,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
     <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body">
       <div class="lottery-panel">
-        <div class="lottery-head"><span>剩余金币：<b id="lottery-gold">0</b></span><span id="lottery-pity-num"></span></div>
+        <div class="lottery-head"><span id="lottery-pity-num"></span></div>
         <div class="wheel-wrap">
           <div class="wheel" id="wheel"><div class="wheel-gear" id="wheel-gear"></div></div>
           <div class="wheel-pointer"></div>
@@ -1940,6 +1950,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
         </div>
         <div class="charge-overlay" id="charge-overlay"><div class="charge-fill" id="charge-fill"></div><span class="charge-txt" id="charge-num"></span></div>
         <div class="lottery-cost">每次抽奖消耗 <b>1亿</b> 金币 · 今日免费 <b id="lottery-free">3/3</b></div>
+        <div class="lottery-wallet"><span>余 额</span><b id="lottery-wallet-gold">0</b></div>
         <div class="lottery-x10"><button class="btn" id="lottery-x10">10 连抽（10 亿）</button><button class="btn" id="lottery-recharge">充值</button></div>
         <div class="lottery-log-wrap">
           <div class="ll-title">获 奖 记 录</div>
@@ -2004,7 +2015,7 @@ var LOOT = [
 var ITEM_BLUEPRINTS = {
   /* --- 消耗品 --- */
   holyPotion: { name:"神圣药水", type:"potion", img:"logos/神圣药水.png", count:1, maxStack:99 },
-  jiMiePotion: { name:"寂灭之息药剂", type:"potion", img:"logos/神圣药水.png", count:1, maxStack:1 },   /* 传说药水：BOSS即死 */
+  jiMiePotion: { name:"寂灭之息药剂", type:"potion", img:"logos/神圣药水.png", count:1, maxStack:99 },   /* 传说药水：BOSS即死（可堆叠，上限99） */
   sunPotion: { name:"太阳", type:"sun_potion", img:"logos/太阳.png", count:1, maxStack:99 },
   megaSunPotion: { name:"超级大太阳", type:"sun_potion", img:"logos/太阳.png", count:1, maxStack:99, mega:true },
   /* --- 洗炼卷轴 --- */
@@ -2013,10 +2024,10 @@ var ITEM_BLUEPRINTS = {
   /* --- 坐骑 --- */
   mount: {
     name:"坐骑", type:"mount", img:"logos/坐骑.png",
-    enhanceLevel:0, defense:30, resistance:15, attribute:"无",
-    maxHp:2000, maxVitality:2000, strength:20, agility:20, constitution:20,
-    intelligence:20, spirit:20, luck:20, damageAbsorption:0, moveSpeed:"神速",
-    price:10000000000, durability:"2000/2000", category:"坐骑", equipLevel:1,
+    enhanceLevel:0, defense:300000000, resistance:150000000, attribute:"无",
+    maxHp:20000000000, maxVitality:20000000000, strength:200000000, agility:200000000, constitution:200000000,
+    intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0, moveSpeed:"神速",
+    price:100000000000, durability:"2000/2000", category:"坐骑", equipLevel:1,
     gemSlots:Array(6).fill(null)
   },
   /* --- 可穿戴装备 --- */
@@ -2122,8 +2133,8 @@ var ITEM_BLUEPRINTS = {
   },
   yitaiNecklace: {
     name:"伊泰安项链", type:"necklace", img:"logos/项链.png",
-    strength:10000, agility:10000, constitution:10000, intelligence:10000, spirit:10000, luck:10000,
-    maxHp:10000, maxVitality:10000,
+    strength:1000000, agility:1000000, constitution:1000000, intelligence:1000000, spirit:1000000, luck:1000000,
+    maxHp:1000000, maxVitality:1000000,
     price:1000000, category:"项链", equipLevel:1, gemSlots:Array(6).fill(null)
   },
   yitaiRing: {
@@ -2557,8 +2568,7 @@ function equipTo(eqId, item, fromBag, fromSlot){
   if (item.type !== accept){ toast('类型不符，无法穿戴'); return; }
   if ((item.equipLevel||0) > (CHARACTER.info.level||1)){ toast('等级不足，无法穿戴（需 Lv.'+item.equipLevel+'）'); return; }   /* 装备等级：角色等级需≥装备等级 */
   var old = equipState[eqId];
-  if (old){ if (!placeInBag(old)){ toast('背包已满，无法更换'); return; } }
-  bag[fromBag][fromSlot] = null;
+  bag[fromBag][fromSlot] = old;   /* 换下的装备放回穿戴上装备的原凹槽（无则留空） */
   equipState[eqId] = item;
   playSoundEffect(item.type);
   renderEquip(); renderBag();
@@ -2851,7 +2861,7 @@ function bindEvents(){
     else if (act === '商店') location.hash = '#shop';
     else if (act === 'GM生成') confirmDialog('确认GM生成？<br>将生成全部物品并发放金币（各1亿）', function(ok){ if(ok) doInit(); });
     else if (act === '抽奖') location.hash = '#lottery';
-    else if (act === '初始化') confirmDialog('确认初始化？<br>所有数据将回到初始状态（等级1、装备/背包/物品清空、金币归0）', function(ok){ if(ok) doReset(); });
+    else if (act === '初始化') confirmDialog('确认初始化？<br>所有数据将回到初始状态（等级1、装备/背包/物品清空、非绑定金币100亿启动资金）', function(ok){ if(ok) doReset(); });
     else if (act === '属性'){ location.hash = '#attrs'; }
     else if (act === '强化'){ location.hash = '#enhance'; }
     else if (act === '宝石'){ location.hash = '#gem'; }
@@ -2957,6 +2967,10 @@ function renderFloatBag(){
   }
   grid.querySelectorAll('.slot.has-item').forEach(function(s){ s._item=bag[FLOAT_TAB][+s.getAttribute('data-slot')]; });
   var fg=$('#fb-gold'); if(fg){ fg.textContent=CURRENCY.gold.toLocaleString(); fg.style.color=getCurrencyStyle(CURRENCY.gold); }   /* 浮层金币颜色与主页面物品栏金币一致 */
+  var _gl=$('#fb-grid'); if(_gl) _gl.querySelectorAll('.slot').forEach(function(s){ s.setAttribute('draggable','true'); });
+  var _wl=$('#fb-wear-grid'); if(_wl) _wl.querySelectorAll('.slot').forEach(function(s){ s.setAttribute('draggable','true'); });   /* 浮层凹槽开启拖拽 */
+  var _ww=$('#fb-wear'), _tt=$('#fb-tabs'); if(_ww&&_tt&&_tt.parentNode&&_ww.parentNode===_tt.parentNode){ if(_tt.compareDocumentPosition(_ww)&Node.DOCUMENT_POSITION_PRECEDING){ _tt.parentNode.insertBefore(_ww,_tt); } }   /* 兜底：穿戴区必须位于 tab 之前 */
+  var wg=$('#fb-wear-grid'); if(wg){ var wh=''; EQUIP_ROWS.forEach(function(row,ri){ row.forEach(function(e,ci){ if(!e) return; wh+='<div class="fb-wcell" data-eq="'+e.id+'" style="grid-column:'+(ci+1)+';grid-row:'+(ri+1)+'">'+slotHTML(equipState[e.id], e.small, e.label, e.id)+'</div>'; }); }); wg.innerHTML=wh; wg.querySelectorAll('.fb-wcell').forEach(function(c){ var it=equipState[c.getAttribute('data-eq')]; var s=c.querySelector('.slot'); if(s&&it){ s._item=it; } }); }   /* 穿戴装备区 */
   syncBagBar();
 }
 (function initFloatBag(){
@@ -2971,6 +2985,24 @@ function renderFloatBag(){
     if(it.type==='potion'||it.type==='sun_potion'){ doPotionAction(it,FLOAT_TAB,i); renderFloatBag(); }
     else { var x=(e.clientX||8), y=(e.clientY||8); showTooltipAt(it, Math.min(x, innerWidth-190), Math.min(y, innerHeight-160)); }
   });
+  var wg2=$('#fb-wear-grid'); if(wg2) wg2.addEventListener('click', function(e){ var c=e.target.closest?e.target.closest('.fb-wcell'):null; if(!c) return; var it=equipState[c.getAttribute('data-eq')]; if(!it) return; var x=(e.clientX||8), y=(e.clientY||8); showTooltipAt(it, Math.min(x, innerWidth-190), Math.min(y, innerHeight-160)); });   /* 穿戴区点击查看详情 */
+  /* ===== 浮层拖拽与长按：背包↔穿戴区（穿戴/互换/卸下），与物品背包一致 ===== */
+  var _gF=$('#fb-grid'), _wF=$('#fb-wear-grid'), fbd=null;
+  function fbSwap(p,i,j){ var t=bag[p][i]; bag[p][i]=bag[p][j]; bag[p][j]=t; }
+  function fbUnequipTo(eq,ti){ var it=equipState[eq]; if(!it) return; if(ti<0||ti>=BAG_SLOTS) return; var pg=bag[FLOAT_TAB]; var occ=pg[ti]; pg[ti]=null; if(occ){ if(!placeInBag(occ,FLOAT_TAB,ti)){ pg[ti]=occ; toast('背包已满，无法卸下'); return; } } equipState[eq]=null; pg[ti]=it; playSoundEffect(it.type); renderEquip(); renderBag(); renderFloatBag(); }
+  if(_gF){
+    _gF.addEventListener('dragstart', function(e){ var s=e.target.closest('.slot'); if(!s||!s.classList.contains('has-item')){ e.preventDefault(); return; } var i=+s.getAttribute('data-slot'); var it=bag[FLOAT_TAB][i]; if(!it) return; fbd={k:'bag',tab:FLOAT_TAB,i:i,it:it}; e.dataTransfer.setData('text/plain',String(i)); s.classList.add('drag-from'); });
+    _gF.addEventListener('dragend', function(){ var f=_gF.querySelector('.drag-from'); if(f) f.classList.remove('drag-from'); fbd=null; });
+    _gF.addEventListener('dragover', function(e){ var s=e.target.closest('.slot'); _gF.querySelectorAll('.slot.drag-over').forEach(function(x){ x.classList.remove('drag-over'); }); if(s&&s!==_gF.querySelector('.drag-from')) s.classList.add('drag-over'); e.preventDefault(); });
+    _gF.addEventListener('drop', function(e){ e.preventDefault(); _gF.querySelectorAll('.slot.drag-over').forEach(function(x){ x.classList.remove('drag-over'); }); var s=e.target.closest('.slot'); if(!s||!fbd) return; var ti=+s.getAttribute('data-slot'); if(fbd.k==='bag'&&fbd.i!==ti){ fbSwap(FLOAT_TAB,fbd.i,ti); } else if(fbd.k==='eq'){ fbUnequipTo(fbd.eq,ti); } renderFloatBag(); saveGame(); });
+    _gF.addEventListener('touchstart', function(){ var t=this; var lp=setTimeout(function(){ var s=t.querySelector('.slot.has-item'); if(!s) return; var i=+s.getAttribute('data-slot'); var it=bag[FLOAT_TAB][i]; if(!it) return; if(it.type==='potion'||it.type==='sun_potion'){ addToQuick(it); } else if(isGodItem(it)){ loadGodFromBag(it,FLOAT_TAB,i); } else { autoEquip(it,FLOAT_TAB,i); } renderFloatBag(); },600); _gF.addEventListener('touchend', function(){ clearTimeout(lp); },{once:true}); },false);   /* 长按背包→穿戴/加入快捷/加载天神 */
+  }
+  if(_wF){
+    _wF.addEventListener('dragover', function(e){ e.preventDefault(); });
+    _wF.addEventListener('drop', function(e){ e.preventDefault(); if(!fbd) return; if(fbd.k==='bag'){ autoEquip(fbd.it,fbd.tab,fbd.i); renderFloatBag(); } });
+    _wF.addEventListener('dragstart', function(e){ var c=e.target.closest('.fb-wcell'); if(!c) return; var eq=c.getAttribute('data-eq'); var it=equipState[eq]; if(!it) return; fbd={k:'eq',eq:eq,it:it}; e.dataTransfer.setData('text/plain',eq); });
+    _wF.addEventListener('dragend', function(){ fbd=null; });
+  }
 })();
 /* ============ 角色属性折叠浮层（背包条左侧"角色属性"入口，300px） ============ */
 function openAttrFloat(){
@@ -3041,7 +3073,7 @@ function closeSettings(){ var sf=$('#settings-float'); if(sf) sf.classList.remov
     var it=e.target.closest?e.target.closest('.sf-item'):null; if(!it) return;
     var act=it.getAttribute('data-sf');
     if(act==='refresh'){ var n=syncItemsFromBlueprints(); recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); syncBagBar(); applyCharTier(); toast('已刷新 '+(n||0)+' 件旧物品为最新属性'); closeSettings(); }
-    else if(act==='reset'){ confirmDialog('确认初始化？<br>所有数据将回到初始状态（等级1、装备/背包/物品清空、金币归0）', function(ok){ if(ok){ closeSettings(); doReset(); } }); }
+    else if(act==='reset'){ confirmDialog('确认初始化？<br>所有数据将回到初始状态（等级1、装备/背包/物品清空、非绑定金币100亿启动资金）', function(ok){ if(ok){ closeSettings(); doReset(); } }); }
     else if(act==='gm'){ confirmDialog('确认GM生成？<br>将生成全部物品并发放金币（各1亿）', function(ok){ if(ok){ closeSettings(); doInit(); } }); }
   }, false);
 })();
@@ -3391,7 +3423,8 @@ var REFINE={ equip:null, material:null };
 REFINE.reset=function(){ this.equip=null; this.material=null; };
 function countStack(type){ var n=0; for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.type===type) n+=(it.count||1); } return n; }
 function rollRefine(n, full, maxAll){
-  var pool=['力量','敏捷','体质','智力','精神','幸运','生命','活力'];
+  var pool=['力量','敏捷','体质','智力','精神','幸运','生命','活力'
+  ];
   var used={}, attrs={}, m=0;
   while(m<n && m<8){
     var idx=Math.floor(Math.random()*8);
@@ -4399,7 +4432,7 @@ function roleTraits(){
 }
 
 /* ============ 商店：出售背包物品换取金币 ============ */
-function shopSellPrice(it){ return it.type==='potion'?100000:(it.type==='mount'?10000000000:(isShopValuable(it)?10000000:10000)); }
+function shopSellPrice(it){ return it.type==='potion'?100000:(it.type==='mount'?100000000000:(isShopValuable(it)?10000000:10000)); }   /* 坐骑出售 1000亿 */
 function isShopValuable(it){
   var t=it.type;
   return isArmorType(t)||t==='weapon'||t==='necklace'||t==='ring'||t==='bracelet'||t==='god_seal'||t==='god_rune';
@@ -4811,7 +4844,7 @@ function tlKill(){
   if(T.isBoss && bossTierOfLayer(T.layer)>=5 && charTierIdx()<5 && ARENA.killGod<1){ unlockGodMedal(); tlLog('<b style="color:#e8503a">越级击杀神级Boss，获得徽章·屠神者！真实伤害+10%</b>'); }   /* 屠神者：低阶位越级击杀神级Boss */
   if(T.layer%10===0){ tlGift(); }
   if(T.layer>=150){ tlUnlockMedal('s150'); } else if(T.layer>=100){ tlUnlockMedal('s100'); } else if(T.layer>=50){ tlUnlockMedal('s50'); }   /* 无尽试炼徽章：通关50/100/150关 */
-  setTimeout(function(){ T.layer++; tlSaveBest(); tlSpawn(); T._killing=false; }, 600);
+  setTimeout(function(){ tlSaveBest(); T.layer++; tlSpawn(); T._killing=false; }, 600);   /* 先保存已通关当前层再进入下一层：修复最高纪录被记为下一层导致跳层 */
 }
 function tlStartRevive(){
   var tip=document.getElementById('tl-revive-tip'); if(tip){ tip.textContent='你被击败了，10秒后自动复活…'; tip.style.display='block'; }
@@ -5392,8 +5425,11 @@ function itemDropFx(label){
   setTimeout(function(){ f.remove(); }, 1700);
 }
 function lotteryRarePool(){   /* 保底稀有奖池：含全属性+500、传说装备、神印牌、完整卷轴；越珍贵权重越小 */
-  var pool=[
-    {label:'寂灭之息药剂',w:0.12,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); g.count=1; g.maxStack=1; addStackable(g);}},   /* 最珍稀：寂灭之息药剂（BOSS即死） */
+  var pool=[];
+  var _jk='shenqi_jackpot_1e8', _jacked=0; try{ _jacked = (localStorage.getItem(_jk)==='1')?1:0; }catch(e){}
+  if(!_jacked){ pool.push({label:'全属性+1亿（含生命活力）',w:0.05,apply:function(){ addPerm(100000000,100000000); try{ localStorage.setItem(_jk,'1'); }catch(e){} toast('天选之刻！全属性+1亿！'); }}); }   /* 全服唯一、全奖最稀有大奖，抽中即永久移除 */
+  pool=pool.concat([
+    {label:'寂灭之息药剂',w:0.12,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); g.count=1; addStackable(g);}},   /* 最珍稀：寂灭之息药剂（BOSS即死） */
     {label:'全属性+100万',w:0.3,apply:function(){addPerm(1000000,0);}},   /* 次珍稀：全属性+100万 */
     {label:'金币+100亿',w:0.5,apply:function(){CURRENCY.gold+=10000000000;}},   /* 次珍稀：100亿金币 */
     {label:'全属性+50000',w:1,apply:function(){addPerm(50000,0);}},
@@ -5404,7 +5440,7 @@ function lotteryRarePool(){   /* 保底稀有奖池：含全属性+500、传说�
     {label:'完整属性卷轴',w:3,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=1; addStackable(g); }},
     {label:'混沌神石',w:3,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=1; g.maxStack=255; addStackable(g); }},
     {label:'永久全属性+100',w:3,apply:function(){addPerm(100,0);}}
-  ];
+  ]);
   var tot=0; for(var i=0;i<pool.length;i++) tot+=pool[i].w;
   var r=Math.random()*tot, acc=0;
   for(var i=0;i<pool.length;i++){ acc+=pool[i].w; if(r<acc) return {item:pool[i], idx:-1}; }
@@ -5599,8 +5635,8 @@ function rechargeGold(){
 }
 function runLottery10(){
   if(lotteryBusy){ toast('轮盘转动中，请稍候…'); return; }
-  if(CURRENCY.gold<1000000000){ toast('金币不足（需10亿）'); return; }
-  CURRENCY.gold-=1000000000; renderCurrency(); updateLotteryGold();
+  if(LOTTERY_FREE>=10){ LOTTERY_FREE-=10; saveLotteryFree(); updateLotteryFree(); }   /* 免费次数满10次时，10连抽优先用免费抵扣 */
+  else { if(CURRENCY.gold<1000000000){ toast('金币不足（需10亿）'); return; } CURRENCY.gold-=1000000000; renderCurrency(); updateLotteryGold(); }
   lotteryBusy=true;
   /* 10连概率表：稀有档（prob<0.01）概率×1.2（约+20%）；谢谢先保留原概率，抽完再压缩 */
   var tbl=LOTTERY.map(function(s){ return {s:s, p:(s.prob<0.01? s.prob*1.2 : s.prob)}; });
@@ -5646,7 +5682,8 @@ function initLottery(){
   if(rc && !rc.__bound){ rc.__bound=true; rc.addEventListener('click', rechargeGold); }
   renderWheel(); buildLegend(); updateLotteryGold(); loadLotteryCount(); updatePity(); loadLotteryFree();
 }
-function updateLotteryGold(){ var g=document.getElementById('lottery-gold'); if(g){ g.textContent=CURRENCY.gold.toLocaleString(); fitMoney(g, CURRENCY.gold); } }
+function fmtYi(n){ if(n>=1e12) return (n/1e12).toFixed(2)+'万亿'; if(n>=1e8) return (n/1e8).toFixed(2)+'亿'; return n.toLocaleString(); }   /* 余额以亿/万亿显示 */
+function updateLotteryGold(){ var g=document.getElementById('lottery-wallet-gold'); if(g) g.textContent=fmtYi(CURRENCY.gold); }
 function buildLegend(){
   var box=document.getElementById('lottery-legend'); if(!box) return;
   box.innerHTML='';
@@ -6092,8 +6129,9 @@ function trSpawnMon(){
     else { TR.bossType=null; TR.bossTier=bossTierOfDungeon(TR.dungeon); }
   } else { TR.bossType=null; TR.bossTier=0; TR.isElite=(Math.random()<0.08); }   /* 8%精英怪（普通小怪间随机刷） */
   TR.forceBoss=null;
-  if(TR.isBoss){   /* Boss 等级随机：普通比角色高5~15级；noble等级低(-3~+2)；神之幻境固定80 */
-    if(isPhantomDungeon(TR.dungeon)) TR.bossLevel=80;
+  if(TR.isBoss){   /* Boss 等级：普通比角色高5~15；noble(-3~+2)；掉传说级物品的副本Boss(无限深渊/克里普特/神之幻境)80~85 */
+    var _lg=(TR.dungeon===2||TR.dungeon===3||isPhantomDungeon(TR.dungeon));   /* 掉落传说级物品的副本 */
+    if(_lg) TR.bossLevel=80+Math.floor(Math.random()*6);
     else if(TR.bossType==='noble') TR.bossLevel=Math.max(1,TR.level-3+Math.floor(Math.random()*6));
     else TR.bossLevel=TR.level+5+Math.floor(Math.random()*11);
   }
@@ -6313,7 +6351,7 @@ function trKillMon(){
   if(TR.isBoss){ var _bn=TR.bossType==='god'?2:1; for(var _bi=0;_bi<_bn;_bi++){ var gg=trBossGuarantee(); if(gg){ addStackable(gg); got=true; trDropAnim(gg.img,itemQuality(gg)); trLog('Boss 保底 <b class="lg-item">'+gg.name+(gg.count>1?'×'+gg.count:'')+'</b>'); if(itemQuality(gg)==='purple') triggerLegendFX(); TR.bossLoot.push(gg.name+(gg.count>1?'×'+gg.count:'')); } } got=true; }   /* Boss 必掉金币+保底（神级2件） */
   if(TR.isBoss){ var _pr=bossPermReward(); if(_pr>0){ addPerm(_pr,0); trLog('<b style="color:#c86bff">击败 BOSS：全属性 +'+_pr+'（永久）</b>'); toast('全属性+'+_pr+' 永久'); triggerLegendFX(); } }   /* 击杀BOSS保底：永久全属性（按阶位与等级） */
   /* 寂灭之息药剂：神之幻境小怪 0.00001%、BOSS 0.1%，仅在线打怪，无全服限量 */
-  if(isPhantomDungeon(TR.dungeon) && location.hash.indexOf('#treasure')>=0 && document.visibilityState==='visible' && Math.random()<(TR.isBoss?0.001:0.0000001)){ var jmm=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); jmm.count=1; jmm.maxStack=1; addStackable(jmm); got=true; trDropAnim(jmm.img,'purple'); trLog('掉落 <b class="lg-item">'+jmm.name+'</b>'); triggerLegendFX(); }   /* 寂灭之息药剂：仅神之幻境小怪0.00001%、BOSS0.1%（在线） */
+  if(isPhantomDungeon(TR.dungeon) && location.hash.indexOf('#treasure')>=0 && document.visibilityState==='visible' && Math.random()<(TR.isBoss?0.001:0.0000001)){ var jmm=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); jmm.count=1; addStackable(jmm); got=true; trDropAnim(jmm.img,'purple'); trLog('掉落 <b class="lg-item">'+jmm.name+'</b>'); triggerLegendFX(); }   /* 寂灭之息药剂：仅神之幻境小怪0.00001%、BOSS0.1%（在线） */
   if(!TR.isBoss && Math.random()<0.005){ trHiddenEvent(); }   /* 0.5%隐藏事件：神秘宝箱门 / 隐藏BOSS */
   if(!got) trLog('没有收获');
   trGainExp((DUNGEONS[TR.dungeon].monLv||1), TR.isBoss?d.bossAtk:d.atk, TR.isBoss);   /* 经验按怪物固定等级 */
@@ -6685,13 +6723,14 @@ function refreshElemChar(){   /* 快捷凹槽/穿戴改变属性后，只更新�
 }
 
 function elemSecHTML(side){
-  var arr=ELEM_SLOT[side], t=side==='atk'?'攻':'防', h='<div class="elem-sec"><span class="elem-sec-t">'+t+'</span>';
+  var arr=ELEM_SLOT[side], h='<div class="elem-sec">';   /* 攻/防标签已去掉 */
   var key=side==='atk'?'weapon':'armor', eq=equipState[key];
   for(var i=0;i<4;i++){ var it=arr[i], el=ELEM_ORDER[i], c=ELEM_COL[el];
     if(it&&!(existsInBag(it.id)||(eq&&eq.id===it.id))){ arr[i]=null; it=null; }
     var active=!!(it&&eq&&eq.id===it.id);
-    h+='<div class="elem-slot'+(it?' has':' empty')+(active?' active':'')+'" data-side="'+side+'" data-i="'+i+'" data-el="'+el+'" title="'+el+'属性'+elemSideTxt(side)+(active?'（穿戴中）':'')+'">'
-      +(it?'<img src="'+it.img+'" alt=""><span class="e-sup">'+el+'</span>':'<span class="e-el">'+el+'</span>')+'</div>'; }
+    h+='<div class="elem-cell"><span class="e-tag" style="color:'+ELEM_COL[el]+'">'+el+'</span>'
+      +'<div class="elem-slot'+(it?' has':' empty')+(active?' active':'')+'" data-side="'+side+'" data-i="'+i+'" data-el="'+el+'" title="'+el+'属性'+elemSideTxt(side)+(active?'（穿戴中）':'')+'">'
+      +(it?'<img src="'+it.img+'" alt="">':'')+'</div></div>'; }
   return h+'</div>';
 }
 function renderElemBars(){
@@ -6885,7 +6924,7 @@ function doReset(){
   LOADED_GODS.length = 0;
   GOD.formation = { main:null, sub1:null, sub2:null, sub3:null };
   GOD.selected = null; GOD.upTarget = null; GOD.page = 1;
-  CURRENCY.gold = 0; CURRENCY.bound = 0;
+  CURRENCY.gold = 10000000000; CURRENCY.bound = 0;   /* 初始化启动资金：非绑定金币100亿，绑定金币0 */
   CHARACTER.info.level = 1; TR.level = 1; TR.exp = 0; TR.reqExp = 100;
   ARENA.score=0; ARENA.win=0; ARENA.lose=0; ARENA.streak=0; ARENA._rank=0; ARENA.titleOn=true; ARENA.killBoss=0; ARENA.medalOn=true; ARENA.killGod=0; ARENA.godMedalOn=true; TLM.s50={got:0,on:true}; TLM.s100={got:0,on:true}; TLM.s150={got:0,on:true}; ARENA.lastDaily=''; ARENA.logs=[]; ARENA.fight=false; ITH_LEFT={yitaiNecklace:1,yitaiRing:2,yitaiBracelet:2}; SJD_LEFT=10; QUICK=[null,null,null,null]; if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.timer=null; }
   POTION_UNTIL = 0; SUN_UNTIL = 0; MEGA_SUN_UNTIL = 0;   /* 初始化清空药水效果 */
@@ -6942,8 +6981,9 @@ bindEvents();})();
 <div id="fb-mask"></div>
 <div id="float-bag">
   <div class="fb-head"><span>背包</span><button id="fb-close" aria-label="关闭">×</button></div>
-  <div class="fb-gold"><span>金币</span><b id="fb-gold">0</b></div>
+  <div class="fb-wear" id="fb-wear"><div class="fb-wear-t">已穿戴装备</div><div class="fb-wear-grid" id="fb-wear-grid"></div></div>
   <div class="bag-tabs" id="fb-tabs"></div>
+  <div class="fb-gold"><span>金币</span><b id="fb-gold">0</b></div>
   <div class="fb-grid" id="fb-grid"></div>
 </div>
 <div id="attr-float">
