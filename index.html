@@ -1288,7 +1288,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   60%{transform:translate(var(--sx),var(--sy)) scale(1.4);}
   100%{opacity:0;transform:translate(calc(var(--sx)*2),300px) scale(.5);}
 }
-.lottery-log{height:200px;min-height:200px;max-height:200px;overflow-y:auto;background:linear-gradient(180deg,rgba(20,17,12,.6),rgba(0,0,0,.24));border:1px solid rgba(201,162,75,.22);border-radius:8px;padding:6px 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
+.lottery-log{height:150px;min-height:150px;max-height:150px;overflow-y:auto;background:linear-gradient(180deg,rgba(20,17,12,.6),rgba(0,0,0,.24));border:1px solid rgba(201,162,75,.22);border-radius:8px;padding:6px 9px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
 .ll-row{font-size:12px;padding:2px 0;border-bottom:1px dashed #2a2621;line-height:1.5;}
 .ll-row:last-child{border-bottom:none;}
 .ll-time{color:#6f685c;margin-right:8px;font-size:11px;}
@@ -2922,6 +2922,7 @@ function renderCurrency(){
   fitMoney(gb, CURRENCY.bound);
   saveGame();
   syncBagBar();
+  updateLotteryGold();   /* 任何金币变动同步抽奖页余额，避免显示旧值 */
 }
 
 /* ===== 全局背包折叠条 + 浮层 ===== */
@@ -5267,7 +5268,7 @@ function endFight(res,o){
       var ratio=o.pw/rolePower(), ratioPow=Math.pow(Math.max(ratio,0.5),2.5);
       var sc=Math.round(5000*ratioPow), gold=Math.round(200000000*ratioPow);
       sc=Math.min(sc,50000); gold=Math.min(gold,10000000000);
-      ARENA.score+=sc; CURRENCY.gold+=gold;
+      ARENA.score+=sc; CURRENCY.gold+=gold; updateLotteryGold();
       if(f){ f.setAttribute('data-end','1'); f.innerHTML='<div class="af-wait" style="color:#D84AA0;font-size:19px;letter-spacing:2px;text-shadow:0 0 12px rgba(216,74,160,.8);">万军取首级！</div><div class="af-wait" style="font-size:12px;color:#D6B56A;">击杀敌方首领 · 战力×'+ratio.toFixed(1)+'<br>+'+sc+'积分 · +'+fmtWan(gold)+'金币</div>'; }
       arenaLog('击杀敌方首领 <span class="t">'+o.n+'</span>！<span class="c">+'+sc+'积分 +'+fmtWan(gold)+'金币</span>');
   if(o.tier==='god' && arenaRank()<6 && ARENA.killGod<1){ unlockGodMedal(); arenaLog('<b class="lg-boss">越级击杀神级Boss，获得徽章·屠神者！真实伤害+10%</b>'); }   /* 屠神者：低段位越级击杀神级Boss */
@@ -5281,7 +5282,7 @@ function endFight(res,o){
       var baseS=30*(ARENA._rank+1), baseG=50000*(ARENA._rank+1);
       var sc=Math.round(baseS*seg*ratioPow), gold=Math.round(baseG*seg*ratioPow);
       sc=Math.max(10,Math.min(sc,3000)); gold=Math.max(100000,Math.min(gold,200000000));
-      ARENA.score+=sc; CURRENCY.gold+=gold;
+      ARENA.score+=sc; CURRENCY.gold+=gold; updateLotteryGold();
       if(f){ f.setAttribute('data-end','1'); f.innerHTML='<div class="af-wait" style="color:#7CFC7C;font-size:18px;letter-spacing:2px;">决斗胜利</div><div class="af-wait" style="font-size:12px;color:#D6B56A;">'+segTxt+' · 战力×'+ratio.toFixed(1)+'<br>+'+sc+'积分 · +'+fmtWan(gold)+'金币</div>'; }
       arenaLog('战胜 <span class="t">'+o.n+'</span>（'+segTxt+'·战力×'+ratio.toFixed(1)+'）<span class="c">+'+sc+'积分 +'+fmtWan(gold)+'金币</span>');
       checkRankUp();
@@ -5435,11 +5436,11 @@ function lotteryRarePool(){   /* 保底稀有奖池：含全属性+500、传说�
     {label:'全属性+50000',w:1,apply:function(){addPerm(50000,0);}},
     {label:'永久生命+100000',w:1,apply:function(){addPerm(0,100000);}},
     {label:'神印天神牌',w:1,apply:function(){var seals=[ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise]; var g=mkLoot(seals[Math.floor(Math.random()*seals.length)]); g.count=1; placeInBag(g); }},
-    {label:'永久全属性+200',w:2,apply:function(){addPerm(200,0);}},
+    {label:'永久全属性+2000',w:2,apply:function(){addPerm(2000,0);}},
     {label:'永久生命+50000',w:2,apply:function(){addPerm(0,50000);}},
-    {label:'完整属性卷轴',w:3,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=1; addStackable(g); }},
-    {label:'混沌神石',w:3,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=1; g.maxStack=255; addStackable(g); }},
-    {label:'永久全属性+100',w:3,apply:function(){addPerm(100,0);}}
+    {label:'完整属性卷轴',w:3,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=100; addStackable(g); }},
+    {label:'混沌神石',w:3,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=100; g.maxStack=255; addStackable(g); }},
+    {label:'永久全属性+1000',w:3,apply:function(){addPerm(1000,0);}}
   ]);
   var tot=0; for(var i=0;i<pool.length;i++) tot+=pool[i].w;
   var r=Math.random()*tot, acc=0;
