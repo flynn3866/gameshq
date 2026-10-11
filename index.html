@@ -3030,7 +3030,7 @@ function renderAttrFloat(){
   var Bn=CHARACTER.bonus||{};
   var nm=CHARACTER.info&&CHARACTER.info.name?CHARACTER.info.name:'谜团';
   var lv=CHARACTER.info&&CHARACTER.info.level?CHARACTER.info.level:1;
-  var tier=CHAR_TIERS[charTierIdx()].n;
+  var tier=((charTierIdx()>=0)?CHAR_TIERS[charTierIdx()].n:'');
   var pw=rolePower();
   var html='';
   /* 身份卡：头像 + 名字 + 阶位 + 战力 */
@@ -4730,7 +4730,7 @@ function tlSpawn(){
   tlRenderMon(); tlRenderChar();
 }
 function tlRenderMon(){ var f=document.getElementById('tl-mon-hp'); if(f){ var p=T.monMax?T.monHp/T.monMax*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-mon-hpnum'); if(n) n.textContent=fmtWan(Math.max(0,T.monHp))+'/'+fmtWan(T.monMax); }
-function tlRenderChar(){ var rf=document.getElementById('tl-rolecard-hp'); if(rf){ var rp=T.maxHp?T.hp/T.maxHp*100:0; rf.style.width=Math.max(0,Math.min(100,rp))+'%'; } var rn=document.getElementById('tl-rolecard-hpnum'); if(rn) rn.textContent=fmtWan(Math.max(0,T.hp))+'/'+fmtWan(T.maxHp); var f=document.getElementById('tl-ch-hp'); if(f){ var p=T.maxHp?T.hp/T.maxHp*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-ch-hpnum'); if(n) n.textContent=fmtWan(Math.max(0,T.hp))+'/'+fmtWan(T.maxHp); var lv=document.getElementById('tl-lv'); if(lv) lv.textContent='Lv.'+TR.level; var _lv=document.getElementById('tl-rolecard-lv'); if(_lv) _lv.textContent='Lv.'+TR.level; var _t=document.getElementById('tl-rolecard-tier'); if(_t) _t.textContent=CHAR_TIERS[charTierIdx()].n; var _p=document.getElementById('tl-rolecard-power'); if(_p) _p.textContent='战力 '+fmtWan(rolePower()); var _re=document.getElementById('tl-rolecard-elem'); if(_re) _re.innerHTML=elemBadgesText(elemKey((CHARACTER.combat[4]||{}).v), charDefElem()); }
+function tlRenderChar(){ var rf=document.getElementById('tl-rolecard-hp'); if(rf){ var rp=T.maxHp?T.hp/T.maxHp*100:0; rf.style.width=Math.max(0,Math.min(100,rp))+'%'; } var rn=document.getElementById('tl-rolecard-hpnum'); if(rn) rn.textContent=fmtWan(Math.max(0,T.hp))+'/'+fmtWan(T.maxHp); var f=document.getElementById('tl-ch-hp'); if(f){ var p=T.maxHp?T.hp/T.maxHp*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-ch-hpnum'); if(n) n.textContent=fmtWan(Math.max(0,T.hp))+'/'+fmtWan(T.maxHp); var lv=document.getElementById('tl-lv'); if(lv) lv.textContent='Lv.'+TR.level; var _lv=document.getElementById('tl-rolecard-lv'); if(_lv) _lv.textContent='Lv.'+TR.level; var _t=document.getElementById('tl-rolecard-tier'); if(_t) _t.textContent=((charTierIdx()>=0)?CHAR_TIERS[charTierIdx()].n:''); var _p=document.getElementById('tl-rolecard-power'); if(_p) _p.textContent='战力 '+fmtWan(rolePower()); var _re=document.getElementById('tl-rolecard-elem'); if(_re) _re.innerHTML=elemBadgesText(elemKey((CHARACTER.combat[4]||{}).v), charDefElem()); }
 function tlLog(html){ var l=document.getElementById('tl-log'); if(!l) return; var d=document.createElement('div'); d.className='tl-log-line'; d.innerHTML='<span style="color:#5c5548">['+new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})+']</span>'+html; l.insertBefore(d,l.firstChild); while(l.children.length>40) l.lastChild.remove(); }
 function fmtDmg(n){
   n = Math.round(Number(n)||0);
@@ -5851,9 +5851,9 @@ function trMonStats(){
     mhp=Math.max(80, Math.round(bl*3600*diff));
     def=Math.max(5, Math.round(bd*5.4*diff));
   } else {
-    atk=Math.max(8, Math.round(ba*TR.monAtkCoef*(hi?2:1)*diff));   /* 小怪攻击：该级裸装物攻×攻击系数×难度；45级以上副本攻击系数×2 */
-    mhp=Math.max(80, Math.round(bl*5*diff));              /* 小怪血量=该级裸装血量×5×难度，连续 */
-    def=Math.max(5, Math.round(bd*0.3*diff));             /* 小怪防御=该级裸装物防×0.3×难度，连续 */
+    var _d0=(TR.dungeon===0);   /* 雕俱星座(最低档)：血量<1000、战力≈600，供1级可刷怪升级 */
+    if(_d0){ atk=Math.max(3, Math.round(ba*(0.2+Math.random()*0.3))); mhp=300; def=Math.max(2, Math.round(bd*0.3*0.4*0.9)); }   /* 雕俱攻击系数0.2~0.5、防御再降10% */
+    else { atk=Math.max(3, Math.round(ba*TR.monAtkCoef*(hi?2:1)*diff)); mhp=Math.max(40, Math.round(bl*5*diff)); def=Math.max(5, Math.round(bd*0.3*diff)); }
   }
   var bossBase=0;
   if(TR.isBoss){                                            /* Boss：全属性按阶位区间（基础属性折算攻/血/防，含特性前） */
@@ -5871,7 +5871,7 @@ function trMonStats(){
   if(TR.isBoss && !isPhantomDungeon(TR.dungeon)){   /* 低阶副本Boss血量=该副本小怪血×连续倍率（随副本递增），避免战力爆炸；神之幻境保持地狱级 */
     mhp = Math.max(mhp, Math.round(bl*5*diff*([50000,70000,100000,140000,200000,300000][TR.dungeon]||50000)));
   } else {
-    var _mMul=TR.isBoss?(TR.bossTier>=5?1000:(TR.bossTier>=4?500:200)):5;   /* 防秒杀倍率：小怪×5，首领以下×200、首领×500、神级×1000 */
+    var _mMul=TR.isBoss?(TR.bossTier>=5?1000:(TR.bossTier>=4?500:200)):(TR.dungeon===0?1:5);   /* 防秒杀倍率：雕俱小怪×1、其余小怪×5，首领以下×200、首领×500、神级×1000 */
     mhp += _mPow*_mMul;   /* 避免秒杀：生命值=原计算值+怪物战力×倍率 */
   }
   return {atk:atk, hp:mhp, def:def, agi:agi};
@@ -6138,6 +6138,7 @@ function trSpawnMon(){
   TR.traits = TR.isBoss ? genBossTraits(TR.bossTier,genTraitCount(TR.bossTier),genTraitCount(TR.bossTier)) : null;   /* Boss 按阶位生成特性，数量随阶位 */
   var _ae=assignElem(TR.isBoss?TR.bossTier:(TR.isElite?0:0), TR.isElite?0.06:0); TR.atkElem=_ae.atkElem; TR.defElem=_ae.defElem;   /* 按阶位随机属性攻防：神级全带，阶位越低概率越低 */
   TR.monAtkCoef=triAtkCoef();   /* 本只怪攻击系数（0.05~0.18，0.1概率最大） */
+  TR.monLv = TR.isBoss ? (TR.bossLevel||60) : (DUNGEONS[TR.dungeon].monLv||1);   /* 每次刷怪更新怪物等级，修复残留等级导致等级压制误判（雕俱1级怪曾被打出百万伤害） */
   var s=trMonStats(); if(TR.isBoss&&TR.traits){ var __ab=applyBossArmor(TR.traits,s.hp,s.def,bossTierOfDungeon(TR.dungeon)); s.hp=__ab.hp; s.def=__ab.def; } TR.monMax=s.hp; TR.monHp=s.hp; TR.monPower=battlePower(s.atk,s.hp,s.def,s.agi);   /* 记录怪物战力用于Boss阶位行显示 */
   renderMon(); renderChar();
   if(TR.isBoss) trBossEnter();
@@ -6549,7 +6550,7 @@ function renderChar(){
   if(ef){ var pp=TR.reqExp?TR.exp/TR.reqExp*100:0; ef.style.width=Math.max(0,Math.min(100,pp))+'%'; }
   if(en) en.textContent=TR.level>=80?'MAX':(TR.exp+'/'+TR.reqExp);
   var _rlv=document.getElementById('tr-rolecard-lv'); if(_rlv) _rlv.textContent='Lv.'+TR.level;   /* 角色等级 */
-  var _rt1=document.getElementById('tr-rolecard-tier'); if(_rt1) _rt1.textContent=CHAR_TIERS[charTierIdx()].n;   /* 当前阶位 */
+  var _rt1=document.getElementById('tr-rolecard-tier'); if(_rt1) _rt1.textContent=((charTierIdx()>=0)?CHAR_TIERS[charTierIdx()].n:'');   /* 当前阶位 */
   var _rp1=document.getElementById('tr-rolecard-power'); if(_rp1) _rp1.textContent='战力 '+fmtWan(rolePower());   /* 角色战力 */
   var _re1=document.getElementById('tr-rolecard-elem'); if(_re1) _re1.innerHTML=elemBadgesText(elemKey((CHARACTER.combat[4]||{}).v), charDefElem());   /* 角色属性攻防标签 */
   renderBuff();
@@ -6925,6 +6926,7 @@ function doReset(){
   GOD.formation = { main:null, sub1:null, sub2:null, sub3:null };
   GOD.selected = null; GOD.upTarget = null; GOD.page = 1;
   CURRENCY.gold = 10000000000; CURRENCY.bound = 0;   /* 初始化启动资金：非绑定金币100亿，绑定金币0 */
+  stopTrialAuto(); T.started=false; T.layer=1; T.best=0; T.auto=false; try{ localStorage.removeItem('shenqi_trial_best'); }catch(e){}   /* 初始化重置无尽试炼：停止自动攻击、清最高纪录与层数 */
   CHARACTER.info.level = 1; TR.level = 1; TR.exp = 0; TR.reqExp = 100;
   ARENA.score=0; ARENA.win=0; ARENA.lose=0; ARENA.streak=0; ARENA._rank=0; ARENA.titleOn=true; ARENA.killBoss=0; ARENA.medalOn=true; ARENA.killGod=0; ARENA.godMedalOn=true; TLM.s50={got:0,on:true}; TLM.s100={got:0,on:true}; TLM.s150={got:0,on:true}; ARENA.lastDaily=''; ARENA.logs=[]; ARENA.fight=false; ITH_LEFT={yitaiNecklace:1,yitaiRing:2,yitaiBracelet:2}; SJD_LEFT=10; QUICK=[null,null,null,null]; if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.timer=null; }
   POTION_UNTIL = 0; SUN_UNTIL = 0; MEGA_SUN_UNTIL = 0;   /* 初始化清空药水效果 */
@@ -6933,7 +6935,7 @@ function doReset(){
   itemIdCounter = 1;
   LOTTERY_LOG = [];   /* 初始化清空抽奖记录 */
   try{ localStorage.removeItem('shenqi_lottery_log'); localStorage.removeItem('shenqi_lottery_count'); }catch(e){}
-  LOTTERY_COUNT=0;
+  LOTTERY_COUNT=0; saveLotteryCount(); updatePity(); updateLotteryGold();   /* 初始化将保底计数写回落盘(0)并即时刷新抽奖页显示，避免进入时残留上次值 */
   LOTTERY_FREE = LOTTERY_FREE_MAX; saveLotteryFree();   /* 初始化重置每日免费抽奖次数为上限 */
   renderLotteryLog();
   recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); renderCurrency();
