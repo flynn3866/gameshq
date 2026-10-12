@@ -3363,6 +3363,7 @@ function rollByInnate(innate,min,max){ var span=max-min; if(innate>=1.8) return 
 function calcGrowth(innate){ return {attr:rollByInnate(innate,3000,5000), hp:rollByInnate(innate,10000,50000), pdef:rollByInnate(innate,1000,3000)}; }  /* 每级成长：按先天运势分档确定 */
 function innateTaken180(){ try{ return localStorage.getItem('_ih18')==='1'; }catch(e){ return false; } }   /* 天运之主是否已被占有（全服唯一） */
 function claimInnate180(){ try{ localStorage.setItem('_ih18','1'); }catch(e){} }
+function unclaimInnate180(){ try{ localStorage.removeItem('_ih18'); }catch(e){} }   /* 释放占用：刷掉1.8后仍可再次随机到 */
 function rollInnate(){  /* 先天运势随机：普通档0.9~1.19约90%（越靠近0.9概率越高）、高级档1.2~1.79约9.999%（越靠近1.2概率越高）、传说档1.8固定0.001%，且全服唯一 */
   var r=Math.random()*100, t;
   if(r<0.001){ if(!innateTaken180()) return 1.8; else t=1-Math.sqrt(1-Math.random()); }   /* 传说档0.001%；已被占有则落高级档 */
@@ -3371,6 +3372,7 @@ function rollInnate(){  /* 先天运势随机：普通档0.9~1.19约90%（越靠
   return Math.round((1.20+t*0.59)*100)/100;   /* 高级档：权重线性递减 */
 }
 function randomRollOrigin(){  /* 先随机先天运势，再按其分档生成角色原始属性 + 每级成长：六维3000~5000 / 生命1万~5万 / 攻击1000~3000 / 防御1000~3000 */
+  unclaimInnate180();   /* 释放占用：本次重新随机由新结果决定是否再占住（刷掉1.8即可再次出现） */
   var innate=rollInnate();
   if(innate>=1.8) claimInnate180();   /* 天运之主全服唯一：产生即占有 */
   var O=CHARACTER.origin=CHARACTER.origin||{};
