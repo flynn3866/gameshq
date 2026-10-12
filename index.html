@@ -514,7 +514,7 @@ body.show-god .stage{max-width:680px;}
 .innate-card::before{content:"";position:absolute;left:-30%;right:-30%;top:-55%;height:130%;background:radial-gradient(50% 45% at 50% 0%, rgba(255,222,160,.18), transparent 70%);pointer-events:none;}
 .innate-head{display:flex;align-items:center;gap:8px;position:relative;}
 .innate-head .cl{font-size:15px;font-weight:800;letter-spacing:3px;background:linear-gradient(90deg,#f4d98a,#fff4cf,#f4d98a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
-.innate-tag{font-size:9px;color:#c99bff;border:1px solid rgba(178,120,255,.45);border-radius:3px;padding:1px 6px;background:rgba(150,90,255,.16);letter-spacing:1px;}
+.innate-tag{font-size:9px;color:#c99bff;border:1px solid rgba(178,120,255,.45);border-radius:3px;padding:1px 6px;background:rgba(150,90,255,.16);letter-spacing:1px;white-space:nowrap;}
 .innate-row{display:flex;align-items:center;gap:12px;}
 .innate-row .innate-head{flex:1;margin-bottom:0;}
 .innate-numcard{flex:none;min-width:92px;text-align:center;padding:9px 16px;border-radius:9px;background:radial-gradient(120% 100% at 50% -20%, rgba(200,140,255,.28), rgba(0,0,0,0) 65%), linear-gradient(180deg,#3a2b4e,#241735);border:1px solid rgba(200,140,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.16), inset 0 -7px 11px rgba(0,0,0,.5), 0 0 16px rgba(160,100,255,.32);}
@@ -3106,7 +3106,7 @@ function renderAttrFloat(){
   if(bad.length){ html+='<div class="af-badges">'+bad.map(function(x){ return '<div class="af-badge"><i style="background:'+x.c+';color:'+x.c+'"></i><b style="color:'+x.c+'">'+x.n+'</b><span class="af-bd">'+x.d+'</span></div>'; }).join('')+'</div>'; }
   /* 先天运势卡（突出高贵） */
   var _in=CHARACTER.innate||1; var _tag='';
-  if(_in>=1.8) _tag='<span class="innate-tag top">天运之主</span>';
+  if(_in>=1.8) _tag='<span class="innate-tag top">天运之主 · 全服唯一</span>';
   else if(_in>=1.2) _tag='<span class="innate-tag">非酋 · 欧皇</span>';
   html+='<div class="af-innate"><div class="af-innate-row"><span class="af-innate-t">先天运势</span>'+_tag+'</div><div class="af-innate-num">'+_in.toFixed(2)+'</div></div>';
   /* 属性区 */
@@ -3361,14 +3361,18 @@ var OG=0;   /* 传说奥格顿套装件数（3件=属性%/4件=更高/5件=机�
 function ogImmune(){ return OG>=5 && Math.random()<0.5; }   /* 5件：50%概率免疫负面状态 */
 function rollByInnate(innate,min,max){ var span=max-min; if(innate>=1.8) return max; if(innate>=1.2){ var t=(innate-1.2)/0.59, lo=0.55, hi=0.55+0.45*t; return Math.round(min+span*(lo+Math.random()*(hi-lo))); } else { var t=(innate-0.9)/0.3, hi=0.25+0.35*t; return Math.round(min+span*Math.random()*hi); } }
 function calcGrowth(innate){ return {attr:rollByInnate(innate,3000,5000), hp:rollByInnate(innate,10000,50000), pdef:rollByInnate(innate,1000,3000)}; }  /* 每级成长：按先天运势分档确定 */
-function rollInnate(){  /* 先天运势随机：普通档0.9~1.19约90%（越靠近0.9概率越高）、高级档1.2~1.79约9.999%（越靠近1.2概率越高）、传说档1.8固定0.001% */
+function innateTaken180(){ try{ return localStorage.getItem('_ih18')==='1'; }catch(e){ return false; } }   /* 天运之主是否已被占有（全服唯一） */
+function claimInnate180(){ try{ localStorage.setItem('_ih18','1'); }catch(e){} }
+function rollInnate(){  /* 先天运势随机：普通档0.9~1.19约90%（越靠近0.9概率越高）、高级档1.2~1.79约9.999%（越靠近1.2概率越高）、传说档1.8固定0.001%，且全服唯一 */
   var r=Math.random()*100, t;
-  if(r<0.001) return 1.8;                     /* 传说档 0.001% */
-  if(r<90){ t=1-Math.sqrt(1-Math.random()); return Math.round((0.90+t*0.29)*100)/100; }   /* 普通档：权重线性递减 */
-  t=1-Math.sqrt(1-Math.random()); return Math.round((1.20+t*0.59)*100)/100;   /* 高级档：权重线性递减 */
+  if(r<0.001){ if(!innateTaken180()) return 1.8; else t=1-Math.sqrt(1-Math.random()); }   /* 传说档0.001%；已被占有则落高级档 */
+  else if(r<90){ t=1-Math.sqrt(1-Math.random()); return Math.round((0.90+t*0.29)*100)/100; }   /* 普通档：权重线性递减 */
+  else t=1-Math.sqrt(1-Math.random());
+  return Math.round((1.20+t*0.59)*100)/100;   /* 高级档：权重线性递减 */
 }
 function randomRollOrigin(){  /* 先随机先天运势，再按其分档生成角色原始属性 + 每级成长：六维3000~5000 / 生命1万~5万 / 攻击1000~3000 / 防御1000~3000 */
   var innate=rollInnate();
+  if(innate>=1.8) claimInnate180();   /* 天运之主全服唯一：产生即占有 */
   var O=CHARACTER.origin=CHARACTER.origin||{};
   O.力量=rollByInnate(innate,3000,5000); O.敏捷=rollByInnate(innate,3000,5000); O.体质=rollByInnate(innate,3000,5000); O.精神=rollByInnate(innate,3000,5000); O.智力=rollByInnate(innate,3000,5000); O.幸运=rollByInnate(innate,3000,5000);
   O.hp=rollByInnate(innate,10000,50000); O.patk=rollByInnate(innate,1000,3000); O.pdef=rollByInnate(innate,1000,3000);
@@ -4376,7 +4380,7 @@ function renderAttrs(){
     if(CHARACTER.innate>=1.8){ confirmDialog('你当前已是 <span style="color:#B08CFF;font-weight:700;letter-spacing:1px">天运之主</span>（先天运势 1.80）<br>重新随机将放弃这份绝世运势……<br><span style="color:#C9A24B">确认要重新生成吗？</span>', function(ok){ if(ok) _doRoll(); }); }
     else _doRoll();
   }); }
-  var _it=$('#innate-tag'); if(_it){ if(CHARACTER.innate>=1.8){ _it.textContent='天运之主'; _it.className='innate-tag top'; _it.style.display=''; } else if(CHARACTER.innate>=1.2){ _it.textContent='非酋 · 欧皇'; _it.className='innate-tag'; _it.style.display=''; } else { _it.style.display='none'; } }
+  var _it=$('#innate-tag'); if(_it){ if(CHARACTER.innate>=1.8){ _it.textContent='天运之主 · 全服唯一'; _it.className='innate-tag top'; _it.style.display=''; } else if(CHARACTER.innate>=1.2){ _it.textContent='非酋 · 欧皇'; _it.className='innate-tag'; _it.style.display=''; } else { _it.style.display='none'; } }
   var _rr=document.querySelector('.innate-reset'); if(_rr) _rr.style.display = ((CHARACTER.info.level||1)===1)? '':'none';   /* 重新随机按钮仅等级1时显示，等级>1隐藏 */
   $('#attr-alloc').innerHTML = ATTR_PAIRS.map(function(p){
     function cell(a){
