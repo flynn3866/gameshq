@@ -426,8 +426,8 @@ body.show-god .stage{max-width:680px;}
 
 /* ===== 二级页面：角色属性（参考游戏属性面板布局） ===== */
 .attrs{display:none;padding:4px 0 10px;}   /* 覆盖 .window 的左右内边距，让面板贴近页面边线 */
-.attrs-body{padding:2px 2px 12px;}
-#view-attrs .attrs-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 104px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}   /* 属性页手机上可上下滚动（顶部标题条+快捷导航固定，内容区滚动） */
+.attrs-body{padding:22px 2px 12px;}
+#view-attrs .attrs-body{height:calc(100vh - env(safe-area-inset-top,0px) - 106px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:64px;box-sizing:border-box;}   /* 属性页：固定滚动区高度+底部留白，顶部固定，特性等内容可滚到底不被弹性回弹遮挡 */
 .attrs .topbar{justify-content:center;}
 .attrs .back-arrow{
   position:absolute;left:2px;top:50%;transform:translateY(-50%);
@@ -545,7 +545,7 @@ body.show-god .stage{max-width:680px;}
 .attrs-id-main{flex:1;min-width:0;}
 .attrs-id-name{font-size:20px;color:#FFFFFF;font-weight:700;letter-spacing:3px;}
 .attrs-id-lvtier{display:flex;align-items:center;gap:7px;margin-top:5px;font-size:13px;color:#a89d88;letter-spacing:1px;font-variant-numeric:tabular-nums;}
-.attrs-id-lvtier .char-tier{color:#B08CFF;text-shadow:0 0 9px rgba(150,90,255,.55);font-weight:700;}
+.attrs-id-lvtier .char-tier{color:#A56BFF;font-weight:700;background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;text-shadow:none;}
 .attrs-id-cls{margin-top:4px;font-size:12px;color:#c9bfa8;letter-spacing:1px;}
 .attrs-id-power{flex:none;text-align:center;background:linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #C9A24B;border-radius:9px;padding:6px 12px;box-shadow:0 0 12px rgba(201,162,75,.22),inset 0 1px 0 rgba(255,255,255,.12);}
 .attrs-id-power b{display:block;font-size:9px;color:#C9A24B;letter-spacing:3px;font-weight:500;margin-bottom:2px;}
@@ -1343,10 +1343,15 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .home-hero .hh-ico img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;}
 .home-hero .hh-main{flex:1;margin-left:15px;min-width:0;}
 .home-hero .hh-name{font-size:21px;color:#211a10;font-weight:700;letter-spacing:2px;}
+.hh-name .hh-innate{display:inline-flex;vertical-align:3px;margin-left:8px;}
+.hh-name .ih-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;padding:2px 9px;border-radius:20px;white-space:nowrap;}
+.hh-name .ih-top{color:#fff;background:linear-gradient(180deg,#FF5EC8,#C14CE8);border:1px solid rgba(255,255,255,.4);box-shadow:0 0 10px rgba(255,94,200,.5);}
+.hh-name .ih-good{color:#0a2030;background:linear-gradient(180deg,#9BE6FF,#57B9FF);border:1px solid rgba(255,255,255,.55);box-shadow:0 0 8px rgba(111,216,255,.5);}
 .home-hero .hh-lv{font-size:12px;color:#a89d88;margin-top:5px;letter-spacing:1px;font-weight:400;}
 .home-hero .hh-awards{font-size:12px;margin-top:5px;letter-spacing:1px;font-weight:600;}
 .home-hero .hh-power{flex:none;margin-left:14px;font-size:15px;color:#9a6d00;font-weight:700;text-align:right;line-height:1.15;letter-spacing:.5px;}
 .home-hero .hh-power b{display:block;font-size:10px;color:#a89d88;font-weight:500;letter-spacing:1px;margin-bottom:2px;}
+.home-hero .hh-tier{flex:none;margin-left:18px;padding-left:16px;border-left:1px solid rgba(154,111,224,.26);font-size:17px;font-weight:800;color:#8A63D2;letter-spacing:2px;}   /* 首页右侧阶位：细竖线分区+沉稳深紫，内敛有层次，无框无渐变无辉光 */
 .home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}   /* 卡片间距=边缘间距=12px */
 .home-card{background:#ffffff;border-radius:18px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:20px 8px 15px;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;border:1px solid #ece5d4;opacity:0;transition:box-shadow .3s,transform .3s cubic-bezier(.22,1,.36,1);animation:cardRise .5s cubic-bezier(.22,1,.36,1) forwards;animation-delay:calc(var(--i)*60ms + .08s);user-select:none;-webkit-user-select:none;}
 @keyframes cardRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
@@ -1368,7 +1373,8 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .forge-inline{margin:0 auto;}
 .wings-pane{min-height:300px;display:flex;align-items:center;justify-content:center;color:#C9B68A;font-size:15px;letter-spacing:2px;border:1px solid rgba(201,162,75,.22);border-radius:10px;background:linear-gradient(180deg,rgba(201,162,75,.05),transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
 #view-arena{width:100%;max-height:calc(100vh - env(safe-area-inset-top,0px) - 76px);overflow-y:auto;box-sizing:border-box;}   /* 计入顶部安全区，避免被状态栏遮挡 */
-#view-achievement{width:100%;max-height:calc(100vh - env(safe-area-inset-top,0px) - 76px);overflow-y:auto;box-sizing:border-box;}   /* 计入顶部安全区 */
+#view-achievement{width:100%;box-sizing:border-box;}   /* 成就页：顶部固定，内容区内部滚动 */
+#view-achievement .ach-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 104px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:56px;}   /* 顶部标题条+快捷导航固定，内容区可上下滚动（同属性页效果） */
 .arena-body{padding:8px 10px;}
 .arena-hero{position:relative;background:
   radial-gradient(130% 95% at 50% -12%, rgba(255,216,132,.20), rgba(0,0,0,0) 58%),
@@ -1381,10 +1387,13 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .arena-title2 .atn{font-size:12px;color:#D6B56A;letter-spacing:1px;}
 .arena-title2 .atn-medal{color:#E84AB5;font-weight:600;text-shadow:0 0 8px rgba(232,74,181,.4);}
 .arena-toggle{flex:none;padding:0 10px;height:22px;font-size:11px;color:#FFFFFF;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
-.arena-id{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:4px 12px;margin:0 0 6px;background:linear-gradient(180deg,#2b241c,#201a15);border:1px solid rgba(214,173,90,.3);border-radius:8px;padding:8px 9px 7px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -5px 9px rgba(0,0,0,.5);}
-.arena-name{flex-basis:100%;text-align:center;color:#FFFFFF;font-size:23px;font-weight:800;letter-spacing:2px;text-shadow:0 0 14px rgba(255,255,255,.32), 0 1px 2px rgba(0,0,0,.95);}
-.arena-id .char-tier{font-size:18px;font-weight:800;margin-left:0;}
-.arena-rn{font-size:17px;color:#D6C07A;font-weight:800;letter-spacing:2px;text-align:center;text-shadow:0 0 12px rgba(214,192,122,.5);}
+.arena-id{display:flex;align-items:center;gap:10px;margin:0 0 6px;background:linear-gradient(180deg,#2b241c,#201a15);border:1px solid rgba(214,173,90,.3);border-radius:8px;padding:8px 9px 7px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -5px 9px rgba(0,0,0,.5);}
+.arena-id .arena-av{width:46px;height:46px;flex:none;border-radius:10px;border:1px solid rgba(201,162,75,.6);background:linear-gradient(180deg,#3a2c12,#241b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 0 12px rgba(201,162,75,.38);object-fit:cover;display:block;}
+.arena-id .arena-idmain{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
+.arena-id .arena-idtier{display:flex;align-items:center;gap:8px;}
+.arena-name{color:#FFFFFF;font-size:21px;font-weight:800;letter-spacing:2px;text-shadow:0 0 14px rgba(255,255,255,.32), 0 1px 2px rgba(0,0,0,.95);}
+.arena-id .char-tier{font-size:13px;font-weight:800;margin-left:0;opacity:.96;color:#A56BFF;background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;text-shadow:none;}   /* 竞技阶位名：传说段位紫，纯净净值 */
+.arena-rn{font-size:13px;color:#D6C07A;font-weight:800;letter-spacing:1px;text-align:center;text-shadow:0 0 8px rgba(214,192,122,.4);opacity:.96;}
 .arena-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0 9px;}
 .arena-meta span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px 5px;border-radius:8px;color:#a29988;background:linear-gradient(180deg,#2b241c,#1e1813);border:1px solid rgba(201,162,75,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -5px 8px rgba(0,0,0,.5);}
 .arena-meta span:first-child b{color:#F6E4A8;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;text-shadow:0 0 6px rgba(246,228,168,.3);}
@@ -1488,7 +1497,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .ach-unlocked{color:#ffd34d;font-weight:900;font-size:16px;letter-spacing:1px;text-shadow:0 0 10px rgba(255,180,40,.9),0 0 26px rgba(255,170,30,.55);}
 .ach-toggle{margin-left:auto;flex:none;font-size:11px;padding:3px 10px;border-radius:6px;border:1px solid #5a4d33;background:linear-gradient(180deg,#2c2518,#1c1710);color:#e8cf9a;cursor:pointer;} .ach-toggle.on{color:#ffd34d;border-color:#8a7438;background:linear-gradient(180deg,#372c17,#241b0d);} .ach-toggle:active{transform:scale(.96);}
 
-.char-tier{display:inline-block;vertical-align:middle;margin-left:6px;font-weight:800;letter-spacing:1px;background:linear-gradient(90deg,#7a3fff,#c99bff,#7a3fff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;text-shadow:0 0 10px rgba(140,80,255,.5);}   /* 阶位统一：高贵紫渐变 */
+.char-tier{display:inline-block;vertical-align:middle;margin-left:6px;font-weight:800;letter-spacing:1px;color:#A56BFF;background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;text-shadow:none;}   /* 阶位统一：传说段位紫，纯净净值 */
 </style>
 </head>
 <body>
@@ -1499,10 +1508,11 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
     <div class="home-hero">
       <div class="hh-ico"><img src="logos/头像.png" alt="头像"></div>
       <div class="hh-main">
-        <div class="hh-name" id="home-name">谜团<span class="char-tier" id="home-tier"></span></div>
+        <div class="hh-name" id="home-name">谜团<span class="hh-innate" id="home-innate"></span></div>
         <div class="hh-lv" id="home-sub"></div>
         <div class="hh-awards" id="home-awards"></div>
       </div>
+      <span class="hh-tier" id="home-tier"></span>
     </div>
     <div class="home-grid" id="home-grid"></div>
   </div>
@@ -1568,7 +1578,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
     <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
     <div class="sys-body arena-body">
       <div class="arena-hero">
-        <div class="arena-id"><span class="arena-name">谜团</span><span class="char-tier" id="arena-tier"></span><span class="arena-rn" id="arena-rank">青铜</span></div>
+        <div class="arena-id"><img class="arena-av" src="logos/头像.png" alt=""><div class="arena-idmain"><span class="arena-name">谜团</span><div class="arena-idtier"><span class="char-tier" id="arena-tier"></span><span class="arena-rn" id="arena-rank">青铜</span></div></div></div>
         <div class="arena-title2" id="arena-title-row" style="display:none"><span class="atn" id="arena-title-name"></span><button class="arena-toggle" id="arena-title-btn"></button></div>
         <div class="arena-title2" id="arena-medal-row" style="display:none"><span class="atn atn-medal" id="arena-medal-name"></span><button class="arena-toggle" id="arena-medal-btn"></button></div>
         <div class="arena-title2" id="arena-godmedal-row" style="display:none"><span class="atn atn-medal" id="arena-godmedal-name"></span><button class="arena-toggle" id="arena-godmedal-btn"></button></div>
@@ -1655,7 +1665,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div id="combat-list"></div>
       <div class="combat-divider"></div>
       <div id="record-list"></div>
-      <div class="innate-reset"><button class="innate-roll" id="innate-roll">重新生成</button><button class="innate-roll" id="innate-rollauto">自动随机</button></div>
+      <div class="innate-reset"><button class="innate-roll" id="innate-roll">重新生成</button><button class="innate-roll" id="innate-rollauto">自动生成</button></div>
       <div id="attr-traits"></div>
     </div>
   </div>
@@ -4373,7 +4383,7 @@ function cRows(arr){
 }
 
 var INNATE_AUTO={on:false, timer:null};   /* 自动随机状态 */
-function stopInnateAuto(){ if(INNATE_AUTO.timer){ clearTimeout(INNATE_AUTO.timer); INNATE_AUTO.timer=null; } INNATE_AUTO.on=false; var _ab=$('#innate-rollauto'); if(_ab) _ab.textContent='自动随机'; }
+function stopInnateAuto(){ if(INNATE_AUTO.timer){ clearTimeout(INNATE_AUTO.timer); INNATE_AUTO.timer=null; } INNATE_AUTO.on=false; var _ab=$('#innate-rollauto'); if(_ab) _ab.textContent='自动生成'; }
 function scheduleInnateAuto(){ INNATE_AUTO.timer=setTimeout(function(){ INNATE_AUTO.timer=null; doInnateRoll(true); },300); }   /* 每秒约3.3次 */
 function performInnateRoll(silent){
   CHARACTER.innateRollCount=(CHARACTER.innateRollCount||0)+1;   /* 生成次数：从初始化起累加 */
@@ -4383,7 +4393,7 @@ function performInnateRoll(silent){
 }
 function doInnateRoll(fromAuto){   /* 统一随机入口：天运之主保护确认，自动不替用户选择 */
   if(CHARACTER.innate>=1.8){
-    var _tp=setTimeout(function(){ var _m=document.getElementById('confirm-mask'); if(_m) _m.remove(); stopInnateAuto(); toast('自动随机已停止（10分钟未确认，视为取消）'); },600000);   /* 超时10分钟默认取消，自动停止 */
+    var _tp=setTimeout(function(){ var _m=document.getElementById('confirm-mask'); if(_m) _m.remove(); stopInnateAuto(); toast('自动生成已停止（10分钟未确认，视为取消）'); },600000);   /* 超时10分钟默认取消，自动停止 */
     confirmDialog('你当前已是 <span style="color:#B08CFF;font-weight:700;letter-spacing:1px">天运之主</span>（先天运势 1.80）<br>重新生成将放弃这份绝世运势……<br><span style="color:#C9A24B">确认要重新生成吗？</span>', function(ok){
       if(_tp){ clearTimeout(_tp); _tp=null; }
       if(ok){ performInnateRoll(fromAuto); if(INNATE_AUTO.on) scheduleInnateAuto(); }
@@ -5442,7 +5452,7 @@ function stopArenaFight(){ if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.ti
 function stopTrialAuto(){ T.auto=false; if(T.timer){ clearInterval(T.timer); T.timer=null; } }   /* 停止无尽试炼自动攻击 */
 function renderHome(){
   var ab=document.getElementById('arena-back'); if(ab&&!ab.__b){ ab.__b=true; ab.addEventListener('click',function(){ location.hash='#home'; }); }
-  var n2=document.getElementById('home-name'); if(n2) n2.textContent='谜团'; applyCharTier();
+  var n2=document.getElementById('home-name'); if(n2){ n2.innerHTML='谜团<span class="hh-innate" id="home-innate"></span>'; var _i2=CHARACTER.innate||1, _it=document.getElementById('home-innate'); if(_it){ if(_i2>=1.8) _it.innerHTML='<span class="ih-badge ih-top">天运之主 · 全服唯一</span>'; else if(_i2>=1.2) _it.innerHTML='<span class="ih-badge ih-good">非酋 · 欧皇</span>'; } } applyCharTier();
   var s2=document.getElementById('home-sub'); if(s2){ var _tta=arenaTitle(); var _cs=ARENA_COLORS[arenaRank()]; s2.innerHTML=CHARACTER.info.cls+' · Lv.'+CHARACTER.info.level+' · 战力 '+fmtWan(rolePower())+(_tta?('<i style="display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;background:'+_cs+';box-shadow:0 0 6px '+_cs+'"></i>'+_tta.n):''); }
   var a2=document.getElementById('home-awards'); if(a2){ var tt=arenaTitle(), tc={璀璨星钻:'#C3A6FF',荣耀王者:'#D84AA0',战神:'#A56BFF'}[tt?tt.n:''], aw=[]; if(tt&&tc) aw.push('<span style="color:'+tc+';">'+tt.n+'</span>'); if(ARENA.killBoss>=1) aw.push('<span style="color:#D84AA0;">万军取首级</span>'); if(ARENA.killGod>=1) aw.push('<span style="color:#FFD700;">屠神者</span>'); if(TLM.s50.got) aw.push('<span style="color:#7CD8FF;">一举成名</span>'); if(TLM.s100.got) aw.push('<span style="color:#C3A6FF;">名震八方</span>'); if(TLM.s150.got) aw.push('<span style="color:#FF8A3D;">执掌乾坤</span>'); a2.innerHTML=aw.join('　'); }
   var grid=document.getElementById('home-grid');
