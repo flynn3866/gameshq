@@ -3366,9 +3366,9 @@ function calcGrowth(innate){ return {attr:rollByInnate(innate,3000,5000), hp:rol
 function innateTaken180(){ try{ return localStorage.getItem('_ih18')==='1'; }catch(e){ return false; } }   /* 天运之主是否已被占有（全服唯一） */
 function claimInnate180(){ try{ localStorage.setItem('_ih18','1'); }catch(e){} }
 function unclaimInnate180(){ try{ localStorage.removeItem('_ih18'); }catch(e){} }   /* 释放占用：刷掉1.8后仍可再次随机到 */
-function rollInnate(){  /* 先天运势随机：普通档0.9~1.19约90%（越靠近0.9概率越高）、高级档1.2~1.79约9.999%（越靠近1.2概率越高）、传说档1.8固定0.001%，且全服唯一 */
+function rollInnate(){  /* 先天运势随机：普通档0.9~1.19约90%（越靠近0.9概率越高）、高级档1.2~1.79约9.99%（越靠近1.2概率越高）、传说档1.8固定0.01%，且全服唯一 */
   var r=Math.random()*100, t;
-  if(r<0.001){ if(!innateTaken180()) return 1.8; else t=1-Math.sqrt(1-Math.random()); }   /* 传说档0.001%；已被占有则落高级档 */
+  if(r<0.01){ if(!innateTaken180()) return 1.8; else t=1-Math.sqrt(1-Math.random()); }   /* 传说档0.01%；已被占有则落高级档 */
   else if(r<90){ t=1-Math.sqrt(1-Math.random()); return Math.round((0.90+t*0.29)*100)/100; }   /* 普通档：权重线性递减 */
   else t=1-Math.sqrt(1-Math.random());
   return Math.round((1.20+t*0.59)*100)/100;   /* 高级档：权重线性递减 */
