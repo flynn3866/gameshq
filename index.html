@@ -84,7 +84,7 @@ body.show-god .stage{max-width:680px;}
 .g-bag-bar{display:flex;align-items:center;justify-content:space-between;height:34px;margin:8px 0 10px;padding:0 8px;border:1px solid rgba(201,162,75,.30);border-radius:8px;background:linear-gradient(180deg,#2c2620,#201a16);box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 2px 10px rgba(0,0,0,.35);}
 .g-bag-gold{font-size:12px;color:#e0b45a;font-weight:500;white-space:nowrap;}
 .g-bag-tit{font-size:12px;color:#E0B96A;letter-spacing:2px;text-shadow:0 0 8px rgba(232,203,116,.4);}
-.g-bag-btn{font-size:12px;color:#F6E4A8;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:6px;padding:3px 10px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
+.g-bag-btn{font-size:12px;color:#FFFFFF;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:6px;padding:3px 10px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
 .g-bag-btn:active{transform:scale(.96);}
 /* ===== 全局背包浮层 ===== */
 #fb-mask{position:fixed;inset:0;background:rgba(0,0,0,.28);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;}   /* 遮罩淡色，不遮挡后方场景 */
@@ -100,13 +100,13 @@ body.show-god .stage{max-width:680px;}
 #settings-float .sf-item:active{transform:scale(.96);}
 #settings-float .sf-item .sf-name{color:#fff;font-size:14px;flex:none;}
 #settings-float .sf-item .sf-go{color:#8a7c66;font-size:12px;text-align:right;}
-#float-bag{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%);width:min(300px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:var(--panel-grad);border:1px solid #6D6354;border-radius:10px;box-shadow:0 14px 38px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.07);   /* 浮层外发光+顶部内高光 */z-index:81;padding:8px;display:none;}
+#float-bag{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%) scale(.96);width:min(300px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:var(--panel-grad);border:1px solid #6D6354;border-radius:10px;box-shadow:0 14px 38px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.07);   /* 浮层外发光+顶部内高光 */z-index:81;padding:8px;opacity:0;visibility:hidden;transition:opacity .22s ease, transform .22s ease, visibility .22s;pointer-events:none;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
 .g-bag-attr{font-size:12px;color:#C9A24B;font-weight:500;white-space:nowrap;cursor:pointer;letter-spacing:1px;}
-#lottery-float{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(360px,calc(100% - 20px));background:linear-gradient(180deg,#2b2419,#1a1610 60%,#15120d);border:1px solid #7d6c4c;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.82), inset 0 1px 0 rgba(255,255,255,.12), 0 0 34px rgba(201,162,75,.16);z-index:82;padding:9px 10px;display:none;color:#cfc6b8;animation:lfIn .2s ease-out;}
+#lottery-float{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(328px,calc(100% - 20px));background:linear-gradient(180deg,#2b2419,#1a1610 60%,#15120d);border:1px solid #7d6c4c;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.82), inset 0 1px 0 rgba(255,255,255,.12), 0 0 34px rgba(201,162,75,.16);z-index:82;padding:9px 10px;display:none;color:#cfc6b8;animation:lfIn .2s ease-out;}
 @keyframes lfIn{from{opacity:0;transform:translate(-50%,-50%) scale(.96);}to{opacity:1;transform:translate(-50%,-50%) scale(1);}}
 #lottery-float .lf-head{display:flex;justify-content:space-between;align-items:center;padding:3px 2px 9px;border-bottom:1px solid rgba(201,162,75,.28);font-size:14px;letter-spacing:3px;color:#E8CB74;text-shadow:0 0 12px rgba(232,203,116,.45);}
 #lottery-float .lf-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:11px 0;}
-.lf-cell{width:100%;aspect-ratio:1;border-radius:9px;padding:3px;background:radial-gradient(130% 130% at 50% 0%, rgba(255,218,150,.09), transparent 55%), linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.22));background-clip:content-box;background-origin:content-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.06), inset 0 -3px 7px rgba(0,0,0,.5);border:1px solid rgba(201,162,75,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;}
+.lf-cell{width:100%;aspect-ratio:1;border-radius:9px;padding:1px;background:radial-gradient(130% 130% at 50% 0%, rgba(255,218,150,.09), transparent 55%), linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.22));background-clip:content-box;background-origin:content-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.06), inset 0 -3px 7px rgba(0,0,0,.5);border:1px solid rgba(201,162,75,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
 .lf-cell.empty{opacity:.5;cursor:default;}
 .lf-cell.revealed{border-color:rgba(232,203,116,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -3px 7px rgba(0,0,0,.5), 0 0 14px rgba(201,162,75,.3);}
 .lf-orb{width:48%;height:48%;border-radius:50%;position:relative;background:radial-gradient(circle at 38% 32%, rgba(255,244,180,.98) 0%, rgba(255,214,90,.85) 22%, rgba(255,178,30,.42) 56%, rgba(255,150,10,.10) 80%, rgba(255,140,0,0) 100%);box-shadow:0 0 6px rgba(255,215,120,.7), 0 0 16px rgba(255,200,60,.42), 0 0 32px rgba(255,180,30,.22);animation:orbPulse 1.9s ease-in-out infinite;}
@@ -117,17 +117,16 @@ body.show-god .stage{max-width:680px;}
 @keyframes orbSpin{to{transform:rotate(360deg);}}
 @keyframes orbPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.14);}}
 .lf-reveal{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;}
-.lf-ico{width:52%;height:52%;border-radius:12px;position:relative;background:linear-gradient(145deg, #3d3d44, #17171c 55%, #0d0d11);border:1px solid rgba(214,177,70,.30);box-shadow:inset 0 1px 1px rgba(255,255,255,.24), inset 0 -4px 7px rgba(0,0,0,.66), 0 1px 2px rgba(0,0,0,.5), 0 0 16px rgba(214,177,70,.28);display:flex;align-items:center;justify-content:center;overflow:visible;}
+.lf-ico{width:80%;height:80%;border-radius:12px;position:relative;background:linear-gradient(145deg, #3d3d44, #17171c 55%, #0d0d11);border:1px solid rgba(214,177,70,.30);box-shadow:inset 0 1px 1px rgba(255,255,255,.24), inset 0 -4px 7px rgba(0,0,0,.66), 0 1px 2px rgba(0,0,0,.5), 0 0 16px rgba(214,177,70,.28);display:flex;align-items:center;justify-content:center;overflow:visible;}
 .lf-ico::before{content:'';position:absolute;left:15%;top:9%;width:24%;height:15%;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,.9), rgba(255,255,255,0) 72%);filter:blur(1px);pointer-events:none;}
 .lf-ico::after{content:'';position:absolute;inset:0;border-radius:12px;box-shadow:inset 0 0 12px rgba(214,177,70,.18), inset 0 0 2px rgba(255,255,255,.14);pointer-events:none;}
 .lf-ico img{width:100%;height:100%;object-fit:contain;display:block;filter:drop-shadow(0 2px 5px rgba(0,0,0,.6));}
-.lf-reveal .lf-text{font-size:8.5px;text-align:center;line-height:1.2;padding:0 2px;color:#FFE19A;font-weight:600;text-shadow:0 0 8px rgba(255,214,110,.55);}
+.lf-reveal .lf-text{font-size:7.6px;text-align:center;line-height:1.2;padding:0 2px;color:#FFE19A;font-weight:600;text-shadow:0 0 8px rgba(255,214,110,.55);}
 #lottery-float .lf-foot{display:flex;justify-content:center;padding-top:8px;border-top:1px solid rgba(201,162,75,.22);margin-top:4px;}
-#attr-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%);width:min(360px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:var(--panel-grad);border:1px solid #6D6354;border-radius:10px;box-shadow:0 14px 38px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.07);   /* 浮层外发光+顶部内高光 */z-index:81;padding:8px;display:none;color:#cfc6b8;}
+#attr-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%) scale(.96);width:min(360px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:var(--panel-grad);border:1px solid #6D6354;border-radius:10px;box-shadow:0 14px 38px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.07);   /* 浮层外发光+顶部内高光 */z-index:81;padding:8px;opacity:0;visibility:hidden;transition:opacity .22s ease, transform .22s ease, visibility .22s;pointer-events:none;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#cfc6b8;}
+#attr-float.open{opacity:1;visibility:visible;transform:translateX(-50%) scale(1);pointer-events:auto;}
 #attr-float .af-head{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 8px;border-bottom:1px solid #3a352f;font-size:14px;letter-spacing:2px;color:#C9A24B;}
 #attr-float .af-x{cursor:pointer;font-size:18px;line-height:1;color:#cfc6b8;padding:0 2px;background:transparent;border:none;}
-#attr-float @keyframes floatIn{from{opacity:0;transform:translateX(-50%) scale(.96);}to{opacity:1;transform:translateX(-50%) scale(1);}}
-#float-bag,#attr-float{animation:floatIn .2s ease-out;}   /* 浮层出入：缩放.96+淡入0.2s 统一 */
 .af-body{padding:10px 2px 2px;}
 #attr-float .af-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 10px;margin-bottom:8px;}
 #attr-float .af-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;}   /* 与属性页一致：每行两列 */
@@ -143,7 +142,7 @@ body.show-god .stage{max-width:680px;}
 #attr-float .af-avatar{width:52px;height:52px;flex:none;border-radius:12px;border:1px solid #C9A24B;background:linear-gradient(180deg,#3a2c12,#241b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 14px rgba(201,162,75,.38);display:flex;align-items:center;justify-content:center;overflow:hidden;}
 #attr-float .af-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
 #attr-float .af-idmain{flex:1;min-width:0;}
-#attr-float .af-name{font-size:17px;color:#F4E9C8;font-weight:700;letter-spacing:2px;text-shadow:0 0 10px rgba(244,233,200,.25);}
+#attr-float .af-name{font-size:17px;color:#FFFFFF;font-weight:700;letter-spacing:2px;}
 #attr-float .af-lvtier{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;color:#a89d88;letter-spacing:1px;}
 #attr-float .af-tier{color:#B08CFF;text-shadow:0 0 9px rgba(150,90,255,.55);font-weight:700;letter-spacing:1px;}
 #attr-float .af-powercard{flex:none;text-align:center;background:linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #C9A24B;border-radius:9px;padding:6px 11px;box-shadow:0 0 12px rgba(201,162,75,.22),inset 0 1px 0 rgba(255,255,255,.12);}
@@ -154,7 +153,7 @@ body.show-god .stage{max-width:680px;}
 #attr-float .af-badge i{display:inline-block;width:7px;height:7px;border-radius:2px;flex:none;box-shadow:0 0 6px currentColor;}
 #attr-float .af-badge b{font-weight:700;letter-spacing:1px;}
 #attr-float .af-badge .af-bd{flex:1;text-align:right;color:#8a8375;font-size:10px;letter-spacing:1px;}
-#float-bag.open{display:block;}
+#float-bag.open{opacity:1;visibility:visible;transform:translateX(-50%) scale(1);pointer-events:auto;}
 .fb-head{display:flex;align-items:center;justify-content:space-between;padding:0 2px 6px;border-bottom:1px solid #6D6354;margin-bottom:6px;}
 .fb-head span{font-size:15px;color:#fff;font-weight:600;letter-spacing:2px;}
 .fb-gold{display:flex;justify-content:space-between;align-items:center;padding:4px 2px 7px;border-bottom:1px solid #6D6354;margin-bottom:6px;font-size:12px;color:#8a8378;}
@@ -284,7 +283,7 @@ body.show-god .stage{max-width:680px;}
 .slot.drag-over{box-shadow:inset 0 0 0 2px rgba(214,173,90,.75), 0 0 8px rgba(214,173,90,.3);}
 .bag-tab.drag-tab-over{box-shadow:inset 0 0 0 2px rgba(214,173,90,.85), 0 0 10px rgba(214,173,90,.35);}
 .bag-org-row{display:flex;justify-content:flex-end;margin:10px 0;}
-#bag-organize{flex:none;padding:0 12px;height:22px;font-size:11px;letter-spacing:1px;color:#F6E4A8;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
+#bag-organize{flex:none;padding:0 12px;height:22px;font-size:11px;letter-spacing:1px;color:#FFFFFF;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
 #bag-organize:active{transform:translateY(1px);}
 .eq-cell.drag-over .slot{box-shadow:inset 0 0 0 2px rgba(214,173,90,.75), 0 0 8px rgba(214,173,90,.3);}
 
@@ -389,7 +388,7 @@ body.show-god .stage{max-width:680px;}
 .btn:active{
   transform:translateY(1px);
   background:linear-gradient(180deg,#141311,#0c0b0a);
-  box-shadow:inset 0 2px 5px rgba(0,0,0,.7);
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.7), 0 0 0 1px rgba(214,173,90,.28), 0 0 10px rgba(214,173,90,.18);
 }
 
 /* ===== Toast ===== */
@@ -418,7 +417,7 @@ body.show-god .stage{max-width:680px;}
 .confirm-msg{font-size:13px;color:var(--text-hi);line-height:1.6;text-align:center;margin-bottom:16px;}
 .confirm-actions{display:flex;gap:10px;justify-content:center;}
 .confirm-actions .cbtn{flex:1;max-width:110px;height:32px;font-size:13px;letter-spacing:2px;}
-.confirm-actions .c-ok{color:#f0e2b8;}
+.confirm-actions .c-ok{color:#FFFFFF;}
 .confirm-actions .c-no{color:#b9afa0;}
 
 /* ===== 二级页面：角色属性（参考游戏属性面板布局） ===== */
@@ -520,7 +519,7 @@ body.show-god .stage{max-width:680px;}
 .attrs-id-avatar{width:56px;height:56px;flex:none;border-radius:13px;border:1px solid #C9A24B;background:linear-gradient(180deg,#3a2c12,#241b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 14px rgba(201,162,75,.38);display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .attrs-id-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
 .attrs-id-main{flex:1;min-width:0;}
-.attrs-id-name{font-size:20px;color:#F4E9C8;font-weight:700;letter-spacing:3px;text-shadow:0 0 12px rgba(244,233,200,.3);}
+.attrs-id-name{font-size:20px;color:#FFFFFF;font-weight:700;letter-spacing:3px;}
 .attrs-id-lvtier{display:flex;align-items:center;gap:7px;margin-top:5px;font-size:13px;color:#a89d88;letter-spacing:1px;font-variant-numeric:tabular-nums;}
 .attrs-id-lvtier .char-tier{color:#B08CFF;text-shadow:0 0 9px rgba(150,90,255,.55);font-weight:700;}
 .attrs-id-cls{margin-top:4px;font-size:12px;color:#c9bfa8;letter-spacing:1px;}
@@ -620,11 +619,11 @@ body.show-god .stage{max-width:680px;}
 .sys-slotline{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;}
 .god-up-line{justify-content:flex-start;align-items:center;gap:12px;flex-wrap:nowrap;}
 .god-up-info{display:flex;flex-direction:column;justify-content:center;gap:3px;flex:1;min-width:0;text-align:left;}
-.gu-name{font-size:13px;color:#f0e2b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gu-name{font-size:13px;color:#FFFFFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .gu-star{font-size:11px;color:#8a8375;}
 .sys-slotline .slot{width:52px;height:52px;}
 .sys-slotline .slot.small{width:34px;height:34px;}
-.sys-ok{width:100%;max-width:220px;margin:6px auto 2px;height:34px;font-size:15px;color:#f0e2b8;letter-spacing:4px;}
+.sys-ok{width:100%;max-width:220px;margin:6px auto 2px;height:34px;font-size:15px;color:#FFFFFF;letter-spacing:4px;}
 .rate-line{display:flex;justify-content:space-between;align-items:baseline;padding:3px 2px;border-bottom:1px solid rgba(109,99,84,.1);}
 .rate-line:last-child{border-bottom:none;}
 .rate-line .rl{font-size:12px;color:#cfc4a8;}
@@ -674,7 +673,7 @@ body.show-god .stage{max-width:680px;}
   margin:0 1px 1px;   /* 与大 div 外的页面边界留 1px 间距（顶部贴合 tab，无间距） */
 }
 .god-head{display:flex;align-items:flex-end;padding:0 2px;}   /* 位于大边框外：左标题 + 右 tab（tab 左对齐右栏左边界） */
-.god-titlebar{flex:1;min-width:0;height:28px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#f0e2b8;font-weight:600;letter-spacing:2px;white-space:nowrap;border:1px solid #5E5E5E;border-radius:4px;box-sizing:border-box;}
+.god-titlebar{flex:1;min-width:0;height:28px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#FFFFFF;font-weight:600;letter-spacing:2px;white-space:nowrap;border:1px solid #5E5E5E;border-radius:4px;box-sizing:border-box;}
 .god-head-tabs{flex:none;display:flex;gap:5px;align-items:flex-end;margin-bottom:0;}
 .god-head-tabs .pgtab{flex:0 0 auto;min-width:44px;padding:0 8px;font-size:12px;letter-spacing:1px;}
 .god-layout{display:flex;flex-direction:column;gap:10px;}
@@ -691,7 +690,7 @@ body.show-god .stage{max-width:680px;}
 .god-li .gi{width:34px;height:34px;object-fit:contain;flex:0 0 auto;border:1px solid #5E5E5E;border-radius:5px;background:#1F1B19;box-shadow:inset 0 2px 6px rgba(0,0,0,.65);}
 .god-li .gi-empty{width:34px;height:34px;flex:0 0 auto;border:1px solid #5E5E5E;border-radius:5px;background:#1F1B19;box-shadow:inset 0 2px 6px rgba(0,0,0,.65);}
 .god-li .gt{display:flex;flex-direction:column;flex:1;min-width:0;}
-.god-li .gn{font-size:12px;color:#f0e2b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.god-li .gn{font-size:12px;color:#FFFFFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .god-li .gr{font-size:10px;color:#8a8375;margin-top:1px;}
 .god-on{
   position:absolute;top:5px;right:6px;font-size:9px;letter-spacing:1px;color:#ff6a5a;
@@ -924,7 +923,7 @@ body.show-god .stage{max-width:680px;}
 .gem-ok:active{transform:translateY(1px);background:linear-gradient(180deg,#141311,#0c0b0a);box-shadow:inset 0 2px 5px rgba(0,0,0,.7);}
 
 /* ===== 无尽试炼页 ===== */
-.tl-banner{text-align:center;font-size:18px;color:#F6E4A8;letter-spacing:3px;margin:4px 0 10px;font-weight:800;text-shadow:0 0 14px rgba(255,210,120,.5);}
+.tl-banner{text-align:center;font-size:18px;color:#FFFFFF;letter-spacing:3px;margin:4px 0 10px;font-weight:800;}
 .tl-banner b{color:#e8503a;}
 .tl-best{text-align:center;font-size:12px;color:#C9A24B;margin-bottom:8px;text-shadow:0 0 6px rgba(201,162,75,.3);}
 .tl-reward-list{margin:8px 0;padding:6px 10px;border:1px solid #5a5550;background:rgba(20,18,17,.6);border-radius:6px;font-size:12px;color:#b8a97f;max-height:64px;overflow:auto;}
@@ -939,7 +938,7 @@ body.show-god .stage{max-width:680px;}
 .tr-dun{flex:0 0 auto;width:96px;border:1px solid rgba(201,162,75,.26);border-radius:8px;padding:6px 6px;text-align:center;
   background:linear-gradient(180deg,rgba(201,162,75,.06),#171412);cursor:pointer;position:relative;transition:border-color .15s,box-shadow .15s;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
 .tr-dun.on{border-color:#C9A24B;box-shadow:0 0 8px rgba(201,162,75,.35),inset 0 0 6px rgba(201,162,75,.12);}
-.tr-dun-name{font-size:12px;color:#F4E9C8;letter-spacing:1px;margin-bottom:2px;text-shadow:0 0 6px rgba(244,233,200,.25);}
+.tr-dun-name{font-size:12px;color:#FFFFFF;letter-spacing:1px;margin-bottom:2px;text-shadow:0 0 6px rgba(255,255,255,.25);}
 .tr-dun-lv{font-size:10px;color:#E0B96A;font-variant-numeric:tabular-nums;}
 .tr-dun-tag{display:inline-block;margin-top:3px;font-size:9px;color:#C9A24B;border:1px solid rgba(201,162,75,.4);border-radius:3px;padding:0 4px;}
 /* 战斗场景 */
@@ -948,7 +947,7 @@ body.show-god .stage{max-width:680px;}
   background:
   radial-gradient(120px 90px at 70% 22%,rgba(201,162,75,.10),transparent 60%),
   radial-gradient(160px 120px at 30% 20%,rgba(120,40,160,.14),transparent 65%),
-  linear-gradient(180deg,#0e0b0a,#16110e);transition:background 1.2s ease;}
+  linear-gradient(180deg,#0e0b0a,#16110e);transition:background 1.2s ease;box-shadow:inset 0 1px 0 rgba(255,255,255,.32),inset 0 9px 18px rgba(0,0,0,.58),inset 2px 0 7px rgba(0,0,0,.45),inset -2px 0 7px rgba(0,0,0,.45),inset 0 -1px 0 rgba(255,255,255,.12);}   /* 场景背景凹槽光照：顶部受光亮边+上部内部凹陷暗影，凹陷更强 */
 /* 场景舞台感：两侧暗角 + 脚下受光（角色暖金/怪物暗红） */
 .tr-scene::after{content:'';position:absolute;inset:0;pointer-events:none;z-index:1;
   background:radial-gradient(60px 30px at 18% 92%,rgba(255,210,122,.16),transparent 70%),radial-gradient(70px 30px at 78% 92%,rgba(255,60,30,.15),transparent 70%),radial-gradient(125% 120% at 50% 20%,transparent 58%,rgba(0,0,0,.5) 100%);}
@@ -1051,14 +1050,14 @@ body.show-god .stage{max-width:680px;}
 #view-shop .shop-list{flex:1;overflow-y:hidden;display:flex;flex-direction:column;gap:5px;padding:4px 10px 6px;min-height:0;}
 #view-shop .shop-pager{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 0 8px;}
 #view-shop .shop-pager .btn{height:26px;padding:0 16px;font-size:12px;border-radius:5px;}
-#view-shop .shop-pager .pg-num{font-size:12px;color:#f0e2b8;min-width:44px;text-align:center;letter-spacing:1px;}
+#view-shop .shop-pager .pg-num{font-size:12px;color:#FFFFFF;min-width:44px;text-align:center;letter-spacing:1px;}
 .shop-row{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid #5A5550;border-radius:6px;background:linear-gradient(180deg,#191513,#100d0b);}
 .shop-row.shop-empty-row{border-style:dashed;border-color:#3a352e;background:linear-gradient(180deg,#141210,#0e0c0a);}
 .shop-row.shop-empty-row .shop-ico{background:#181614;}
 .shop-row .shop-ico{width:34px;height:34px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;border-radius:4px;background:#212020;}
 .shop-row .shop-ico img{width:30px;height:30px;object-fit:contain;}
 .shop-row .shop-info{flex:1;min-width:0;}
-.shop-row .shop-name{font-size:12px;color:#f0e2b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.shop-row .shop-name{font-size:12px;color:#FFFFFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .shop-row .shop-sub{font-size:10px;color:#8a8375;margin-top:2px;}
 .shop-row .shop-price{font-size:12px;color:#C9A24B;white-space:nowrap;flex:0 0 auto;}
 .shop-row .shop-sell{flex:0 0 auto;}
@@ -1067,22 +1066,22 @@ body.show-god .stage{max-width:680px;}
 .shop-empty{color:#8a8375;font-size:12px;text-align:center;padding:30px 0;}
 /* 离线补偿条 */
 #offline-bar{display:flex;align-items:center;gap:8px;margin:6px 0;padding:6px 10px;border:1px solid #6C6253;border-radius:6px;background:linear-gradient(180deg,#2a241d,#181411);}
-#offline-bar span{flex:1;font-size:12px;color:#f0e2b8;letter-spacing:1px;}
+#offline-bar span{flex:1;font-size:12px;color:#FFFFFF;letter-spacing:1px;}
 #offline-bar .btn.sys-ok{width:auto;max-width:120px;margin:0;padding:0 14px;height:28px;font-size:12px;letter-spacing:1px;}
 /* 攻击 / 挂机按钮 */
 .tr-ctl{display:flex;gap:10px;justify-content:center;padding:8px 0;background:linear-gradient(180deg,#1c1713,#100d0b);border:1px solid rgba(201,162,75,.26);border-radius:8px;margin-top:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 10px rgba(0,0,0,.4);}
-.tr-ctl .btn.sys-ok{flex:0 0 auto;width:auto;max-width:172px;margin:0;padding:0 30px;height:34px;letter-spacing:2px;font-size:15px;white-space:nowrap;box-sizing:border-box;background:linear-gradient(180deg,#7a6a4c,#5a4a33);border:1px solid rgba(214,177,110,.55);color:#f6e9c0;box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}
+.tr-ctl .btn.sys-ok{flex:0 0 auto;width:auto;max-width:172px;margin:0;padding:0 30px;height:34px;letter-spacing:2px;font-size:15px;white-space:nowrap;box-sizing:border-box;background:linear-gradient(180deg,#7a6a4c,#5a4a33);border:1px solid rgba(214,177,110,.55);color:#FFFFFF;box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}
 .tr-ctl .btn.sys-ok.on{background:linear-gradient(180deg,#3a2c12,#241b08);border-color:#C9A24B;color:#D6C07A;box-shadow:0 0 8px rgba(201,162,75,.35);}
 /* 掉落统计折叠面板 */
 .tr-stats{position:relative;margin:0 0 4px;}
-.tr-stats-bar{width:100%;display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid rgba(201,162,75,.34);border-radius:8px;background:linear-gradient(180deg,#2e2719,#1a1510);cursor:pointer;color:#f0e2b8;font-size:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 12px rgba(201,162,75,.08);}
+.tr-stats-bar{width:100%;display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid rgba(201,162,75,.34);border-radius:8px;background:linear-gradient(180deg,#2e2719,#1a1510);cursor:pointer;color:#FFFFFF;font-size:12px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 12px rgba(201,162,75,.08);}
 .tr-ss-ico{color:#E8CB74;font-size:11px;text-shadow:0 0 8px rgba(232,203,116,.5);}
 .tr-ss-t{letter-spacing:2px;}
-.tr-ss-sum{flex:1;text-align:right;font-size:11px;color:#E8CB74;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 6px rgba(232,203,116,.3);}
+.tr-ss-sum{flex:1;text-align:right;font-size:11px;color:#FFFFFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 6px rgba(255,255,255,.25);}
 .tr-ss-caret{color:#C9A24B;font-size:10px;transition:transform .25s;}
 .tr-stats.open .tr-ss-caret{transform:rotate(180deg);}
-.tr-stats-panel{position:absolute;left:0;right:0;top:100%;z-index:40;margin-top:4px;display:none;border:1px solid #6C6253;border-radius:6px;background:rgba(15,12,10,.98);box-shadow:0 8px 22px rgba(0,0,0,.65);padding:8px 10px;max-height:52vh;overflow-y:auto;}
-.tr-stats.open .tr-stats-panel{display:block;}
+.tr-stats-panel{position:absolute;left:0;right:0;top:100%;z-index:90;margin-top:4px;border:1px solid rgba(214,177,110,.25);border-radius:10px;background:rgba(18,14,11,.97);box-shadow:0 14px 34px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);padding:9px 11px;max-height:52vh;overflow-y:auto;opacity:0;visibility:hidden;transform:scale(.96) translateY(-8px);transform-origin:top center;transition:opacity .22s ease, transform .22s ease, visibility .22s;pointer-events:none;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+.tr-stats.open .tr-stats-panel{opacity:1;visibility:visible;transform:scale(1) translateY(0);pointer-events:auto;}
 .tr-stats-panel::-webkit-scrollbar{width:4px;}
 .tr-stats-panel::-webkit-scrollbar-thumb{background:#3a342c;border-radius:2px;}
 .tr-ss-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
@@ -1090,16 +1089,35 @@ body.show-god .stage{max-width:680px;}
 .tr-ss-cell b{font-size:15px;color:#fff;font-variant-numeric:tabular-nums;}
 .tr-ss-cell b.g{color:#C9A24B;}
 .tr-ss-cell b.r{color:#ffd700;}
-.tr-ss-cell i{font-style:normal;font-size:10px;color:#8a8375;}
+.tr-ss-cell i{font-style:normal;font-size:10px;color:#FFFFFF;}
 .tr-ss-sub{margin:9px 2px 5px;font-size:11px;color:#C9A24B;letter-spacing:2px;border-bottom:1px solid rgba(201,162,75,.2);padding-bottom:3px;}
-.tr-ss-dun{display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:11px;color:#f0e2b8;}
+.tr-ss-dun{display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:11px;color:#FFFFFF;}
+.tr-br-wrap{display:flex;flex-direction:column;gap:8px;}
+.tr-br-fold{border:1px solid #5A5550;border-radius:8px;overflow:hidden;background:linear-gradient(180deg,#191513,#100d0b);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
+.tr-br-head{width:100%;display:flex;align-items:center;gap:8px;padding:9px 10px;cursor:pointer;background:linear-gradient(180deg,#262019,#17130f);border:none;color:#FFFFFF;font-size:12px;text-align:left;}
+.tr-br-head:active{transform:scale(.98);}
+.tr-br-n{flex:0 0 auto;font-weight:700;letter-spacing:1px;}
+.tr-br-m{flex:1;min-width:0;font-size:11px;color:#D6C07A;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 6px rgba(214,192,122,.2);}
+.tr-br-caret{flex:none;color:#C9A24B;font-size:10px;transition:transform .25s;}
+.tr-br-fold.open .tr-br-caret{transform:rotate(180deg);}
+.tr-br-body{display:none;padding:7px 10px 9px;border-top:1px solid #3a342c;background:linear-gradient(180deg,#14110d,#0e0c0a);}
+.tr-br-fold.open .tr-br-body{display:block;}
+.tr-br-rec{display:flex;align-items:center;gap:7px;flex-wrap:wrap;padding:5px 2px;border-bottom:1px dashed rgba(145,138,95,.20);font-size:11px;color:#FFFFFF;}
+.tr-br-rec:last-child{border-bottom:none;}
+.tr-br-rec i{font-style:normal;color:#8a8375;flex:none;font-variant-numeric:tabular-nums;}
+.tr-br-a{flex:none;color:#c86bff;font-weight:700;text-shadow:0 0 8px rgba(200,107,255,.45);}
+.tr-br-it{flex:none;color:#ffd34d;background:linear-gradient(180deg,#2a2117,#1c1710);border:1px solid #6a5a36;border-radius:4px;padding:1px 6px;font-size:10px;box-shadow:0 0 6px rgba(255,211,77,.18);}
+.tr-br-none{font-size:11px;color:#8a8375;padding:4px 2px;}
 .tr-ss-dun span{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .tr-ss-dun em{font-style:normal;font-size:10px;color:#8a8375;}
 .tr-ss-rec{display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:11px;color:#ffd700;}
 .tr-ss-rec i{font-style:normal;color:#5c5548;font-size:10px;}
 .tr-ss-none{color:#8a8375;font-size:11px;padding:4px 2px;}
 /* 暴击 / 稀有掉落 / 震屏特效 */
-/* MISS 样式占位 */ .tr-float.miss{color:#9fe8ff;font-weight:bold;} .tr-float.crit{font-size:22px;color:#ffd700;text-shadow:0 0 12px rgba(255,170,0,.95),0 0 4px #ff6600;animation:trFloat 1s ease-out forwards,trCritShake .22s ease;}   /* 暴击数字：放大金色+轻微震动 */
+/* 伤害飘字：普通白/MISS白/暴击数字白+CRIT金色小字 */
+.tr-float.miss{color:#FFFFFF;font-weight:bold;} .tr-float.crit{animation:trFloat .7s ease-out forwards;}
+.tr-float .tr-crit{position:absolute;top:-22px;left:50%;transform:translateX(-50%);font-style:normal;font-size:9px;color:#FFD700;font-weight:bold;letter-spacing:1px;text-shadow:0 0 6px rgba(255,215,0,.85);animation:trCritUp .7s ease-out forwards;white-space:nowrap;pointer-events:none;}   /* 头顶-22px；随容器上浮40px+自身15px=55px */
+@keyframes trCritUp{0%{transform:translate(-50%,0);}100%{transform:translate(-50%,-10px);}}   /* CRIT自身额外上浮10px(总50px)，透明度由容器统一(alpha同步) */
 @keyframes trCritShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-2px);}50%{transform:translateX(2px);}75%{transform:translateX(-1px);}}
 .tr-scene.shake{animation:trShake .35s ease;}
 .tr-monster.shake{animation:trMonShake .35s ease;}   /* 暴击只震怪物图标（场景/角色卡/状态不震）；时长.35s与卡片同步 */
@@ -1131,7 +1149,7 @@ body.show-god .stage{max-width:680px;}
 .tr-loot-body{max-height:42vh;overflow-y:auto;}
 .tr-loot-body::-webkit-scrollbar{width:4px;}
 .tr-loot-body::-webkit-scrollbar-thumb{background:#3a342c;border-radius:2px;}
-.tr-loot-item{display:flex;align-items:center;gap:8px;padding:4px 6px;font-size:12px;color:#f0e2b8;opacity:0;animation:trLootRow .35s ease forwards;border-bottom:1px dashed rgba(145,138,95,.22);}
+.tr-loot-item{display:flex;align-items:center;gap:8px;padding:4px 6px;font-size:12px;color:#FFFFFF;opacity:0;animation:trLootRow .35s ease forwards;border-bottom:1px dashed rgba(145,138,95,.22);}
 .tr-loot-item:last-child{border-bottom:none;}
 .tr-loot-item i{width:5px;height:5px;border-radius:50%;background:#C9A24B;box-shadow:0 0 6px #C9A24B;flex:0 0 auto;}
 @keyframes trLootRow{from{opacity:0;transform:translateX(18px);}to{opacity:1;transform:translateX(0);}}
@@ -1158,10 +1176,10 @@ body.show-god .stage{max-width:680px;}
 @keyframes trLogIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 #revive-tip,#tl-revive-tip{position:fixed;left:50%;top:44%;transform:translateX(-50%);z-index:9999;background:rgba(205,205,205,.16);color:var(--text-hi);padding:9px 20px;border-radius:8px;border:1px solid rgba(225,225,225,.28);backdrop-filter:blur(4px);font-size:14px;letter-spacing:1px;text-align:center;pointer-events:none;display:none;box-shadow:0 4px 18px rgba(0,0,0,.4);white-space:nowrap;}
 /* 受击飘字 */
-.tr-float{position:absolute;font-size:15px;font-weight:bold;color:#ffd33a;text-shadow:0 0 6px rgba(255,120,30,.6);z-index:5;pointer-events:none;
-  animation:trFloat 1s ease-out forwards;}
-.tr-float.mon{color:#ff6a4d;}
-.tr-float.heal{color:#3dff6e;text-shadow:0 0 6px rgba(40,230,90,.7);}   /* 吸血绿字 */
+.tr-float{position:absolute;font-size:15px;font-weight:bold;color:#FFFFFF;z-index:5;pointer-events:none;
+  animation:trFloat .7s ease-out forwards;}
+.tr-float.mon{color:#FFFFFF;}
+.tr-float.heal{color:#39FF66;text-shadow:0 0 6px rgba(57,255,102,.55);}   /* 吸血绿字 */
 /* 寻宝页经验条 / 垂直居中 / 高度增加 */
 .tr-ch-line .tr-exp{flex:1;height:9px;border:1px solid #3a342c;border-radius:4px;overflow:hidden;background:#0c0a08;position:relative;}
 .tr-exp-fill{height:100%;background:linear-gradient(180deg,#ffe066,#d9a520);box-shadow:0 0 8px rgba(255,210,80,.5);transition:width .3s ease;}
@@ -1172,7 +1190,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 #view-trial .tr-battle .tr-scene{height:240px;background:radial-gradient(150px 110px at 62% 16%,rgba(205,70,45,.20),transparent 62%),radial-gradient(150px 110px at 30% 22%,rgba(201,162,75,.10),transparent 65%),linear-gradient(180deg,#130b09,#1a100c);}   /* 无尽试炼：暗红氛围 */
 #view-trial .tr-log{height:190px;}
 #view-treasure .tr-log{height:150px;}
-@keyframes trFloat{0%{opacity:0;transform:translateY(6px);}20%{opacity:1;}100%{opacity:0;transform:translateY(-22px);}}
+@keyframes trFloat{0%{opacity:0;transform:translateY(8px);}18%{opacity:1;}100%{opacity:0;transform:translateY(-40px);}}   /* 数字上浮40px，alpha同步淡入淡出 */
 /* 桌面端天神阵位/升级凹槽：与背包凹槽(46px)一致；材料槽40px */
 #god-form .slot{width:46px;height:46px;}
 #god-target{width:46px;height:46px;}
@@ -1214,9 +1232,9 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .lottery-cost{margin-top:2px;font-size:13px;color:#d9d2c4;}
 .lottery-wallet{display:flex;justify-content:center;align-items:center;gap:6px;margin:6px auto 0;width:min(352px,86vw);padding:4px 0;font-size:13px;color:#d9d2c4;letter-spacing:1px;border-top:1px solid rgba(214,177,110,.18);border-bottom:1px solid rgba(214,177,110,.18);background:linear-gradient(180deg,rgba(48,42,32,.4),rgba(28,24,20,.4));}
 .lottery-wallet b{color:#E8CB74;font-weight:700;font-size:16px;text-shadow:0 0 12px rgba(232,203,116,.5);}
-.recharge-input{width:78%;padding:9px 12px;margin:10px auto 4px;font-size:16px;color:#f0e2b8;background:#161614;border:1px solid #6C6253;border-radius:7px;outline:none;text-align:center;display:block;box-sizing:border-box;}
+.recharge-input{width:78%;padding:9px 12px;margin:10px auto 4px;font-size:16px;color:#FFFFFF;background:#161614;border:1px solid #6C6253;border-radius:7px;outline:none;text-align:center;display:block;box-sizing:border-box;}
 .lottery-x10{display:flex;justify-content:center;gap:8px;margin-top:4px;}
-.lottery-x10 .btn{min-width:170px;padding:8px 0;font-size:14px;letter-spacing:2px;background:linear-gradient(180deg,#78694e,#5a4c36);color:#f6e9c0;border:1px solid rgba(214,177,110,.55);border-radius:8px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.16);}
+.lottery-x10 .btn{min-width:170px;padding:8px 0;font-size:14px;letter-spacing:2px;background:linear-gradient(180deg,#78694e,#5a4c36);color:#FFFFFF;border:1px solid rgba(214,177,110,.55);border-radius:8px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.16);}
 .lottery-x10 #lottery-recharge{min-width:88px;font-size:13px;letter-spacing:1px;}
 .lottery-x10 .btn:active{transform:translateY(1px);box-shadow:0 1px 3px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1);}
 .lot-gold-fx{position:fixed;top:34%;left:50%;z-index:10000;pointer-events:none;opacity:0;text-align:center;}
@@ -1332,9 +1350,9 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .arena-title2{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:2px 0 6px;padding:0 2px;}   /* 称号左对齐、卸下/戴上按钮右对齐 */
 .arena-title2 .atn{font-size:12px;color:#D6B56A;letter-spacing:1px;}
 .arena-title2 .atn-medal{color:#D84AA0;font-weight:600;}
-.arena-toggle{flex:none;padding:0 10px;height:22px;font-size:11px;color:#F6E4A8;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
+.arena-toggle{flex:none;padding:0 10px;height:22px;font-size:11px;color:#FFFFFF;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
  .arena-id{display:flex;align-items:baseline;justify-content:center;gap:10px;margin:0 0 4px;}
-.arena-name{color:#E7E1D2;font-size:19px;font-weight:800;letter-spacing:1px;}
+.arena-name{color:#FFFFFF;font-size:19px;font-weight:800;letter-spacing:1px;}
 .arena-id .char-tier{font-size:16px;}
 .arena-rn{font-size:16px;color:#D6C07A;font-weight:600;letter-spacing:2px;text-align:center;text-shadow:0 0 10px rgba(201,162,75,.35);}
 .arena-meta{display:flex;justify-content:space-around;margin:7px 0 8px;font-size:12px;color:#8a8375;}
@@ -1347,28 +1365,29 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .arena-opp{display:flex;align-items:center;gap:8px;padding:7px 8px;background:linear-gradient(180deg,#262220,#1b1815);border:1px solid rgba(201,162,75,.20);border-radius:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
 .arena-opp .op-ico{width:34px;height:34px;flex:none;border-radius:6px;background:#1F1B19;border:1px solid #5E5E5E;display:flex;align-items:center;justify-content:center;color:#8a8375;font-size:17px;box-shadow:inset 0 2px 5px rgba(0,0,0,.6);}
 .arena-opp .op-info{flex:1;min-width:0;}
-.arena-opp .op-n{font-size:13px;color:#f0e2b8;}
+.arena-opp .op-n{font-size:13px;color:#FFFFFF;}
 .arena-opp .op-r{font-size:10px;color:#8a8375;margin-top:1px;}
 .arena-opp .op-pw{font-size:10px;color:#D6C07A;margin-top:1px;}
 .arena-opp .op-n-boss{color:#D84AA0;text-shadow:0 0 8px rgba(216,74,160,.6);}
 .arena-opp.boss{border-color:#7a3f6e;background:linear-gradient(180deg,#2a2026,#1d161b);}
 .arena-opp .op-t{font-size:10px;color:#ff9a3c;margin-top:2px;}
-.arena-opp .op-btn{flex:none;padding:0 12px;height:26px;border-radius:6px;font-size:12px;letter-spacing:1px;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);color:#F6E4A8;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
+.arena-opp .op-btn{flex:none;padding:0 12px;height:26px;border-radius:6px;font-size:12px;letter-spacing:1px;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);color:#FFFFFF;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
 .arena-opp .op-btn:active{transform:translateY(1px);}
 .arena-opp.fighting{border-color:#E0B900;background:linear-gradient(180deg,#2c2417,#1e1812);box-shadow:0 0 10px rgba(224,185,0,.25);}
 .arena-opp .op-btn.on{background:linear-gradient(180deg,#3a2f16,#241c0d);border-color:#E0B900;color:#ffe9a0;cursor:default;}
 .arena-opp .op-btn:disabled{opacity:.55;cursor:not-allowed;}
 .arena-title.at-opp{display:flex;align-items:center;justify-content:space-between;}
 .arena-title.at-opp span{flex:1;text-align:center;}
-.arena-reroll{flex:none;padding:0 10px;height:22px;font-size:11px;letter-spacing:1px;color:#F6E4A8;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
+.arena-reroll{flex:none;padding:0 10px;height:22px;font-size:11px;letter-spacing:1px;color:#FFFFFF;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
 .arena-reroll:active{transform:translateY(1px);}
-.arena-fight{position:relative;background:linear-gradient(180deg,rgba(201,162,75,.05),#100d0b 30%,#100d0b);border:1px solid rgba(201,162,75,.30);border-radius:9px;padding:12px 10px;margin-bottom:10px;min-height:116px;overflow:hidden;box-shadow:0 3px 14px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.06);}
-.af-rows{display:flex;justify-content:space-between;align-items:center;gap:10px;}
+.arena-fight{position:relative;background:linear-gradient(180deg,rgba(201,162,75,.05),#100d0b 30%,#100d0b);border:1px solid rgba(201,162,75,.30);border-radius:9px;padding:12px 10px;margin-bottom:10px;min-height:168px;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 14px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.06), inset 0 1px 0 rgba(255,255,255,.32),inset 0 9px 18px rgba(0,0,0,.58),inset 2px 0 7px rgba(0,0,0,.45),inset -2px 0 7px rgba(0,0,0,.45),inset 0 -1px 0 rgba(255,255,255,.12);}   /* 高度+30、血条垂直水平居中、凹陷光照与副本一致 */
+.af-rows{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;}
 .af-hero,.af-enemy{flex:1;text-align:center;}
-.af-n{font-size:13px;color:#f0e2b8;letter-spacing:1px;}
+.af-enemy.shake{animation:trMonCardShake .35s ease;}   /* 对手卡(名字+血条)暴击左右震动，与副本一致 */
+.af-n{font-size:13px;color:#FFFFFF;letter-spacing:1px;}
 .af-hp{height:10px;background:#161513;border:1px solid #3a342c;border-radius:5px;overflow:hidden;margin:5px 0;}
-.af-hp i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#8a2,#a33);box-shadow:inset 0 1px 0 rgba(255,255,255,.28);transition:width .28s;}   /* 顶部光泽，与副本/试炼血条统一 */
-.af-hp.enemy i{background:linear-gradient(90deg,#5a8,#3a6);}
+.af-hp i{display:block;height:100%;width:100%;background:linear-gradient(180deg,#ff5c3d,#b82012);box-shadow:inset 0 1px 0 rgba(255,255,255,.28);transition:width .28s;}   /* 红色渐变，与副本一致 */
+.af-hp.enemy i{background:linear-gradient(180deg,#ff5c3d,#b82012);}   /* 红色渐变，与副本一致 */
 .af-hpt{font-size:10px;color:#8a8375;}
 .af-vs{flex:none;font-size:22px;color:#8a8375;text-shadow:0 0 8px rgba(0,0,0,.6);}
 .af-dmg{position:absolute;top:14px;font-size:15px;font-weight:700;color:#ff6a5a;text-shadow:0 0 6px rgba(255,90,60,.6);pointer-events:none;animation:afFloat .9s ease-out forwards;}   /* 与 tr-float 同一伤害飘字层级 */
@@ -1381,7 +1400,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .ar-min{font-style:normal;color:#a89d88;font-size:10px;margin-left:3px;}
 .ar-item{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;background:#212020;border:1px solid #3a342c;border-radius:6px;font-size:12px;color:#8a8375;}
 .ar-item.got{border-color:#d8b46a;box-shadow:0 0 10px rgba(216,180,106,.3);}   /* 已达成段位金辉光 */
-.ar-item .t{color:#f0e2b8;}
+.ar-item .t{color:#FFFFFF;}
 .ar-item.done{opacity:.55;}
 .ar-item .bt{flex:none;padding:0 10px;height:24px;border-radius:5px;font-size:11px;background:linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #C9A24B;color:#D6C07A;cursor:pointer;}
 .arena-log{background:linear-gradient(180deg,#221d19,#191512);border:1px solid rgba(201,162,75,.26);border-radius:8px;padding:8px 10px;height:120px;overflow-y:auto;font-size:11px;color:#8a8375;line-height:1.7;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
@@ -1428,7 +1447,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .ach-card{background:linear-gradient(180deg,#1d1916,#15110d);border:1px solid #3a352f;border-left:3px solid #3a352f;border-radius:9px;padding:9px 12px;filter:grayscale(.6);opacity:.82;}   /* 未解锁去饱和灰 */
 .ach-card.got{border-color:#d8b46a;border-left:3px solid #f5d998;background:linear-gradient(180deg,#221c15,#19130c);box-shadow:0 0 12px rgba(216,180,106,.35);filter:none;opacity:1;}   /* 已解锁金光描边+辉光 */
 .ach-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.ach-name{font-size:18px;font-weight:700;letter-spacing:1px;color:#e8e0d0;}
+.ach-name{font-size:18px;font-weight:700;letter-spacing:1px;color:#FFFFFF;}
 .ach-cond{font-size:11px;color:#9a8f7c;margin-top:3px;}
 .ach-attr{font-size:11px;color:#c9b78a;margin-top:3px;}
 .ach-note{font-size:10px;color:#6f6655;margin-top:4px;padding-left:8px;border-left:1px solid #4a4236;font-style:italic;}
@@ -3015,13 +3034,13 @@ function openAttrFloat(){
     var bars=document.querySelectorAll('.g-bag-bar'), bar=null;
     for(var i=0;i<bars.length;i++){ if(bars[i].offsetWidth>0){ bar=bars[i]; break; } }
     af.style.top=(bar ? (bar.getBoundingClientRect().bottom+4) : 52) + 'px';
-    af.style.display='block';
+    af.classList.add('open');
   }
   applyCharTier();
-  var mk=$('#fb-mask'); if(mk) mk.classList.add('show');
+  var mk=$('#fb-mask'); if(mk){ mk.classList.add('show'); if(!mk.__af){ mk.__af=1; mk.addEventListener('click', closeAttrFloat); } }
 }
 function closeAttrFloat(){
-  var af=$('#attr-float'); if(af) af.style.display='none';
+  var af=$('#attr-float'); if(af) af.classList.remove('open');
   var mk=$('#fb-mask'); if(mk) mk.classList.remove('show');
 }
 function renderAttrFloat(){
@@ -4369,11 +4388,11 @@ function calcHit(A,D){   /* 统一伤害结算（角色/怪物/Boss 同一套）
   var eDef=Math.max((D.def||0)*(1-(A.ig||0)),0);              /* 有效防御=承受者防御×(1-攻击者无视防御) */
   var main=(A.atk||0)*(1 - eDef/(eDef+600));                  /* 主伤害=攻击×(1-减伤率)，减伤率=有效防御/(有效防御+600)；这一步只看物理攻防，元素属性不参与 */
   main*=(1-(D.mdef||0));                                      /* 铁壁血盾：承受者主伤害减伤%，只作用主伤害，不影响真伤 */
+  main*=(1-(D.attrDefDR||0));                                  /* 属性防御：独立固定30%主伤害减伤(类似铁壁血盾，只作用主伤害，不影响真伤) */
   var real=((A.realAtk||A.atk)||0)*(A.real||0);               /* 真伤=攻击力×真伤%，跳过防御 */
   var elemRate=1;                                             /* 属性倍率：攻击方有属性宝石(attackElem)才进入属性计算 */
   if(A.attackElem){
-    var _dr=(D.nativeElem===A.attackElem)?(D.defElemResist||0):0;   /* 抗性只取攻击属性对应的目标那条元素：水攻只看目标水防，火攻只看目标火防（目标只有火防→水抗性=0） */
-    var _rc=Math.max(1+(A.atkElemPct||0)-_dr,0.1);   /* 抗性系数=1+攻属性增伤30%-目标对应元素抗性30%，最低0.1 */
+    var _rc=Math.max(1+(A.atkElemPct||0),0.1);   /* 属性增伤30%（不再叠加目标元素抗性；属性防御统一由 attrDefDR 固定减30%主伤害） */
     var _rr=restrainRate(A.attackElem, D.nativeElem||null);   /* 属性克制倍率：水克火/火克土/土克风/风克水 ×1.5，被克×0.75，同属性/无本体×1 */
     elemRate=_rc*_rr;
   }
@@ -4743,12 +4762,12 @@ function fmtDmg(n){
 }
 function tlFloat(n,isMon,crit,miss){
   var s=document.getElementById('tl-scene'); if(!s) return;
-  var el=document.createElement('div'); el.className='tr-float'+(isMon?' mon':'')+(crit?' crit':'')+(miss?' miss':''); el.textContent=miss?'MISS':(crit?('暴击 '+fmtDmg(n)):(n===0?'0':('-'+fmtDmg(n))));
+  var el=document.createElement('div'); el.className='tr-float'+(isMon?' mon':'')+(crit?' crit':'')+(miss?' miss':''); if(crit){ el.innerHTML='<i class="tr-crit">CRIT</i>'+(n===0?'0':fmtDmg(n)); } else { el.textContent=miss?'MISS':(n===0?'0':('-'+fmtDmg(n))); }
   el.style.left=isMon?(58+Math.random()*10)+'%':(5+Math.random()*12)+'%';   /* 与寻宝统一：怪物受击在怪物头上(右)、角色受击在左下角 */
   el.style.top=isMon?(44+Math.random()*10)+'%':(80+Math.random()*10)+'%';
   s.appendChild(el); setTimeout(function(){ el.remove(); },1000);
 }
-function tlHealFloat(n){ var s=document.getElementById('tl-scene'); if(!s)return; var el=document.createElement('div'); el.className='tr-float heal'; el.textContent='+'+n; el.style.left=(5+Math.random()*12)+'%'; el.style.top=(74+Math.random()*8)+'%'; s.appendChild(el); setTimeout(function(){ el.remove(); },1000); }
+function tlHealFloat(n){ var s=document.getElementById('tl-scene'); if(!s)return; var el=document.createElement('div'); el.className='tr-float heal'; el.textContent=n; el.style.left=(5+Math.random()*12)+'%'; el.style.top=(74+Math.random()*8)+'%'; s.appendChild(el); setTimeout(function(){ el.remove(); },1000); }
 function tlCharDmg(){
   var atk=TR.patk;   /* 属性攻击已由 calcHit 属性倍率结算（修复：原来误用防御宝石标志） */
   var lvd=TR.level-T.monLv; var pS=(lvd>=10)?lvSuppress(lvd):(lvd<=-10?0.5:1);
@@ -4759,7 +4778,7 @@ function tlCharDmg(){
   var crit=Math.random()<trCritRate(), weak=Math.random()<0.05;
   var _critMul=(weak&&crit)?(2*1.1*2):(crit?2:(weak?2:1));   /* 弱×2、暴×2、同发×4.4（只作用主伤害） */
   var _mFdr=0,_mmDef=0; if(T.traits){ for(var _tq=0;_tq<T.traits.length;_tq++){ var _tv=T.traits[_tq]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(怪物)：dmgred→最终伤害减免(作用合计,上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
-  var dmg=Math.round(calcHit({atk:atk*pS*_critMul, realAtk:atk, ig:_ig, real:_rl, add:_add, attackElem:elemKey(TR.attr), atkElemPct:(TR.attr&&TR.attr!=='无'?0.3:0)}, {def:T.monDef, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, defElemResist:(T.defElem?0.3:0), nativeElem:T.defElem||null, abs:0}));   /* 统一结算：主伤害(有效防御+等级压制+暴击弱点)+真伤→增伤→怪物终减→吸收 */
+  var dmg=Math.round(calcHit({atk:atk*pS*_critMul, realAtk:atk, ig:_ig, real:_rl, add:_add, attackElem:elemKey(TR.attr), atkElemPct:(TR.attr&&TR.attr!=='无'?0.3:0)}, {def:T.monDef, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(T.defElem?0.3:0), defElemResist:(T.defElem?0.3:0), nativeElem:T.defElem||null, abs:0}));   /* 统一结算：主伤害(有效防御+等级压制+暴击弱点)+真伤→增伤→怪物终减→吸收 */
   if(!T.isBoss && equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0 && T.monLv<=TR.level && Math.random()<0.01){ dmg=T.monHp; tlLog('<b style="color:#c86bff">伊泰安项链触发秒杀！</b>'); }   /* 伊泰安项链：1%概率秒杀等级≤角色的小怪，对boss无效 */
   return {d:dmg, crit:crit, miss:Math.random()<0.02, weak:weak};
 }
@@ -5192,7 +5211,7 @@ function startFight(idx){
   var s=arenaStat(); ARENA.fight=true; ARENA.oppIdx=idx;
   renderOppList();   /* 刷新对手行：该行变色、挑战中、其余禁用 */
   ARENA.hpP=s.hp; ARENA.hpO=o.hp; ARENA.tP=0; ARENA.tO=0;
-  var pInt=attackInterval(s.agi)*(POTION_UNTIL>Date.now()?0.5:1), oInt=pInt*1.3;
+  var pInt=charAtkSpeed(), oInt=pInt*1.3;   /* 角色攻速与副本统一(charAtkSpeed 已含药水提速)；对手比角色慢30% */
   var f=$('#arena-fight'); if(f){ f.setAttribute('data-end','0');
     f.innerHTML='<div class="af-rows">'
       +'<div class="af-hero"><div class="af-n">谜团<span class="char-tier" id="af-tier"></span><span class="af-elem" id="af-elem">'+elemBadgesText(elemKey((CHARACTER.combat[4]||{}).v), charDefElem())+'</span></div><div class="af-hp" id="af-hp-p"><i></i></div><div class="af-hpt" id="af-hpt-p"></div></div>'
@@ -5205,7 +5224,7 @@ function startFight(idx){
   ARENA.timer=setInterval(function(){ arenaStep(o,s,pInt,oInt); },60);
 }
 function setHp(w,cur,max){ var el=$('#af-hp-'+w); if(!el) return; var b=el.querySelector('i'); b.style.width=Math.max(0,Math.round(cur/max*100))+'%'; var t=$('#af-hpt-'+w); if(t) t.textContent=fmtWan(Math.max(0,Math.round(cur)))+' / '+fmtWan(max); }
-function floatDmg(val,side,miss){ var f=$('#arena-fight'); if(!f) return; var d=document.createElement('div'); d.className='af-dmg'+(miss?' miss':'')+((''+val).indexOf('暴击')>=0?' crit':''); d.textContent=val; d.style.left=side==='hero'?'16%':'72%'; d.style.transform='translateX(-50%)'; f.appendChild(d); setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); },950); }
+function floatDmg(val,side,miss){ var f=document.getElementById('arena-fight'); if(!f) return; var crit=(''+val).indexOf('暴击')>=0, num=(''+val).replace('暴击 ',''); var d=document.createElement('div'); d.className='tr-float'+(crit?' crit':'')+(miss?' miss':''); if(crit){ d.innerHTML='<i class="tr-crit">CRIT</i>'+num; } else d.textContent=miss?'MISS':num; d.style.left=side==='hero'?'16%':'72%'; d.style.transform='translateX(-50%)'; f.appendChild(d); setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); },1000); }
 function arenaStep(o,s,pInt,oInt){
   if(!ARENA.fight){ if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.timer=null; } return; }
   ARENA.tP+=60; ARENA.tO+=60;
@@ -5223,16 +5242,36 @@ function playerHit(o,s){
   var _rl=wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk();   /* 角色真实伤害% */
   var _add=(OG>=5?0.1:0)+(_tp2.m-1);   /* 增伤乘区：奥格顿5件+阶位压制 */
   var _mFdr=0,_mmDef=0; if(o.trait&&(o.trait.fx==='pdef'||o.trait.fx==='boss')) _mFdr+=0.3; if(o.traits){ for(var _tk=0;_tk<o.traits.length;_tk++){ var _tv=o.traits[_tk]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(对手)：dmgred→最终伤害减免(上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
-  var dmg=Math.max(1, Math.round(calcHit({atk:s.patk*lvR*(isCrit?2:1), realAtk:s.patk*lvR, ig:_ig, real:_rl, add:_add, attackElem:elemKey((CHARACTER.combat[4]||{}).v), atkElemPct:(((CHARACTER.combat[4]||{}).v!=='无')?0.3:0)}, {def:o.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, defElemResist:(o.defElem?0.3:0), nativeElem:o.defElem||null, abs:0})));   /* 统一结算：主伤害(有效防御+等级压制+暴击)+真伤→增伤→对手终减→吸收 */
+  var dmg=Math.max(1, Math.round(calcHit({atk:s.patk*lvR*(isCrit?2:1), realAtk:s.patk*lvR, ig:_ig, real:_rl, add:_add, attackElem:elemKey((CHARACTER.combat[4]||{}).v), atkElemPct:(((CHARACTER.combat[4]||{}).v!=='无')?0.3:0)}, {def:o.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(o.defElem?0.3:0), defElemResist:(o.defElem?0.3:0), nativeElem:o.defElem||null, abs:0})));   /* 统一结算：主伤害(有效防御+等级压制+暴击)+真伤→增伤→对手终减→吸收 */
+  arenaShootArrow(function(){   /* 箭矢从左下角射向对手，命中后才结算掉血/飘字/震动 */
   var _ls3=(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls; if(_ls3>0){ var hl=Math.max(1,Math.round(dmg*_ls3)); if(ARENA.hpP<s.hp){ ARENA.hpP=Math.min(s.hp,ARENA.hpP+hl); setHp('p',ARENA.hpP,s.hp); arenaHeal(hl); } }   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上) */
   if(o.traits){ for(var ti=0;ti<o.traits.length;ti++){ var tt=o.traits[ti];
     if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0&&ARENA.hpP>0){ ARENA.hpP-=rb; if(ARENA.hpP<0)ARENA.hpP=0; setHp('p',ARENA.hpP,s.hp); floatDmg('-'+fmtDmg(rb),'hero',false); if(ARENA.hpP<=0) return endFight('lose',o); } }   /* 反弹（减伤特性已并入 calcHit 终减） */
   } }
   ARENA.hpO-=dmg; setHp('o',ARENA.hpO,o.hp);
   floatDmg((isCrit?'暴击 ':'')+fmtDmg(dmg),'enemy',false);
+  if(isCrit){ var _e=document.querySelector('#arena-fight .af-enemy'); if(_e){ _e.classList.remove('shake'); void _e.offsetWidth; _e.classList.add('shake'); } }   /* 暴击对手卡左右震动 */
   if(ARENA.hpO<=0) return endFight('win',o);
+  });
 }
-function arenaHeal(n){ var f=document.getElementById('arena-fight'); if(!f)return; var d=document.createElement('div'); d.className='af-dmg'; d.textContent='+'+fmtDmg(n); d.style.color='#3dff6e'; d.style.textShadow='0 0 6px rgba(40,230,90,.7)'; d.style.left='16%'; d.style.transform='translateX(-50%)'; f.appendChild(d); setTimeout(function(){ if(d.parentNode)d.parentNode.removeChild(d); },950); }
+function arenaHeal(n){ var f=document.getElementById('arena-fight'); if(!f)return; var d=document.createElement('div'); d.className='tr-float heal'; d.textContent=fmtDmg(n); d.style.left='16%'; d.style.transform='translateX(-50%)'; f.appendChild(d); setTimeout(function(){ if(d.parentNode)d.parentNode.removeChild(d); },1000); }
+function arenaShootArrow(cb){   /* 与副本一致：从战斗场景左下角射箭飞向对手，命中后回调 */
+  var f=document.getElementById('arena-fight'); if(!f) return;
+  var a=document.createElement('div'); a.className='tr-arrow'; a.textContent='\u27a4'; f.appendChild(a);
+  var frect=f.getBoundingClientRect();
+  var sx=12, sy=frect.height-26;   /* 起点：左下角 */
+  var e=document.querySelector('#arena-fight .af-enemy');
+  var tx,ty;
+  if(e){ var r=e.getBoundingClientRect(); tx=r.left-frect.left+r.width/2-8; ty=r.top-frect.top+r.height/2-8; }
+  else { tx=frect.width*0.72-8; ty=frect.height*0.5-8; }
+  a.style.left=sx+'px'; a.style.top=sy+'px';
+  var dx=tx-sx, dy=ty-sy;
+  a.style.transform='rotate('+(Math.atan2(dy,dx)*180/Math.PI)+'deg)';
+  var dur=Math.min(300, Math.max(80, charAtkSpeed()*0.7));
+  var anim=a.animate([{transform:'translate(0,0)'},{transform:'translate('+dx+'px,'+dy+'px)'}],{duration:dur,easing:'ease-in'});
+  anim.onfinish=function(){ if(a.parentNode) a.remove(); if(cb) cb(); };
+  anim.oncancel=function(){ if(a.parentNode) a.remove(); };
+}
 function oppHit(o,s){
   var miss=(Math.random()*100)<(s.agi>2000?20:(s.agi>1000?10:4));
   if(miss){ floatDmg('MISS','hero',true); return; }
@@ -5615,7 +5654,6 @@ function runLottery(charge){
     LOTTERY.forEach(function(s){ total+=s.prob; });
     var r=Math.random()*total;
     for(var i=0;i<LOTTERY.length;i++){ acc+=LOTTERY[i].prob; if(r<acc){ win=LOTTERY[i]; winIdx=i; break; } }
-    if(win.prob<0.01) LOTTERY_COUNT=0;   /* 自然抽中稀有也重置保底计数 */
   }
   saveLotteryCount(); updatePity();
   var c=Math.min(1, charge||0);   /* 充能比例 0~1 */
@@ -5651,7 +5689,6 @@ function runLottery10(){
       var r=Math.random()*tTot, acc=0, picked=false;
       for(var i=0;i<tbl.length;i++){ acc+=tbl[i].p; if(r<acc){ win=tbl[i].s; winIdx=i; picked=true; break; } }
       if(!picked){ win=tbl[tbl.length-1].s; winIdx=tbl.length-1; }
-      if(win.prob<0.01) LOTTERY_COUNT=0;
     }
     results.push({win:win, idx:winIdx});
   }
@@ -5746,7 +5783,7 @@ function isPhantomDungeon(d){ return d>=0&&d<DUNGEONS.length&&DUNGEONS[d].mode==
 var TR={ dungeon:0, isBoss:false, hp:0, maxHp:0, patk:0, pdef:0, attrDef:false, attr:'无', absorb:0, absorbPct:0,
   kill:0, killToBoss:150, auto:false, timer:null, regen:null, revTimer:null, revCount:0, suppressLog:false, atkTick:0, monAtkCoef:0.1,
   monHp:0, monMax:0, lastAtk:0, level:1, exp:0, reqExp:100, spawnTimer:null, bossLoot:[], bossType:null, bossTier:0, forceBoss:null, phantomTimer:null, bossLevel:60, nobleSub:null,
-  stats:{ kill:0, drop:0, gold:0, rare:0, per:(function(){ var a=[]; for(var si=0;si<DUNGEONS.length;si++) a.push({kill:0,drop:0}); return a; })(), recent:[] } };
+  stats:{ kill:0, drop:0, gold:0, rare:0, bossKill:0, legend:0, per:(function(){ var a=[]; for(var si=0;si<DUNGEONS.length;si++) a.push({kill:0,drop:0,bossKill:0,legend:0,bossRewards:[]}); return a; })(), recent:[] } };
 function monsterSVG(color, boss){
   return '<svg viewBox="0 0 64 64">'+
     '<path d="M18 46 C13 39 13 29 18 24 C24 20 28 13 30 8 C31 10 34 12 38 14 C44 12 50 11 52 15 C52 17 50 20 47 23 C50 28 51 36 46 42 C44 47 38 51 32 51 C26 51 22 49 18 46 Z" fill="'+color+'" opacity="0.92"/>'+
@@ -5879,14 +5916,14 @@ function trMonStats(){
 }
 /* 角色受击伤害：先被物理防御抵挡 → 属性防御再减30% → 防具伤害吸收累加抵消 */
 function roleHitDamage(monAtk){   /* 副本怪物攻击角色：统一结算（怪物特性喂入 calcHit 攻击者参数） */
-  var __lvd=TR.level-(TR.isBoss?(TR.bossLevel||60):(TR.monLv||(DUNGEONS[TR.dungeon].monLv||1)));   /* 等级压制：差距≥10级，等级高的一方攻防×10 */
+  var __lvd=TR.level-(TR.isBoss?(TR.bossLevel||60):((DUNGEONS[TR.dungeon].mode==='level')?(TR.monLv||(DUNGEONS[TR.dungeon].monLv||1)):(DUNGEONS[TR.dungeon].monLv||1)));   /* 等级压制：小怪取当前副本固定等级(避免残留TR.monLv误判)，Boss用bossLevel */
   var __pS=(__lvd>=10)?lvSuppress(__lvd):(__lvd<=-10?0.5:1);   /* 角色攻防倍率：压制怪×lvs、被怪压制×0.5 */
   var __mS=(__lvd<=-10)?lvSuppress(-__lvd):(__lvd>=10?0.5:1);   /* 怪物攻防倍率：压制角色×lvs、被角色压制×0.5 */
   var tp=foeVsRoleTier(TR.isBoss?TR.bossTier:-1, charTierIdx());   /* 阶位压制：高阶无视低阶10%防御+伤害10%；低阶攻击-10% */
   var raw=monAtk*(TR.isBoss?bossAtkCoef(TR.bossTier||0):1)*__mS*tp.m*(0.55+Math.random()*0.4);   /* Boss攻击乘阶位系数1~10（神级最高），小怪×1 */
   var _ma=monTraitAtk(TR.traits, raw);   /* 怪物增伤/真伤/无视防御/破防→A；暴击/吸血/晕/减速/毒/流血/反弹→bm */
   var fdr=Math.min(0.9, finalDR());              /* 承受者(角色)最终伤害减免：属性防御30%+装备(伊泰安/奥格顿/强20)，封顶90% */
-  var dmg=Math.round(calcHit({atk:_ma.A.atk*(_ma.bm.crit?(ISET>=5?1.4:2):1), realAtk:_ma.A.realAtk, ig:tp.ig+_ma.A.ig, real:_ma.A.real, add:_ma.A.add, attackElem:TR.atkElem||null, atkElemPct:(TR.atkElem?0.3:0)}, {def:TR.pdef*__pS*(Date.now()<POTION_UNTIL?2:1), fdr:fdr, defElemResist:(TR.attrDef?0.3:0), nativeElem:charDefElem(), abs:TR.absorb}));   /* 统一结算：主伤害(有效防御+暴击)→真伤→增伤→终减→吸收 */
+  var dmg=Math.round(calcHit({atk:_ma.A.atk*(_ma.bm.crit?(ISET>=5?1.4:2):1), realAtk:_ma.A.realAtk, ig:tp.ig+_ma.A.ig, real:_ma.A.real, add:_ma.A.add, attackElem:TR.atkElem||null, atkElemPct:(TR.atkElem?0.3:0)}, {def:TR.pdef*__pS*(Date.now()<POTION_UNTIL?2:1), fdr:fdr, attrDefDR:(TR.attrDef?0.3:0), defElemResist:(TR.attrDef?0.3:0), nativeElem:charDefElem(), abs:TR.absorb}));   /* 统一结算：主伤害(有效防御+暴击)→真伤→增伤→终减→吸收 */
   dmg=Math.max(dmg, Math.round(raw*0.10));   /* 总减伤封顶90%：保底10%原始伤害 */
   return {d:dmg, raw:raw, bm:_ma.bm};
 }
@@ -5988,11 +6025,11 @@ function ithDropNeck(){
   triggerLegendFX();
 }
 function ithActive(){
-  return location.hash.indexOf('#treasure')>=0 && document.visibilityState==='visible' && TR.dungeon===0 && TR.hp>0 && TR.monHp>0 && CHARACTER.info.level===1 && ITH_LEFT.yitaiNecklace>0;
+  return location.hash.indexOf('#treasure')>=0 && document.visibilityState==='visible' && TR.dungeon===0 && TR.hp>0 && TR.monHp>0 && ITH_LEFT.yitaiNecklace>0;
 }
 function ithStart(){
   ithStop();
-  if(CHARACTER.info.level!==1 || TR.dungeon!==0 || ITH_LEFT.yitaiNecklace<=0) return;
+  if(TR.dungeon!==0 || ITH_LEFT.yitaiNecklace<=0) return;
   ITH_TIMER=setInterval(function(){
     if(!ithActive()){ return; }   /* 仅当前页面在打怪（可见+雕俱星座+战斗中）才生效：最小化/离线/切页均不触发 */
     if(Math.random()<0.005) ithDropNeck();   /* 每20秒0.5%概率从屏幕上方掉落伊泰安项链 */
@@ -6160,9 +6197,9 @@ function trLog(html){
   l.insertBefore(d, l.firstChild);
   while(l.children.length>50) l.removeChild(l.lastChild);
 }
-function charAtkSpeed(){   /* 角色攻击间隔ms：平滑曲线 间隔=2000/(1+敏捷×0.0015)，敏捷越高越快；药水提速一倍 */
+function charAtkSpeed(){   /* 角色攻击间隔ms：幂律曲线 305000/敏捷^0.3228，1亿敏≈800ms、约10亿敏封顶380ms；药水提速一倍 */
   var a=((CHARACTER.base&&CHARACTER.base['敏捷'])||10)+((CHARACTER.bonus&&CHARACTER.bonus['敏捷'])||0);
-  var base=Math.min(1280, Math.max(300, Math.round(2000/(1+a*0.0015))));   /* 低敏≤1280、1000敏≈800、1500敏≈615、3000敏以上封顶300ms */
+  var base=Math.min(1280, Math.max(380, Math.round(305000/Math.pow(Math.max(1,a),0.3228))));   /* 上限1280(最慢)、封顶380(最快) */
   return (Date.now()<POTION_UNTIL)?Math.round(base/2):base;   /* 神圣药水：当前攻速提升一倍 */
 }
 function monAtkInterval(){   /* 怪物攻击间隔ms：1~30级比第一档慢60%，30~60级=第一档；狂暴攻速翻倍 */
@@ -6184,13 +6221,13 @@ function trCritRate(){
 }
 function trFloat(n,isMon,crit,miss){
   var s=document.getElementById('tr-scene'); if(!s) return;
-  var el=document.createElement('div'); el.className='tr-float'+(isMon?' mon':'')+(crit?' crit':'')+(miss?' miss':''); el.textContent=miss?'MISS':(crit?('暴击 '+fmtDmg(n)):(n===0?'0':('-'+fmtDmg(n))));
+  var el=document.createElement('div'); el.className='tr-float'+(isMon?' mon':'')+(crit?' crit':'')+(miss?' miss':''); if(crit){ el.innerHTML='<i class="tr-crit">CRIT</i>'+(n===0?'0':fmtDmg(n)); } else { el.textContent=miss?'MISS':(n===0?'0':('-'+fmtDmg(n))); }
   if(isMon){ var _mm=document.getElementById('tr-monster'), _sr=document.getElementById('tr-scene'); if(_mm&&_sr){ var _mrr=_mm.getBoundingClientRect(), _srr=_sr.getBoundingClientRect(); var _cx=_mrr.left+_mrr.width/2-_srr.left+Math.random()*8-4, _cy=_mrr.top-_srr.top-10+Math.random()*8; s.appendChild(el); var _ew=el.offsetWidth||0; el.style.left=(_cx-_ew/2)+'px'; el.style.top=_cy+'px'; setTimeout(function(){ el.remove(); },1000); return; } }
   el.style.left=(isMon?(58+Math.random()*10):(5+Math.random()*12))+'%';
   el.style.top=(isMon?(44+Math.random()*10):(80+Math.random()*10))+'%';
   s.appendChild(el); setTimeout(function(){ el.remove(); },1000);
 }
-function trHealFloat(n){ var s=document.getElementById('tr-scene'); if(!s)return; var el=document.createElement('div'); el.className='tr-float heal'; el.textContent='+'+n; el.style.left=(5+Math.random()*12)+'%'; el.style.top=(74+Math.random()*8)+'%'; s.appendChild(el); setTimeout(function(){ el.remove(); },1000); }
+function trHealFloat(n){ var s=document.getElementById('tr-scene'); if(!s)return; var el=document.createElement('div'); el.className='tr-float heal'; el.textContent=n; el.style.left=(5+Math.random()*12)+'%'; el.style.top=(74+Math.random()*8)+'%'; s.appendChild(el); setTimeout(function(){ el.remove(); },1000); }
 function shakeMonster(el, lv){   /* 怪物图标震动分级：lv1=暴击/弱点(±5) lv2=暴击+弱点(±7) lv3=击杀(±9) */
   if(!el) return;
   var c=lv>=3?'shake-kill':(lv===2?'shake-strong':'shake');
@@ -6265,21 +6302,23 @@ function trDropAnim(img, q){
   setTimeout(function(){ if(el.parentNode)el.remove(); if(burst.parentNode)burst.remove(); },1100);
 }
 function renderTrStats(){
-  var sum=document.getElementById('tr-ss-sum'); if(sum&&TR.stats) sum.textContent='击杀 '+TR.stats.kill+' · 掉落 '+TR.stats.drop+' · 金币 '+TR.stats.gold.toLocaleString();
+  var sum=document.getElementById('tr-ss-sum'); if(sum&&TR.stats) sum.textContent='击杀BOSS '+TR.stats.bossKill+' · 传说掉落 '+TR.stats.legend;
   var p=document.getElementById('tr-stats-panel'); if(!p||!TR.stats) return;
-  var s=TR.stats, h='';
-  h+='<div class="tr-ss-grid">'
-    +'<div class="tr-ss-cell"><b>'+s.kill+'</b><i>击杀</i></div>'
-    +'<div class="tr-ss-cell"><b>'+s.drop+'</b><i>掉落</i></div>'
-    +'<div class="tr-ss-cell"><b class="g">'+s.gold.toLocaleString()+'</b><i>金币</i></div>'
-    +'<div class="tr-ss-cell"><b class="r">'+s.rare+'</b><i>稀有</i></div>'
-    +'</div>';
-  h+='<div class="tr-ss-sub">副本明细</div>';
-  DUNGEONS.forEach(function(dd,i){ var pp=s.per[i]||{kill:0,drop:0}; h+='<div class="tr-ss-dun"><span>'+dd.name+'</span><em>'+pp.kill+' 杀 / '+pp.drop+' 掉</em></div>'; });
-  h+='<div class="tr-ss-sub">最近稀有掉落</div>';
-  if(!s.recent.length) h+='<div class="tr-ss-none">暂无稀有掉落</div>';
-  else s.recent.forEach(function(rr){ h+='<div class="tr-ss-rec"><i>'+rr.time+'</i><span>'+rr.name+'</span></div>'; });
+  var s=TR.stats, h='<div class="tr-br-wrap">';
+  DUNGEONS.forEach(function(dd,i){ var pp=s.per[i]||{bossKill:0,legend:0,bossRewards:[]};
+    h+='<div class="tr-br-fold" data-i="'+i+'">'
+      +'<button class="tr-br-head"><span class="tr-br-n">'+dd.name+'</span><span class="tr-br-m">Boss '+pp.bossKill+' · 传说 '+pp.legend+'</span><span class="tr-br-caret">&#9662;</span></button>'
+      +'<div class="tr-br-body">';
+    if(!pp.bossRewards.length){ h+='<div class="tr-br-none">暂无 Boss 击杀奖励</div>'; }
+    else { pp.bossRewards.forEach(function(rr){
+      h+='<div class="tr-br-rec"><i>'+rr.t+'</i>'+((rr.attr>0)?'<b class="tr-br-a">全属性 +'+rr.attr+'</b>':'')+rr.items.map(function(x){ return '<span class="tr-br-it">'+x+'</span>'; }).join('')+'</div>';
+    }); }
+    h+='</div></div>';
+  });
+  h+='</div>';
   p.innerHTML=h;
+  var hs=p.querySelectorAll('.tr-br-head');
+  for(var bi=0;bi<hs.length;bi++){ (function(hd){ hd.addEventListener('click',function(){ var f=hd.closest('.tr-br-fold'); if(f) f.classList.toggle('open'); }); })(hs[bi]); }
 }
 function trBossGuarantee(){   /* Boss 保底：必掉金币 + 保底稀有一件（按副本保底池随机） */
   var d=DUNGEONS[TR.dungeon];
@@ -6324,6 +6363,8 @@ function trKillMon(){
   var lv=TR.level, got=false;
   TR.stats.kill++; TR.stats.per[TR.dungeon].kill++;
   TR.bossLoot=[];   /* 本次击杀清空，Boss 死亡时才结算其当场战利品 */
+  var _br=null;
+  if(TR.isBoss){ var _now=new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'}); _br={t:_now,attr:0,items:[]}; TR.stats.bossKill++; TR.stats.per[TR.dungeon].bossKill++; TR.stats.per[TR.dungeon].bossRewards.push(_br); }
   if(TR.isBoss && TR.bossTier>=5 && charTierIdx()<5 && ARENA.killGod<1){ unlockGodMedal(); trLog('<b class="lg-boss">越级击杀神级Boss，获得徽章·屠神者！真实伤害+10%</b>'); }   /* 屠神者：低阶位越级击杀神级Boss */
   if(d.mode==='bound'){
     var bg=10000+Math.floor(Math.random()*90000); var bpct=TR.isElite?100:(80-(bg-10000)/90000*(80-30)); if(TR.isElite) bg=Math.min(Math.round(bg*1.5),100000); if(Math.random()*100<bpct){ CURRENCY.bound+=bg; TR.stats.gold+=bg; renderCurrency(); trDropAnim(null); trLog('雕俱守卫掉落 <b class="lg-gold">绑定金币 '+bg.toLocaleString()+'</b>'); got=true; if(TR.isBoss) TR.bossLoot.push('绑定金币 '+bg.toLocaleString()); }
@@ -6346,12 +6387,12 @@ function trKillMon(){
     else if(Math.random()<0.001){ CURRENCY.gold+=100000000; TR.stats.gold+=100000000; renderCurrency(); trDropAnim(null); trLog('掉落 <b class="lg-gold">金币 100,000,000</b>'); got=true; trRare({name:'金币 1亿'}); if(TR.isBoss) TR.bossLoot.push('金币 100,000,000'); }
     else { var _gm=[10000,20000,30000,40000,50000,60000][TR.dungeon]||10000, _gx=[200000,400000,600000,800000,1000000,1000000][TR.dungeon]||200000; var g=_gm+Math.floor(Math.random()*(_gx-_gm+1)); if(TR.isElite) g=Math.min(Math.round(g*1.5),_gx); var pct=TR.isElite?100:(80-(g-_gm)/(_gx-_gm)*(80-8)); if(Math.random()*100<pct){ CURRENCY.gold+=g; TR.stats.gold+=g; renderCurrency(); trDropAnim(null); trLog('掉落 <b class="lg-gold">金币 '+g.toLocaleString()+'</b>'); got=true; if(TR.isBoss) TR.bossLoot.push('金币 '+g.toLocaleString()); } }
     var drops=trRollDrop();
-    drops.forEach(function(item){ if(item){ got=true; addStackable(item); var rare=isRareDrop(item); trDropAnim(item.img,itemQuality(item)); trLog('掉落 <b class="lg-item">'+item.name+'</b>'); TR.stats.drop++; TR.stats.per[TR.dungeon].drop++; if(rare){ TR.stats.rare++; TR.stats.recent.unshift({name:item.name,time:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})}); if(TR.stats.recent.length>5) TR.stats.recent.pop(); } if(TR.isBoss) TR.bossLoot.push(item.name); } });
+    drops.forEach(function(item){ if(item){ got=true; addStackable(item); var rare=isRareDrop(item); var _lg=itemQuality(item)==='purple'; trDropAnim(item.img,itemQuality(item)); trLog('掉落 <b class="lg-item">'+item.name+'</b>'); TR.stats.drop++; TR.stats.per[TR.dungeon].drop++; if(rare){ TR.stats.rare++; TR.stats.recent.unshift({name:item.name,time:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})}); if(TR.stats.recent.length>5) TR.stats.recent.pop(); } if(_lg){ TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; if(_br) _br.items.push(item.name); } if(TR.isBoss) TR.bossLoot.push(item.name); } });
     if(TR.isElite){ var xd=trRollDrop(); xd.forEach(function(item){ if(item){ got=true; addStackable(item); trDropAnim(item.img,itemQuality(item)); trLog('精英掉落 <b class="lg-item">'+item.name+'</b>'); TR.stats.drop++; TR.stats.per[TR.dungeon].drop++; if(isRareDrop(item)){ TR.stats.rare++; } } }); }   /* 精英怪：额外多一档掉落 */
     if(TR.isBoss) trLog('<b class="lg-boss">击败 BOSS '+d.bossName+'</b>');
   }
-  if(TR.isBoss){ var _bn=TR.bossType==='god'?2:1; for(var _bi=0;_bi<_bn;_bi++){ var gg=trBossGuarantee(); if(gg){ addStackable(gg); got=true; trDropAnim(gg.img,itemQuality(gg)); trLog('Boss 保底 <b class="lg-item">'+gg.name+(gg.count>1?'×'+gg.count:'')+'</b>'); if(itemQuality(gg)==='purple') triggerLegendFX(); TR.bossLoot.push(gg.name+(gg.count>1?'×'+gg.count:'')); } } got=true; }   /* Boss 必掉金币+保底（神级2件） */
-  if(TR.isBoss){ var _pr=bossPermReward(); if(_pr>0){ addPerm(_pr,0); trLog('<b style="color:#c86bff">击败 BOSS：全属性 +'+_pr+'（永久）</b>'); toast('全属性+'+_pr+' 永久'); triggerLegendFX(); } }   /* 击杀BOSS保底：永久全属性（按阶位与等级） */
+  if(TR.isBoss){ var _bn=TR.bossType==='god'?2:1; for(var _bi=0;_bi<_bn;_bi++){ var gg=trBossGuarantee(); if(gg){ addStackable(gg); got=true; trDropAnim(gg.img,itemQuality(gg)); trLog('Boss 保底 <b class="lg-item">'+gg.name+(gg.count>1?'×'+gg.count:'')+'</b>'); if(itemQuality(gg)==='purple'){ triggerLegendFX(); TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; if(_br) _br.items.push(gg.name+(gg.count>1?'×'+gg.count:'')); } TR.bossLoot.push(gg.name+(gg.count>1?'×'+gg.count:'')); } } got=true; }   /* Boss 必掉金币+保底（神级2件） */
+  if(TR.isBoss){ var _pr=bossPermReward(); if(_pr>0){ addPerm(_pr,0); trLog('<b style="color:#c86bff">击败 BOSS：全属性 +'+_pr+'（永久）</b>'); toast('全属性+'+_pr+' 永久'); triggerLegendFX(); } if(_br) _br.attr=_pr; }   /* 击杀BOSS保底：永久全属性（按阶位与等级） */
   /* 寂灭之息药剂：神之幻境小怪 0.00001%、BOSS 0.1%，仅在线打怪，无全服限量 */
   if(isPhantomDungeon(TR.dungeon) && location.hash.indexOf('#treasure')>=0 && document.visibilityState==='visible' && Math.random()<(TR.isBoss?0.001:0.0000001)){ var jmm=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); jmm.count=1; addStackable(jmm); got=true; trDropAnim(jmm.img,'purple'); trLog('掉落 <b class="lg-item">'+jmm.name+'</b>'); triggerLegendFX(); }   /* 寂灭之息药剂：仅神之幻境小怪0.00001%、BOSS0.1%（在线） */
   if(!TR.isBoss && Math.random()<0.005){ trHiddenEvent(); }   /* 0.5%隐藏事件：神秘宝箱门 / 隐藏BOSS */
@@ -6417,7 +6458,7 @@ function trAtk(){
   TR.__lastAtkTick=__now;
   var s=trMonStats();
   var isCrit=Math.random()<trCritRate();
-  var __lvd=TR.level-(TR.isBoss?(TR.bossLevel||60):(TR.monLv||(DUNGEONS[TR.dungeon].monLv||1)));   /* 等级压制：差距≥10级，等级高的一方攻防×10 */
+  var __lvd=TR.level-(TR.isBoss?(TR.bossLevel||60):((DUNGEONS[TR.dungeon].mode==='level')?(TR.monLv||(DUNGEONS[TR.dungeon].monLv||1)):(DUNGEONS[TR.dungeon].monLv||1)));   /* 等级压制：小怪取当前副本固定等级(避免残留TR.monLv误判)，Boss用bossLevel */
   var __pS=(__lvd>=10)?lvSuppress(__lvd):(__lvd<=-10?0.5:1);   /* 角色攻防倍率：压制怪×lvs、被怪压制×0.5 */
   var __mS=(__lvd<=-10)?lvSuppress(-__lvd):(__lvd>=10?0.5:1);   /* 怪物攻防倍率：压制角色×lvs、被角色压制×0.5 */
   var _pa=TR.patk*__pS*(Date.now()<POTION_UNTIL?2:1)*(0.85+Math.random()*0.3);   /* 角色攻击（等级压制·药水·波动） */
@@ -6430,7 +6471,7 @@ function trAtk(){
   var weak=Math.random()<0.10;   /* 弱点攻击10% */
   var _critMul=(isCrit&&weak)?(4*1.1):(isCrit?2:(weak?2:1));   /* 暴击/弱点倍率（只作用主伤害） */
   var _mFdr=0,_mmDef=0; if(TR.traits){ for(var _tj=0;_tj<TR.traits.length;_tj++){ var _tv=TR.traits[_tj]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(怪物)：dmgred→最终伤害减免(作用合计,上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
-  var dmg=Math.max(6, Math.round(calcHit({atk:_atk2*_critMul, realAtk:_atk2, ig:_ig, real:_rl, add:_add, attackElem:elemKey(TR.attr), atkElemPct:(TR.attr&&TR.attr!=='无'?0.3:0)}, {def:s.def*__mS, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, defElemResist:(TR.defElem?0.3:0), nativeElem:TR.defElem||null, abs:0})));   /* 统一结算：主伤害(有效防御+暴击弱点)+真伤→增伤→怪物终减→吸收 */
+  var dmg=Math.max(6, Math.round(calcHit({atk:_atk2*_critMul, realAtk:_atk2, ig:_ig, real:_rl, add:_add, attackElem:elemKey(TR.attr), atkElemPct:(TR.attr&&TR.attr!=='无'?0.3:0)}, {def:s.def*__mS, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(TR.defElem?0.3:0), defElemResist:(TR.defElem?0.3:0), nativeElem:TR.defElem||null, abs:0})));   /* 统一结算：主伤害(有效防御+暴击弱点)+真伤→增伤→怪物终减→吸收 */
   if(!TR.isBoss){ var ymv=DUNGEONS[TR.dungeon].monLv; if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0&&ymv<=TR.level&&Math.random()<0.01){ dmg=TR.monHp; trLog('<b class="lg-boss">伊泰安项链触发秒杀！</b>'); } }   /* 伊泰安项链：1%概率秒杀等级≤角色的小怪，对boss无效 */
   var _ls2=(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls; if(_ls2>0){ var hl=Math.max(1,Math.round(dmg*_ls2)); if(TR.hp<TR.maxHp){ TR.hp=Math.min(TR.maxHp,TR.hp+hl); trHealFloat(hl); } }   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上) */
   if(TR.traits){ for(var ti=0;ti<TR.traits.length;ti++){ var tt=TR.traits[ti];
@@ -6601,7 +6642,8 @@ function initTreasureUI(){
     },{passive:true});
     el.addEventListener('touchend',function(){ active=false; },{passive:true});
   });
-  var sb=document.getElementById('tr-stats-bar'); if(sb) sb.addEventListener('click',function(){ var w=document.getElementById('tr-stats'); if(w){ w.classList.toggle('open'); renderTrStats(); } });
+function closeTrStats(){ var w=document.getElementById('tr-stats'); if(w) w.classList.remove('open'); var mk=document.getElementById('fb-mask'); if(mk) mk.classList.remove('show'); }
+  var sb=document.getElementById('tr-stats-bar'); if(sb) sb.addEventListener('click',function(){ var w=document.getElementById('tr-stats'); if(w){ var _open=w.classList.toggle('open'); renderTrStats(); var mk=document.getElementById('fb-mask'); if(mk){ if(_open){ mk.classList.add('show'); if(!mk.__tr){ mk.__tr=1; mk.addEventListener('click',closeTrStats); } } else { if(!document.querySelector('.tr-stats.open')) mk.classList.remove('show'); } } } });
   var ab=document.getElementById('tr-atk'); if(ab) ab.addEventListener('click',function(){ trAtk(); });
   var au=document.getElementById('tr-auto'); if(au) au.addEventListener('click',function(){ trSetAuto(!TR.auto); });
   trStartRegen();
