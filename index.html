@@ -523,6 +523,8 @@ body.show-god .stage{max-width:680px;}
 .innate-tag.top{color:#FFE08A;border-color:rgba(255,200,90,.6);background:linear-gradient(180deg,rgba(255,200,90,.24),rgba(200,140,40,.14));text-shadow:0 0 8px rgba(255,200,90,.55);font-weight:700;}
 .innate-reset{display:flex;justify-content:center;margin-top:12px;}
 .innate-reset .innate-roll{height:32px;padding:0 18px;font-size:13px;letter-spacing:2px;border-radius:6px;margin-left:0;margin-right:0;background:linear-gradient(180deg,#78694e,#5a4c36);box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}
+.innate-reset .innate-roll + .innate-roll{margin-left:10px;}
+#innate-rollauto{background:linear-gradient(180deg,#6b5d9c,#4a3e6e);border-color:rgba(176,140,255,.5);}
 .combat-divider{
   height:1px;margin:10px 16px;
   background:linear-gradient(90deg,transparent,#6D6354 25%,#6D6354 75%,transparent);
@@ -1653,7 +1655,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div id="combat-list"></div>
       <div class="combat-divider"></div>
       <div id="record-list"></div>
-      <div class="innate-reset"><button class="innate-roll" id="innate-roll">重新随机</button></div>
+      <div class="innate-reset"><button class="innate-roll" id="innate-roll">重新生成</button><button class="innate-roll" id="innate-rollauto">自动随机</button></div>
       <div id="attr-traits"></div>
     </div>
   </div>
@@ -4370,6 +4372,25 @@ function cRows(arr){
   return h;
 }
 
+var INNATE_AUTO={on:false, timer:null};   /* 自动随机状态 */
+function stopInnateAuto(){ if(INNATE_AUTO.timer){ clearTimeout(INNATE_AUTO.timer); INNATE_AUTO.timer=null; } INNATE_AUTO.on=false; var _ab=$('#innate-rollauto'); if(_ab) _ab.textContent='自动随机'; }
+function scheduleInnateAuto(){ INNATE_AUTO.timer=setTimeout(function(){ INNATE_AUTO.timer=null; doInnateRoll(true); },300); }   /* 每秒约3.3次 */
+function performInnateRoll(silent){
+  CHARACTER.innateRollCount=(CHARACTER.innateRollCount||0)+1;   /* 生成次数：从初始化起累加 */
+  CHARACTER.innate=randomRollOrigin();
+  saveGame(); recalcCharacter(); renderAttrs();
+  if(!silent) toast('已重新生成角色原始属性 · 先天运势 '+CHARACTER.innate.toFixed(2)+'（第 '+CHARACTER.innateRollCount+' 次）');
+}
+function doInnateRoll(fromAuto){   /* 统一随机入口：天运之主保护确认，自动不替用户选择 */
+  if(CHARACTER.innate>=1.8){
+    var _tp=setTimeout(function(){ var _m=document.getElementById('confirm-mask'); if(_m) _m.remove(); stopInnateAuto(); toast('自动随机已停止（10分钟未确认，视为取消）'); },600000);   /* 超时10分钟默认取消，自动停止 */
+    confirmDialog('你当前已是 <span style="color:#B08CFF;font-weight:700;letter-spacing:1px">天运之主</span>（先天运势 1.80）<br>重新生成将放弃这份绝世运势……<br><span style="color:#C9A24B">确认要重新生成吗？</span>', function(ok){
+      if(_tp){ clearTimeout(_tp); _tp=null; }
+      if(ok){ performInnateRoll(fromAuto); if(INNATE_AUTO.on) scheduleInnateAuto(); }
+      else stopInnateAuto();   /* 用户选不重新生成 → 自动停止 */
+    });
+  } else { performInnateRoll(fromAuto); if(INNATE_AUTO.on) scheduleInnateAuto(); }
+}
 function renderAttrs(){
   $('#ch-name').textContent = CHARACTER.info.name; applyCharTier();
   $('#ch-lv').textContent = 'Lv.' + CHARACTER.info.level;
@@ -4377,11 +4398,8 @@ function renderAttrs(){
   $('#ch-power').textContent = fmtWan(rolePower());
   var _iv=$('#innate-val'); if(_iv) _iv.textContent=CHARACTER.innate.toFixed(2);
 
-  var _ir=$('#innate-roll'); if(_ir&&!_ir.__b){ _ir.__b=true; _ir.addEventListener('click',function(){
-    function _doRoll(){ CHARACTER.innate=randomRollOrigin(); saveGame(); recalcCharacter(); renderAttrs(); toast('已重新随机角色原始属性 · 先天运势 '+CHARACTER.innate.toFixed(2)); }
-    if(CHARACTER.innate>=1.8){ confirmDialog('你当前已是 <span style="color:#B08CFF;font-weight:700;letter-spacing:1px">天运之主</span>（先天运势 1.80）<br>重新随机将放弃这份绝世运势……<br><span style="color:#C9A24B">确认要重新生成吗？</span>', function(ok){ if(ok) _doRoll(); }); }
-    else _doRoll();
-  }); }
+  var _ir=$('#innate-roll'); if(_ir&&!_ir.__b){ _ir.__b=true; _ir.addEventListener('click',function(){ stopInnateAuto(); doInnateRoll(false); }); }   /* 手动点击：先停止自动 */
+  var _ia=$('#innate-rollauto'); if(_ia&&!_ia.__b){ _ia.__b=true; _ia.addEventListener('click',function(){ if(INNATE_AUTO.on){ stopInnateAuto(); } else { INNATE_AUTO.on=true; _ia.textContent='停止自动'; doInnateRoll(true); } }); }
   var _it=$('#innate-tag'); if(_it){ if(CHARACTER.innate>=1.8){ _it.textContent='天运之主 · 全服唯一'; _it.className='innate-tag top'; _it.style.display=''; } else if(CHARACTER.innate>=1.2){ _it.textContent='非酋 · 欧皇'; _it.className='innate-tag'; _it.style.display=''; } else { _it.style.display='none'; } }
   var _rr=document.querySelector('.innate-reset'); if(_rr) _rr.style.display = ((CHARACTER.info.level||1)===1)? '':'none';   /* 重新随机按钮仅等级1时显示，等级>1隐藏 */
   $('#attr-alloc').innerHTML = ATTR_PAIRS.map(function(p){
@@ -4525,6 +4543,7 @@ function roleTraits(){
   if(enh15>0) out.push({n:'抗暴率',d:'受到的暴击率降低3%。提供：防具强化+15('+enh15+'件)',p:'3%'});
   if(enh18>0) out.push({n:'暴击伤害减免',d:'受暴击时暴击伤害降低3%。提供：防具强化+18('+enh18+'件)',p:'3%'});
   if(ab>0){ var sl=[]; sl.push('防具强化+专注宝石等固定吸收累计+'+fmtWan(ab)); out.push({n:'伤害吸收',d:'抵消受到的固定伤害。提供：'+jn(sl),p:fmtWan(ab)}); }
+  if(CHARACTER.innate>=1.8) out.push({n:'天运之主',d:'提升传说级物品的掉落概率。生成次数 '+(CHARACTER.innateRollCount||0),p:'全服唯一'});   /* 仅记录特性，不影响现有数值（先天运势系数已另行生效） */
   return out;
 }
 
@@ -7067,6 +7086,7 @@ function doReset(){
   POTION_UNTIL = 0; SUN_UNTIL = 0; MEGA_SUN_UNTIL = 0;   /* 初始化清空药水效果 */
   ELEM_SLOT = {atk:[null,null,null,null], def:[null,null,null,null]};   /* 初始化清空属性凹槽引用 */
   PERM = {力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0};   /* 初始化清空永久属性 */
+  CHARACTER.innateRollCount=0;   /* 生成次数从初始化开始重新累加 */
   CHARACTER.innate=randomRollOrigin();   /* 初始化：先随机先天运势，再按运势分档生成角色属性（与“重新随机”按钮逻辑一致） */
   itemIdCounter = 1;
   LOTTERY_LOG = [];   /* 初始化清空抽奖记录 */
