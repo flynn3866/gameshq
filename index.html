@@ -2451,6 +2451,7 @@ var LOOT_POOL = buildLootPool();
 
 /* 兜底：整页固定，禁止下拉刷新；但放行可滚动容器（寻宝副本横滚、日志纵滚）以支持原生触摸滚动 */
 document.addEventListener('touchmove', function(e){
+  var _ae=document.activeElement; if(_ae && (_ae.tagName==='INPUT'||_ae.tagName==='TEXTAREA')) return;   /* 输入框/输入法工作期间放行原生触摸，避免禁滚致手机键盘异常(充值框只能输1位) */
   if (window.__allowNativeScroll) return;
   /* 若触摸点在可滚动容器（overflow auto/scroll）内且确实可滚动，允许原生滚动，不禁 */
   var el=e.target;
