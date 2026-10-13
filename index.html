@@ -125,15 +125,15 @@ body.show-god .stage{max-width:680px;}
 #lottery-float .lf-foot{display:flex;justify-content:center;padding-top:8px;border-top:1px solid rgba(201,162,75,.22);margin-top:4px;}
 #attr-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%) scale(.96);width:min(360px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:var(--panel-grad);border:1px solid #6D6354;border-radius:10px;box-shadow:0 14px 38px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.07);   /* 浮层外发光+顶部内高光 */z-index:81;padding:8px;opacity:0;visibility:hidden;transition:opacity .22s ease, transform .22s ease, visibility .22s;pointer-events:none;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#cfc6b8;}
 #attr-float.open{opacity:1;visibility:visible;transform:translateX(-50%) scale(1);pointer-events:auto;}
-#attr-float .af-head{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 8px;border-bottom:1px solid #3a352f;font-size:14px;letter-spacing:2px;color:#C9A24B;}
-#attr-float .af-x{cursor:pointer;font-size:18px;line-height:1;color:#cfc6b8;padding:0 2px;background:transparent;border:none;}
+#attr-float .af-head{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 8px;border-bottom:1px solid #3a352f;font-size:14px;letter-spacing:2px;color:#FFFFFF;}
+#attr-float .af-x{cursor:pointer;font-size:18px;line-height:1;color:#FFFFFF;padding:0 2px;background:transparent;border:none;}
 .af-body{padding:10px 2px 2px;}
 #attr-float .af-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 10px;margin-bottom:8px;}
 #attr-float .af-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;}   /* 与属性页一致：每行两列 */
 #attr-float .af-grid2 .af-full{grid-column:1/-1;}   /* 生命值/战力各占整行 */
 #attr-float .af-cell{display:flex;justify-content:space-between;font-size:12px;line-height:18px;}
 #attr-float .af-cell b{font-weight:400;color:#C9A24B;letter-spacing:1px;}
-#attr-float .af-cell span{color:#f2ede4;font-weight:300;}
+#attr-float .af-cell span{color:#FFFFFF;font-weight:400;}
 #attr-float .af-div{height:1px;background:#3a352f;margin:8px 0;}
 #attr-float .af-row{display:flex;justify-content:space-between;font-size:12px;line-height:22px;}
 #attr-float .af-row b{font-weight:400;color:#C9A24B;letter-spacing:1px;}
@@ -143,7 +143,7 @@ body.show-god .stage{max-width:680px;}
 #attr-float .af-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
 #attr-float .af-idmain{flex:1;min-width:0;}
 #attr-float .af-name{font-size:17px;color:#FFFFFF;font-weight:700;letter-spacing:2px;}
-#attr-float .af-lvtier{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;color:#a89d88;letter-spacing:1px;}
+#attr-float .af-lvtier{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;color:#FFFFFF;letter-spacing:1px;}
 #attr-float .af-tier{color:#B08CFF;text-shadow:0 0 9px rgba(150,90,255,.55);font-weight:700;letter-spacing:1px;}
 #attr-float .af-powercard{flex:none;text-align:center;background:linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #C9A24B;border-radius:9px;padding:6px 11px;box-shadow:0 0 12px rgba(201,162,75,.22),inset 0 1px 0 rgba(255,255,255,.12);}
 #attr-float .af-powercard b{display:block;font-size:9px;color:#C9A24B;letter-spacing:3px;font-weight:500;margin-bottom:2px;}
@@ -650,8 +650,8 @@ body.show-god .stage{max-width:680px;}
 .sys-ok{width:100%;max-width:220px;margin:6px auto 2px;height:34px;font-size:15px;color:#FFFFFF;letter-spacing:4px;}
 .rate-line{display:flex;justify-content:space-between;align-items:baseline;padding:3px 2px;border-bottom:1px solid rgba(109,99,84,.1);}
 .rate-line:last-child{border-bottom:none;}
-.rate-line .rl{font-size:12px;color:#cfc4a8;}
-.rate-line b{font-size:14px;color:#C9A24B;font-weight:500;font-variant-numeric:tabular-nums;}
+.rate-line .rl{font-size:12px;color:#FFFFFF;}
+.rate-line b{font-size:14px;color:#FFFFFF;font-weight:500;font-variant-numeric:tabular-nums;}
 .sys-strip{display:flex;gap:7px;overflow-x:auto;padding:2px 1px 4px;-webkit-overflow-scrolling:touch;}
 .sys-strip .pick{flex:0 0 auto;width:46px;height:46px;}
 /* 选择面板内的小凹槽 */
@@ -935,13 +935,13 @@ body.show-god .stage{max-width:680px;}
 #view-enhance .rate-sec{padding:7px 0;}   /* 强化页成功率/金币 与上方凹槽区同宽居中 */
 #view-enhance .rate-sec .rate-info{width:278px;margin:0 auto;}   /* 固定宽度 居中，对齐 6 凹槽区宽(278px) */
 /* 成功率：迁移老系统 rate-info / total-rate */
-.rate-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#aaa;padding:2px 0;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.1);}
+.rate-info{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#FFFFFF;padding:2px 0;margin-bottom:4px;border-bottom:1px solid rgba(255,255,255,.1);}
 .rate-info:last-child{border-bottom:none;margin-bottom:0;}
 #view-refine .rate-info{min-height:22px;}
-.rate-info b{color:#ffd700;font-weight:bold;font-variant-numeric:tabular-nums;}
+.rate-info b{color:#FFFFFF;font-weight:bold;font-variant-numeric:tabular-nums;}
 .rate-info.total{background:rgba(255,215,0,.1);padding:6px;border-radius:4px;margin-top:3px;border-bottom:none;}
-.rate-info.total span{color:#ffd700;font-weight:bold;}
-.rate-info.total b{color:#ffd700;}
+.rate-info.total span{color:#FFFFFF;font-weight:bold;}
+.rate-info.total b{color:#FFFFFF;}
 /* 操作按钮：与首页按钮同一风格（深色渐变 + 金色细内框），宽度自适应不撑满整行 */
 .gem-ok{display:flex;align-items:center;justify-content:center;margin:10px auto 0;height:32px;padding:0 26px;font-size:15px;letter-spacing:4px;}
 .gem-ok:active{transform:translateY(1px);background:linear-gradient(180deg,#141311,#0c0b0a);box-shadow:inset 0 2px 5px rgba(0,0,0,.7);}
@@ -1253,8 +1253,8 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;
   text-shadow:0 1px 2px rgba(0,0,0,.95);letter-spacing:.2px;pointer-events:none;line-height:1.2;}
 .wseg .wprob{font-size:9px;opacity:.95;color:#ffe9b0;}
-.lottery-cost{margin-top:2px;font-size:13px;color:#d9d2c4;}
-.lottery-wallet{display:flex;justify-content:center;align-items:center;gap:6px;margin:6px auto 0;width:min(352px,86vw);padding:4px 0;font-size:13px;color:#d9d2c4;letter-spacing:1px;border-top:1px solid rgba(214,177,110,.18);border-bottom:1px solid rgba(214,177,110,.18);background:linear-gradient(180deg,rgba(48,42,32,.4),rgba(28,24,20,.4));}
+.lottery-cost{margin-top:2px;font-size:13px;color:#FFFFFF;}
+.lottery-wallet{display:flex;justify-content:center;align-items:center;gap:6px;margin:6px auto 0;width:min(352px,86vw);padding:4px 0;font-size:13px;color:#FFFFFF;letter-spacing:1px;border-top:1px solid rgba(214,177,110,.18);border-bottom:1px solid rgba(214,177,110,.18);background:linear-gradient(180deg,rgba(48,42,32,.4),rgba(28,24,20,.4));}
 .lottery-wallet b{color:#E8CB74;font-weight:700;font-size:16px;text-shadow:0 0 12px rgba(232,203,116,.5);}
 .recharge-input{width:78%;padding:9px 12px;margin:10px auto 4px;font-size:16px;color:#FFFFFF;background:#161614;border:1px solid #6C6253;border-radius:7px;outline:none;text-align:center;display:block;box-sizing:border-box;}
 .lottery-x10{display:flex;justify-content:center;gap:8px;margin-top:4px;}
@@ -1372,7 +1372,8 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .forge-body{position:relative;overflow-y:auto;border-radius:9px;}
 .forge-inline{margin:0 auto;}
 .wings-pane{min-height:300px;display:flex;align-items:center;justify-content:center;color:#C9B68A;font-size:15px;letter-spacing:2px;border:1px solid rgba(201,162,75,.22);border-radius:10px;background:linear-gradient(180deg,rgba(201,162,75,.05),transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
-#view-arena{width:100%;max-height:calc(100vh - env(safe-area-inset-top,0px) - 76px);overflow-y:auto;box-sizing:border-box;}   /* 计入顶部安全区，避免被状态栏遮挡 */
+#view-arena{width:100%;box-sizing:border-box;}   /* 竞技页：顶部固定，内容区内部滚动 */
+#view-arena .arena-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 104px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:56px;}   /* 顶部标题条+快捷导航固定，内容区可上下滚动（同成就系统） */
 #view-achievement{width:100%;box-sizing:border-box;}   /* 成就页：顶部固定，内容区内部滚动 */
 #view-achievement .ach-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 104px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:56px;}   /* 顶部标题条+快捷导航固定，内容区可上下滚动（同属性页效果） */
 .arena-body{padding:8px 10px;}
@@ -1395,11 +1396,11 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .arena-id .char-tier{font-size:13px;font-weight:800;margin-left:0;opacity:.96;color:#A56BFF;background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;text-shadow:none;}   /* 竞技阶位名：传说段位紫，纯净净值 */
 .arena-rn{font-size:13px;color:#D6C07A;font-weight:800;letter-spacing:1px;text-align:center;text-shadow:0 0 8px rgba(214,192,122,.4);opacity:.96;}
 .arena-meta{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0 9px;}
-.arena-meta span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px 5px;border-radius:8px;color:#a29988;background:linear-gradient(180deg,#2b241c,#1e1813);border:1px solid rgba(201,162,75,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -5px 8px rgba(0,0,0,.5);}
-.arena-meta span:first-child b{color:#F6E4A8;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;text-shadow:0 0 6px rgba(246,228,168,.3);}
-.arena-meta span:nth-child(2) b,.arena-meta span:nth-child(3) b{color:#D8C9A0;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;}
+.arena-meta span{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px 5px;border-radius:8px;color:#FFFFFF;background:linear-gradient(180deg,#2b241c,#1e1813);border:1px solid rgba(201,162,75,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -5px 8px rgba(0,0,0,.5);}
+.arena-meta span:first-child b{color:#FFFFFF;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;}
+.arena-meta span:nth-child(2) b,.arena-meta span:nth-child(3) b{color:#FFFFFF;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;}
 .arena-meta span:nth-child(4){border-color:rgba(224,183,96,.55);background:linear-gradient(180deg,#3a2f1e,#262014);}
-.arena-meta span:nth-child(4) b{color:#FFDA8C;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;text-shadow:0 0 10px rgba(255,214,110,.45);}
+.arena-meta span:nth-child(4) b{color:#FFFFFF;font-weight:800;font-size:15px;font-variant-numeric:tabular-nums;}
 .arena-bar{height:9px;background:#12100d;border-radius:5px;overflow:hidden;border:1px solid rgba(214,173,90,.32);box-shadow:inset 0 2px 4px rgba(0,0,0,.75);}
 .arena-bar i{display:block;height:100%;width:0;background:linear-gradient(180deg,#ffeeba,#e8b95a 55%,#c8933a);box-shadow:0 0 9px rgba(240,190,100,.65);}
 .arena-sec{background:linear-gradient(180deg,#221d19,#1a1613);border:1px solid rgba(201,162,75,.26);border-radius:9px;padding:8px 10px;margin-bottom:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
@@ -1446,7 +1447,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .ar-item .t{color:#FFFFFF;}
 .ar-item.done{opacity:.55;}
 .ar-item .bt{flex:none;padding:0 10px;height:24px;border-radius:5px;font-size:11px;background:linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #C9A24B;color:#D6C07A;cursor:pointer;}
-.arena-log{background:linear-gradient(180deg,#221d19,#191512);border:1px solid rgba(201,162,75,.26);border-radius:8px;padding:8px 10px;height:120px;overflow-y:auto;font-size:11px;color:#8a8375;line-height:1.7;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
+.arena-log{background:linear-gradient(180deg,#221d19,#191512);border:1px solid rgba(201,162,75,.26);border-radius:8px;padding:8px 10px;height:120px;overflow-y:auto;font-size:11px;color:#FFFFFF;line-height:1.7;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
 .arena-log::-webkit-scrollbar{width:4px;}
 .arena-log .t{color:#D6C07A;}
 .arena-log .g{color:#D6B56A;}
@@ -1496,6 +1497,31 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .ach-note{font-size:10px;color:#6f6655;margin-top:4px;padding-left:8px;border-left:1px solid #4a4236;font-style:italic;}
 .ach-unlocked{color:#ffd34d;font-weight:900;font-size:16px;letter-spacing:1px;text-shadow:0 0 10px rgba(255,180,40,.9),0 0 26px rgba(255,170,30,.55);}
 .ach-toggle{margin-left:auto;flex:none;font-size:11px;padding:3px 10px;border-radius:6px;border:1px solid #5a4d33;background:linear-gradient(180deg,#2c2518,#1c1710);color:#e8cf9a;cursor:pointer;} .ach-toggle.on{color:#ffd34d;border-color:#8a7438;background:linear-gradient(180deg,#372c17,#241b0d);} .ach-toggle:active{transform:scale(.96);}
+
+
+/* ===== 世界顶级 APP 增强层：排印 / 动效生命力 / 场景氛围 / 首屏冲击 ===== */
+/* 1 排印：顶栏标题金色微光 + 字距 */
+.topbar h1{letter-spacing:4px;color:#FFFFFF;text-shadow:0 1px 2px rgba(0,0,0,.8),0 0 12px rgba(255,255,255,.18);}
+/* 2 动效：呼吸光效（box-shadow，不闪内容） */
+@keyframes glowBreathe{0%,100%{text-shadow:0 1px 2px rgba(0,0,0,.8),0 0 8px rgba(232,203,116,.28);}50%{text-shadow:0 1px 2px rgba(0,0,0,.8),0 0 18px rgba(232,203,116,.6);}}
+@keyframes heroGlow{0%,100%{box-shadow:0 5px 16px rgba(0,0,0,.14),0 0 0 rgba(201,162,75,0);}50%{box-shadow:0 5px 20px rgba(0,0,0,.16),0 0 24px rgba(201,162,75,.30);}}
+@keyframes sceneGlow{0%,100%{box-shadow:0 0 0 rgba(201,162,75,0);}50%{box-shadow:0 0 30px rgba(201,162,75,.20);}}
+@keyframes icoGlow{0%,100%{box-shadow:inset 0 1px 0 #fff,0 0 6px rgba(201,162,75,.2);}50%{box-shadow:inset 0 1px 0 #fff,0 0 16px rgba(201,162,75,.45);}}
+/* 战斗场景角色战力、属性浮层战力的暖金呼吸 */
+.tr-rolecard-power,.af-powercard span{animation:glowBreathe 3.4s ease-in-out infinite;}
+/* 3 首屏冲击：首页 hero 金色辉光呼吸 + 卡片 hover 上浮 + 图标呼吸 */
+#view-home .home-hero{animation:heroGlow 4s ease-in-out infinite;}
+.home-card{transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s;}
+.home-card .home-ico{animation:icoGlow 3.8s ease-in-out infinite;}
+@media(hover:hover){
+  .home-card:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(0,0,0,.2),0 0 20px rgba(201,162,75,.24);}
+  .home-card:hover .home-ico{box-shadow:inset 0 1px 0 #fff,0 0 18px rgba(201,162,75,.5);background:#fbf4e2;}
+}
+/* 4 场景氛围：战斗场景光晕呼吸（副本/试炼/竞技统一），血条数值不闪 */
+#view-treasure .tr-scene,#view-trial .tr-scene,#view-arena .tr-scene{animation:sceneGlow 4.6s ease-in-out infinite;}
+.tr-scene .tr-bar-fill{transition:width .15s linear;}
+/* 5 全局 hover / 按压微反馈（统一缓动） */
+.btn,.forge-tab,.g-bag-btn,.arena-opp,.hub-card,.ach-toggle,.lottery-wallet{transition:transform .2s cubic-bezier(.22,1,.36,1),box-shadow .25s,border-color .25s;}
 
 .char-tier{display:inline-block;vertical-align:middle;margin-left:6px;font-weight:800;letter-spacing:1px;color:#A56BFF;background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;text-shadow:none;}   /* 阶位统一：传说段位紫，纯净净值 */
 </style>
@@ -3396,7 +3422,7 @@ function randomRollOrigin(){  /* 先随机先天运势，再按其分档生成�
 function recalcCharacter(){
   /* 基础：原始+升级分配（6 大属性） */
   var base={力量:10,敏捷:10,体质:10,精神:10,智力:10,幸运:10};
-  var gr=CHARACTER.growth||{attr:1000,hp:100,pdef:1}; var lvB=10+((CHARACTER.info.level||1)-1)*gr.attr;   /* 每升1级，6项基础属性各+先天运势成长 */
+  var gr=CHARACTER.growth||{attr:1000,hp:100,pdef:1}; var lvB=((CHARACTER.info.level||1)-1)*gr.attr;   /* 每升1级，6项基础属性各+先天运势成长；1级=0，即初始=随机原始属性 */
   var og=CHARACTER.origin||{}; base={力量:lvB+PERM.力量+(og.力量||0),敏捷:lvB+PERM.敏捷+(og.敏捷||0),体质:lvB+PERM.体质+(og.体质||0),精神:lvB+PERM.精神+(og.精神||0),智力:lvB+PERM.智力+(og.智力||0),幸运:lvB+PERM.幸运+(og.幸运||0)};   /* 含永久增加属性+随机原始属性 */
   /* 附加：装备（含宝石加成）+ 天神编队 */
   var bonus={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0};
