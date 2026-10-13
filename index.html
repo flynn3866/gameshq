@@ -6219,7 +6219,7 @@ function trRollDrop(){
     if(TR.isBoss){
       /* BOSS：6级随机50%、属性攻防10%、5级专注50%、6级专注20%（同类不同时） */
       if(antiRoll(0.50) && pool6.length){ out.push(mkLoot(pool6[Math.floor(Math.random()*pool6.length)])); }
-      if(antiRoll(0.10)){ var ag=[ITEM_BLUEPRINTS.earthBlessingGem,ITEM_BLUEPRINTS.fireBlessingGem,ITEM_BLUEPRINTS.waterBlessingGem,ITEM_BLUEPRINTS.windBlessingGem]; out.push(mkLoot(ag[Math.floor(Math.random()*ag.length)])); }
+      if(luckRoll(0.02)){ var ag=[ITEM_BLUEPRINTS.earthBlessingGem,ITEM_BLUEPRINTS.fireBlessingGem,ITEM_BLUEPRINTS.waterBlessingGem,ITEM_BLUEPRINTS.windBlessingGem]; out.push(mkLoot(ag[Math.floor(Math.random()*ag.length)])); }   /* 属性攻防（祝福宝石）传说级：BOSS 2%×先天运势 */
       if(antiRoll(0.50) && focus5.length){ out.push(mkLoot(focus5[Math.floor(Math.random()*focus5.length)])); }
       if(antiRoll(0.20) && focus6.length){ out.push(mkLoot(focus6[Math.floor(Math.random()*focus6.length)])); }   /* 5级与6级专注独立，可同时掉 */
       if(luckRoll(0.10)){ var chh=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); out.push(chh); }   /* 混沌神石：BOSS 10%，每次一颗 */
@@ -6510,34 +6510,31 @@ function renderTrStats(){
   var hs=p.querySelectorAll('.tr-br-head');
   for(var bi=0;bi<hs.length;bi++){ (function(hd){ hd.addEventListener('click',function(){ var f=hd.closest('.tr-br-fold'); if(f) f.classList.toggle('open'); }); })(hs[bi]); }
 }
-function trBossGuarantee(){   /* Boss 保底：必掉金币 + 保底稀有一件（按副本保底池随机） */
+function trBossGuarantee(){   /* Boss 保底：金币必掉 + 非传说保底必掉；传说级物品改为按先天运势加权的概率掉落（命中才掉，不再必掉） */
   var d=DUNGEONS[TR.dungeon];
-  if(d.mode==='phantom'){   /* 神之幻境：BOSS 保底传说/史诗奥格顿（首领1件、神级2件由主逻辑控制） */
-    var pool=[ function(){ var as=[ITEM_BLUEPRINTS.legendOgdenHelmet,ITEM_BLUEPRINTS.legendOgdenChest,ITEM_BLUEPRINTS.legendOgdenGloves,ITEM_BLUEPRINTS.legendOgdenLeggings,ITEM_BLUEPRINTS.legendOgdenBoots]; return mkLoot(as[Math.floor(Math.random()*as.length)]); },
-               function(){ var es=[ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots]; return mkLoot(es[Math.floor(Math.random()*es.length)]); } ];
-    return pool[Math.floor(Math.random()*pool.length)]();
+  var _oc=location.hash.indexOf('#treasure')>=0 && document.visibilityState==='visible';   /* 传说级概率掉落仅在线打怪生效 */
+  if(d.mode==='phantom'){   /* 神之幻境：传说奥格顿已由 trRollDrop 1%×先天运势概率掉落；这里保底史诗奥格顿 */
+    var es=[ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots];
+    return mkLoot(es[Math.floor(Math.random()*es.length)]);
   }
   if(d.mode==='bound'){
-    /* 雕俱：绑定金币必掉 + 保底池 */
+    /* 雕俱：绑定金币必掉 + 神力碎片保底；混沌神石改概率(10%×先天运势，离线不掉) */
     var bg=50000+Math.floor(Math.random()*50000); CURRENCY.bound+=bg; TR.stats.gold+=bg; dailyAddGold(TR.dungeon,bg); renderCurrency(); trDropAnim(null); trLog('雕俱 Boss 掉落 <b class="lg-gold">绑定金币 '+bg.toLocaleString()+'</b>'); TR.bossLoot.push('绑定金币 '+bg.toLocaleString());
-    var pool=[ function(){ var f=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); f.count=3+Math.floor(Math.random()*8); return f; },
-               function(){ var c=mkLoot(ITEM_BLUEPRINTS.godCrystal); c.count=1; return c; } ];
-    return pool[Math.floor(Math.random()*pool.length)]();
+    if(_oc && luckRoll(0.10)){ var c=mkLoot(ITEM_BLUEPRINTS.godCrystal); c.count=1; return c; }   /* 混沌神石：10%×先天运势 */
+    var f=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); f.count=3+Math.floor(Math.random()*8); return f;   /* 神力碎片保底必掉 */
   }
   /* 非绑定：必掉金币 100万~500万 */
   var g2=1000000+Math.floor(Math.random()*4000000); CURRENCY.gold+=g2; TR.stats.gold+=g2; dailyAddGold(TR.dungeon,g2); renderCurrency(); trDropAnim(null); trLog('Boss 掉落 <b class="lg-gold">金币 '+g2.toLocaleString()+'</b>'); TR.bossLoot.push('金币 '+g2.toLocaleString());
-  /* 各副本保底池（必掉1件） */
+  /* 各副本保底池（非传说必掉；传说级改概率） */
   var pools=[
-    function(){ var c=mkLoot(ITEM_BLUEPRINTS.godCrystal); c.count=1; return c; },   /* 水龙 */
-    function(){ var g=ITEM_BLUEPRINTS.statGems; var six=g.filter(function(x){ return x.level===6&&x.name.indexOf('专注')<0; }); var arr=[six.length?function(){return mkLoot(six[Math.floor(Math.random()*six.length)]);}:null, function(){ return mkLoot(g[g.length-1]); }].filter(Boolean); return arr[Math.floor(Math.random()*arr.length)](); },   /* 无限深渊：6级宝石/混沌神石 */
+    function(){ if(_oc && luckRoll(0.10)){ var c=mkLoot(ITEM_BLUEPRINTS.godCrystal); c.count=1; return c; } return null; },   /* 水龙：混沌神石 10%×先天运势（不再必掉） */
+    function(){ var g=ITEM_BLUEPRINTS.statGems; var six=g.filter(function(x){ return x.level===6&&x.name.indexOf('专注')<0; }); return six.length?mkLoot(six[Math.floor(Math.random()*six.length)]):null; },   /* 无限深渊：6级宝石保底必掉（混沌神石已由 trRollDrop 10%×运势概率掉落） */
     function(){ var rs=[function(){var f=mkLoot(ITEM_BLUEPRINTS.runeFragment);f.count=1;return f;}, function(){var f=mkLoot(ITEM_BLUEPRINTS.sealFragment);f.count=1;return f;}, function(){var g=mkLoot([ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune][Math.floor(Math.random()*2)]);g.count=1;return g;}]; return rs[Math.floor(Math.random()*rs.length)](); },   /* 克里普特 */
     function(){ var js=[ITEM_BLUEPRINTS.dominationNecklace,ITEM_BLUEPRINTS.dominationRing,ITEM_BLUEPRINTS.dominationBracelet]; return mkLoot(js[Math.floor(Math.random()*js.length)]); },   /* 奥利森：随机首饰 */
     function(){ var as=[ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots]; return mkLoot(as[Math.floor(Math.random()*as.length)]); }   /* 沙漠：随机史诗防具 */
   ];
   var pi=TR.dungeon-1;   /* dungeon 1~5 -> pools 0~4 */
-  var _gb=(pi>=0&&pi<pools.length)?pools[pi]():null;
-  if(_gb && itemQuality(_gb)==='purple' && (location.hash.indexOf('#treasure')<0||document.visibilityState!=='visible')) return null;   /* 离线挂机：传说保底不给 */
-  return _gb;
+  return (pi>=0&&pi<pools.length)?pools[pi]():null;
 }
 function pfDayToday(){ return new Date().toLocaleDateString('en-CA'); }
 function getPfDay(){ try{ var j=JSON.parse(localStorage.getItem('shenqi_daily_pf')); if(j&&j.date===pfDayToday()) return j.n||0; }catch(e){} return 0; }
@@ -6812,7 +6809,7 @@ function initTreasureUI(){
   var trDropsInfo=[
     '绑定金币（1万~10万，80%~30%金额越大概率越低）、神力碎片（1-8个，10%~60%）、神力结晶（10%）、伊泰安项链（随机稀有掉落，仅在线）',
     '武器·魔翼（BOSS 10%）、金币（0.1%概率1亿）',
-    '宝石：小怪5级10%/6级1%（不同时）；BOSS 6级50%、属性攻防10%、5级专注50%、6级专注20%（可同时）、混沌神石10%',
+    '宝石：小怪5级10%/6级1%（不同时）；BOSS 6级50%、属性攻防2%、5级专注50%、6级专注20%（可同时）、混沌神石10%',
     '小怪：神符碎片5%、神印碎片1%；BOSS：神符碎片80%、神印碎片50%、神符牌50%、神印牌5%',
     '首饰（BOSS 30%、小怪0.001%）、BOSS镶嵌/拆卸锤20%、海伦宝石（小怪0.1%）',
     '防具（小怪0.001%、BOSS 50%）、海伦宝石（小怪0.1%、BOSS 20%）',
