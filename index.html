@@ -1042,7 +1042,7 @@ body.show-god .stage{max-width:680px;}
 .tr-rolecard-nl{display:flex;align-items:baseline;gap:4px;}
 .tr-rolecard-lv{font-size:9px;color:#C9A24B;font-weight:600;letter-spacing:0;text-shadow:0 1px 2px #000;}
 .tr-rolecard-l1 img{width:30px;height:30px;border-radius:7px;border:1px solid #C9A24B;object-fit:cover;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 8px rgba(201,162,75,.38);}   /* 头像：方形圆角+金色微光，与属性浮层统一 */
-.tr-rolecard-tier{display:block;font-size:9px;font-weight:700;letter-spacing:1px;color:#B08CFF;text-shadow:0 0 8px rgba(150,90,255,.6);}   /* 阶位：神级Boss淡紫光晕 */
+.tr-rolecard-tier{font-size:11px;font-weight:800;letter-spacing:1px;color:#D3B6FF;text-shadow:0 0 8px rgba(170,120,255,.9),0 0 2px rgba(255,255,255,.45),0 1px 2px #000;-webkit-text-stroke:.5px #7a5ad0;}   /* 阶位：高亮紫+双层辉光+细描边，大气醒目（与名字等级同行的紫光晕） */
 .tr-rolecard-hp{width:100%;margin-top:1px;}
 .tr-rolecard-hp .tr-bar{position:relative;height:12px;width:100%;right:auto;left:auto;top:auto;bottom:auto;box-sizing:border-box;background:#0c0a08;z-index:auto;border:1px solid #3a342c;}   /* 重置场景血条继承，角色卡内血条 */
 .tr-rolecard-hp .tr-bar-txt{font-size:9px;}
@@ -1936,7 +1936,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div class="tr-battle">
         <div class="tr-scene" id="tr-scene">
           <div class="tr-rolecard" id="tr-rolecard">
-            <div class="tr-rolecard-l1"><img src="logos/头像.png" alt=""><div class="tr-rolecard-id"><div class="tr-rolecard-nl"><div class="tr-rolecard-name">谜团</div><span class="tr-rolecard-lv" id="tr-rolecard-lv"></span></div><div class="tr-rolecard-tier" id="tr-rolecard-tier"></div></div></div>
+            <div class="tr-rolecard-l1"><img src="logos/头像.png" alt=""><div class="tr-rolecard-id"><div class="tr-rolecard-nl"><div class="tr-rolecard-name">谜团</div><span class="tr-rolecard-lv" id="tr-rolecard-lv"></span><span class="tr-rolecard-tier" id="tr-rolecard-tier"></span></div></div></div>
             <div class="tr-rolecard-hp"><div class="tr-bar"><div class="tr-bar-fill ch" id="tr-rolecard-hp"></div><span class="tr-bar-txt" id="tr-rolecard-hpnum"></span></div></div>
             <div class="tr-rolecard-power" id="tr-rolecard-power"></div>
             <div class="tr-rolecard-elem" id="tr-rolecard-elem"></div>
@@ -1983,7 +1983,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
         <div class="tr-scene" id="tl-scene">
           <div class="tr-drop-layer" id="tl-drop-layer"></div>
           <div class="tr-rolecard">
-            <div class="tr-rolecard-l1"><img src="logos/头像.png" alt=""><div class="tr-rolecard-id"><div class="tr-rolecard-nl"><div class="tr-rolecard-name">谜团</div><span class="tr-rolecard-lv" id="tl-rolecard-lv"></span></div><div class="tr-rolecard-tier" id="tl-rolecard-tier"></div></div></div>
+            <div class="tr-rolecard-l1"><img src="logos/头像.png" alt=""><div class="tr-rolecard-id"><div class="tr-rolecard-nl"><div class="tr-rolecard-name">谜团</div><span class="tr-rolecard-lv" id="tl-rolecard-lv"></span><span class="tr-rolecard-tier" id="tl-rolecard-tier"></span></div></div></div>
             <div class="tr-rolecard-hp"><div class="tr-bar"><div class="tr-bar-fill ch" id="tl-rolecard-hp"></div><span class="tr-bar-txt" id="tl-rolecard-hpnum"></span></div></div>
             <div class="tr-rolecard-power" id="tl-rolecard-power"></div>
             <div class="tr-rolecard-elem" id="tl-rolecard-elem"></div>
@@ -2048,7 +2048,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
         <div class="charge-overlay" id="charge-overlay"><div class="charge-fill" id="charge-fill"></div><span class="charge-txt" id="charge-num"></span></div>
         <div class="lottery-cost">每次抽奖消耗 <b>1亿</b> 金币 · 今日免费 <b id="lottery-free">3/3</b></div>
         <div class="lottery-wallet"><span>余 额</span><b id="lottery-wallet-gold">0</b></div>
-        <div class="lottery-x10"><button class="btn" id="lottery-x10">10 连抽（10 亿）</button><button class="btn" id="lottery-recharge">充值</button></div>
+        <div class="lottery-x10"><button class="btn" id="lottery-x10">10 连抽（10 亿）</button><button class="btn" id="lottery-recharge">发放100亿</button></div>
         <div class="lottery-log-wrap">
           <div class="ll-title">获 奖 记 录</div>
           <div class="lottery-log" id="lottery-log"></div>
@@ -5360,13 +5360,13 @@ function startFight(idx){
     setHp('p',ARENA.hpP,s.hp); setHp('o',ARENA.hpO,o.hp); applyCharTier();
   }
   arenaLog('向 <span class="t">'+o.n+'</span> 发起挑战');
-  ARENA.timer=setInterval(function(){ arenaStep(o,s,pInt,oInt); },60);
+  ARENA.timer=setInterval(function(){ arenaStep(o,s,pInt,oInt); },120);   /* 性能优化：战斗检查60ms->120ms，攻速判定由tP/tO累加决定，功能不变 */
 }
 function setHp(w,cur,max){ var el=$('#af-hp-'+w); if(!el) return; var b=el.querySelector('i'); b.style.width=Math.max(0,Math.round(cur/max*100))+'%'; var t=$('#af-hpt-'+w); if(t) t.textContent=fmtWan(Math.max(0,Math.round(cur)))+' / '+fmtWan(max); }
 function floatDmg(val,side,miss){ var f=document.getElementById('arena-fight'); if(!f) return; var crit=(''+val).indexOf('暴击')>=0, num=(''+val).replace('暴击 ',''); var d=document.createElement('div'); d.className='tr-float'+(crit?' crit':'')+(miss?' miss':''); if(crit){ d.innerHTML='<i class="tr-crit">CRIT</i>'+num; } else d.textContent=miss?'MISS':num; d.style.left=side==='hero'?'16%':'72%'; d.style.transform='translateX(-50%)'; f.appendChild(d); setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); },1000); }
 function arenaStep(o,s,pInt,oInt){
   if(!ARENA.fight){ if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.timer=null; } return; }
-  ARENA.tP+=60; ARENA.tO+=60;
+  ARENA.tP+=120; ARENA.tO+=120;   /* 与120ms周期同步，攻速判定不变 */
   if(ARENA.tP>=pInt && ARENA.fight){ ARENA.tP=0; if(!(ARENA.stunUntil&&Date.now()<ARENA.stunUntil)) playerHit(o,s); }   /* 被击晕则跳过 */
   if(ARENA.tO>=oInt && ARENA.fight){ ARENA.tO=0; oppHit(o,s); }
 }
@@ -5809,15 +5809,7 @@ function runLottery(charge){
   spinWheel(winIdx, win, spins, dur);
 }
 function rechargeGold(){
-  var mask=document.createElement('div'); mask.className='confirm-mask'; mask.id='confirm-mask';
-  mask.innerHTML='<div class="confirm-box"><div class="confirm-msg">充值非绑定金币</div><input id="recharge-input" class="recharge-input" type="text" maxlength="15" placeholder="请输入充值金额"><div class="confirm-actions"><button class="btn cbtn c-ok">确定</button><button class="btn cbtn c-no">取消</button></div></div>';
-  document.body.appendChild(mask);
-  var inp=mask.querySelector('#recharge-input');
-  if(inp){ inp.addEventListener('focus',function(){ window.__allowNativeScroll=true; }); inp.addEventListener('blur',function(){ window.__allowNativeScroll=false; }); }
-  mask.querySelector('.c-ok').onclick=function(){ var n=parseInt(inp.value,10); if(!n||n<=0){ toast('请输入有效金额'); return; } mask.remove(); CURRENCY.gold+=n; renderCurrency(); renderGem(); updateLotteryGold(); saveGame(); toast('已充值 '+n.toLocaleString()+' 金币'); };
-  mask.querySelector('.c-no').onclick=function(){ mask.remove(); };
-  mask.addEventListener('click',function(e){ if(e.target===mask) mask.remove(); });
-  setTimeout(function(){ inp.focus(); },60);
+  CURRENCY.gold+=10000000000; renderCurrency(); renderGem(); updateLotteryGold(); saveGame(); toast('发放 100 亿非绑定金币');   /* 点击直接发放100亿非绑定金币（不再弹输入框） */
 }
 function runLottery10(){
   if(lotteryBusy){ toast('轮盘转动中，请稍候…'); return; }
@@ -6169,11 +6161,13 @@ function ithDropNeck(){
   ITH_LEFT.yitaiNecklace--;
   var yin=mkLoot(ITEM_BLUEPRINTS.yitaiNecklace);
   addStackable(yin); trDropAnim(yin.img,itemQuality(yin)); trLog('掉落 <b class="lg-item">'+yin.name+'</b>');
+  TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; dailyAddLegend(TR.dungeon);   /* 传说掉落统计同步更新 */
+  toast('掉落传说级物品：'+yin.name);   /* 全局提示，切页/挂机掉落也可见 */
   if(TR.isBoss) TR.bossLoot.push(yin.name);
   triggerLegendFX();
 }
 function ithActive(){
-  return location.hash.indexOf('#treasure')>=0 && document.visibilityState==='visible' && TR.dungeon===0 && TR.hp>0 && TR.monHp>0 && ITH_LEFT.yitaiNecklace>0;
+  return TR.dungeon===0 && ITH_LEFT.yitaiNecklace>0;   /* 伊泰安掉落：只要在雕俱星座(挂机/切页/死亡/最小化均可)且有剩余即触发 */
 }
 function ithStart(){
   ithStop();
@@ -6184,7 +6178,7 @@ function ithStart(){
   },20000);
 }
 function ithStop(){ if(ITH_TIMER){ clearInterval(ITH_TIMER); ITH_TIMER=null; } }
-window.addEventListener('hashchange', function(){ if(location.hash.indexOf('#treasure')>=0){ ithStart(); renderQuick(); } else if(location.hash.indexOf('#trial')>=0 || location.hash.indexOf('#arena')>=0){ renderQuick(); } else ithStop(); });
+window.addEventListener('hashchange', function(){ if(location.hash.indexOf('#treasure')>=0){ ithStart(); renderQuick(); } else if(location.hash.indexOf('#trial')>=0 || location.hash.indexOf('#arena')>=0){ ithStop(); renderQuick(); } else { if(!(TR.auto && TR.dungeon===0 && ITH_LEFT.yitaiNecklace>0)) ithStop(); } });   /* 伊泰安掉落：进试炼/竞技停止；雕俱挂机切到其他页保留定时器继续掉落 */
 function luckRoll(p){ return Math.random() < p * lotteryInnate(); }   /* 传说级物品：掉落概率×先天运势（运势越高越易掉） */
 function antiRoll(p){ var k=1/(1+(lotteryInnate()-1)); return Math.random() < p*k; }   /* 非传说级物品：反向补偿（传说涨则非传说降，反之亦然，幅度温和） */
 function trRollDrop(){
@@ -6488,10 +6482,10 @@ function dailyAddRec(idx,rec){ if(!rec) return; var d=dailyGet(); dailyPer(idx,d
 function dailyAddLegend(idx){ var d=dailyGet(); dailyPer(idx,d).legend=(dailyPer(idx,d).legend||0)+1; dailySave(d); }
 function renderTrStats(){
   var d=dailyGet();
-  var tGold=0,tAttr=0,tBoss=0;
-  DUNGEONS.forEach(function(dd,i){ var p=d.per[i]||{gold:0,attr:0,rec:[]}; tGold+=p.gold; tAttr+=p.attr; tBoss+=p.rec.length; });
+  var tGold=0,tAttr=0,tLegend=0;
+  DUNGEONS.forEach(function(dd,i){ var p=d.per[i]||{gold:0,attr:0,rec:[]}; tGold+=p.gold; tAttr+=p.attr; tLegend+=p.legend||0; });
   var sum=document.getElementById('tr-ss-sum');
-  if(sum) sum.textContent='今日 BOSS '+tBoss+' · 全属性 +'+fmtBig(tAttr)+' · 金币 '+fmtBig(tGold);
+  if(sum) sum.textContent='今日 传说 '+tLegend+' · 全属性 +'+fmtBig(tAttr)+' · 金币 '+fmtBig(tGold);   /* 顶部统计条：BOSS 计数改为传说掉落计数 */
   var p=document.getElementById('tr-stats-panel'); if(!p) return;
   var openSet={};
   var oldFolds=p.querySelectorAll('.tr-br-fold.open');
@@ -6584,8 +6578,8 @@ function trKillMon(){
   }
   if(TR.isBoss){ var _bn=TR.bossType==='god'?2:1; for(var _bi=0;_bi<_bn;_bi++){ var gg=trBossGuarantee(); if(gg){ addStackable(gg); got=true; trDropAnim(gg.img,itemQuality(gg)); trLog('Boss 保底 <b class="lg-item">'+gg.name+(gg.count>1?'×'+gg.count:'')+'</b>'); if(itemQuality(gg)==='purple'){ triggerLegendFX(); TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; dailyAddLegend(TR.dungeon); if(_br) _br.items.push(gg.name+(gg.count>1?'×'+gg.count:'')); } TR.bossLoot.push(gg.name+(gg.count>1?'×'+gg.count:'')); } } got=true; }   /* Boss 必掉金币+保底（神级2件） */
   if(TR.isBoss){ var _pr=bossPermReward(); if(_pr>0){ addPerm(_pr,0); trLog('<b style="color:#c86bff">击败 BOSS：全属性 +'+_pr+'（永久）</b>'); toast('全属性+'+_pr+' 永久'); triggerLegendFX(); } if(_br) _br.attr=_pr; dailyAddAttr(TR.dungeon,_pr); }   /* 击杀BOSS保底：永久全属性（按阶位与等级） */
-  /* 寂灭之息药剂：神之幻境小怪 0.00001%、BOSS 0.1%，仅在线打怪，无全服限量 */
-  if(isPhantomDungeon(TR.dungeon) && location.hash.indexOf('#treasure')>=0 && document.visibilityState==='visible' && Math.random()<(TR.isBoss?0.001:0.0000001)){ var jmm=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); jmm.count=1; addStackable(jmm); got=true; trDropAnim(jmm.img,'purple'); trLog('掉落 <b class="lg-item">'+jmm.name+'</b>'); triggerLegendFX(); }   /* 寂灭之息药剂：仅神之幻境小怪0.00001%、BOSS0.1%（在线） */
+  /* 寂灭之息药剂：神之幻境小怪 0.00001%、BOSS 0.1%，打怪/挂机均可掉落（不再要求在线可见），无全服限量 */
+  if(isPhantomDungeon(TR.dungeon) && Math.random()<(TR.isBoss?0.001:0.0000001)){ var jmm=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); jmm.count=1; addStackable(jmm); got=true; trDropAnim(jmm.img,'purple'); trLog('掉落 <b class="lg-item">'+jmm.name+'</b>'); TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; dailyAddLegend(TR.dungeon);   /* 传说掉落统计同步更新 */ triggerLegendFX(); }   /* 寂灭之息药剂：神之幻境小怪0.00001%、BOSS0.1%，打怪/挂机均触发 */
   if(!TR.isBoss && Math.random()<0.005){ trHiddenEvent(); }   /* 0.5%隐藏事件：神秘宝箱门 / 隐藏BOSS */
   if(!got) trLog('没有收获');
   trGainExp((DUNGEONS[TR.dungeon].monLv||1), TR.isBoss?d.bossAtk:d.atk, TR.isBoss);   /* 经验按怪物固定等级 */
@@ -6810,14 +6804,14 @@ function trSetAuto(on){
 }
 function initTreasureUI(){
   var trDropsInfo=[
-    '绑定金币（1万~10万，80%~30%金额越大概率越低）、神力碎片（1-8个，10%~60%）、神力结晶（10%）、伊泰安项链（随机稀有掉落，仅在线）',
+    '绑定金币（1万~10万，80%~30%金额越大概率越低）、神力碎片（1-8个，10%~60%）、神力结晶（10%）、伊泰安项链（全服唯一：每20秒0.5% 或 任意怪死亡0.1%，打怪/挂机均可）',
     '武器·魔翼（BOSS 10%）、金币（0.1%概率1亿）',
     '宝石：小怪5级10%/6级1%（不同时）；BOSS 6级50%、属性攻防2%、5级专注50%、6级专注20%（可同时）、混沌神石10%',
     '小怪：神符碎片5%、神印碎片1%；BOSS：神符碎片80%、神印碎片50%、神符牌50%、神印牌5%',
     '首饰（BOSS 30%、小怪0.001%）、BOSS镶嵌/拆卸锤20%、海伦宝石（小怪0.1%）',
     '防具（小怪0.001%、BOSS 50%）、海伦宝石（小怪0.1%、BOSS 20%）',
     '升级专用：怪物79~83级、经验全场最高（无BOSS，海量升级经验）',
-    'BOSS：金币1亿100%（神级10亿）、传说奥格顿套装1%、寂灭之息药剂（小怪0.00001%、BOSS 0.1%，仅在线）'
+    'BOSS：金币1亿100%（神级10亿）、传说奥格顿套装1%、寂灭之息药剂（小怪0.00001%、BOSS 0.1%，打怪/挂机均可）'
   ];
   var ds=document.getElementById('tr-dungeons');
   if(ds) ds.addEventListener('click',function(e){ var t=e.target.closest('.tr-dun'); if(!t) return; TR.dungeon=+t.getAttribute('data-i'); TR.kill=0; TR.isBoss=false; TR.hp=TR.maxHp; ithStart(); trPhantomTimer(); trSpawnMon(); renderTreasure(); trLog('进入 <b>'+DUNGEONS[TR.dungeon].name+'</b>，可掉落：'+trDropsInfo[TR.dungeon]); });
@@ -6928,7 +6922,7 @@ var SAVE_KEY='shenqi_save_v1';
 var POTION_UNTIL=0;   /* 神圣药水生效截止时间戳（0=未生效） */
 var SUN_UNTIL=0;   /* 太阳生效截止时间戳：打怪经验翻倍12小时（0=未生效） */
 var MEGA_SUN_UNTIL=0;   /* 超级大太阳生效截止时间戳：打怪经验5倍2小时（0=未生效） */
-setInterval(function(){ if(window.location.hash==='#treasure' && Date.now()<POTION_UNTIL) renderBuff(); },1000);
+setInterval(function(){ if(window.location.hash==='#treasure' && Date.now()<POTION_UNTIL) renderBuff(); },2000);   /* 性能优化：药水倒计时1s->2s刷新，返回页面会经renderChar刷新，功能不变 */
 var QUICK=[null,null,null,null];   /* 战斗快捷道具栏（存药水name，最多4格），随存档保存 */
 /* ===== 属性装备栏：攻/防各4个预设凹槽（水火风土），点击凹槽一键切换穿戴 ===== */
 var ELEM_SLOT={atk:[null,null,null,null], def:[null,null,null,null]};   /* 次序：水/火/风/土 */
