@@ -131,27 +131,31 @@ body.show-god .stage{max-width:680px;}
 #attr-float .af-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 10px;margin-bottom:8px;}
 #attr-float .af-grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;}   /* 与属性页一致：每行两列 */
 #attr-float .af-grid2 .af-full{grid-column:1/-1;}   /* 生命值/战力各占整行 */
+#attr-float .af-cell.af-full span{font-size:15px;font-weight:700;color:#FFD98A;}
 #attr-float .af-cell{display:flex;justify-content:space-between;font-size:12px;line-height:18px;}
 #attr-float .af-cell b{font-weight:400;color:#C9A24B;letter-spacing:1px;}
 #attr-float .af-cell span{color:#FFFFFF;font-weight:400;}
-#attr-float .af-div{height:1px;background:#3a352f;margin:8px 0;}
+#attr-float .af-div{height:1px;background:#3a352f;margin:11px 0;}
 #attr-float .af-row{display:flex;justify-content:space-between;font-size:12px;line-height:22px;}
 #attr-float .af-row b{font-weight:400;color:#C9A24B;letter-spacing:1px;}
 #attr-float .af-row span{color:#f2ede4;font-weight:300;}
-#attr-float .af-idcard{display:flex;align-items:center;gap:10px;padding:8px 4px 12px;margin-bottom:6px;border-bottom:1px solid rgba(201,162,75,.18);}
+#attr-float .af-idcard{display:flex;align-items:center;gap:10px;padding:10px 4px 15px;margin-bottom:12px;border-bottom:1px solid rgba(201,162,75,.22);background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0) 70%);}
 #attr-float .af-avatar{width:52px;height:52px;flex:none;border-radius:12px;border:1px solid #C9A24B;background:linear-gradient(180deg,#3a2c12,#241b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 14px rgba(201,162,75,.38);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+#attr-float .af-avatar.af-crown{border-color:#FF7AD8;box-shadow:0 0 0 2px rgba(255,94,200,.55),0 0 22px rgba(255,94,200,.65),inset 0 1px 0 rgba(255,255,255,.2);}
 #attr-float .af-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
-#attr-float .af-idmain{flex:1;min-width:0;}
-#attr-float .af-name{font-size:17px;color:#FFFFFF;font-weight:700;letter-spacing:2px;}
-#attr-float .af-lvtier{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;color:#FFFFFF;letter-spacing:1px;}
-#attr-float .af-tier{color:#B08CFF;text-shadow:0 0 9px rgba(150,90,255,.55);font-weight:700;letter-spacing:1px;}
+#attr-float .af-idmain{flex:1;min-width:0;border-left:2px solid rgba(201,162,75,.5);padding-left:10px;}
+#attr-float .af-name{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:23px;color:#FFFFFF;font-weight:800;letter-spacing:2px;}
+#attr-float .af-name .af-nm-badge{font-size:10px;padding:1px 7px;box-shadow:0 0 14px rgba(255,94,200,.55);}
+#attr-float .af-lvtier{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:10px;color:#FFFFFF;letter-spacing:1px;}
+#attr-float .af-lvsep{color:#D8CFC2;font-size:9px;font-weight:600;letter-spacing:1px;}   /* 等级：去掉边框，纯文字 */
+#attr-float .af-tier{font-size:10px;color:#C9A4FF;font-weight:800;letter-spacing:1px;text-shadow:0 0 6px rgba(150,90,255,.55);}   /* 阶位：去掉边框，纯紫文字+微光 */
 #attr-float .af-powercard{flex:none;text-align:center;background:linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #C9A24B;border-radius:9px;padding:6px 11px;box-shadow:0 0 12px rgba(201,162,75,.22),inset 0 1px 0 rgba(255,255,255,.12);}
-#attr-float .af-powercard b{display:block;font-size:9px;color:#C9A24B;letter-spacing:3px;font-weight:500;margin-bottom:2px;}
-#attr-float .af-powercard span{font-size:14px;color:#FFD27A;font-weight:700;font-variant-numeric:tabular-nums;}
+#attr-float .af-powercard b{display:block;font-size:9px;color:#E8C77A;letter-spacing:3px;font-weight:600;margin-bottom:3px;text-shadow:0 0 8px rgba(230,190,110,.4);}
+#attr-float .af-powercard span{font-size:18px;color:#FFD98A;font-weight:800;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(255,200,110,.5);}
 #attr-float .af-badges{margin:8px 0 6px;}
-#attr-float .af-badge{display:flex;align-items:center;gap:7px;padding:5px 8px;margin-bottom:4px;border:1px solid rgba(201,162,75,.18);border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.01));font-size:11px;}
+#attr-float .af-badge{display:flex;align-items:center;gap:7px;padding:5px 9px;margin-bottom:5px;border:1px solid rgba(201,162,75,.26);border-radius:6px;background:linear-gradient(90deg,rgba(201,162,75,.07),rgba(201,162,75,.02));font-size:11px;}
 #attr-float .af-badge i{display:inline-block;width:7px;height:7px;border-radius:2px;flex:none;box-shadow:0 0 6px currentColor;}
-#attr-float .af-badge b{font-weight:700;letter-spacing:1px;}
+#attr-float .af-badge b{font-weight:600;letter-spacing:1px;color:#EDE4D4;}
 #attr-float .af-badge .af-bd{flex:1;text-align:right;color:#8a8375;font-size:10px;letter-spacing:1px;}
 #attr-float .af-innate{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0 4px;padding:11px 13px;border-radius:9px;background:radial-gradient(130% 90% at 50% -20%, rgba(255,215,150,.16), rgba(0,0,0,0) 62%), linear-gradient(180deg,#362c20,#241c14);border:1px solid rgba(202,166,96,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.09), inset 0 -8px 14px rgba(0,0,0,.5), 0 0 14px rgba(0,0,0,.4);}
 #attr-float .af-innate-row{display:flex;align-items:center;gap:8px;min-width:0;}
@@ -1038,11 +1042,11 @@ body.show-god .stage{max-width:680px;}
 .tr-rolecard{position:absolute;left:10px;top:6px;z-index:3;display:flex;flex-direction:column;gap:3px;align-items:stretch;width:150px;padding:6px 8px;border:1px solid rgba(232,214,180,.22);border-radius:6px;background:linear-gradient(180deg,rgba(76,66,52,.84),rgba(40,34,27,.9));box-shadow:inset 0 1px 0 rgba(255,255,255,.24),inset 0 -1px 0 rgba(0,0,0,.5),0 4px 12px rgba(0,0,0,.6),0 0 10px rgba(255,210,122,.10);}   /* 名牌浮于场景：宽150与怪物血条对称，血条更长 */
 .tr-rolecard-l1{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#fff;text-shadow:0 1px 2px #000;letter-spacing:1px;}
   .tr-rolecard-id{display:flex;flex-direction:column;gap:1px;align-items:flex-start;}
-  .tr-rolecard-name{font-size:12px;color:#FFD27A;text-shadow:0 0 8px rgba(255,210,122,.55);}   /* 角色名暖金，与BOSS品红紫区分 */
+  .tr-rolecard-name{font-size:15px;color:#FFFFFF;font-weight:700;text-shadow:0 0 8px rgba(255,255,255,.32),0 1px 2px #000;}   /* 角色名主角：纯白，与BOSS品红紫区分 */
 .tr-rolecard-nl{display:flex;align-items:baseline;gap:4px;}
 .tr-rolecard-lv{font-size:9px;color:#C9A24B;font-weight:600;letter-spacing:0;text-shadow:0 1px 2px #000;}
 .tr-rolecard-l1 img{width:30px;height:30px;border-radius:7px;border:1px solid #C9A24B;object-fit:cover;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),0 0 8px rgba(201,162,75,.38);}   /* 头像：方形圆角+金色微光，与属性浮层统一 */
-.tr-rolecard-tier{font-size:11px;font-weight:800;letter-spacing:1px;color:#D3B6FF;text-shadow:0 0 8px rgba(170,120,255,.9),0 0 2px rgba(255,255,255,.45),0 1px 2px #000;-webkit-text-stroke:.5px #7a5ad0;}   /* 阶位：高亮紫+双层辉光+细描边，大气醒目（与名字等级同行的紫光晕） */
+.tr-rolecard-tier{font-size:10px;font-weight:800;letter-spacing:1px;color:#C9A4FF;text-shadow:0 0 6px rgba(150,90,255,.55);}   /* 阶位：纯紫文字+微光（与浮层一致，简洁大气） */
 .tr-rolecard-hp{width:100%;margin-top:1px;}
 .tr-rolecard-hp .tr-bar{position:relative;height:12px;width:100%;right:auto;left:auto;top:auto;bottom:auto;box-sizing:border-box;background:#0c0a08;z-index:auto;border:1px solid #3a342c;}   /* 重置场景血条继承，角色卡内血条 */
 .tr-rolecard-hp .tr-bar-txt{font-size:9px;}
@@ -1392,6 +1396,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .arena-toggle{flex:none;padding:0 10px;height:22px;font-size:11px;color:#FFFFFF;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
 .arena-id{display:flex;align-items:center;gap:10px;margin:0 0 6px;background:linear-gradient(180deg,#2b241c,#201a15);border:1px solid rgba(214,173,90,.3);border-radius:8px;padding:8px 9px 7px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -5px 9px rgba(0,0,0,.5);}
 .arena-id .arena-av{width:46px;height:46px;flex:none;border-radius:10px;border:1px solid rgba(201,162,75,.6);background:linear-gradient(180deg,#3a2c12,#241b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.16), 0 0 12px rgba(201,162,75,.38);object-fit:cover;display:block;}
+.arena-id .arena-av.af-crown{border-color:#FF7AD8;box-shadow:0 0 0 2px rgba(255,94,200,.55),0 0 22px rgba(255,94,200,.65),inset 0 1px 0 rgba(255,255,255,.2);}   /* 天运之主：竞技头像加冕（粉紫光环，与浮层一致） */
 .arena-id .arena-idmain{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;}
 .arena-id .arena-idtier{display:flex;align-items:center;gap:8px;}
 .arena-name{color:#FFFFFF;font-size:21px;font-weight:800;letter-spacing:2px;text-shadow:0 0 14px rgba(255,255,255,.32), 0 1px 2px rgba(0,0,0,.95);}
@@ -3029,6 +3034,7 @@ function ensureBagBar(viewEl){
   if(viewEl.querySelector('.g-bag-bar')) return;
   var bar=document.createElement('div'); bar.className='g-bag-bar';
   bar.innerHTML='<button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn" id="g-bar-open">查看背包 (<span id="g-bar-count">0</span>)</button>';
+  applyNavTitle();
   var top=viewEl.querySelector('.topbar');
   if(top){ top.parentNode.insertBefore(bar, top.nextSibling); }
   else { viewEl.insertBefore(bar, viewEl.firstChild); }
@@ -3134,6 +3140,7 @@ function closeAttrFloat(){
   var af=$('#attr-float'); if(af) af.classList.remove('open');
   var mk=$('#fb-mask'); if(mk) mk.classList.remove('show');
 }
+function applyNavTitle(){ var _n=(CHARACTER.info&&CHARACTER.info.name)?CHARACTER.info.name:'谜团'; var _t=((charTierIdx()>=0)?CHAR_TIERS[charTierIdx()].n:''); document.querySelectorAll('.g-attr-open').forEach(function(b){ b.textContent=_n+(_t?' · '+_t:''); }); }   /* 快捷导航标题：角色属性 → 名字+阶位 */
 function renderAttrFloat(){
   var body=$('#af-body'); if(!body) return;
   var B=CHARACTER.base||{};
@@ -3143,10 +3150,14 @@ function renderAttrFloat(){
   var lv=CHARACTER.info&&CHARACTER.info.level?CHARACTER.info.level:1;
   var tier=((charTierIdx()>=0)?CHAR_TIERS[charTierIdx()].n:'');
   var pw=rolePower();
+  var _head=document.getElementById('af-head-title'); if(_head) _head.textContent=nm+(tier?' · '+tier:'');   /* 浮层头部标题：名字 + 阶位 */
+  var _in=CHARACTER.innate||1; var _tag='';   /* 天运之主/非酋欧皇 视为身份，并入身份横幅 */
+  if(_in>=1.8) _tag='<span class="ih-badge ih-top">天运之主</span>';
+  else if(_in>=1.2) _tag='<span class="ih-badge ih-good">非酋 · 欧皇</span>';
   var html='';
-  /* 身份卡：头像 + 名字 + 阶位 + 战力 */
-  html+='<div class="af-idcard"><div class="af-avatar"><img src="logos/头像.png" alt=""></div>'
-    +'<div class="af-idmain"><div class="af-name">'+nm+'</div>'
+  /* 身份横幅：头像 + 名字 + 阶位 + 称号徽章 + 战力 */
+  html+='<div class="af-idcard"><div class="af-avatar'+( _in>=1.8?' af-crown':'')+'"><img src="logos/头像.png" alt=""></div>'
+    +'<div class="af-idmain"><div class="af-name">'+nm+(_in>=1.8?'<span class="ih-badge ih-top af-nm-badge">天运之主</span>':(_in>=1.2?'<span class="ih-badge ih-good">非酋 · 欧皇</span>':''))+'</div>'
     +'<div class="af-lvtier"><span class="af-tier">'+tier+'</span><span class="af-lvsep">· Lv.'+lv+'</span></div></div>'
     +'<div class="af-powercard"><b>战 力</b><span>'+fmtWan(pw)+'</span></div></div>';
   /* 荣耀徽章区：称号 + 各徽章（彩色，有即显示） */
@@ -3156,12 +3167,9 @@ function renderAttrFloat(){
   if(ARENA.killBoss>=1) bad.push({n:'徽章·万军取首级',c:'#D84AA0',d:ARENA.medalOn?'已戴上':'未戴'});
   if(ARENA.killGod>=1) bad.push({n:'徽章·屠神者',c:'#FFD700',d:ARENA.godMedalOn?'已戴上':'未戴'});
   [['s50','一举成名','#7CFC7C'],['s100','名震八方','#5BC0FF'],['s150','执掌乾坤','#C86BFF']].forEach(function(x){ if(TLM[x[0]].got) bad.push({n:'徽章·'+x[1],c:x[2],d:TLM[x[0]].on?'已戴上':'未戴'}); });
-  if(bad.length){ html+='<div class="af-badges">'+bad.map(function(x){ return '<div class="af-badge"><i style="background:'+x.c+';color:'+x.c+'"></i><b style="color:'+x.c+'">'+x.n+'</b><span class="af-bd">'+x.d+'</span></div>'; }).join('')+'</div>'; }
-  /* 先天运势卡（突出高贵） */
-  var _in=CHARACTER.innate||1; var _tag='';
-  if(_in>=1.8) _tag='<span class="ih-badge ih-top">天运之主 · 全服唯一</span>';
-  else if(_in>=1.2) _tag='<span class="ih-badge ih-good">非酋 · 欧皇</span>';
-  html+='<div class="af-innate"><div class="af-innate-row"><span class="af-innate-t">先天运势</span>'+_tag+'</div><div class="af-innate-num">'+_in.toFixed(2)+'</div></div>';
+  if(bad.length){ html+='<div class="af-badges">'+bad.map(function(x){ return '<div class="af-badge"><i style="background:'+x.c+';color:'+x.c+'"></i><b>'+x.n+'</b><span class="af-bd">'+x.d+'</span></div>'; }).join('')+'</div>'; }   /* 收敛颜色：名称统一金白，仅圆点保彩色 */
+  /* 先天运势卡：徽章已并入身份横幅，这里只保留标题+数值 */
+  html+='<div class="af-innate"><div class="af-innate-row"><span class="af-innate-t">先天运势'+(_in>=1.8?' · 全服唯一':'')+'</span></div><div class="af-innate-num">'+_in.toFixed(2)+'</div></div>';
   /* 属性区 */
   var items=[['力量',(B.力量||0)+(Bn.力量||0)],['敏捷',(B.敏捷||0)+(Bn.敏捷||0)],['体质',(B.体质||0)+(Bn.体质||0)],['精神',(B.精神||0)+(Bn.精神||0)],['智力',(B.智力||0)+(Bn.智力||0)],['幸运',(B.幸运||0)+(Bn.幸运||0)],
     ['物理攻击',C['物理攻击']],['物理防御',C['物理防御']],['攻击属性',C['攻击属性']],['防御属性',C['防御属性']]];   /* 6大属性=基础+装备/天神等附加（真实总和） */
@@ -3503,6 +3511,7 @@ function recalcCharacter(){
   if(equipState['weapon']&&equipState['weapon'].gemAttributes&&equipState['weapon'].gemAttributes.additionalAttribute) attr=equipState['weapon'].gemAttributes.additionalAttribute;
   if(equipState['armor']&&equipState['armor'].gemAttributes&&equipState['armor'].gemAttributes.additionalAttribute) dattr=equipState['armor'].gemAttributes.additionalAttribute;
   CHARACTER.base=base; CHARACTER.bonus=bonus;
+  applyNavTitle();   /* 阶位/属性变化后即时刷新快捷导航标题（角色属性→名字+阶位） */
   CHARACTER.combat=[
     {k:'生命值',v:String(hp)},{k:'物理攻击',v:String(patk)},
     {k:'魔法攻击',v:'0'},{k:'射击攻击',v:String(Math.round(patk*0.6))},
@@ -5082,6 +5091,7 @@ function route(){
   ['arena','forge','wanshou','gem','enhance','refine','shop','treasure','trial','lottery','achievement','attrs','main'].forEach(function(k){
     var b=document.getElementById(k+'-back'); if(b&&!b.__b){ b.__b=true; b.addEventListener('click',function(){ location.hash='#home'; }); }
   });
+  applyNavTitle();   /* 快捷导航标题：角色属性 → 名字+阶位 */
   /* 挂机不因切换页面而停止：只有点「停止挂机」才停 */
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
       refine = h.indexOf('#refine')>=0,
@@ -5261,6 +5271,7 @@ function renderArena(){
   recalcCharacter();   /* 刷新直达竞技页时先重算，确保阶位可正常显示 */
   var r=arenaRank(), rk=ARENA_RANKS[r], nx=arenaNext();
   var el=$('#arena-rank'); if(el){ el.textContent=rk.n; el.style.color=ARENA_COLORS[arenaRank()]||'#D6C07A'; } applyCharTier();   /* 段位颜色与奖励列表一致 */
+  var _av=document.querySelector('.arena-id .arena-av'); if(_av){ if((CHARACTER.innate||1)>=1.8) _av.classList.add('af-crown'); else _av.classList.remove('af-crown'); }   /* 天运之主：竞技头像加冕（与浮层一致） */
   if($('#arena-score')) $('#arena-score').textContent=fmtWan(ARENA.score);
   if($('#arena-streak')) $('#arena-streak').textContent=ARENA.streak;
   var tot=ARENA.win+ARENA.lose; if($('#arena-wr')) $('#arena-wr').textContent=tot?Math.round(ARENA.win/tot*100)+'%':'--';
@@ -7225,7 +7236,7 @@ bindEvents();})();
   <div class="fb-grid" id="fb-grid"></div>
 </div>
 <div id="attr-float">
-  <div class="af-head"><span>角色属性</span><button id="af-close" class="af-x" aria-label="关闭">×</button></div>
+  <div class="af-head"><span id="af-head-title">角色属性</span><button id="af-close" class="af-x" aria-label="关闭">×</button></div>
   <div class="af-body" id="af-body"></div>
 </div>
 <div id="lottery-float">
