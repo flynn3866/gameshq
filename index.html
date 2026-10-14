@@ -58,7 +58,7 @@ body.show-home{align-items:flex-start;justify-content:flex-start;background:var(
 .stage{
   width:100%;box-sizing:border-box;
   padding:
-    calc(1.5rem + env(safe-area-inset-top,0px))
+    calc(1.5rem - 10px + env(safe-area-inset-top,0px))
     calc(env(safe-area-inset-right,0px) + 10px)
     calc(env(safe-area-inset-bottom,0px) + 6px)
     calc(env(safe-area-inset-left,0px) + 10px);
@@ -66,16 +66,16 @@ body.show-home{align-items:flex-start;justify-content:flex-start;background:var(
 body.show-home .stage{max-width:460px;}   /* 首页：手机满宽、电脑端适中 */
 }
 /* 竞技页：加宽舞台，内容更舒展 */
-body.show-arena .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 竞技页：垂直居中，顶部安全 10px */
-body.show-ach .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 成就页：垂直居中，顶部安全 10px */
-body.show-shop .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 商店：同副本秘境垂直居中 */
+body.show-arena .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 竞技页：垂直居中，顶部安全 10px */
+body.show-ach .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 成就页：垂直居中，顶部安全 10px */
+body.show-shop .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 商店：同副本秘境垂直居中 */
 /* 神兵锻冶/万法归宗聚合页：垂直居中 + 顶部安全，内容限高内部滚动 */
-body.show-forge .stage,body.show-wanshou .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}
+body.show-forge .stage,body.show-wanshou .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}
 #view-forge .forge-body,#view-wanshou .forge-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 118px);}
 /* 属性页单独加宽 50px：窗口约 390px，主页面不受影响 */
-body.show-attrs .stage{max-width:410px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}
+body.show-attrs .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}
 /* 抽奖页：加宽舞台容纳轮盘 */
-body.show-lottery .stage{max-width:404px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 幸运轮盘：顶部安全 10px */
+body.show-lottery .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 幸运轮盘：顶部安全 10px */
 /* 天神页：电脑宽屏加宽舞台以左右分栏，手机保持单列不超屏幕宽 */
 body.show-god .stage{max-width:680px;}
 @media(max-width:480px){ body.show-god .stage{max-width:100%;} }
@@ -294,9 +294,12 @@ body.show-god .stage{max-width:680px;}
 .slot.drag-from{opacity:.35;}
 .slot.drag-over{box-shadow:inset 0 0 0 2px rgba(214,173,90,.75), 0 0 8px rgba(214,173,90,.3);}
 .bag-tab.drag-tab-over{box-shadow:inset 0 0 0 2px rgba(214,173,90,.85), 0 0 10px rgba(214,173,90,.35);}
-.bag-org-row{display:flex;justify-content:flex-end;margin:10px 0;}
+.bag-org-row{display:flex;justify-content:center;gap:10px;margin:10px 0;}   /* 三按钮居中，间隔10px */
 #bag-organize{flex:none;padding:0 12px;height:22px;font-size:11px;letter-spacing:1px;color:#FFFFFF;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
 #bag-organize:active{transform:translateY(1px);}
+#bag-reset,#bag-gm{flex:none;padding:0 12px;height:22px;font-size:11px;letter-spacing:1px;color:#FFFFFF;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
+#bag-reset:active,#bag-gm:active{transform:translateY(1px);}
+#bag-gm{background:linear-gradient(180deg,#6b5d9c,#4a3e6e);border-color:rgba(176,140,255,.5);}
 .eq-cell.drag-over .slot{box-shadow:inset 0 0 0 2px rgba(214,173,90,.75), 0 0 8px rgba(214,173,90,.3);}
 
 /* ===== 凹槽：空槽 #212020 + 边框 #5E5E5E + 内凹凹陷 ===== */
@@ -665,6 +668,7 @@ body.show-god .stage{max-width:680px;}
 .sys-body{padding:2px 2px 12px;}
 /* 副本秘境/无尽试炼：顶部标题条+快捷导航固定，内容区内部滚动，避免 body 溢出滚动条 */
 #view-treasure .sys-body,#view-trial .sys-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 236px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 64px);box-sizing:border-box;}
+#view-lottery .sys-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 236px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 64px);box-sizing:border-box;}   /* 玄鉴页：顶部固定，内容内部滚动，仅纵向滚动（消除横向跳动） */
 .sys .topbar{justify-content:center;}
 .sys .back-arrow{
   position:absolute;left:2px;top:50%;transform:translateY(-50%);
@@ -791,7 +795,7 @@ body.show-god .stage{max-width:680px;}
 #picker-mask{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .2s;z-index:120;}
 #picker-mask.show{opacity:1;pointer-events:auto;}
 .picker{
-  position:fixed;left:0;right:0;bottom:0;z-index:121;
+  position:fixed;left:0;right:0;bottom:calc(56px + env(safe-area-inset-bottom,0px));z-index:121;   /* 底部从导航条上方开始显示，不遮挡导航 */
   background:linear-gradient(180deg,#282A2A,#1A1917);
   border-top:1px solid #6D6354;border-radius:10px 10px 0 0;
   transform:translateY(110%);transition:transform .22s ease-out;
@@ -1262,8 +1266,8 @@ body.show-god .stage{max-width:680px;}
 .tr-ch-line .tr-exp{flex:1;height:9px;border:1px solid #3a342c;border-radius:4px;overflow:hidden;background:#0c0a08;position:relative;}
 .tr-exp-fill{height:100%;background:linear-gradient(180deg,#ffe066,#d9a520);box-shadow:0 0 8px rgba(255,210,80,.5);transition:width .3s ease;}
 .tr-exp-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:7px;color:#fff;text-shadow:0 1px 1px #000;font-variant-numeric:tabular-nums;}
-body.show-treasure .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 副本秘境：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
-body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 无尽试炼：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
+body.show-treasure .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 副本秘境：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
+body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 无尽试炼：宽度同竞技，垂直居中，顶部安全保底不穿状态栏 */
 #view-treasure .tr-battle .tr-scene{height:240px;background:radial-gradient(150px 110px at 62% 16%,rgba(230,150,70,.18),transparent 62%),radial-gradient(150px 110px at 30% 22%,rgba(201,162,75,.10),transparent 65%),linear-gradient(180deg,#120d08,#181209);}   /* 副本秘境：暖橙氛围 */
 #view-trial .tr-battle .tr-scene{height:240px;background:radial-gradient(150px 110px at 62% 16%,rgba(205,70,45,.20),transparent 62%),radial-gradient(150px 110px at 30% 22%,rgba(201,162,75,.10),transparent 65%),linear-gradient(180deg,#130b09,#1a100c);}   /* 无尽试炼：暗红氛围 */
 #view-trial .tr-log{height:190px;}
@@ -1289,7 +1293,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   -webkit-mask:radial-gradient(closest-side, transparent calc(100% - 23px), #000 calc(100% - 21px));
   mask:radial-gradient(closest-side, transparent calc(100% - 23px), #000 calc(100% - 21px));
 }
-.wheel{width:100%;height:100%;border-radius:50%;border:5px solid #1e1e1e;position:relative;z-index:1;
+.wheel{width:100%;height:100%;border-radius:50%;border:5px solid #1e1e1e;position:relative;z-index:1;will-change:transform;   /* 独立合成层，转动不触发重绘，丝滑 */
   box-shadow:inset 0 0 0 2px #1b1b1b, inset 0 0 0 8px #0f0f0f, inset 0 0 62px rgba(0,0,0,.38), inset 0 0 26px rgba(0,0,0,.48),
     inset 0 1px 6px rgba(190,198,210,.10), inset 0 -10px 18px rgba(0,0,0,.6), 0 0 0 3px #0a0a0a, 0 0 28px rgba(0,0,0,.62), 0 6px 24px rgba(0,0,0,.78);
   transition:transform 32s cubic-bezier(.08,.7,.05,1);}
@@ -1685,7 +1689,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
         <span id="gold-bind" class="val">1,004,727</span>
       </div>
     </div>
-    <div class="bag-org-row"><button id="bag-organize">一键整理</button></div>
+    <div class="bag-org-row"><button id="bag-reset">初始化</button><button id="bag-gm">GM生成</button><button id="bag-organize">一键整理</button></div>
     <div class="divider"></div>
     <div class="actions" id="actions"></div>
 
@@ -2735,6 +2739,8 @@ function renderBag(){
   var slots = gridEl.querySelectorAll('.slot.has-item');
   for (var i = 0; i < slots.length; i++){ var s = slots[i]; s._item = bag[currentTab][+s.getAttribute('data-slot')]; }
   var ob=$('#bag-organize'); if(ob&&!ob.__b){ ob.__b=true; ob.addEventListener('click',organizeBag); }
+  var _br=$('#bag-reset'); if(_br&&!_br.__b){ _br.__b=true; _br.addEventListener('click',function(){ confirmDialog('确认初始化？<br>所有数据将回到初始状态（等级1、装备/背包/物品清空、非绑定金币100亿启动资金）', function(ok){ if(ok) doReset(); }); }); }
+  var _bg=$('#bag-gm'); if(_bg&&!_bg.__b){ _bg.__b=true; _bg.addEventListener('click',function(){ confirmDialog('确认GM生成？<br>将生成全部物品并发放金币（各1亿）', function(ok){ if(ok) doInit(); }); }); }
   saveGame();
 }
 function organizeBag(){
@@ -4607,7 +4613,7 @@ function renderAttrs(){
   var _ir=$('#innate-roll'); if(_ir&&!_ir.__b){ _ir.__b=true; _ir.addEventListener('click',function(){ stopInnateAuto(); doInnateRoll(false); }); }   /* 手动点击：先停止自动 */
   var _ia=$('#innate-rollauto'); if(_ia&&!_ia.__b){ _ia.__b=true; _ia.addEventListener('click',function(){ if(INNATE_AUTO.on){ stopInnateAuto(); } else { INNATE_AUTO.on=true; _ia.textContent='停止自动'; doInnateRoll(true); } }); }
   var _it=$('#innate-tag'); if(_it){ if(CHARACTER.innate>=1.8){ _it.textContent='全服唯一'; _it.className='innate-tag top'; _it.style.display=''; } else if(CHARACTER.innate>=1.2){ _it.textContent='非酋 · 欧皇'; _it.className='innate-tag'; _it.style.display=''; } else { _it.style.display='none'; } }
-  var _rr=document.querySelector('.innate-reset'); if(_rr) _rr.style.display = ((CHARACTER.info.level||1)===1)? '':'none';   /* 重新随机按钮仅等级1时显示，等级>1隐藏 */
+  var _rr=document.querySelector('.innate-reset'); if(_rr) _rr.style.display = ((CHARACTER.info.level||1)===1)? '':'none';   /* 仅等级1显示（初始化后等级1可用） */
   $('#attr-alloc').innerHTML = ATTR_PAIRS.map(function(p){
     function cell(a){
       return '<span class="c-pair">'
@@ -5876,21 +5882,22 @@ function addPerm(attr,hp){
   PERM.hp+=hp||0;
   recalcCharacter();
 }
-var WHEEL_ANIM=null, WHEEL_TIMER=null;
-function wheelTick(){   /* 轮盘驱动：setInterval 按时间算角度，页面切走(display:none)时仍持续推进，切回无缝无跳变 */
+var WHEEL_ANIM=null, WHEEL_RAF=null;
+function wheelTick(){   /* 轮盘驱动：requestAnimationFrame 按时间算角度，与刷新率同步更丝滑；页面切走(display:none)时仍持续推进，切回无缝无跳变 */
   var a=WHEEL_ANIM;
-  if(!a){ if(WHEEL_TIMER){ clearInterval(WHEEL_TIMER); WHEEL_TIMER=null; } return; }
-  var w=document.getElementById('wheel'); if(!w) return;
+  if(!a){ WHEEL_RAF=null; return; }
+  var w=document.getElementById('wheel'); if(!w){ WHEEL_RAF=null; return; }
   var p=Math.min(1,(Date.now()-a.start)/a.dur);
   var e=1-Math.pow(1-p,5);   /* easeOutQuint 强刹车，贴合原 cubic-bezier(.18,.82,.32,1) 末段快速停下 */
   w.style.transition='none';
   w.style.transform='rotate('+(a.from+(a.to-a.from)*e)+'deg)';
   if(p>=1){
     w.style.transform='rotate('+a.to+'deg)';
-    var win=a.win, x10=a.x10; WHEEL_ANIM=null;
-    if(WHEEL_TIMER){ clearInterval(WHEEL_TIMER); WHEEL_TIMER=null; }
-    setTimeout(function(){ showDrops(win, x10); }, 0);
+    var win=a.win, x10=a.x10; WHEEL_ANIM=null; WHEEL_RAF=null;
+    showDrops(win, x10);   /* 轮盘停帧立即弹出结果浮层，消除 setTimeout 宏任务延迟 */
+    return;
   }
+  WHEEL_RAF=requestAnimationFrame(wheelTick);
 }
 function spinWheel(idx, win, spins, durMs, x10results){
   var w=document.getElementById('wheel'); if(!w) return;
@@ -5901,9 +5908,9 @@ function spinWheel(idx, win, spins, durMs, x10results){
   var from=wheelAngle;
   var to=from + 360*(spins||6) + ((target-(wheelAngle%360)+360)%360);
   wheelAngle=to;
-  if(WHEEL_TIMER){ clearInterval(WHEEL_TIMER); WHEEL_TIMER=null; }
+  if(WHEEL_RAF){ cancelAnimationFrame(WHEEL_RAF); WHEEL_RAF=null; }
   WHEEL_ANIM={ start:Date.now(), dur:(durMs||12000), from:from, to:to, win:win, x10:x10results };
-  WHEEL_TIMER=setInterval(wheelTick, 33);   /* ~30fps 持续推进，不受 view 显隐影响，切走期间也保持转动进度 */
+  WHEEL_RAF=requestAnimationFrame(wheelTick);   /* rAF 驱动：与刷新率同步，不受 view 显隐影响，切走期间也保持转动进度 */
 }
 function celebrateConfetti(){
   /* 中大奖（概率<=1%）庆祝：从屏幕中部喷出彩色纸带与星点，四散飘落 */
