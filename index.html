@@ -7513,6 +7513,7 @@ function doReset(){
   LOTTERY_LOG = [];   /* 初始化清空抽奖记录 */
   try{ localStorage.removeItem('shenqi_daily_stats'); }catch(e){}   /* 初始化清空今日掉落统计：dailyGet 自动重建为当天全0 */
   try{ localStorage.removeItem('shenqi_lottery_log'); localStorage.removeItem('shenqi_lottery_count'); }catch(e){}
+  try{ localStorage.removeItem('shenqi_jackpot_1e8'); }catch(e){}   /* 初始化重置抽奖稀有池'全属性+1亿'限量：回默认全服10份 */
   LOTTERY_COUNT=0; saveLotteryCount(); updatePity(); updateLotteryGold();   /* 初始化将保底计数写回落盘(0)并即时刷新抽奖页显示，避免进入时残留上次值 */
   LOTTERY_FREE = LOTTERY_FREE_MAX; saveLotteryFree();   /* 初始化重置每日免费抽奖次数为上限 */
   renderLotteryLog();
