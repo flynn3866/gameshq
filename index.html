@@ -214,7 +214,7 @@ body.show-god .stage{max-width:680px;}
   background:linear-gradient(180deg,#2c2620,#211c18);   /* 装备面板底色 */
   border:1px solid rgba(201,162,75,.30);
   margin:20px 2px 2px;   /* 穿戴区与快捷导航间距20px；左右外边距与背包面板一致 */
-  padding:17px 8px;   /* 穿戴区卡内上下间距每边+10px */
+  padding:12px 8px;   /* 穿戴区卡内上下间距每边12px */
   box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 2px 12px rgba(0,0,0,.4);
 }
 .equip{
@@ -294,10 +294,10 @@ body.show-god .stage{max-width:680px;}
 .slot.drag-from{opacity:.35;}
 .slot.drag-over{box-shadow:inset 0 0 0 2px rgba(214,173,90,.75), 0 0 8px rgba(214,173,90,.3);}
 .bag-tab.drag-tab-over{box-shadow:inset 0 0 0 2px rgba(214,173,90,.85), 0 0 10px rgba(214,173,90,.35);}
-.bag-org-row{display:flex;justify-content:center;gap:10px;margin:20px 0;}   /* 三按钮居中，间隔10px；上下间距各+10px */
-#bag-organize{flex:none;padding:0 18px;height:32px;font-size:13px;letter-spacing:2px;color:#FFFFFF;background:linear-gradient(180deg,#78694e,#5a4c36);border:1px solid rgba(214,177,110,.5);border-radius:6px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}   /* 与人物页随机生成按钮一致 */
+.bag-org-row{display:flex;justify-content:center;gap:10px;margin:15px 0;}   /* 三按钮居中，间隔10px；上下间距各15px */
+#bag-organize{flex:none;padding:0 14px;height:27px;font-size:12px;letter-spacing:1px;color:#FFFFFF;background:linear-gradient(180deg,#78694e,#5a4c36);border:1px solid rgba(214,177,110,.5);border-radius:6px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}   /* 略缩小 */
 #bag-organize:active{transform:translateY(1px);}
-#bag-reset,#bag-gm{flex:none;padding:0 18px;height:32px;font-size:13px;letter-spacing:2px;color:#FFFFFF;background:linear-gradient(180deg,#78694e,#5a4c36);border:1px solid rgba(214,177,110,.5);border-radius:6px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}   /* 与人物页随机生成按钮一致 */
+#bag-reset,#bag-gm{flex:none;padding:0 14px;height:27px;font-size:12px;letter-spacing:1px;color:#FFFFFF;background:linear-gradient(180deg,#78694e,#5a4c36);border:1px solid rgba(214,177,110,.5);border-radius:6px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}   /* 略缩小 */
 #bag-reset:active,#bag-gm:active{transform:translateY(1px);}
 #bag-gm{background:linear-gradient(180deg,#6b5d9c,#4a3e6e);border-color:rgba(176,140,255,.5);}
 .eq-cell.drag-over .slot{box-shadow:inset 0 0 0 2px rgba(214,173,90,.75), 0 0 8px rgba(214,173,90,.3);}
@@ -553,7 +553,7 @@ body.show-god .stage{max-width:680px;}
 .innate-body #innate-val{font-size:34px;font-weight:800;letter-spacing:1px;font-variant-numeric:tabular-nums;background:linear-gradient(90deg,#b56bff,#f2ddff,#b56bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 20px rgba(160,100,255,.55);}
 .innate-tag.top{color:#FFE08A;border-color:rgba(255,200,90,.6);background:linear-gradient(180deg,rgba(255,200,90,.24),rgba(200,140,40,.14));text-shadow:0 0 8px rgba(255,200,90,.55);font-weight:700;}
 .innate-reset{display:flex;justify-content:center;margin-top:12px;}
-.innate-reset .innate-roll{height:32px;padding:0 18px;font-size:13px;letter-spacing:2px;border-radius:6px;margin-left:0;margin-right:0;background:linear-gradient(180deg,#78694e,#5a4c36);box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}
+.innate-reset .innate-roll{height:27px;padding:0 14px;font-size:12px;letter-spacing:1px;border-radius:6px;margin-left:0;margin-right:0;background:linear-gradient(180deg,#78694e,#5a4c36);box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}   /* 与背包三按钮一致 */
 .innate-reset .innate-roll + .innate-roll{margin-left:10px;}
 #innate-rollauto{background:linear-gradient(180deg,#6b5d9c,#4a3e6e);border-color:rgba(176,140,255,.5);}
 .combat-divider{
