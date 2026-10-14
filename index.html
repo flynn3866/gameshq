@@ -6348,7 +6348,7 @@ function roleHitDamage(monAtk){   /* 副本怪物攻击角色：统一结算（�
   dmg=Math.max(dmg, Math.round(raw*0.10));   /* 总减伤封顶90%：保底10%原始伤害 */
   return {d:dmg, raw:raw, bm:_ma.bm};
 }
-function trReqExp(lv){ if(lv<=0) return 100; var e=Math.floor((lv*lv*190 + lv*120)*800); return (lv>50? e*100 : e)*5; }   /* 每级所需经验：floor((L²×190 + L×120)×800)×5；50级以上经验×100；0级需求100 */
+function trReqExp(lv){ if(lv<=0) return 1000000; var e=Math.floor((lv*lv*190 + lv*120)*800); return (lv>50? e*100 : e)*5; }   /* 每级所需经验：floor((L²×190 + L×120)×800)×5；50级以上经验×100；0级升1级需求100万 */
 function trExpScale(monLv){   /* 等级差经验系数：同等级×1；越级每高1级+15%(封顶10级)；刷低级怪每低1级×0.7，低10级起为0（仅经验） */
   var d=monLv-TR.level;
   if(d>0) return Math.pow(1.15,Math.min(d,10));
@@ -7455,7 +7455,7 @@ function doReset(){
   GOD.selected = null; GOD.upTarget = null; GOD.page = 1;
   CURRENCY.gold = 10000000000; CURRENCY.bound = 0;   /* 初始化启动资金：非绑定金币100亿，绑定金币0 */
   stopTrialAuto(); T.started=false; T.layer=1; T.best=0; T.auto=false; try{ localStorage.removeItem('shenqi_trial_best'); }catch(e){}   /* 初始化重置无尽试炼：停止自动攻击、清最高纪录与层数 */
-  CHARACTER.info.level = 0; TR.level = 0; TR.exp = 0; TR.reqExp = 100;   /* 角色从0级开始升级 */
+  CHARACTER.info.level = 0; TR.level = 0; TR.exp = 0; TR.reqExp = 1000000;   /* 角色从0级开始升级；0级升1级需100万经验 */
   ARENA.score=0; ARENA.win=0; ARENA.lose=0; ARENA.streak=0; ARENA._rank=0; ARENA.titleOn=true; ARENA.killBoss=0; ARENA.medalOn=true; ARENA.killGod=0; ARENA.godMedalOn=true; TLM.s50={got:0,on:true}; TLM.s100={got:0,on:true}; TLM.s150={got:0,on:true}; ARENA.lastDaily=''; ARENA.logs=[]; ARENA.fight=false; ITH_LEFT={yitaiNecklace:1,yitaiRing:2,yitaiBracelet:2}; SJD_LEFT=10; QUICK=[null,null,null,null]; if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.timer=null; }
   POTION_UNTIL = 0; SUN_UNTIL = 0; MEGA_SUN_UNTIL = 0;   /* 初始化清空药水效果 */
   ELEM_SLOT = {atk:[null,null,null,null], def:[null,null,null,null]};   /* 初始化清空属性凹槽引用 */
