@@ -127,6 +127,7 @@ body.show-god .stage{max-width:680px;}
 #attr-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 52px);transform:translateX(-50%) scale(.96);width:min(360px,calc(100% - 20px));max-height:62vh;overflow-y:auto;background:var(--panel-grad);border:1px solid #6D6354;border-radius:10px;box-shadow:0 14px 38px rgba(0,0,0,.75), inset 0 1px 0 rgba(255,255,255,.07);   /* 浮层外发光+顶部内高光 */z-index:81;padding:8px;opacity:0;visibility:hidden;transition:opacity .22s ease, transform .22s ease, visibility .22s;pointer-events:none;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#cfc6b8;}
 #attr-float.open{opacity:1;visibility:visible;transform:translateX(-50%) scale(1);pointer-events:auto;}
 #attr-float .af-head{display:flex;justify-content:space-between;align-items:center;padding:2px 2px 8px;border-bottom:1px solid #3a352f;font-size:14px;letter-spacing:2px;color:#FFFFFF;}
+#attr-float .af-head-name{color:#FFFFFF;}   /* 浮层头部名字：纯净白 */
 #attr-float .af-x{cursor:pointer;font-size:18px;line-height:1;color:#FFFFFF;padding:0 2px;background:transparent;border:none;}
 .af-body{padding:10px 2px 2px;}
 #attr-float .af-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 10px;margin-bottom:8px;}
@@ -150,6 +151,13 @@ body.show-god .stage{max-width:680px;}
 #attr-float .af-lvtier{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:10px;color:#FFFFFF;letter-spacing:1px;}
 #attr-float .af-lvsep{color:#D8CFC2;font-size:9px;font-weight:600;letter-spacing:1px;}   /* 等级：去掉边框，纯文字 */
 #attr-float .af-tier{font-size:10px;color:#C9A4FF;font-weight:800;letter-spacing:1px;text-shadow:0 0 6px rgba(150,90,255,.55);}   /* 阶位：去掉边框，纯紫文字+微光 */
+#attr-float .af-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
+#attr-float .af-tier.ti-1{color:#4A9BFF!important;text-shadow:none!important;}
+#attr-float .af-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
+#attr-float .af-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
+#attr-float .af-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
+#attr-float .af-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 2.2s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}   /* 大帝：品红紫+呼吸流光+氛围光 */
+.ach-name.ti-5{position:relative;display:inline-block;box-shadow:0 0 18px rgba(255,90,200,.10);}
 #attr-float .af-powercard{flex:none;text-align:center;background:linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #C9A24B;border-radius:9px;padding:6px 11px;box-shadow:0 0 12px rgba(201,162,75,.22),inset 0 1px 0 rgba(255,255,255,.12);}
 #attr-float .af-powercard b{display:block;font-size:9px;color:#E8C77A;letter-spacing:3px;font-weight:600;margin-bottom:3px;text-shadow:0 0 8px rgba(230,190,110,.4);}
 #attr-float .af-powercard span{font-size:18px;color:#FFD98A;font-weight:800;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(255,200,110,.5);}
@@ -336,15 +344,18 @@ body.show-god .stage{max-width:680px;}
     inset -1px 0 5px rgba(0,0,0,.5),
     inset 0 -2px 4px rgba(0,0,0,.5);
 }
-/* 物品品质边框：灰(默认)/蓝/金/紫 */
+/* ===== 稀有度视觉体系：稀有(青蓝粒子微光)/史诗(暖金流动光晕)/传说(品红紫呼吸流光) ===== */
 .slot.has-item.q-blue::after,.slot.has-item.q-gold::after,.slot.has-item.q-purple::after{content:'';position:absolute;inset:0;border-radius:4px;pointer-events:none;z-index:1;}
-.slot.has-item.q-blue::after{box-shadow:inset 0 0 0 1px rgba(79,196,192,.75),0 0 7px rgba(79,196,192,.35);}
-.slot.has-item.q-gold::after{box-shadow:inset 0 0 0 1px rgba(255,215,0,.85),0 0 10px rgba(255,215,0,.5);}
-.slot.has-item.q-purple::after{box-shadow:inset 0 0 0 1px rgba(181,107,255,.9),0 0 13px rgba(181,107,255,.6);}
+.slot.has-item.q-blue::after{box-shadow:inset 0 0 0 1px rgba(64,224,208,.8),0 0 6px rgba(64,224,208,.4),0 0 12px rgba(64,224,208,.18);}
+.slot.has-item.q-gold::after{box-shadow:inset 0 0 0 1px rgba(255,186,50,.92),0 0 9px rgba(255,176,38,.5),0 0 16px rgba(255,150,20,.22);animation:qShine 2.6s ease-in-out infinite;}
+.slot.has-item.q-purple::after{box-shadow:inset 0 0 0 1px rgba(228,112,255,.95),0 0 12px rgba(214,90,255,.6),0 0 24px rgba(190,60,235,.35);animation:qPulse 2.2s ease-in-out infinite;}
 .picker-grid .pick.q-blue::after,.picker-grid .pick.q-gold::after,.picker-grid .pick.q-purple::after{content:'';position:absolute;inset:0;border-radius:5px;pointer-events:none;z-index:1;}   /* 选择列表凹槽品质特效，与背包统一 */
-.picker-grid .pick.q-blue::after{box-shadow:inset 0 0 0 1px rgba(79,196,192,.75),0 0 7px rgba(79,196,192,.35);}
-.picker-grid .pick.q-gold::after{box-shadow:inset 0 0 0 1px rgba(255,215,0,.85),0 0 10px rgba(255,215,0,.5);}
-.picker-grid .pick.q-purple::after{box-shadow:inset 0 0 0 1px rgba(181,107,255,.9),0 0 13px rgba(181,107,255,.6);}
+.picker-grid .pick.q-blue::after{box-shadow:inset 0 0 0 1px rgba(64,224,208,.8),0 0 6px rgba(64,224,208,.4),0 0 12px rgba(64,224,208,.18);}
+.picker-grid .pick.q-gold::after{box-shadow:inset 0 0 0 1px rgba(255,186,50,.92),0 0 9px rgba(255,176,38,.5),0 0 16px rgba(255,150,20,.22);animation:qShine 2.6s ease-in-out infinite;}
+.picker-grid .pick.q-purple::after{box-shadow:inset 0 0 0 1px rgba(228,112,255,.95),0 0 12px rgba(214,90,255,.6),0 0 24px rgba(190,60,235,.35);animation:qPulse 2.2s ease-in-out infinite;}
+@keyframes qShine{0%,100%{opacity:.9;}50%{opacity:1;box-shadow:inset 0 0 0 1px rgba(255,200,64,1),0 0 13px rgba(255,190,48,.75),0 0 26px rgba(255,160,20,.4);}}
+@keyframes qPulse{0%,100%{opacity:.92;}50%{opacity:1;box-shadow:inset 0 0 0 1px rgba(240,124,255,1),0 0 16px rgba(224,100,255,.8),0 0 32px rgba(196,64,235,.5);}}
+@keyframes tierPulse{0%,100%{text-shadow:0 0 2px rgba(160,80,224,.6),0 0 6px rgba(255,90,200,.5);}50%{text-shadow:0 0 2px rgba(255,90,200,.95),0 0 7px rgba(160,80,224,.75),0 0 14px rgba(255,90,200,.5);}}   /* 大帝阶位：品红紫实心发光+紫罗兰立体呼吸流光 */
 
 /* ===== 下部：金币 + 分割线 + 按钮 ===== */
 .money{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 4px 0;}
@@ -1557,7 +1568,26 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 /* 5 全局 hover / 按压微反馈（统一缓动） */
 .btn,.forge-tab,.g-bag-btn,.arena-opp,.hub-card,.ach-toggle,.lottery-wallet{transition:transform .2s cubic-bezier(.22,1,.36,1),box-shadow .25s,border-color .25s;}
 
-.char-tier{display:inline-block;vertical-align:middle;margin-left:6px;font-weight:800;letter-spacing:1px;color:#A56BFF;background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;text-shadow:none;}   /* 阶位统一：传说段位紫，纯净净值 */
+.char-tier{display:inline-block;vertical-align:middle;margin-left:6px;font-weight:800;letter-spacing:1px;color:#A56BFF;background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;text-shadow:none;}   /* 阶位统一：纯净净值，档位配色见下 */
+/* ===== 阶位专属视觉：按档位配色递进（纯净纯色，无渐变无模糊） ===== */
+.char-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}   /* 锐凡：青蓝 */
+.char-tier.ti-1{color:#4A9BFF!important;text-shadow:none!important;}   /* 半神：亮蓝 */
+.char-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}   /* 神灵：蓝紫 */
+.char-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}   /* 真神：紫（保留） */
+.char-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}   /* 神王：金橙 */
+.char-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 2.2s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}   /* 大帝：品红紫+呼吸流光+氛围光 */
+.hh-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
+.hh-tier.ti-1{color:#4A9BFF!important;text-shadow:none!important;}
+.hh-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
+.hh-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
+.hh-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
+.hh-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 2.2s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}
+.tr-rolecard-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
+.tr-rolecard-tier.ti-1{color:#4A9BFF!important;text-shadow:none!important;}
+.tr-rolecard-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
+.tr-rolecard-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
+.tr-rolecard-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
+.tr-rolecard-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 2.2s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}
 /* ===== 底部导航（App 式） ===== */
 
 .back-arrow{display:none!important;}
@@ -3212,7 +3242,7 @@ function renderAttrFloat(){
   var lv=CHARACTER.info&&CHARACTER.info.level?CHARACTER.info.level:1;
   var tier=((charTierIdx()>=0)?CHAR_TIERS[charTierIdx()].n:'');
   var pw=rolePower();
-  var _head=document.getElementById('af-head-title'); if(_head) _head.textContent=nm+(tier?' · '+tier:'');   /* 浮层头部标题：名字 + 阶位 */
+  var _head=document.getElementById('af-head-title'); if(_head){ var _nm=document.getElementById('af-head-name'); if(_nm) _nm.textContent=nm; }   /* 浮层头部标题：名字(纯净白) */
   var _in=CHARACTER.innate||1; var _tag='';   /* 天运之主/非酋欧皇 视为身份，并入身份横幅 */
   if(_in>=1.8) _tag='<span class="ih-badge ih-top">天运之主</span>';
   else if(_in>=1.2) _tag='<span class="ih-badge ih-good">非酋 · 欧皇</span>';
@@ -3220,7 +3250,7 @@ function renderAttrFloat(){
   /* 身份横幅：头像 + 名字 + 阶位 + 称号徽章 + 战力 */
   html+='<div class="af-idcard"><div class="af-avatar'+( _in>=1.8?' af-crown':'')+'"><img src="logos/头像.png" alt=""></div>'
     +'<div class="af-idmain"><div class="af-name">'+nm+(_in>=1.8?'<span class="ih-badge ih-top af-nm-badge">天运之主</span>':(_in>=1.2?'<span class="ih-badge ih-good">非酋 · 欧皇</span>':''))+'</div>'
-    +'<div class="af-lvtier"><span class="af-tier">'+tier+'</span><span class="af-lvsep">· Lv.'+lv+'</span></div></div>'
+    +'<div class="af-lvtier"><span class="af-tier'+(charTierIdx()>=0?' ti-'+charTierIdx():'')+'">'+tier+'</span><span class="af-lvsep">· Lv.'+lv+'</span></div></div>'
     +'<div class="af-powercard"><b>战 力</b><span>'+fmtWan(pw)+'</span></div></div>';
   /* 荣耀徽章区：称号 + 各徽章（彩色，有即显示） */
   var bad=[];
@@ -3486,7 +3516,8 @@ function charTierIdx(){
   return -1;
 }
 function charTierName(){ var i=charTierIdx(); return i>=0?CHAR_TIERS[i].n:''; }
-function applyCharTier(){ var t=charTierName(); ['home-tier','ch-tier','af-tier','arena-tier','attr-tier'].forEach(function(id){ var el=document.getElementById(id); if(el) el.textContent=t; }); }
+function applyCharTier(){ var t=charTierName(), _ti=charTierIdx(); ['home-tier','ch-tier','af-tier','arena-tier','attr-tier'].forEach(function(id){ var el=document.getElementById(id); if(el){ el.textContent=t; for(var i=0;i<=5;i++) el.classList.remove('ti-'+i); if(_ti>=0) el.classList.add('ti-'+_ti); } }); }
+function setTierEl(el){ if(!el) return; var i=charTierIdx(); el.textContent=(i>=0)?CHAR_TIERS[i].n:''; for(var k=0;k<=5;k++) el.classList.remove('ti-'+k); if(i>=0) el.classList.add('ti-'+i); }   /* 战斗场景阶位：档位配色 */
 function foeTierOf(o){ return o.tier==='god'?5:(o.tier==='lord'?4:(o.boss?4:arenaTierOfRank(o.ri||0))); }
 function roleVsFoeTier(rt,ft){ if(rt<0||ft<0) return {ig:0,m:1}; if(rt>ft) return {ig:0.1,m:1.1}; if(rt<ft) return {ig:0,m:0.9}; return {ig:0,m:1}; }   /* 高阶对低阶：无视10%防御+伤害10%；低阶对高阶：攻击-10% */
 function foeVsRoleTier(ft,rt){ if(ft<0||rt<0) return {ig:0,m:1}; if(ft>rt) return {ig:0.1,m:1.1}; if(ft<rt) return {ig:0,m:0.9}; return {ig:0,m:1}; }
@@ -4991,7 +5022,7 @@ function tlSpawn(){
   tlRenderMon(); tlRenderChar();
 }
 function tlRenderMon(){ var f=document.getElementById('tl-mon-hp'); if(f){ var p=T.monMax?T.monHp/T.monMax*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-mon-hpnum'); if(n) n.textContent=fmtWan(Math.max(0,T.monHp))+'/'+fmtWan(T.monMax); }
-function tlRenderChar(){ var rf=document.getElementById('tl-rolecard-hp'); if(rf){ var rp=T.maxHp?T.hp/T.maxHp*100:0; rf.style.width=Math.max(0,Math.min(100,rp))+'%'; } var rn=document.getElementById('tl-rolecard-hpnum'); if(rn) rn.textContent=fmtWan(Math.max(0,T.hp))+'/'+fmtWan(T.maxHp); var f=document.getElementById('tl-ch-hp'); if(f){ var p=T.maxHp?T.hp/T.maxHp*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-ch-hpnum'); if(n) n.textContent=fmtWan(Math.max(0,T.hp))+'/'+fmtWan(T.maxHp); var lv=document.getElementById('tl-lv'); if(lv) lv.textContent='Lv.'+TR.level; var _lv=document.getElementById('tl-rolecard-lv'); if(_lv) _lv.textContent='Lv.'+TR.level; var _t=document.getElementById('tl-rolecard-tier'); if(_t) _t.textContent=((charTierIdx()>=0)?CHAR_TIERS[charTierIdx()].n:''); var _p=document.getElementById('tl-rolecard-power'); if(_p) _p.textContent='战力 '+fmtWan(rolePower()); var _re=document.getElementById('tl-rolecard-elem'); if(_re) _re.innerHTML=elemBadgesText(elemKey((CHARACTER.combat[4]||{}).v), charDefElem()); }
+function tlRenderChar(){ var rf=document.getElementById('tl-rolecard-hp'); if(rf){ var rp=T.maxHp?T.hp/T.maxHp*100:0; rf.style.width=Math.max(0,Math.min(100,rp))+'%'; } var rn=document.getElementById('tl-rolecard-hpnum'); if(rn) rn.textContent=fmtWan(Math.max(0,T.hp))+'/'+fmtWan(T.maxHp); var f=document.getElementById('tl-ch-hp'); if(f){ var p=T.maxHp?T.hp/T.maxHp*100:0; f.style.width=Math.max(0,Math.min(100,p))+'%'; } var n=document.getElementById('tl-ch-hpnum'); if(n) n.textContent=fmtWan(Math.max(0,T.hp))+'/'+fmtWan(T.maxHp); var lv=document.getElementById('tl-lv'); if(lv) lv.textContent='Lv.'+TR.level; var _lv=document.getElementById('tl-rolecard-lv'); if(_lv) _lv.textContent='Lv.'+TR.level; var _t=document.getElementById('tl-rolecard-tier'); setTierEl(_t); var _p=document.getElementById('tl-rolecard-power'); if(_p) _p.textContent='战力 '+fmtWan(rolePower()); var _re=document.getElementById('tl-rolecard-elem'); if(_re) _re.innerHTML=elemBadgesText(elemKey((CHARACTER.combat[4]||{}).v), charDefElem()); }
 function tlLog(html){ var l=document.getElementById('tl-log'); if(!l) return; var d=document.createElement('div'); d.className='tl-log-line'; d.innerHTML='<span style="color:#5c5548">['+new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})+']</span>'+html; l.insertBefore(d,l.firstChild); while(l.children.length>40) l.lastChild.remove(); }
 function fmtDmg(n){
   n = Math.round(Number(n)||0);
@@ -5273,10 +5304,11 @@ function renderAchievement(){
     {r:'大帝',  rm:1000000000, b:'神级',     br:'100亿 ~ 1000亿'}
   ];
   var cTier=charTierIdx();
+  var TIER_COLORS=['#52C6DA','#4A9BFF','#6E9BFF','#A56BFF','#F2A93B','#FF5AD8'];   /* 档位配色：与角色属性/竞技/首页统一 */
   var tel2=document.getElementById('ach-tiers');
   if(tel2){ var th='';
     for(var ti=0;ti<tierList.length;ti++){ var tt=tierList[ti], tg=ti<=cTier;
-      th+='<div class="ach-card'+(tg?' got':'')+'"><div class="ach-top"><span class="ach-name">角色 · '+tt.r+'</span><span class="ach-name" style="color:#D8B46A">怪物 · '+tt.b+'</span></div>'
+      th+='<div class="ach-card'+(tg?' got':'')+'"><div class="ach-top"><span class="ach-name" style="color:'+TIER_COLORS[ti]+'">角色 · '+(ti===5?'<span class="ach-name ti-5" style="color:#FF5AD8;text-shadow:0 0 10px rgba(255,90,200,.65);animation:tierPulse 2.2s ease-in-out infinite">'+tt.r+'</span>':'<span class="ach-name" style="color:'+TIER_COLORS[ti]+'">'+tt.r+'</span>')+'</span><span class="ach-name" style="color:#D8B46A">怪物 · '+tt.b+'</span></div>'
         +'<div class="ach-cond">角色达标：最高基础属性 ≥ '+fmt(tt.rm)+'</div>'
         +'<div class="ach-attr">怪物基础属性：'+tt.br+'</div></div>'; }
     tel2.innerHTML=th;
@@ -6622,7 +6654,7 @@ function itemQuality(it){
   if(it.type==='helen_gem'||(it.name.indexOf('专注')>=0&&it.level!==6)||t==='potion'||t==='normal_scroll'||t==='sun_potion') return 'blue';   /* 第二层级：5级专注、药水、属性卷轴、海伦石、太阳 */
   return 'grey';
 }
-function ttNameColor(it){ return (it&&itemQuality(it)==='purple')?'rgb(231,2,231)':'rgb(255,128,0)'; }   /* tooltip 名字同源颜色：传说紫/其他橙 */
+function ttNameColor(it){ if(!it) return 'rgb(255,128,0)'; var q=itemQuality(it); if(q==='purple') return 'rgb(231,2,231)'; if(q==='gold') return 'rgb(255,172,45)'; if(q==='blue') return 'rgb(64,210,205)'; return 'rgb(255,128,0)'; }   /* tooltip 名字品质分层：传说紫/史诗金橙/稀有青蓝/其他橙 */
 function isRareDrop(it){
   var t=it.type;
   if(isArmorType(t)||t==='weapon'||t==='necklace'||t==='ring'||t==='bracelet'||t==='god_seal'||t==='god_rune') return true;
@@ -6978,7 +7010,7 @@ function renderChar(){
   if(ef){ var pp=TR.reqExp?TR.exp/TR.reqExp*100:0; ef.style.width=Math.max(0,Math.min(100,pp))+'%'; }
   if(en) en.textContent=TR.level>=80?'MAX':(TR.exp+'/'+TR.reqExp);
   var _rlv=document.getElementById('tr-rolecard-lv'); if(_rlv) _rlv.textContent='Lv.'+TR.level;   /* 角色等级 */
-  var _rt1=document.getElementById('tr-rolecard-tier'); if(_rt1) _rt1.textContent=((charTierIdx()>=0)?CHAR_TIERS[charTierIdx()].n:'');   /* 当前阶位 */
+  var _rt1=document.getElementById('tr-rolecard-tier'); setTierEl(_rt1);   /* 当前阶位（档位配色） */
   var _rp1=document.getElementById('tr-rolecard-power'); if(_rp1) _rp1.textContent='战力 '+fmtWan(rolePower());   /* 角色战力 */
   var _re1=document.getElementById('tr-rolecard-elem'); if(_re1) _re1.innerHTML=elemBadgesText(elemKey((CHARACTER.combat[4]||{}).v), charDefElem());   /* 角色属性攻防标签 */
   renderBuff();
@@ -7428,7 +7460,7 @@ bindEvents();})();
   <div class="fb-grid" id="fb-grid"></div>
 </div>
 <div id="attr-float">
-  <div class="af-head"><span id="af-head-title">角色属性</span><button id="af-close" class="af-x" aria-label="关闭">×</button></div>
+  <div class="af-head"><span id="af-head-title"><span class="af-head-name" id="af-head-name"></span></span><button id="af-close" class="af-x" aria-label="关闭">×</button></div>
   <div class="af-body" id="af-body"></div>
 </div>
 
