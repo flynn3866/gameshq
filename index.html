@@ -1018,7 +1018,7 @@ body.show-god .stage{max-width:680px;}
 .tr-dun.on{border-color:#C9A24B;box-shadow:0 0 8px rgba(201,162,75,.35),inset 0 0 6px rgba(201,162,75,.12);}
 .tr-dun-name{font-size:12px;color:#FFFFFF;letter-spacing:1px;margin-bottom:2px;text-shadow:0 0 6px rgba(255,255,255,.25);}
 .tr-dun-lv{font-size:10px;color:#E0B96A;font-variant-numeric:tabular-nums;}
-.tr-dun-tag{display:inline-block;margin-top:3px;font-size:9px;color:#C9A24B;border:1px solid rgba(201,162,75,.4);border-radius:3px;padding:0 4px;}
+.tr-dun-tag{display:inline-block;margin-top:3px;font-size:9px;color:#52C6DA;border:1px solid rgba(82,198,218,.5);border-radius:3px;padding:0 4px;text-shadow:0 0 6px rgba(82,198,218,.45);}   /* 掉落标签用锐凡青蓝色 */
 /* 战斗场景 */
 .tr-battle{border:1px solid rgba(201,162,75,.32);border-radius:10px;overflow:hidden;background:linear-gradient(180deg,rgba(201,162,75,.07),rgba(13,11,10,.9) 34%,#0d0b0a);box-shadow:0 4px 20px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.06);}
 .tr-scene{position:relative;height:200px;overflow:hidden;--dust:201,162,75;
@@ -1158,7 +1158,7 @@ body.show-god .stage{max-width:680px;}
 .tr-ss-sum{flex:1;text-align:right;font-size:11px;color:#FFFFFF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 6px rgba(255,255,255,.25);}
 .tr-ss-caret{color:#C9A24B;font-size:10px;transition:transform .25s;}
 .tr-stats.open .tr-ss-caret{transform:rotate(180deg);}
-.tr-stats-panel{position:absolute;left:0;right:0;top:100%;z-index:90;margin-top:4px;border:1px solid rgba(214,177,110,.25);border-radius:10px;background:rgba(18,14,11,.97);box-shadow:0 14px 34px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);padding:9px 11px;max-height:52vh;overflow-y:auto;opacity:0;visibility:hidden;transform:scale(.96) translateY(-8px);transform-origin:top center;transition:opacity .22s ease, transform .22s ease, visibility .22s;pointer-events:none;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);}
+.tr-stats-panel{position:absolute;left:0;right:0;top:100%;z-index:150;margin-top:4px;border:1px solid rgba(214,177,110,.25);border-radius:10px;background:rgba(18,14,11,.97);box-shadow:0 14px 34px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.06);padding:9px 11px;max-height:52vh;overflow-y:auto;opacity:0;visibility:hidden;transform:scale(.96) translateY(-8px);transform-origin:top center;transition:opacity .22s ease, transform .22s ease, visibility .22s;pointer-events:none;}   /* 提高z-index并去掉backdrop-filter，避免被fb-mask遮罩(80)盖住 */
 .tr-stats.open .tr-stats-panel{opacity:1;visibility:visible;transform:scale(1) translateY(0);pointer-events:auto;}
 .tr-stats-panel::-webkit-scrollbar{width:4px;}
 .tr-stats-panel::-webkit-scrollbar-thumb{background:#3a342c;border-radius:2px;}
@@ -1252,8 +1252,8 @@ body.show-god .stage{max-width:680px;}
 .tr-log::-webkit-scrollbar-thumb{background:#3a342c;border-radius:2px;}
 .tr-logline{color:#a89c88;animation:trLogIn .3s ease;line-height:1.7;word-break:break-word;}
 .tr-logline b{color:#C9A24B;font-weight:normal;}
-.tr-logline .lg-gold{color:#ffd700;}
-.tr-logline .lg-item{color:#7ee08a;}
+.tr-logline .lg-gold{color:#52C6DA;text-shadow:0 0 6px rgba(82,198,218,.4);}   /* 金币/经验提示用锐凡青蓝 */
+.tr-logline .lg-item{color:#52C6DA;text-shadow:0 0 6px rgba(82,198,218,.4);}   /* 掉落物品名用锐凡青蓝 */
 .tr-logline .lg-boss{color:#ff7b5c;}
 @keyframes trLogIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 #revive-tip,#tl-revive-tip{position:fixed;left:50%;top:44%;transform:translateX(-50%);z-index:9999;background:rgba(205,205,205,.16);color:var(--text-hi);padding:9px 20px;border-radius:8px;border:1px solid rgba(225,225,225,.28);backdrop-filter:blur(4px);font-size:14px;letter-spacing:1px;text-align:center;pointer-events:none;display:none;box-shadow:0 4px 18px rgba(0,0,0,.4);white-space:nowrap;}
@@ -2667,7 +2667,7 @@ function playSoundEffect(itemType){
 }
 
 function toast(msg){
-  toastEl.textContent = msg;
+  toastEl.innerHTML = msg;   /* 支持数值/关键信息着色（数据源为系统固定文本） */
   toastEl.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(function(){ toastEl.classList.remove('show'); }, 1800);
@@ -3780,7 +3780,7 @@ function doRefine(){
   REFINE.equip.washAttrs=rollRefine(n, full, maxAll);
   playSoundEffect('embedSuccess'); enhFx('success','refine-equip');   /* 洗炼成功：凹槽散发效果与镶嵌成功一致（音效已同上） */
   if(maxAll){ toast('神迹降临！所有属性洗出区间最高值！'); triggerLegendFX(); }
-  else toast('洗炼成功：附加 '+n+' 条属性');
+  else toast('洗炼成功：附加 <b style="color:#52C6DA">'+n+'</b> 条属性');
   renderBag(); renderRefine(); recalcCharacter();
 }
 function consumeStack(it,n){
@@ -3878,7 +3878,7 @@ function doEnhanceCore(){
     CURRENCY.gold-=acfg.cost; renderCurrency();
     ok=Math.random()<acfg.rate;
   }
-  if(ok){ eq.enhanceLevel=lv+1; playSoundEffect('embedSuccess'); enhFx('success'); toast('强化成功 +'+eq.enhanceLevel); }
+  if(ok){ eq.enhanceLevel=lv+1; playSoundEffect('embedSuccess'); enhFx('success'); toast('强化成功 <b style="color:#52C6DA">+'+eq.enhanceLevel+'</b>'); }
   else { playSoundEffect('embedFail'); toast('强化失败'); }
   ENH.mats=[null,null,null,null,null,null]; ENH.hammer=null;
   renderEquip(); renderBag(); renderEnhance(); recalcCharacter();
@@ -4438,7 +4438,7 @@ function doGodUpgrade(){
       var gain=lv===1?(Math.floor(Math.random()*3)+1):(Math.floor(Math.random()*lv*2+6));
       g.currentExp=(g.currentExp||0)+gain;
       if(g.currentExp>(g.requiredExp||100)) g.currentExp=(g.requiredExp||100);
-      toast('升级成功 · 经验 +'+gain);
+      toast('升级成功 · 经验 <b style="color:#52C6DA">+'+gain+'</b>');
     } else if((g.star||1)>=5){
       if(g.grade>=5){ g.grade=5; g.star=5; g.currentExp=g.requiredExp; toast('已达满级'); }
       else { g.grade+=1; g.star=1; g.currentExp=0; g.requiredExp=calcReqExp(g); toast('升重成功！'+g.grade+'重'); }
@@ -6774,7 +6774,7 @@ function renderTrStats(){
   var tGold=0,tAttr=0,tLegend=0;
   DUNGEONS.forEach(function(dd,i){ var p=d.per[i]||{gold:0,attr:0,rec:[]}; tGold+=p.gold; tAttr+=p.attr; tLegend+=p.legend||0; });
   var sum=document.getElementById('tr-ss-sum');
-  if(sum) sum.textContent='今日 传说 '+tLegend+' · 全属性 +'+fmtBig(tAttr)+' · 金币 '+fmtBig(tGold);   /* 顶部统计条：BOSS 计数改为传说掉落计数 */
+  if(sum) sum.innerHTML='今日 传说 <span style="color:#52C6DA">'+tLegend+'</span> · 全属性 +<span style="color:#52C6DA">'+fmtBig(tAttr)+'</span> · 金币 <span style="color:#52C6DA">'+fmtBig(tGold)+'</span>';   /* 顶部统计条：今日战果数字用锐凡青蓝 */
   var p=document.getElementById('tr-stats-panel'); if(!p) return;
   var openSet={};
   var oldFolds=p.querySelectorAll('.tr-br-fold.open');
@@ -7108,7 +7108,7 @@ function initTreasureUI(){
     'BOSS：金币1亿100%（神级10亿）、传说奥格顿套装1%、寂灭之息药剂（小怪0.00001%、BOSS 0.1%，打怪/挂机均可）'
   ];
   var ds=document.getElementById('tr-dungeons');
-  if(ds) ds.addEventListener('click',function(e){ var t=e.target.closest('.tr-dun'); if(!t) return; TR.dungeon=+t.getAttribute('data-i'); TR.kill=0; TR.isBoss=false; TR.hp=TR.maxHp; ithStart(); trPhantomTimer(); trSpawnMon(); renderTreasure(); trLog('进入 <b>'+DUNGEONS[TR.dungeon].name+'</b>，可掉落：'+trDropsInfo[TR.dungeon]); });
+  if(ds) ds.addEventListener('click',function(e){ var t=e.target.closest('.tr-dun'); if(!t) return; TR.dungeon=+t.getAttribute('data-i'); TR.kill=0; TR.isBoss=false; TR.hp=TR.maxHp; ithStart(); trPhantomTimer(); trSpawnMon(); renderTreasure(); trLog('进入 <b>'+DUNGEONS[TR.dungeon].name+'</b>，<b style="color:#52C6DA">可掉落：'+trDropsInfo[TR.dungeon]+'</b>');   /* 可掉落提示用锐凡青蓝 */ });
   if(ds) ds.addEventListener('wheel',function(e){
     if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ e.preventDefault(); ds.scrollLeft+=e.deltaY; }
   },{passive:false});
@@ -7124,8 +7124,9 @@ function initTreasureUI(){
     },{passive:true});
     el.addEventListener('touchend',function(){ active=false; },{passive:true});
   });
-function closeTrStats(){ var w=document.getElementById('tr-stats'); if(w) w.classList.remove('open'); var mk=document.getElementById('fb-mask'); if(mk) mk.classList.remove('show'); }
-  var sb=document.getElementById('tr-stats-bar'); if(sb) sb.addEventListener('click',function(){ var w=document.getElementById('tr-stats'); if(w){ var _open=w.classList.toggle('open'); renderTrStats(); var mk=document.getElementById('fb-mask'); if(mk){ if(_open){ mk.classList.add('show'); if(!mk.__tr){ mk.__tr=1; mk.addEventListener('click',closeTrStats); } } else { if(!document.querySelector('.tr-stats.open')) mk.classList.remove('show'); } } } });
+function closeTrStats(){ var w=document.getElementById('tr-stats'); if(w) w.classList.remove('open'); }
+  var sb=document.getElementById('tr-stats-bar'); if(sb) sb.addEventListener('click',function(e){ e.stopPropagation(); var w=document.getElementById('tr-stats'); if(w){ w.classList.toggle('open'); renderTrStats(); } });
+  if(!document.__trDismiss){ document.__trDismiss=1; document.addEventListener('click',function(e){ var w=document.getElementById('tr-stats'); if(w&&w.classList.contains('open')&&!e.target.closest('#tr-stats')){ closeTrStats(); } }); }   /* 掉落统计面板不再用全屏遮罩，点击面板外关闭 */
   var ab=document.getElementById('tr-atk'); if(ab) ab.addEventListener('click',function(){ trAtk(); });
   var au=document.getElementById('tr-auto'); if(au) au.addEventListener('click',function(){ trSetAuto(!TR.auto); });
   trStartRegen();
@@ -7464,11 +7465,13 @@ function doReset(){
   CHARACTER.innate=randomRollOrigin();   /* 初始化：先随机先天运势，再按运势分档生成角色属性（与“重新随机”按钮逻辑一致） */
   itemIdCounter = 1;
   LOTTERY_LOG = [];   /* 初始化清空抽奖记录 */
+  try{ localStorage.removeItem('shenqi_daily_stats'); }catch(e){}   /* 初始化清空今日掉落统计：dailyGet 自动重建为当天全0 */
   try{ localStorage.removeItem('shenqi_lottery_log'); localStorage.removeItem('shenqi_lottery_count'); }catch(e){}
   LOTTERY_COUNT=0; saveLotteryCount(); updatePity(); updateLotteryGold();   /* 初始化将保底计数写回落盘(0)并即时刷新抽奖页显示，避免进入时残留上次值 */
   LOTTERY_FREE = LOTTERY_FREE_MAX; saveLotteryFree();   /* 初始化重置每日免费抽奖次数为上限 */
   renderLotteryLog();
   recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); renderCurrency();
+  if(typeof renderTrStats==='function') renderTrStats();   /* 初始化后刷新掉落统计为全0 */
   saveGame();
   toast('已恢复到初始状态');
 }
