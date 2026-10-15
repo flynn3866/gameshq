@@ -6007,7 +6007,7 @@ function wheelTick(){   /* 轮盘驱动：requestAnimationFrame 按时间算角�
   if(!a){ WHEEL_RAF=null; return; }
   var w=document.getElementById('wheel'); if(!w){ WHEEL_RAF=null; return; }
   var p=Math.min(1,(Date.now()-a.start)/a.dur);
-  var e=1-Math.pow(1-p,(a.pow||3));   /* 缓动阶数随充能力度：轻点=三次(平缓起步)，充能足=四次(初始冲速更陡)，力度匹配且末段平滑无突跳 */
+  var e; if((a.pow||3)===2.5){ e=(1-Math.pow(1-p,2)+1-Math.pow(1-p,3))/2; } else { e=1-Math.pow(1-p,(a.pow||3)); }   /* 半档=二次与三次各半：初始够冲、末段滑行更拖尾 */
   w.style.transition='none';
   w.style.transform='rotate('+(a.from+(a.to-a.from)*e)+'deg)';
   if(p>=1){
@@ -6029,7 +6029,7 @@ function spinWheel(idx, win, spins, durMs, x10results){
   var to=from + 360*(spins||6) + ((target-(wheelAngle%360)+360)%360);
   wheelAngle=to;
   if(WHEEL_RAF){ cancelAnimationFrame(WHEEL_RAF); WHEEL_RAF=null; }
-  WHEEL_ANIM={ start:Date.now(), dur:(durMs||12000), from:from, to:to, win:win, x10:x10results, pow:(spins>=18?4:3) };   /* 充能足(≥18圈)用四次缓动初始更陡 */
+  WHEEL_ANIM={ start:Date.now(), dur:(durMs||12000), from:from, to:to, win:win, x10:x10results, pow:2.5 };   /* 二次/三次各半：初始够冲、停止更拖尾滑行 */
   document.body.classList.add('lottery-spin');   /* 转动期：隐藏模糊光晕层，极致丝滑 */
   WHEEL_RAF=requestAnimationFrame(wheelTick);   /* rAF 驱动：与刷新率同步，不受 view 显隐影响，切走期间也保持转动进度 */
 }
