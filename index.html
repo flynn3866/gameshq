@@ -5350,10 +5350,10 @@ function initTrial(){
   var best=document.getElementById('tl-best'); if(best) best.innerHTML='最高纪录：第 <b style="color:#52C6DA">'+(T.best||0)+'</b> 层';   /* 层数用锐凡青蓝 */
   tlSpawn(); tlLog('<b>进入无尽试炼</b>，地狱难度，每10层为BOSS（必掉大奖）');
   T.auto=false;   /* 进入试炼不自动攻击，点「自动攻击」才开打 */
-  if(T.auto && !T.timer){ T.timer=setInterval(tlTick,120); }
-  var atk=document.getElementById('tl-atk'); if(atk && !atk.__b){ atk.__b=true; atk.addEventListener('click', function(){ stopTreasure(); stopArenaFight(); T.auto=true; if(!T.timer) T.timer=setInterval(tlTick,120); if(T.hp>0){ tlTick(); } }); }   /* 开试炼自动：停副本挂机与竞技挑战 */
+  if(T.auto && !T.timer){ T.timer=setInterval(tlTick,250); }
+  var atk=document.getElementById('tl-atk'); if(atk && !atk.__b){ atk.__b=true; atk.addEventListener('click', function(){ stopTreasure(); stopArenaFight(); T.auto=true; if(!T.timer) T.timer=setInterval(tlTick,250); if(T.hp>0){ tlTick(); } }); }   /* 开试炼自动：停副本挂机与竞技挑战 */
   var au=document.getElementById('tl-auto'); if(au && !au.__b){ au.__b=true; au.addEventListener('click', function(){
-    T.auto=!T.auto; if(T.auto){ stopTreasure(); stopArenaFight(); if(!T.timer) T.timer=setInterval(tlTick,120); au.textContent='暂停'; } else { if(T.timer){ clearInterval(T.timer); T.timer=null; } au.textContent='继续'; }   /* 开试炼自动：停副本挂机与竞技挑战 */
+    T.auto=!T.auto; if(T.auto){ stopTreasure(); stopArenaFight(); if(!T.timer) T.timer=setInterval(tlTick,250); au.textContent='暂停'; } else { if(T.timer){ clearInterval(T.timer); T.timer=null; } au.textContent='继续'; }   /* 开试炼自动：停副本挂机与竞技挑战 */
   }); au.textContent='继续'; }
   var bk=document.getElementById('trial-back'); if(bk && !bk.__b){ bk.__b=true; bk.addEventListener('click', function(){ location.hash=''; }); }
 }
@@ -5705,7 +5705,7 @@ function startFight(idx){
     setHp('p',ARENA.hpP,s.hp); setHp('o',ARENA.hpO,o.hp); applyCharTier();
   }
   arenaLog('向 <span class="t">'+o.n+'</span> 发起挑战');
-  ARENA.timer=setInterval(function(){ arenaStep(o,s,pInt,oInt); },120);   /* 性能优化：战斗检查60ms->120ms，攻速判定由tP/tO累加决定，功能不变 */
+  ARENA.timer=setInterval(function(){ arenaStep(o,s,pInt,oInt); },250);   /* 性能优化：战斗检查60ms->120ms->250ms，攻速判定由tP/tO累加决定，功能不变 */
 }
 function setHp(w,cur,max){ var el=$('#af-hp-'+w); if(!el) return; var b=el.querySelector('i'); b.style.width=Math.max(0,Math.round(cur/max*100))+'%'; var t=$('#af-hpt-'+w); if(t) t.textContent=fmtWan(Math.max(0,Math.round(cur)))+' / '+fmtWan(max); }
 function floatDmg(val,side,miss){ var f=document.getElementById('arena-fight'); if(!f) return; var crit=(''+val).indexOf('暴击')>=0, num=(''+val).replace('暴击 ',''); var d=document.createElement('div'); d.className='tr-float'+(crit?' crit':'')+(miss?' miss':''); if(crit){ d.innerHTML='<i class="tr-crit">CRIT</i>'+num; } else d.textContent=miss?'MISS':num; d.style.left=side==='hero'?'16%':'72%'; d.style.transform='translateX(-50%)'; f.appendChild(d); setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); },1000); }
@@ -5907,14 +5907,14 @@ window.addEventListener('hashchange', route);
 /* ============ 幸运轮盘 ============ */
 /* 抽奖概率=真实概率（总和1.0）；prob<0.01 为稀有档（保底奖池） */
 var LOTTERY=[
-  {label:'谢谢参与',short:'谢谢',prob:0.14,color:'#3a352f',apply:function(){}},
-  {label:'300万金币',short:'300万',prob:0.15,color:'#8a5a2b',apply:function(){CURRENCY.gold+=3000000;}},
+  {label:'谢谢参与',short:'谢谢',prob:0.14,color:'#4A5A72',apply:function(){}}   /* 协调蓝灰：低调不刺眼，与整体暗金/蓝/金体系搭配 */,
+  {label:'300万金币',short:'300万',prob:0.15,color:'#C08430',apply:function(){CURRENCY.gold+=3000000;}}   /* 亮金棕：与银白谢谢区分，金币主题呼应 */,
   {label:'全属性+10~50',short:'全属性+10~50',prob:0.107,color:'#4f7da0',apply:function(){this._addVal=10+Math.floor(Math.random()*41); addPerm(this._addVal,0);}},   /* 轮盘显示区间 10~50；日志/结果显示真实附加值 */
   {label:'神符碎片',short:'神符碎片',prob:0.07,color:'#e2b04f',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=1; addStackable(g); }},
   {label:'神力碎片',short:'神力碎片',prob:0.06,color:'#6fa8dc',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; addStackable(g); }},
   {label:'1亿金币',short:'1亿',prob:0.11,color:'#f2c51e',apply:function(){CURRENCY.gold+=100000000;}},
   {label:'神符天神牌子',short:'神符牌',prob:0.05,color:'#d4a017',apply:function(){var rs=[ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune]; var g=mkLoot(rs[Math.floor(Math.random()*rs.length)]); g.count=1; placeInBag(g); }},
-  {label:'生命+10000',short:'生命+1万',prob:0.04,color:'#a04f4f',apply:function(){addPerm(0,10000);}},
+  {label:'生命+10000',short:'生命+1万',prob:0.04,color:'#D0715F',apply:function(){addPerm(0,10000);}}   /* 亮暖红：与相邻扇区视觉齐平 */,
   {label:'神印碎片',short:'神印碎片',prob:0.03,color:'#9a5bd0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.sealFragment); g.count=1; addStackable(g); }},
   {label:'锤7',short:'锤7',prob:0.13,color:'#e8b54a',apply:function(){var h=ITEM_BLUEPRINTS.hammers[0]; var g=mkLoot(h); g.count=1; g.maxStack=255; addStackable(g); }},
   {label:'全属性+100',short:'全属性+100',prob:0.012,color:'#4fa05f',apply:function(){addPerm(100,0);}},
@@ -6029,7 +6029,7 @@ function spinWheel(idx, win, spins, durMs, x10results){
   var to=from + 360*(spins||6) + ((target-(wheelAngle%360)+360)%360);
   wheelAngle=to;
   if(WHEEL_RAF){ cancelAnimationFrame(WHEEL_RAF); WHEEL_RAF=null; }
-  WHEEL_ANIM={ start:Date.now(), dur:(durMs||12000), from:from, to:to, win:win, x10:x10results, pow:2.5 };   /* 二次/三次各半：初始够冲、停止更拖尾滑行 */
+  WHEEL_ANIM={ start:Date.now(), dur:(durMs||12000), from:from, to:to, win:win, x10:x10results, pow:2.8 };   /* 三次偏柔和：减速比2.5略强、比3更拖尾 */
   document.body.classList.add('lottery-spin');   /* 转动期：隐藏模糊光晕层，极致丝滑 */
   WHEEL_RAF=requestAnimationFrame(wheelTick);   /* rAF 驱动：与刷新率同步，不受 view 显隐影响，切走期间也保持转动进度 */
 }
@@ -6588,6 +6588,7 @@ function ithStart(){
 }
 function ithStop(){ if(ITH_TIMER){ clearInterval(ITH_TIMER); ITH_TIMER=null; } }
 window.addEventListener('hashchange', function(){ if(location.hash.indexOf('#treasure')>=0){ ithStart(); renderQuick(); } else if(location.hash.indexOf('#trial')>=0 || location.hash.indexOf('#arena')>=0){ ithStop(); renderQuick(); } else { if(!(TR.auto && TR.dungeon===0 && ITH_LEFT.yitaiNecklace>0)) ithStop(); } });   /* 伊泰安掉落：进试炼/竞技停止；雕俱挂机切到其他页保留定时器继续掉落 */
+window.addEventListener('hashchange', function(){ if(typeof T!=='undefined'&&T.auto){ if(T.timer){ clearInterval(T.timer); T.timer=null; } T.timer=setInterval(tlTick, location.hash.indexOf('#trial')>=0?250:500); } });   /* ③试炼挂机切走降频：离开试炼页500ms、回到250ms，挂机不掉落不变 */
 function luckRoll(p){ return Math.random() < p * lotteryInnate(); }   /* 传说级物品：掉落概率×先天运势（运势越高越易掉） */
 function antiRoll(p){ var k=1/(1+(lotteryInnate()-1)); return Math.random() < p*k; }   /* 非传说级物品：反向补偿（传说涨则非传说降，反之亦然，幅度温和） */
 function trRollDrop(){
