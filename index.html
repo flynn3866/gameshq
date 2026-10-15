@@ -570,12 +570,14 @@ body.show-god .stage{max-width:680px;}
 .tt-card .tt-desc{width:100%;font-size:11px;color:#a89f8d;line-height:1.45;}
 .tt-empty{font-size:12px;color:#8a8171;text-align:center;padding:12px 0;margin:0 14px;}
 /* ===== 属性页身份卡 + 荣耀徽章（与浮层样式统一） ===== */
-.attrs-id{display:flex;align-items:center;gap:12px;margin:2px 12px 10px;padding:14px 12px;border-radius:11px;border:1px solid rgba(201,162,75,.4);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 72%),linear-gradient(180deg,#2E2822,#211C17);box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 6px 16px rgba(0,0,0,.35),0 0 3px rgba(201,162,75,.42);}   /* 增加3px发散金色阴影，强化卡片层次且不过大 */
+.attrs-id{display:flex;align-items:center;gap:12px;margin:2px 12px 10px;padding:14px 12px;border-radius:11px;border:1px solid rgba(201,162,75,.4);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 72%),linear-gradient(180deg,#2E2822,#211C17);box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 6px 16px rgba(0,0,0,.35),0 0 3px rgba(201,162,75,.42),0 0 8px rgba(226,233,245,.30);}   /* 增加3px发散金色阴影+最外层淡银白辉光 */
 .attrs-id-avatar{width:58px;height:58px;flex:none;border-radius:14px;border:1px solid #C9A24B;background:linear-gradient(180deg,#3a2c12,#241b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 16px rgba(201,162,75,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .attrs-id-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
 .attrs-id-main{flex:1;min-width:0;}
 .attrs-id-name{font-size:23px;color:#FFFFFF;font-weight:800;letter-spacing:3px;text-shadow:0 0 10px rgba(255,255,255,.12);}
-.attrs-id-lvtier{display:flex;align-items:center;gap:7px;margin-top:6px;font-size:13px;color:#D8CFC2;letter-spacing:1px;font-variant-numeric:tabular-nums;}
+.attrs-id-tier{margin-top:5px;}
+.attrs-id-tier .char-tier{font-size:16px;font-weight:800;letter-spacing:2px;margin-left:0;}
+.attrs-id-lvtier{display:flex;align-items:center;gap:7px;margin-top:5px;font-size:13px;color:#D8CFC2;letter-spacing:1px;font-variant-numeric:tabular-nums;}
 .attrs-id-lvtier .attrs-id-cls{margin:0;font-size:10px;color:#D8CFC2;letter-spacing:1px;}
 .attrs-id-lvtier .attrs-id-lv{font-size:10px;}
 .attrs-id-lvtier .char-tier{font-size:10px;}
@@ -596,6 +598,17 @@ body.show-god .stage{max-width:680px;}
 .tier-progress .tp-bar i{position:absolute;left:0;top:0;bottom:0;border-radius:5px;background:linear-gradient(90deg,#FF5AD8,#D080F0,#FFD98A);box-shadow:0 0 10px rgba(255,90,200,.6);transition:width .5s ease;}
 .tier-progress .tp-meta{display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:#B7AB95;letter-spacing:.5px;font-variant-numeric:tabular-nums;}
 .tier-progress .tp-done{text-align:center;font-size:12px;font-weight:800;color:#FF5AD8;text-shadow:0 0 8px rgba(255,90,200,.5);letter-spacing:1px;}   /* 大帝已满档 */
+.tier-progress .tp-steps{display:flex;align-items:center;justify-content:space-between;gap:2px;}
+.tier-progress .tp-node{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;}
+.tier-progress .tp-dot{width:7px;height:7px;border-radius:50%;border:1.5px solid #6b645c;background:transparent;flex:none;}
+.tier-progress .tp-node.on .tp-dot{background:currentColor;border-color:currentColor;}
+.tier-progress .tp-node.cur .tp-dot{width:9px;height:9px;box-shadow:0 0 9px currentColor;}
+.tier-progress .tp-name{font-size:11px;font-weight:700;letter-spacing:.5px;white-space:nowrap;}
+.tier-progress .tp-node.off .tp-name{color:#6b645c;font-weight:600;}
+.tier-progress .tp-node.cur .tp-name{font-size:12px;text-shadow:0 0 8px currentColor;}
+.tier-progress .tp-line{flex:1;min-width:4px;height:2px;border-radius:1px;background:#4a443c;}
+.tier-progress .tp-line.on{background:#C9A24B;}
+.tier-progress .tp-line.cur{background:#FFD98A;box-shadow:0 0 6px rgba(255,200,110,.5);}
 .attrs-badge{display:flex;align-items:center;gap:7px;padding:5px 8px;margin-bottom:4px;border:1px solid rgba(201,162,75,.18);border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.01));font-size:11px;}
 .attrs-badge i{display:inline-block;width:7px;height:7px;border-radius:2px;flex:none;box-shadow:0 0 6px currentColor;}
 .attrs-badge b{font-weight:600;letter-spacing:1px;color:#EDE4D4;}
@@ -1315,10 +1328,10 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   border-left:14px solid transparent;border-right:14px solid transparent;border-top:27px solid #d9b45a;
   filter:drop-shadow(0 2px 3px rgba(0,0,0,.8)) drop-shadow(0 0 5px rgba(217,180,90,.45));}
 .wheel-pointer::after{content:'';position:absolute;left:-4px;top:-3px;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ffe9c2,#c99f4a);box-shadow:0 0 6px rgba(217,180,90,.7);}
-.wseg{position:absolute;left:50%;top:50%;width:66px;height:32px;margin-left:-33px;margin-top:-16px;z-index:3;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:600;
-  text-shadow:0 1px 2px rgba(0,0,0,.95);letter-spacing:.2px;pointer-events:none;line-height:1.2;}
-.wseg .wprob{font-size:9px;opacity:.95;color:#ffe9b0;}
+.wseg{position:absolute;left:50%;top:50%;width:72px;height:34px;margin-left:-36px;margin-top:-17px;z-index:3;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:600;
+  text-shadow:0 1px 2px rgba(0,0,0,.95);letter-spacing:.2px;pointer-events:none;line-height:1.2;white-space:nowrap;}
+.wseg .wprob{font-size:8px;opacity:.95;color:#ffe9b0;}
 .lottery-cost{margin-top:2px;font-size:13px;color:#FFFFFF;}
 .lottery-wallet{display:flex;justify-content:center;align-items:center;gap:6px;margin:6px auto 0;width:min(352px,86vw);padding:4px 0;font-size:13px;color:#FFFFFF;letter-spacing:1px;border-top:1px solid rgba(214,177,110,.18);border-bottom:1px solid rgba(214,177,110,.18);background:linear-gradient(180deg,rgba(48,42,32,.4),rgba(28,24,20,.4));}
 .lottery-wallet b{color:#E8CB74;font-weight:700;font-size:16px;text-shadow:0 0 12px rgba(232,203,116,.5);}
@@ -1877,7 +1890,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
         <div class="attrs-id-avatar"><img src="logos/头像.png" alt=""></div>
         <div class="attrs-id-main">
           <div class="attrs-id-name" id="ch-name"></div>
-          <div class="attrs-id-lvtier"><span class="char-tier" id="ch-tier"></span><span class="attrs-id-lvsep">·</span><span class="attrs-id-cls" id="ch-cls"></span><span class="attrs-id-lvsep">·</span><span class="attrs-id-lv" id="ch-lv"></span><span class="rkbadge rkbadge-sm" id="ch-rank"></span></div>
+          <div class="attrs-id-tier"><span class="char-tier" id="ch-tier"></span></div><div class="attrs-id-lvtier"><span class="attrs-id-cls" id="ch-cls"></span><span class="attrs-id-lvsep">·</span><span class="attrs-id-lv" id="ch-lv"></span></div>
         </div>
         <div class="attrs-id-power"><b>战 力</b><span id="ch-power"></span></div>
       </div>
@@ -4700,9 +4713,10 @@ function renderAttrs(){
     var m=0; ['力量','敏捷','体质','精神','智力','幸运'].forEach(function(k){ var v=(CHARACTER.base?CHARACTER.base[k]:0)+(CHARACTER.bonus?CHARACTER.bonus[k]:0); if(v>m)m=v; });
     var i=charTierIdx();
     if(i>=CHAR_TIERS.length-1){ el.innerHTML='<div class="tier-progress"><div class="tp-done">已达大帝 · 至高无上</div></div>'; return; }
+    var TC=['#52C6DA','#4A9BFF','#6E9BFF','#A56BFF','#F2A93B','#FF5AD8'];
+    var _steps=''; for(var _s=0;_s<CHAR_TIERS.length;_s++){ if(_s>0){ var _lg=_s<=i?'on':(_s===i+1?'cur':'off'); _steps+='<span class="tp-line '+_lg+'"></span>'; } var _on=_s<=i; _steps+='<span class="tp-node'+(_on?' on':' off')+(_s===i?' cur':'')+'"'+( _on?' style="color:'+TC[_s]+'"':'')+'><i class="tp-dot"></i><span class="tp-name">'+CHAR_TIERS[_s].n+'</span></span>'; }
     var cur=i>=0?CHAR_TIERS[i].m:0, nxt=CHAR_TIERS[i+1].m, pct=Math.min(100,Math.max(0,(m-cur)/(nxt-cur)*100));
-    var cn=i>=0?CHAR_TIERS[i].n:'未入阶', nn=CHAR_TIERS[i+1].n;
-    el.innerHTML='<div class="tier-progress"><div class="tp-top"><span class="tp-cur">'+cn+'</span><span class="tp-arrow">→</span><span class="tp-next">'+nn+'</span><span class="tp-pct">'+pct.toFixed(0)+'%</span></div><div class="tp-bar"><i style="width:'+pct.toFixed(1)+'%"></i></div><div class="tp-meta"><span>'+fmtWan(m)+'</span><span>门槛 '+fmtWan(nxt)+'</span></div></div>';
+    el.innerHTML='<div class="tier-progress"><div class="tp-steps">'+_steps+'</div><div class="tp-bar"><i style="width:'+pct.toFixed(1)+'%"></i></div><div class="tp-meta"><span>'+fmtWan(m)+'</span><span>下一阶 门槛 '+fmtWan(nxt)+' · '+pct.toFixed(0)+'%</span></div></div>';
   })();
   $('#ch-lv').textContent = 'Lv.' + CHARACTER.info.level;
   $('#ch-cls').textContent = CHARACTER.info.cls;
@@ -5972,7 +5986,7 @@ function renderWheel(){
   var segs=LOTTERY.map(function(s,i){ return s.color+' '+(i*sa)+'deg '+(i*sa+sa)+'deg'; }).join(',');
   w.style.background='conic-gradient('+segs+')';
   var olds=w.querySelectorAll('.wseg'); olds.forEach(function(e){e.remove();});
-  var R=(w.clientWidth||300)*0.40;   /* 未布局/隐藏时兜底 300，避免扇区标签堆在中心 */
+  var R=(w.clientWidth||300)*0.34;   /* 扇区标签向中心收，避免长文字溢到轮盘边缘 */
   LOTTERY.forEach(function(s,i){
     var d=document.createElement('div'); d.className='wseg';
     d.innerHTML='<span>'+s.short+'</span><span class="wprob">'+fmtProb(s.prob)+'</span>';   /* 概率紧贴轮盘边框 */
@@ -5993,7 +6007,7 @@ function wheelTick(){   /* 轮盘驱动：requestAnimationFrame 按时间算角�
   if(!a){ WHEEL_RAF=null; return; }
   var w=document.getElementById('wheel'); if(!w){ WHEEL_RAF=null; return; }
   var p=Math.min(1,(Date.now()-a.start)/a.dur);
-  var e=1-Math.pow(1-p,5);   /* easeOutQuint 强刹车，贴合原 cubic-bezier(.18,.82,.32,1) 末段快速停下 */
+  var e=1-Math.pow(1-p,(a.pow||3));   /* 缓动阶数随充能力度：轻点=三次(平缓起步)，充能足=四次(初始冲速更陡)，力度匹配且末段平滑无突跳 */
   w.style.transition='none';
   w.style.transform='rotate('+(a.from+(a.to-a.from)*e)+'deg)';
   if(p>=1){
@@ -6015,7 +6029,7 @@ function spinWheel(idx, win, spins, durMs, x10results){
   var to=from + 360*(spins||6) + ((target-(wheelAngle%360)+360)%360);
   wheelAngle=to;
   if(WHEEL_RAF){ cancelAnimationFrame(WHEEL_RAF); WHEEL_RAF=null; }
-  WHEEL_ANIM={ start:Date.now(), dur:(durMs||12000), from:from, to:to, win:win, x10:x10results };
+  WHEEL_ANIM={ start:Date.now(), dur:(durMs||12000), from:from, to:to, win:win, x10:x10results, pow:(spins>=18?4:3) };   /* 充能足(≥18圈)用四次缓动初始更陡 */
   document.body.classList.add('lottery-spin');   /* 转动期：隐藏模糊光晕层，极致丝滑 */
   WHEEL_RAF=requestAnimationFrame(wheelTick);   /* rAF 驱动：与刷新率同步，不受 view 显隐影响，切走期间也保持转动进度 */
 }
@@ -6304,7 +6318,7 @@ var DUNGEONS=[
   { name:'无限深渊', lv:60, monLv:35, mode:'gem', ambient:'gem', tag:'全部宝石', bossName:'深渊之主', monName:'深渊魔物', color:'#a04fd4', atk:3.6, hp:8, bossAtk:1.8 },
   { name:'克里普特王座', lv:60, monLv:45, mode:'godcard', ambient:'crown', tag:'天神牌子', bossName:'王座霸主', monName:'王座卫士', color:'#a58ad6', atk:4.0, hp:8.5, bossAtk:1.72 },
   { name:'奥利森废墟', lv:57, monLv:50, mode:'jewelry', ambient:'jewelry', tag:'首饰', bossName:'废墟王座', monName:'废墟怨灵', color:'#e0a24f', atk:4.3, hp:9, bossAtk:1.7 },
-  { name:'沙漠之渊', lv:58, monLv:59, mode:'armor', ambient:'desert', tag:'防具', bossName:'沙渊巨兽', monName:'沙渊猎手', color:'#d4643c', atk:5.3, hp:11, bossAtk:1.6 },
+  { name:'沙漠之渊', lv:58, monLv:70, mode:'armor', ambient:'desert', tag:'防具', bossName:'沙渊巨兽', monName:'沙渊猎手', color:'#d4643c', atk:5.3, hp:11, bossAtk:1.6 },
   { name:'狄奥多雷斯', lv:82, monLv:80, mode:'level', ambient:'gem', tag:'升级·经验', bossName:'—', monName:'狄奥守卫', color:'#8fd8a0', atk:6.4, hp:14, bossAtk:0 },
   { name:'神之幻境', lv:80, monLv:79, mode:'phantom', ambient:'gem', tag:'传说套装', bossName:'幻境神主', monName:'幻境神卫', color:'#d8b04f', atk:10, hp:22, bossAtk:2.0 }
 ];
@@ -6723,7 +6737,8 @@ function trSpawnMon(){
   TR.forceBoss=null;
   if(TR.isBoss){   /* Boss 等级：普通比角色高5~15；noble(-3~+2)；掉传说级物品的副本Boss(无限深渊/克里普特/神之幻境)80~85 */
     var _lg=(TR.dungeon===2||TR.dungeon===3||isPhantomDungeon(TR.dungeon));   /* 掉落传说级物品的副本 */
-    if(_lg) TR.bossLevel=80+Math.floor(Math.random()*6);
+    if(TR.dungeon===5) TR.bossLevel=70;   /* 沙漠之渊：Boss 固定70级（与小怪同） */
+    else if(_lg) TR.bossLevel=80+Math.floor(Math.random()*6);
     else if(TR.bossType==='noble') TR.bossLevel=Math.max(1,TR.level-3+Math.floor(Math.random()*6));
     else TR.bossLevel=TR.level+5+Math.floor(Math.random()*11);
   }
