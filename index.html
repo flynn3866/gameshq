@@ -4865,7 +4865,7 @@ function roleTraits(){
   if(fd>0){ var fl=[]; if(ISET>=5) fl.push('伊泰安首饰5件+30%'); if(OG>=5) fl.push('传说奥格顿5件+10%'); if(enhN>0) fl.push('强化+20防具'+enhN+'件+'+pct(enhN*0.03)); out.push({n:'最终伤害减免',d:'受到的最终伤害降低'+pct(fd)+'。提供：'+jn(fl),p:pct(fd)}); }
   if(OG>=5) out.push({n:'最终伤害加成',d:'造成的最终伤害提高10%。提供：传说奥格顿5件',p:'10%'});
   if(tt&&titleAtk().ls>0) out.push({n:'攻击吸血',d:'攻击恢复造成伤害'+pct(titleAtk().ls)+'的生命。提供：'+tt.n+'称号',p:pct(titleAtk().ls)});   /* 称号吸血：璀璨星钻10%（戴上生效） */
-  if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0){ out.push({n:'攻击吸血',d:'攻击恢复造成伤害10%的生命。提供：伊泰安项链',p:'10%'}); out.push({n:'秒杀小怪',d:'1%概率秒杀等级≤自身的普通小怪(对Boss无效)。提供：伊泰安项链',p:'1%'}); }
+  if(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0){ out.push({n:'攻击吸血',d:'攻击恢复造成伤害10%的生命。提供：伊泰安项链',p:'10%'}); out.push({n:'秒杀小怪',d:'1%概率秒杀任何小怪(无视等级，对Boss无效)。提供：伊泰安项链',p:'1%'}); }
   if(OG>=5) out.push({n:'免疫负面',d:'50%概率免疫流血/中毒/眩晕/减速。提供：传说奥格顿5件',p:'50%'});
   if(atr) out.push({n:'属性攻击',d:'物理攻击等效+30%。提供：武器镶嵌攻击宝石',p:'30%'});
   if(dattr) out.push({n:'属性防御',d:'受到的伤害降低30%。提供：胸甲镶嵌防御宝石',p:'30%'});
@@ -5208,7 +5208,7 @@ function tlCharDmg(){
   var _critMul=(weak&&crit)?(2*1.1*2):(crit?2:(weak?2:1));   /* 弱×2、暴×2、同发×4.4（只作用主伤害） */
   var _mFdr=0,_mmDef=0; if(T.traits){ for(var _tq=0;_tq<T.traits.length;_tq++){ var _tv=T.traits[_tq]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(怪物)：dmgred→最终伤害减免(作用合计,上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
   var dmg=Math.round(calcHit({atk:atk*pS*_critMul, realAtk:atk, ig:_ig, real:_rl, add:_add, attackElem:elemKey(TR.attr), atkElemPct:(TR.attr&&TR.attr!=='无'?0.3:0)}, {def:T.monDef, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(T.defElem?0.3:0), defElemResist:(T.defElem?0.3:0), nativeElem:T.defElem||null, abs:0}));   /* 统一结算：主伤害(有效防御+等级压制+暴击弱点)+真伤→增伤→怪物终减→吸收 */
-  if(!T.isBoss && equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0 && T.monLv<=TR.level && Math.random()<0.01){ dmg=T.monHp; tlLog('<b style="color:#c86bff">伊泰安项链触发秒杀！</b>'); }   /* 伊泰安项链：1%概率秒杀等级≤角色的小怪，对boss无效 */
+  if(!T.isBoss && equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0 && Math.random()<0.01){ dmg=T.monHp; tlLog('<b style="color:#c86bff">伊泰安项链触发秒杀！</b>'); }   /* 伊泰安项链：1%概率秒杀任何小怪（无视等级），对boss无效 */
   return {d:dmg, crit:crit, miss:Math.random()>hitRate(HIT_P2M,TR.patk,T.monAtk,TR.level,T.monLv,T.isBoss?'BOSS':'NORMAL'), weak:weak};
 }
 function tlShootArrow(cb){   /* 与寻宝 trShootArrow 一致：从场景左下角发射箭矢飞向怪物，到达后回调 */
@@ -5313,7 +5313,7 @@ function tlTick(){
         if(T.traits){ for(var ti=0;ti<T.traits.length;ti++){ var tt=T.traits[ti];
           if(tt.fx==='reflect'){ var rb=Math.round(r.d*tt.val); if(rb>0){ T.hp-=rb; if(T.hp<0)T.hp=0; tlFloat(rb,false); tlRenderChar(); if(T.hp<=0){ T.hp=0; tlRenderChar(); tlStartRevive(); return; } } }   /* 反弹（减伤特性已并入 calcHit 终减；OG增伤已并入） */
         } }
-      if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0){ var hl=Math.max(1,Math.round(r.d*0.05)); if(T.hp<T.maxHp){ T.hp=Math.min(T.maxHp,T.hp+hl); tlHealFloat(hl); } }
+      if(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0){ var hl=Math.max(1,Math.round(r.d*0.05)); if(T.hp<T.maxHp){ T.hp=Math.min(T.maxHp,T.hp+hl); tlHealFloat(hl); } }
         var _sl=(r.crit&&r.weak)?2:((r.crit||r.weak)?1:0); T.monHp-=r.d; tlFloat(r.d,true,r.crit); var m=document.getElementById('tl-monster'); if(m){ m.classList.add('hit'); setTimeout(function(){ if(m) m.classList.remove('hit'); },100); } if(_sl){ var mm=document.getElementById('tl-monster'); if(mm) shakeMonster(mm,_sl); addMonCardShake('tl',_sl); }
       }
       tlRenderMon();
@@ -5490,7 +5490,7 @@ function renderAchievement(){
     {c:'史诗奥格顿套装',rows:['2件：力量 +20、敏捷 +20','3件：力量/敏捷/幸运/体质 +30','4件：力量/敏捷/幸运/体质 +60','5件：全属性 +200、生命 +2000']},
     {c:'传说奥格顿套装',rows:['3件：全属性×1.1、生命/活力/物防/法防×1.2','4件：全属性×1.5、生命/活力/物防/法防×1.5','5件：最终伤害加成 +10%、最终伤害减免 +10%','5件：50%概率免疫负面状态'],note:'免疫 流血/中毒/眩晕/减速'},
     {c:'伊泰安首饰（项链+2戒+2镯）',rows:['3件：全属性 +100万、生命活力 +100万','5件：无视防御 +30%、最终伤害减免 +30%、暴击伤害减免 +30%']},
-    {c:'伊泰安项链（单件）',rows:['攻击带 10% 吸血','1% 概率秒杀等级≤角色的小怪'],note:'对 Boss 无效'},
+    {c:'伊泰安项链（单件）',rows:['攻击带 10% 吸血','1% 概率秒杀任何小怪（无视等级）'],note:'对 Boss 无效'},
     {c:'传说魔翼',rows:['全属性各 +500万、物理攻击 +500万、攻速最快、6凹槽、需 80 级','真实伤害：强化 0=5%、强化 20=30%（线性）'],note:'强化 20：物理攻击 +1471万'},
     {c:'天神满级 5重5星',rows:['释放该天神牌子 100% 全属性','上阵主阵位 100% 附加、副阵位 50%']},
     {c:'强化 +20（防具）',rows:['每件伤害吸收 300万（固定值，5件累加）','每件 -3% 最终伤害（5件 -15%）'],note:'tooltip 追加：抗暴率 +3%（强15）/ 暴伤减免 +3%（强18）/ 最终伤害减免 +3%（强20）'},
@@ -5728,7 +5728,7 @@ function playerHit(o,s){
   var dmg=Math.max(1, Math.round(calcHit({atk:s.patk*lvR*(isCrit?2:1), realAtk:s.patk*lvR, ig:_ig, real:_rl, add:_add, attackElem:elemKey((CHARACTER.combat[4]||{}).v), atkElemPct:(((CHARACTER.combat[4]||{}).v!=='无')?0.3:0)}, {def:o.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(o.defElem?0.3:0), defElemResist:(o.defElem?0.3:0), nativeElem:o.defElem||null, abs:0})));   /* 统一结算：主伤害(有效防御+等级压制+暴击)+真伤→增伤→对手终减→吸收 */
   arenaShootArrow(function(){   /* 箭矢从左下角射向对手，命中后才结算掉血/飘字/震动 */
   if(Math.random()>hitRate(HIT_P2M,TR.patk,o.atk,CHARACTER.info.level,(o.level||1),o.boss?'BOSS':null)){ floatDmg('MISS','enemy',true); return; }   /* 玩家打对手统一MISS判定 */
-  var _ls3=(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls; if(_ls3>0){ var hl=Math.max(1,Math.round(dmg*_ls3)); if(ARENA.hpP<s.hp){ ARENA.hpP=Math.min(s.hp,ARENA.hpP+hl); setHp('p',ARENA.hpP,s.hp); arenaHeal(hl); } }   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上) */
+  var _ls3=(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls; if(_ls3>0){ var hl=Math.max(1,Math.round(dmg*_ls3)); if(ARENA.hpP<s.hp){ ARENA.hpP=Math.min(s.hp,ARENA.hpP+hl); setHp('p',ARENA.hpP,s.hp); arenaHeal(hl); } }   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上) */
   if(o.traits){ for(var ti=0;ti<o.traits.length;ti++){ var tt=o.traits[ti];
     if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0&&ARENA.hpP>0){ ARENA.hpP-=rb; if(ARENA.hpP<0)ARENA.hpP=0; setHp('p',ARENA.hpP,s.hp); floatDmg('-'+fmtDmg(rb),'hero',false); if(ARENA.hpP<=0) return endFight('lose',o); } }   /* 反弹（减伤特性已并入 calcHit 终减） */
   } }
@@ -6317,7 +6317,7 @@ var DUNGEONS=[
   { name:'水龙巢穴', lv:59, monLv:20, mode:'loot', ambient:'water', tag:'武器·魔翼', bossName:'范特西玛', monName:'水龙精英', color:'#4fc4c0', atk:3, hp:7, bossAtk:1.8 },
   { name:'无限深渊', lv:60, monLv:35, mode:'gem', ambient:'gem', tag:'全部宝石', bossName:'深渊之主', monName:'深渊魔物', color:'#a04fd4', atk:3.6, hp:8, bossAtk:1.8 },
   { name:'克里普特王座', lv:60, monLv:45, mode:'godcard', ambient:'crown', tag:'天神牌子', bossName:'王座霸主', monName:'王座卫士', color:'#a58ad6', atk:4.0, hp:8.5, bossAtk:1.72 },
-  { name:'奥利森废墟', lv:57, monLv:50, mode:'jewelry', ambient:'jewelry', tag:'首饰', bossName:'废墟王座', monName:'废墟怨灵', color:'#e0a24f', atk:4.3, hp:9, bossAtk:1.7 },
+  { name:'奥利森废墟', lv:57, monLv:60, mode:'jewelry', ambient:'jewelry', tag:'首饰', bossName:'废墟王座', monName:'废墟怨灵', color:'#e0a24f', atk:4.3, hp:9, bossAtk:1.7 },   /* 奥利森小怪等级 50→60：经验/实力由monLv自动同步 */
   { name:'沙漠之渊', lv:58, monLv:70, mode:'armor', ambient:'desert', tag:'防具', bossName:'沙渊巨兽', monName:'沙渊猎手', color:'#d4643c', atk:5.3, hp:11, bossAtk:1.6 },
   { name:'狄奥多雷斯', lv:82, monLv:80, mode:'level', ambient:'gem', tag:'升级·经验', bossName:'—', monName:'狄奥守卫', color:'#8fd8a0', atk:6.4, hp:14, bossAtk:0 },
   { name:'神之幻境', lv:80, monLv:79, mode:'phantom', ambient:'gem', tag:'传说套装', bossName:'幻境神主', monName:'幻境神卫', color:'#d8b04f', atk:10, hp:22, bossAtk:2.0 }
@@ -7080,8 +7080,8 @@ function trAtk(){
   var _critMul=(isCrit&&weak)?(4*1.1):(isCrit?2:(weak?2:1));   /* 暴击/弱点倍率（只作用主伤害） */
   var _mFdr=0,_mmDef=0; if(TR.traits){ for(var _tj=0;_tj<TR.traits.length;_tj++){ var _tv=TR.traits[_tj]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(怪物)：dmgred→最终伤害减免(作用合计,上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
   var dmg=Math.max(6, Math.round(calcHit({atk:_atk2*_critMul, realAtk:_atk2, ig:_ig, real:_rl, add:_add, attackElem:elemKey(TR.attr), atkElemPct:(TR.attr&&TR.attr!=='无'?0.3:0)}, {def:s.def*__mS, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(TR.defElem?0.3:0), defElemResist:(TR.defElem?0.3:0), nativeElem:TR.defElem||null, abs:0})));   /* 统一结算：主伤害(有效防御+暴击弱点)+真伤→增伤→怪物终减→吸收 */
-  if(!TR.isBoss){ var ymv=DUNGEONS[TR.dungeon].monLv; if(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0&&ymv<=TR.level&&Math.random()<0.01){ dmg=TR.monHp; trLog('<b class="lg-boss">伊泰安项链触发秒杀！</b>'); } }   /* 伊泰安项链：1%概率秒杀等级≤角色的小怪，对boss无效 */
-  var _ls2=(equipState['necklace']&&String(equipState['necklace'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls; if(_ls2>0){ var hl=Math.max(1,Math.round(dmg*_ls2)); if(TR.hp<TR.maxHp){ TR.hp=Math.min(TR.maxHp,TR.hp+hl); trHealFloat(hl); } }   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上) */
+  if(!TR.isBoss){ if(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0&&Math.random()<0.01){ dmg=TR.monHp; trLog('<b class="lg-boss">伊泰安项链触发秒杀！</b>'); } }   /* 伊泰安项链：1%概率秒杀任何小怪（无视等级），对boss无效 */
+  var _ls2=(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls; if(_ls2>0){ var hl=Math.max(1,Math.round(dmg*_ls2)); if(TR.hp<TR.maxHp){ TR.hp=Math.min(TR.maxHp,TR.hp+hl); trHealFloat(hl); } }   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上) */
   if(TR.traits){ for(var ti=0;ti<TR.traits.length;ti++){ var tt=TR.traits[ti];
     if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0){ TR.hp-=rb; if(TR.hp<0)TR.hp=0; trFloat(rb,false); renderChar(); if(TR.hp<=0){ TR.hp=0; renderChar(); startRevive(); return; } } }   /* Boss 反弹伤害（减伤特性已并入 calcHit 终减） */
   } }
