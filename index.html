@@ -5144,8 +5144,8 @@ function tlMonStats(){
   }
   if(T.layer>=50) mhp=Math.round(mhp*2);   /* 50层后怪物血量×2（含BOSS） */
   var _tAgi=isBoss?(Math.round(_base*0.5)||0):(10+(elv-1)*5);
-  if(!isBoss){ var _cur=Math.max(1,battlePower(atk,mhp,def,_tAgi)); var _tg=1e8*Math.pow(1.5,(elv-20)/10)*diff; var _sc=_tg/_cur; atk=Math.round(atk*_sc); mhp=Math.round(mhp*_sc); def=Math.round(def*_sc); }   /* 试炼小怪战力基准：20级=1亿、每高10级×1.5，再叠加每层1.035递增 */
-  var _tPow=battlePower(atk,mhp,def,_tAgi);   /* 叠加前怪物战力 */
+  if(!isBoss){ atk=Math.round(atk*50); mhp=Math.round(mhp*50); def=Math.round(def*50); }   /* 试炼小怪实力×50（攻/血/防，10倍再乘5） */
+  var _tPow=battlePower(atk,def,mhp,_tAgi);   /* 叠加前怪物战力 */
   var _tMul=isBoss?(_tier>=5?1000:(_tier>=4?500:200)):100;   /* 防秒杀倍率：试炼小怪×100，首领以下×200、首领×500、神级×1000 */
   mhp += _tPow*_tMul;   /* 避免秒杀：生命值=原计算值+怪物战力×倍率 */
   return {lv:elv, atk:atk, hp:mhp, def:def, isBoss:isBoss};
@@ -6432,10 +6432,10 @@ function trMonStats(){
     def=Math.max(10,Math.round(bossBase*0.12*diff));
   }
   var agi=TR.isBoss?Math.round(bossBase*0.5):(10+(el-1)*5);   /* 怪物敏捷：小怪=裸装el敏捷；Boss敏捷=基础属性×0.5（神级百万以上） */
-  if(!TR.isBoss && TR.dungeon!==0){ var _cur=Math.max(1,battlePower(atk,mhp,def,agi)); var _tg=1e8*Math.pow(1.5,(el-20)/10); var _sc=_tg/_cur; atk=Math.round(atk*_sc); mhp=Math.round(mhp*_sc); def=Math.round(def*_sc); }   /* 怪物战力基准：20级小怪=1亿、每高10级×1.5；雕俱特例(0级刷怪)除外 */
+  if(!TR.isBoss && TR.dungeon!==0){ atk=Math.round(atk*50); mhp=Math.round(mhp*50); def=Math.round(def*50); }   /* 所有副本小怪（雕俱除外）实力×50（攻/血/防，10倍再乘5） */
   if(TR.isElite){ atk=Math.round(atk*3); mhp=Math.round(mhp*3); def=Math.round(def*3); }   /* 精英怪：攻防血×3 */
   if(TR.isBoss&&TR.traits&&TR.traits.length){ var _ts=isPhantomDungeon(TR.dungeon)?traitStrength(TR.traits.length):dungeonBossTraitStr(TR.dungeon,TR.traits.length); atk=Math.round(atk*_ts); mhp=Math.round(mhp*_ts); def=Math.round(def*_ts); }   /* 副本Boss特性放大：低阶降权，神之幻境原值 */
-  var _mPow=battlePower(atk,mhp,def,agi);   /* 叠加前怪物战力 */
+  var _mPow=battlePower(atk,def,mhp,agi);   /* 叠加前怪物战力 */
   if(TR.isBoss && !isPhantomDungeon(TR.dungeon)){   /* 低阶副本Boss血量=该副本小怪血×连续倍率（随副本递增），避免战力爆炸；神之幻境保持地狱级 */
     mhp = Math.max(mhp, Math.round(bl*5*diff*([50000,70000,100000,140000,200000,300000][TR.dungeon]||50000)));
   } else {
@@ -6476,6 +6476,7 @@ function trGainExp(monLv, af, isBoss){
   if(!isBoss && TR.dungeon!==0) exp*=10;   /* 小怪经验×10（Boss 不乘；雕俱星座特例保留每怪5点，不×10） */
   if(isBoss) exp*=60;   /* Boss 经验显著奖励：该副本小怪 60 倍（击杀耗时×DPS 校准） */
   if(TR.isElite) exp=Math.round(exp*3);   /* 精英经验：战力×3 → 经验×3 */
+  if(!isBoss){ var _dm={1:10,2:10,3:5,4:5}[TR.dungeon]; if(_dm) exp=Math.round(exp*_dm); }   /* 水龙/深渊×10、王座/奥利森×5（小怪专属，Boss不乘） */
   if(Date.now()<SUN_UNTIL) exp*=2;   /* 太阳：打怪经验翻倍 */
   if(Date.now()<MEGA_SUN_UNTIL) exp*=5;   /* 超级大太阳：打怪经验5倍 */
   TR.exp+=exp;
@@ -6730,7 +6731,7 @@ function trSpawnMon(){
   var _ae=assignElem(TR.isBoss?TR.bossTier:(TR.isElite?0:0), TR.isElite?0.06:0); TR.atkElem=_ae.atkElem; TR.defElem=_ae.defElem;   /* 按阶位随机属性攻防：神级全带，阶位越低概率越低 */
   TR.monAtkCoef=triAtkCoef();   /* 本只怪攻击系数（0.05~0.18，0.1概率最大） */
   TR.monLv = TR.isBoss ? (TR.bossLevel||60) : (DUNGEONS[TR.dungeon].monLv||1);   /* 每次刷怪更新怪物等级，修复残留等级导致等级压制误判（雕俱1级怪曾被打出百万伤害） */
-  var s=trMonStats(); if(TR.isBoss&&TR.traits){ var __ab=applyBossArmor(TR.traits,s.hp,s.def,bossTierOfDungeon(TR.dungeon)); s.hp=__ab.hp; s.def=__ab.def; } TR.monMax=s.hp; TR.monHp=s.hp; TR.monPower=battlePower(s.atk,s.hp,s.def,s.agi);   /* 记录怪物战力用于Boss阶位行显示 */
+  var s=trMonStats(); if(TR.isBoss&&TR.traits){ var __ab=applyBossArmor(TR.traits,s.hp,s.def,bossTierOfDungeon(TR.dungeon)); s.hp=__ab.hp; s.def=__ab.def; } TR.monMax=s.hp; TR.monHp=s.hp; TR.monPower=battlePower(s.atk,s.def,s.hp,s.agi);   /* 记录怪物战力用于Boss阶位行显示 */
   renderMon(); renderChar();
   if(TR.isBoss) trBossEnter();
 }
