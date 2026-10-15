@@ -81,9 +81,9 @@ body.show-god .stage{max-width:680px;}
 @media(max-width:480px){ body.show-god .stage{max-width:100%;} }
 
 /* ===== 全局背包折叠条（统一二级页顶部） ===== */
-.g-bag-bar{display:flex;align-items:center;justify-content:space-between;height:30px;margin:10px 0 10px;padding:0 4px;}   /* 去卡片包裹：极简一行，层次靠留白与下方内容区边框 */
+.g-bag-bar{display:flex;align-items:center;justify-content:flex-start;gap:6px;height:30px;margin:10px 0 10px;padding:0 4px;}   /* 去卡片包裹：极简一行，层次靠留白与下方内容区边框 */
 .g-bag-gold{font-size:12px;color:#e0b45a;font-weight:500;white-space:nowrap;}
-.g-bag-tit{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:3px;text-shadow:none;}   /* 中间标题弱化：半透明白、无发光，不抢两端按钮 */
+.g-bag-tit{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:3px;text-shadow:none;margin-right:auto;flex-shrink:0;}   /* 中间标题弱化：半透明白、无发光，不抢两端按钮 */
 .g-bag-btn{font-size:12px;color:#FFFFFF;background:rgba(255,255,255,.03);border:1px solid rgba(214,177,110,.28);border-radius:14px;padding:3px 11px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 3px rgba(0,0,0,.35);}   /* 胶囊外凸立体：文字纯净白，顶部微高光+淡投影 */
 .g-bag-btn:active{transform:scale(.96);}
 /* ===== 全局背包浮层 ===== */
@@ -1332,6 +1332,38 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:600;
   text-shadow:0 1px 2px rgba(0,0,0,.95);letter-spacing:.2px;pointer-events:none;line-height:1.2;white-space:nowrap;}
 .wseg .wprob{font-size:8px;opacity:.95;color:#ffe9b0;}
+.adv-over{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(8,6,4,.55);display:flex;align-items:center;justify-content:center;z-index:2147483000;}
+.adv-card{width:min(332px,88vw);background:linear-gradient(180deg,#261d13,#150f0b);border:2px solid #C9A24B;border-radius:16px;padding:20px 18px;text-align:center;color:#fff;box-shadow:0 0 30px rgba(201,162,75,.25),inset 0 0 22px rgba(201,162,75,.12);}
+.adv-tier{font-size:12px;letter-spacing:3px;font-weight:800;margin-bottom:5px;text-shadow:0 0 10px currentColor;}
+.adv-title{font-size:24px;font-weight:900;letter-spacing:4px;margin-bottom:10px;text-shadow:0 0 16px currentColor;}
+.adv-msg{font-size:14px;line-height:1.7;color:#F5EFDF;margin-bottom:16px;}
+.adv-close{width:100%;padding:11px 0;border:none;border-radius:10px;background:linear-gradient(180deg,#D6AF5B,#a5833a);color:#1a1408;font-weight:800;font-size:15px;letter-spacing:3px;cursor:pointer;}
+.advlog-over{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(6,5,4,.66);display:flex;align-items:center;justify-content:center;z-index:2147482990;}
+.advlog-panel{width:min(344px,90vw);max-height:80vh;background:linear-gradient(180deg,#251e16,#181310);border:1px solid #6b5d42;border-radius:16px;padding:0;color:#fff;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 46px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.05);}
+.advlog-head{display:flex;align-items:center;justify-content:center;gap:10px;padding:16px 16px 4px;font-size:17px;font-weight:800;letter-spacing:4px;color:#fff;}
+.advlog-head .al-count{font-size:12px;color:#D6B56A;border:1px solid rgba(214,181,106,.4);padding:1px 9px;border-radius:20px;}
+.advlog-stats{display:flex;gap:8px;justify-content:center;padding:12px 16px 10px;}
+.al-stat{flex:1;text-align:center;border-radius:9px;padding:6px 0;font-size:11px;line-height:1.4;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);color:#9a8f7c;}
+.al-stat b{display:block;font-size:16px;font-weight:800;color:#fff;}
+.al-stat.rare b{color:#F2A93B;}
+.al-stat.legend b{color:#FF5AD8;}
+.advlog-list{flex:1;overflow-y:auto;padding:2px 14px 10px;max-height:46vh;}
+.advlog-list::-webkit-scrollbar{width:5px;}
+.advlog-list::-webkit-scrollbar-thumb{background:#3c3529;border-radius:3px;}
+.advlog-row{display:flex;flex-direction:column;gap:3px;padding:12px 0;border-bottom:1px solid rgba(201,162,75,.16);}
+.advlog-row:last-child{border-bottom:none;}
+.advlog-row .al-top{display:flex;align-items:baseline;gap:10px;}
+.advlog-row .advlog-t{color:#7d7465;font-size:11px;letter-spacing:1px;flex-shrink:0;}
+.advlog-row b{font-size:14px;font-weight:800;letter-spacing:1px;}
+.advlog-row.r-rare b{color:#F2A93B;}
+.advlog-row.r-legend b{color:#FF5AD8;}
+.advlog-row.r-normal b{color:#E8CB74;}
+.advlog-row i{font-style:normal;color:#CFC7B4;font-size:12px;line-height:1.6;}
+.advlog-empty{color:#8d8372;text-align:center;padding:38px 0;font-size:13px;letter-spacing:2px;}
+.advlog-close{width:auto;margin:2px auto 14px;padding:8px 32px;border-radius:22px;background:linear-gradient(180deg,#E5C47C,#c6a04a);border:1px solid #f2d89a;color:#261a06;font-weight:800;font-size:14px;letter-spacing:3px;cursor:pointer;box-shadow:0 2px 7px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.55);}
+.advlog-close:active{transform:scale(.95);filter:brightness(1.06);}
+@keyframes advPulse{0%,100%{text-shadow:0 0 8px currentColor;opacity:1}50%{text-shadow:0 0 24px currentColor;opacity:.82}}
+
 .lottery-cost{margin-top:2px;font-size:13px;color:#FFFFFF;}
 .lottery-wallet{display:flex;justify-content:center;align-items:center;gap:6px;margin:6px auto 0;width:min(352px,86vw);padding:4px 0;font-size:13px;color:#FFFFFF;letter-spacing:1px;border-top:1px solid rgba(214,177,110,.18);border-bottom:1px solid rgba(214,177,110,.18);background:linear-gradient(180deg,rgba(48,42,32,.4),rgba(28,24,20,.4));}
 .lottery-wallet b{color:#E8CB74;font-weight:700;font-size:16px;text-shadow:0 0 12px rgba(232,203,116,.5);}
@@ -1767,7 +1799,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 
     <!-- ===== 顶栏：物品栏（白字） ===== -->
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="main-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>物品栏</h1></header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
 
     <!-- ===== 第一部分：装备面板 ===== -->
     <section class="panel equip-panel"><div id="equip" class="equip"></div></section>
@@ -1797,7 +1829,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   <!-- ===== 二级页面：神兵锻冶（聚合：强化/洗炼/宝石） ===== -->
   <div class="window sys" id="view-forge">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="forge-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>神兵锻冶</h1></header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="forge-nav">
       <button class="forge-tab on" data-tab="gem">镶嵌</button>
       <button class="forge-tab" data-tab="extract">拆卸</button>
@@ -1809,7 +1841,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   <!-- ===== 二级页面：万法归宗（聚合：天神/翅膀） ===== -->
   <div class="window sys" id="view-wanshou">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="wanshou-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>万法归宗</h1></header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="forge-nav">
       <button class="forge-tab on" data-tab="god">天神</button>
       <button class="forge-tab" data-tab="wings">翅膀</button>
@@ -1821,7 +1853,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   <!-- ===== 二级页面：竞技系统 ===== -->
   <div class="window sys" id="view-arena">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="arena-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>竞技系统</h1></header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body arena-body">
       <div class="arena-hero">
         <div class="arena-id"><img class="arena-av" src="logos/头像.png" alt=""><div class="arena-idmain"><span class="arena-name">谜团</span><div class="arena-idtier"><span class="char-tier" id="arena-tier"></span><span class="arena-rn" id="arena-rank">青铜</span></div></div></div>
@@ -1858,7 +1890,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
   <!-- ===== 二级页面：成就系统 ===== -->
   <div class="window sys" id="view-achievement">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="ach-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>成就系统</h1></header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body ach-body">
       <div class="ach-sec-title">阶位 · 角色 / 怪物</div>
       <div class="ach-list" id="ach-tiers"></div>
@@ -1883,7 +1915,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       </button>
       <h1>角色属性</h1>
     </header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="attrs-body">
       <!-- 第一部分：角色身份卡（头像+名字+阶位+战力） -->
       <div class="attrs-id">
@@ -1927,7 +1959,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="enhance-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>强化</h1>
     </header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body gem-body">
       <div class="gem-sec gem-target-sec">
         <div class="enh-name" id="enh-name"></div>
@@ -1965,7 +1997,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="refine-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>洗炼</h1>
     </header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body gem-body">
       <div class="gem-sec gem-target-sec">
         <div class="enh-name" id="refine-name"></div>
@@ -1999,7 +2031,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="gem-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>宝石</h1>
     </header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body gem-body">
       <div class="pgtabs"><button class="pgtab on" data-mode="embed">镶嵌</button><button class="pgtab" data-mode="extract">拆卸</button></div>
       <div class="gem-pane" id="gem-embed">
@@ -2063,7 +2095,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="god-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>天神之力</h1>
     </header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body">
       <div class="god-head">
         <div class="god-titlebar">天神列表</div>
@@ -2141,7 +2173,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="treasure-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>副本秘境</h1>
     </header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body">
       <div id="offline-bar" style="display:none">
         <span id="offline-txt"></span>
@@ -2198,7 +2230,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="trial-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>无尽试炼</h1>
     </header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body">
       <div class="tl-banner" id="tl-banner">第 <b style="color:#52C6DA">1</b> 层</div>
       <div class="tl-best" id="tl-best"></div>
@@ -2238,7 +2270,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="shop-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>商店</h1>
     </header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body">
       <div class="pgtabs" style="margin-bottom:6px;">
         <button class="pgtab on" data-sm="system">系统商店</button>
@@ -2259,7 +2291,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       <button class="back-arrow" id="lottery-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>幸运轮盘</h1>
     </header>
-    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button></div>
+    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body">
       <div class="lottery-panel">
         <div class="lottery-head"><span id="lottery-pity-num"></span><button class="lot-limited" id="lot-limited-hint">限量</button></div>
@@ -3255,7 +3287,7 @@ function ensureBagBar(viewEl){
   if(!viewEl) return;
   if(viewEl.querySelector('.g-bag-bar')) return;
   var bar=document.createElement('div'); bar.className='g-bag-bar';
-  bar.innerHTML='<button class="g-bag-btn g-attr-open">角色属性</button><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn" id="g-bar-open">查看背包 (<span id="g-bar-count">0</span>)</button>';
+  bar.innerHTML='<span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn" id="g-bar-open">查看背包 (<span id="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button>';
   applyNavTitle();
   var top=viewEl.querySelector('.topbar');
   if(top){ top.parentNode.insertBefore(bar, top.nextSibling); }
@@ -3760,6 +3792,7 @@ function recalcCharacter(){
   if(OG>=3){ var _dc=OG>=4?1.5:1.2; hp=Math.floor(hp*_dc); vitality=Math.floor(vitality*_dc); pdef=Math.floor(pdef*_dc); mdef=Math.floor(mdef*_dc); }   /* 传说奥格顿3件生命活力防御+20%/4件+50% */
   if(tt2&&ARENA.titleOn&&tt2.pct>0){ hp=Math.floor(hp*(1+tt2.pct)); vitality=Math.floor(vitality*(1+tt2.pct)); }   /* 战神称号：生命活力+10% */
   if((CHARACTER.innate||1)>=1.8){ A.力量*=2; A.敏捷*=2; A.体质*=2; A.精神*=2; A.智力*=2; A.幸运*=2; hp*=2; vitality*=2; patk*=2; pdef*=2; mdef*=2; }   /* 天运之主：全属性+100%（含生命/活力/攻防） */
+  if(typeof ADV_BOOST!=='undefined'&&ADV_BOOST.pct>0&&Date.now()<ADV_BOOST.until){ var _bp=ADV_BOOST.pct; A.力量=Math.floor(A.力量*(1+_bp)); A.敏捷=Math.floor(A.敏捷*(1+_bp)); A.体质=Math.floor(A.体质*(1+_bp)); A.精神=Math.floor(A.精神*(1+_bp)); A.智力=Math.floor(A.智力*(1+_bp)); A.幸运=Math.floor(A.幸运*(1+_bp)); hp=Math.floor(hp*(1+_bp)); vitality=Math.floor(vitality*(1+_bp)); patk=Math.floor(patk*(1+_bp)); pdef=Math.floor(pdef*(1+_bp)); mdef=Math.floor(mdef*(1+_bp)); }   /* 奇遇实力暴增：全属性+20%持续60秒 */
   /* 攻击属性=武器槽宝石附加；防御属性=胸甲槽宝石附加 */
   var attr='无', dattr='无';
   if(equipState['weapon']&&equipState['weapon'].gemAttributes&&equipState['weapon'].gemAttributes.additionalAttribute) attr=equipState['weapon'].gemAttributes.additionalAttribute;
@@ -5285,6 +5318,7 @@ function tlMonDie(){   /* 与寻宝 trMonDie 一致：随机两种死亡表现 *
 }
 function tlKill(){
   if(T._killing) return; T._killing=true;
+  tryTriggerAdventure();   /* 击杀触发随机奇遇 */
   tlLog('<b style="color:#e8503a">击败 '+(T.isBoss?'试炼BOSS':'守卫')+' 第'+T.layer+'层</b>');
   var _od=TR.dungeon; if(T.isBoss){ TR.dungeon=0; trGainExp(T.monLv||82, 2, true); } else { var _pi=-1; for(var _q=0;_q<DUNGEONS.length;_q++){ if(DUNGEONS[_q].mode==='phantom'){ _pi=_q; break; } } TR.dungeon=_pi; trGainExp(_pi>=0?DUNGEONS[_pi].monLv:79, _pi>=0?(DUNGEONS[_pi].atk||2.2):2.2, false); } TR.dungeon=_od;   /* 试炼小怪经验=神之幻境一致；Boss 保留原逻辑 */
   tlMonDie();
@@ -5904,7 +5938,116 @@ route.first = true;
 route.last = undefined;
 window.addEventListener('hashchange', route);
 
+/* ============ 随机奇遇事件（挂机惊喜） ============ */
+var ADV_FREE=0;                   /* 奇遇免费抽奖券计数 */
+var ADV_BOOST={until:0,pct:0};    /* 实力暴增临时buff：全属性+20%持续60秒 */
+var ADV_OVER=null;                /* 当前奇遇浮层 */
+var ADVENTURES=[
+  {n:'神秘商人',tier:'normal',w:24,fx:'merchant'},
+  {n:'隐藏宝箱',tier:'normal',w:22,fx:'chest'},
+  {n:'免费抽奖券',tier:'normal',w:14,fx:'ticket'},
+  {n:'一夜暴富',tier:'rare',w:13,fx:'gold'},
+  {n:'实力暴增',tier:'rare',w:11,fx:'boost'},
+  {n:'随机精英',tier:'rare',w:8,fx:'elite'},
+  {n:'逆天装备',tier:'legend',w:2,fx:'gear'},
+  {n:'一夜成神',tier:'legend',w:1,fx:'god'}
+];
+function advInnate(){ try{ return lotteryInnate()||1; }catch(e){ return 1; } }
+function tryTriggerAdventure(){
+  if(ADV_OVER) return;
+  try{ if(lotteryBusy) return; }catch(e){}
+  var _in=advInnate();
+  if(Math.random()>0.003*_in) return;   /* 每击杀基础0.3%，先天运势越高越易触发 */
+  var lb=_in>=1.4?4:(_in>=1.15?2.5:1.5);   /* 传说事件出现加成：运势越高越稀有 */
+  var rb=_in>=1.2?2:1;                     /* 稀有事件加成 */
+  var pool=[];
+  ADVENTURES.forEach(function(a){
+    var times=1;
+    if(a.tier==='legend') times=lb;
+    else if(a.tier==='rare') times=rb;
+    for(var i=0;i<times;i++) pool.push(a);
+  });
+  runAdventure(pool[Math.floor(Math.random()*pool.length)]);
+}
+function advColor(t){ return t==='legend'?'#FF5AD8':(t==='rare'?'#F2A93B':'#E8CB74'); }
+function runAdventure(ev){
+  if(ADV_OVER) return;
+  var msg='';
+  try{
+  if(ev.fx==='merchant'){
+    var _keys=['godCrystal','godPowerFragment','runeFragment','sealFragment','chaosStone','warGodsFavor'];
+    var bp=ITEM_BLUEPRINTS[_keys[Math.floor(Math.random()*_keys.length)]]||ITEM_BLUEPRINTS.godCrystal;
+    var it=mkLoot(bp); if(it.count===undefined) it.count=1; addStackable(it);
+    msg='神秘商人现身，以 <b>半价</b> 成交了 <b style="color:#FFD27A">'+it.name+'</b>（已放入背包）';
+  } else if(ev.fx==='chest'){
+    var _in=advInnate();
+    var cg=Math.round((20000000+(980000000)*Math.pow(Math.random(),1/_in))/100)*100;   /* 2千万~10亿，运势越高落向高值 */
+    CURRENCY.gold+=cg; renderCurrency();
+    var fr=ITEM_BLUEPRINTS.godPowerFragment, fm=mkLoot(fr); fm.count=1+Math.floor(Math.random()*5); addStackable(fm);
+    try{ trDropAnim(fr.img,itemQuality(fr)); }catch(e){}
+    msg='发现隐藏宝箱！获得 <b style="color:#FFD27A">'+cg.toLocaleString()+'</b> 金币 + <b>'+fr.name+'×'+fm.count+'</b>';
+  } else if(ev.fx==='ticket'){
+    ADV_FREE++;
+    msg='获得 <b>免费抽奖券 ×1</b>！下次抽奖不消耗金币';
+  } else if(ev.fx==='gold'){
+    var _in2=advInnate(); var mul=0.5+Math.random()*1.5;
+    var cg=Math.max(500000000, Math.round(CURRENCY.gold*mul));
+    CURRENCY.gold+=cg; renderCurrency();
+    try{ dailyAddGold(TR.dungeon,cg); }catch(e){}
+    msg='<b style="color:#FFD27A">一夜暴富！</b> 天降 '+cg.toLocaleString()+' 金币！';
+  } else if(ev.fx==='boost'){
+    ADV_BOOST={until:Date.now()+60000,pct:0.2};
+    try{ recalcCharacter(); }catch(e){}
+    msg='实力暴增！全属性 <b>+20%</b>，持续 60 秒';
+  } else if(ev.fx==='elite'){
+    if(typeof TR!=='undefined'&&TR&&!TR.isBoss&&TR.dungeon!==0){ TR.isElite=true; try{ clearTimeout(TR.spawnTimer); trSpawnMon(); }catch(e){} msg='遭遇 <b>随机精英</b>！击杀掉落传说概率翻倍'; }
+    else { var _cg=Math.max(500000000,Math.round((CURRENCY.gold||0)*0.5)); CURRENCY.gold+=_cg; renderCurrency(); msg='<b style="color:#FFD27A">遭遇精英！</b> 击退强敌，缴获 '+_cg.toLocaleString()+' 金币'; }
+  } else if(ev.fx==='gear'){
+    var _gpool=[ITEM_BLUEPRINTS.yitaiNecklace,ITEM_BLUEPRINTS.yitaiRing,ITEM_BLUEPRINTS.yitaiBracelet,ITEM_BLUEPRINTS.chaosStone,ITEM_BLUEPRINTS.warGodsFavor];
+    var bp2=_gpool[Math.floor(Math.random()*_gpool.length)];
+    var it2=mkLoot(bp2); addItem(it2);
+    try{ triggerLegendFX(); }catch(e){}
+    msg='天降 <b class="lg-legend" style="color:#FF5AD8">逆天装备</b>：<b>'+it2.name+'</b> 已入包！';
+  } else if(ev.fx==='god'){
+    addPerm(100000000,100000000);
+    msg='<b style="color:#FF5AD8">一夜成神！</b> 六维 +1亿、生命 +1亿（永久）';
+  }
+  }catch(e){ msg='获得一份意外惊喜！'; }
+  var _c=advColor(ev.tier);
+  var glow=(ev.tier==='legend')?'animation:advPulse 1.6s ease-in-out infinite;':'';
+  var ov=document.createElement('div'); ov.className='adv-over'; ADV_OVER=ov;
+  ov.innerHTML='<div class="adv-card" style="border-color:'+_c+';box-shadow:0 0 30px '+_c+'55,inset 0 0 22px '+_c+'33;">'
+    +'<div class="adv-tier" style="color:'+_c+';'+glow+'">'+(ev.tier==='legend'?'传说奇遇':(ev.tier==='rare'?'稀有奇遇':'奇遇'))+'</div>'
+    +'<div class="adv-title" style="color:'+_c+';'+glow+'">'+ev.n+'</div>'
+    +'<div class="adv-msg">'+msg+'</div>'
+    +'<button class="adv-close">收下惊喜</button></div>';
+  var cl=ov.querySelector('.adv-close'); cl.onclick=function(){ ov.remove(); ADV_OVER=null; };
+  document.body.appendChild(ov);
+  try{ ADV_LOG.unshift({t:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'}),n:ev.n,tier:ev.tier,m:msg}); if(ADV_LOG.length>50) ADV_LOG.length=50; saveAdvLog(); }catch(e){}
+  try{ saveGame(); }catch(e){}
+}
+var ADV_LOG=[];
+function saveAdvLog(){ try{ localStorage.setItem('shenqi_adv_log', JSON.stringify(ADV_LOG)); }catch(e){} }
+function openAdvLog(){
+  var _o=document.getElementById('advlog-over');
+  if(_o){ _o.remove(); return; }
+  var ov=document.createElement('div'); ov.id='advlog-over'; ov.className='advlog-over';
+  var c={normal:0,rare:0,legend:0}; ADV_LOG.forEach(function(r){ if(c[r.tier]!==undefined) c[r.tier]++; });
+  var rows=ADV_LOG.map(function(r){ return '<div class="advlog-row r-'+r.tier+'"><div class="al-top"><span class="advlog-t">'+r.t+'</span><b style="color:'+advColor(r.tier)+'">'+r.n+'</b></div><i>'+r.m+'</i></div>'; }).join('')||'<div class="advlog-empty">暂无奇遇记录，挂机打怪试试手气</div>';
+  ov.innerHTML='<div class="advlog-panel"><div class="advlog-bar"></div>'
+    +'<div class="advlog-head">奇遇记录 <span class="al-count">'+ADV_LOG.length+'</span></div>'
+    +'<div class="advlog-stats"><div class="al-stat normal">奇遇<b>'+c.normal+'</b></div><div class="al-stat rare">稀有<b>'+c.rare+'</b></div><div class="al-stat legend">传说<b>'+c.legend+'</b></div></div>'
+    +'<div class="advlog-list">'+rows+'</div>'
+    +'<button class="advlog-close">关闭</button></div>';
+  ov.querySelector('.advlog-close').onclick=function(){ ov.remove(); };
+  ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+  document.body.appendChild(ov);
+}
+window.addEventListener('DOMContentLoaded',function(){ try{ var raw=localStorage.getItem('shenqi_adv_log'); ADV_LOG=(raw?JSON.parse(raw):[])||[]; }catch(e){} });
+document.addEventListener('click',function(e){ var b=e.target.closest&&e.target.closest('.adv-open'); if(b) openAdvLog(); });
 /* ============ 幸运轮盘 ============ */
+
+
 /* 抽奖概率=真实概率（总和1.0）；prob<0.01 为稀有档（保底奖池） */
 var LOTTERY=[
   {label:'谢谢参与',short:'谢谢',prob:0.14,color:'#4A5A72',apply:function(){}}   /* 协调蓝灰：低调不刺眼，与整体暗金/蓝/金体系搭配 */,
@@ -6187,7 +6330,8 @@ function lotChargeDraw(){
 function runLottery(charge){
   if(lotteryBusy){ toast('轮盘转动中，请稍候…'); return; }   /* 转动中禁止连点 */
   /* 每日免费优先：有免费次数则不消耗金币 */
-  if(LOTTERY_FREE>0){ LOTTERY_FREE--; saveLotteryFree(); updateLotteryFree(); }
+  if(ADV_FREE>0){ ADV_FREE--; }   /* 奇遇免费券优先 */
+  else if(LOTTERY_FREE>0){ LOTTERY_FREE--; saveLotteryFree(); updateLotteryFree(); }
   else {
     if(CURRENCY.gold<100000000){ toast('金币不足（需1亿）'); return; }
     CURRENCY.gold-=100000000; renderCurrency(); updateLotteryGold();   /* 点击立即扣金币 */
@@ -6966,6 +7110,7 @@ function bossPermReward(){   /* 击杀BOSS保底：永久全属性，先地位�
   return Math.max(1, Math.round(_rp*lotteryInnate()));   /* 先天运势系数影响：奖励×运势（运势越高Boss永久属性奖励越高），保底至少1 */
 }
 function trKillMon(){
+  tryTriggerAdventure();   /* 击杀触发随机奇遇 */
   var d=DUNGEONS[TR.dungeon];
   var lv=TR.level, got=false;
   TR.stats.kill++; TR.stats.per[TR.dungeon].kill++;
