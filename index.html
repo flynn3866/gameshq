@@ -570,6 +570,17 @@ body.show-god .stage{max-width:680px;}
 .tt-card .tt-desc{width:100%;font-size:11px;color:#a89f8d;line-height:1.45;}
 .tt-empty{font-size:12px;color:#8a8171;text-align:center;padding:12px 0;margin:0 14px;}
 /* ===== 属性页身份卡 + 荣耀徽章（与浮层样式统一） ===== */
+.attrs-overview{margin:2px 12px 10px;border-radius:14px;overflow:hidden;border:1px solid rgba(201,162,75,.48);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,0) 55%),linear-gradient(180deg,#2E2822,#201A14);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 6px 16px rgba(0,0,0,.38),0 0 8px rgba(201,162,75,.28);}
+.attrs-overview .attrs-id,.attrs-overview .tier-progress,.attrs-overview .attrs-badges,.attrs-overview .innate-card{border:0!important;background:none!important;box-shadow:none!important;border-radius:0;margin:0;}
+.attrs-overview .attrs-id{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:14px 14px 4px;}
+.attrs-overview .attrs-id-row{display:flex;align-items:center;gap:12px;}
+.attrs-overview .attrs-id .tier-progress{padding:10px 0 12px;margin-top:8px;border-top:1px solid rgba(201,162,75,.18);}
+.attrs-overview .attrs-badges{padding:6px 14px;}
+.attrs-overview .innate-card{padding:12px 14px;margin-bottom:0;}
+.attrs-overview .innate-card{background:radial-gradient(130% 95% at 50% -30%, rgba(255,214,150,.14), rgba(0,0,0,0) 65%),linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0))!important;}
+.attrs-overview .innate-card .innate-reset{margin-top:11px;padding-top:10px;border-top:1px solid rgba(201,162,75,.16);}
+.attrs-overview .innate-card .innate-reset .innate-roll{height:26px;padding:0 16px;font-size:12px;letter-spacing:1px;border-radius:13px;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);box-shadow:0 1px 4px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.14);}
+.attrs-overview>div+div{border-top:1px solid rgba(201,162,75,.18)!important;}
 .attrs-id{display:flex;align-items:center;gap:12px;margin:2px 12px 10px;padding:14px 12px;border-radius:11px;border:1px solid rgba(201,162,75,.4);background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 72%),linear-gradient(180deg,#2E2822,#211C17);box-shadow:inset 0 1px 0 rgba(255,255,255,.10),0 6px 16px rgba(0,0,0,.35),0 0 3px rgba(201,162,75,.42),0 0 8px rgba(226,233,245,.30);}   /* 增加3px发散金色阴影+最外层淡银白辉光 */
 .attrs-id-avatar{width:58px;height:58px;flex:none;border-radius:14px;border:1px solid #C9A24B;background:linear-gradient(180deg,#3a2c12,#241b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 16px rgba(201,162,75,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;}
 .attrs-id-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
@@ -1917,16 +1928,19 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
     </header>
     <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="attrs-body">
+      <div class="attrs-overview">
       <!-- 第一部分：角色身份卡（头像+名字+阶位+战力） -->
       <div class="attrs-id">
-        <div class="attrs-id-avatar"><img src="logos/头像.png" alt=""></div>
-        <div class="attrs-id-main">
-          <div class="attrs-id-name" id="ch-name"></div>
-          <div class="attrs-id-tier"><span class="char-tier" id="ch-tier"></span></div><div class="attrs-id-lvtier"><span class="attrs-id-cls" id="ch-cls"></span><span class="attrs-id-lvsep">·</span><span class="attrs-id-lv" id="ch-lv"></span></div>
+        <div class="attrs-id-row">
+          <div class="attrs-id-avatar"><img src="logos/头像.png" alt=""></div>
+          <div class="attrs-id-main">
+            <div class="attrs-id-name" id="ch-name"></div>
+            <div class="attrs-id-tier"><span class="char-tier" id="ch-tier"></span></div><div class="attrs-id-lvtier"><span class="attrs-id-cls" id="ch-cls"></span><span class="attrs-id-lvsep">·</span><span class="attrs-id-lv" id="ch-lv"></span></div>
+          </div>
+          <div class="attrs-id-power"><b>战 力</b><span id="ch-power"></span></div>
         </div>
-        <div class="attrs-id-power"><b>战 力</b><span id="ch-power"></span></div>
+        <div id="tier-progress"></div>
       </div>
-      <div id="tier-progress"></div>
       <div class="attrs-badges" id="attrs-badges"></div>
       <!-- 第二部分：分配属性点（整块含标题） -->
       <div class="innate-card">
@@ -1934,6 +1948,8 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
           <div class="innate-head"><span class="cl">先天运势</span><span class="innate-tag" id="innate-tag">非酋 · 欧皇</span></div>
           <div class="innate-numcard"><b id="innate-val">1.20</b></div>
         </div>
+        <div class="innate-reset"><button class="innate-roll" id="innate-roll">重新生成</button><button class="innate-roll" id="innate-rollauto">自动生成</button></div>
+      </div>
       </div>
       <div class="attrs-panel">
         <div class="panel-title">分配属性点</div>
@@ -1948,7 +1964,6 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
       </div>
       <div class="combat-divider"></div>
       <div id="record-list"></div>
-      <div class="innate-reset"><button class="innate-roll" id="innate-roll">重新生成</button><button class="innate-roll" id="innate-rollauto">自动生成</button></div>
       <div id="attr-traits"></div>
     </div>
   </div>
