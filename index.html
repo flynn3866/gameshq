@@ -390,7 +390,7 @@ body.show-god .stage{max-width:680px;}
 @media (prefers-reduced-motion: reduce){ .ti-5,.tr-drop.d-purple::before,.tr-drop.d-gold::after,.q-blue::after,.q-gold::after,.q-purple::after{animation:none!important;} }   /* 性能节制：系统节能时停止常驻呼吸/边框动画 */
 
 /* ===== 下部：金币 + 分割线 + 按钮 ===== */
-.money{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0 4px 0;}
+.money{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;margin:0 4px 0;align-items:center;}
 .money-box{
   display:flex;align-items:center;justify-content:space-between;gap:6px;
   padding:5px 10px;border-radius:7px;
@@ -403,6 +403,9 @@ body.show-god .stage{max-width:680px;}
 .money-box .val{font-size:14px;font-weight:500;color:rgb(240,214,150);font-variant-numeric:tabular-nums;letter-spacing:0;text-shadow:0 0 8px rgba(240,214,150,.4);}
 .money-box.bound .coin svg{filter:drop-shadow(0 0 4px rgba(120,160,220,.28));}
 .money-box.bound .val{color:rgb(158,186,226);text-shadow:0 0 8px rgba(158,186,226,.35);}
+.coin-convert-wrap{display:flex;align-items:center;justify-content:center;}
+.coin-convert{width:32px;height:32px;border:none;border-radius:50%;cursor:pointer;background:linear-gradient(180deg,#F0B95A,#c9862e);color:#3a2408;font-size:17px;font-weight:800;line-height:1;box-shadow:0 0 10px rgba(240,185,90,.4);transition:transform .15s;}
+.coin-convert:active{transform:scale(.88);}
 
 .divider{
   height:1px;margin:6px 6px;
@@ -1820,6 +1823,9 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
         <span class="coin"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e0b45a"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#8a6a2a" stroke-width="1.2"/><path d="M12 8.6v6.8M8.6 12h6.8" stroke="#8a6a2a" stroke-width="1.4" stroke-linecap="round"/></svg></span>
         <span id="gold-trade" class="val">1,195,630</span>
       </div>
+      <div class="coin-convert-wrap" title="将 1 亿非绑定金币转为绑定金币（单向，不可逆）">
+        <button class="coin-convert" id="gold-convert"><svg viewBox="0 0 24 24" width="21" height="21"><path d="M3 12h14.5M15.5 6.5 22 12l-6.5 5.5" stroke="currentColor" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
       <div class="money-box bound">
         <span class="coin"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#5b86c9"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#2b4a78" stroke-width="1.2"/><path d="M12 8.6v6.8M8.6 12h6.8" stroke="#2b4a78" stroke-width="1.4" stroke-linecap="round"/></svg></span>
         <span id="gold-bind" class="val">1,004,727</span>
@@ -2882,6 +2888,7 @@ function renderBag(){
   var _br=$('#bag-reset'); if(_br&&!_br.__b){ _br.__b=true; _br.addEventListener('click',function(){ confirmDialog('确认初始化？<br>所有数据将回到初始状态（等级0、装备/背包/物品清空、非绑定金币100亿启动资金）', function(ok){ if(ok) doReset(); }); }); }
   var _bg=$('#bag-gm'); if(_bg&&!_bg.__b){ _bg.__b=true; _bg.addEventListener('click',function(){ confirmDialog('确认GM生成？<br>将生成全部物品并发放金币（各1亿）', function(ok){ if(ok) doInit(); }); }); }
   var _as=$('#bag-autosell'); if(_as&&!_as.__b){ _as.__b=true; _as.addEventListener('click',openAutoSellPanel); }
+  var _gc=$('#gold-convert'); if(_gc&&!_gc.__b){ _gc.__b=true; _gc.addEventListener('click',goldConvert); }
   saveGame();
 }
 function organizeBag(){
@@ -3294,6 +3301,10 @@ function renderCurrency(force){
   updateLotteryGold();   /* 任何金币变动同步抽奖页余额，避免显示旧值 */
 }
 
+function goldConvert(){
+  if(CURRENCY.gold<100000000){ toast('非绑定金币不足 1 亿，无法转换'); return; }
+  confirmDialog('确认将 <b>1 亿</b> 非绑定金币转换为绑定金币？<br>转换后不可逆', function(ok){ if(!ok) return; CURRENCY.gold-=100000000; CURRENCY.bound+=100000000; renderCurrency(); saveGame(); toast('已转换：1 亿非绑定 → 绑定金币'); });
+}
 /* ===== 全局背包折叠条 + 浮层 ===== */
 function ensureBagBar(viewEl){
   if(!viewEl) return;
@@ -4580,7 +4591,7 @@ function enhFx(cls, slotId){
   document.body.appendChild(fx);
   setTimeout(function(){ if(fx.parentNode) fx.remove(); },2000);
 }
-function doGodUpgrade(){
+function doGodUpgrade(fromAuto){
   var g=GOD.upTarget; if(!g){ toast('请选择升级目标'); return; }
   if(g.grade>=5&&g.star>=5&&calcGodProgress(g)>=100){ toast('已达满级 5重5星'); return; }
   var cost=calcGodCost(g);
@@ -4590,7 +4601,7 @@ function doGodUpgrade(){
   var ok=Math.random()<calcGodRate(g)/100;
   mats.forEach(function(m){ consumeStack(m,1); });
   CURRENCY.bound-=cost; renderCurrency();
-  if(ok){ playSoundEffect('embedSuccess'); showGodUpgradeSuccess();
+  if(ok){ if(!fromAuto){ playSoundEffect('embedSuccess'); showGodUpgradeSuccess(); }
     var prog=calcGodProgress(g);
     if(prog<100){ var lv=(g.grade*5)+g.star;
       var gain=lv===1?(Math.floor(Math.random()*3)+1):(Math.floor(Math.random()*lv*2+6));
@@ -4601,7 +4612,7 @@ function doGodUpgrade(){
       if(g.grade>=5){ g.grade=5; g.star=5; g.currentExp=g.requiredExp; toast('已达满级'); }
       else { g.grade+=1; g.star=1; g.currentExp=0; g.requiredExp=calcReqExp(g); toast('升重成功！'+g.grade+'重'); }
     } else { g.star+=1; g.currentExp=0; g.requiredExp=calcReqExp(g); toast('升星成功！'+g.star+'星'); }
-  } else { playSoundEffect('embedFail'); showGodUpgradeFailure(); toast('升级失败'); }
+  } else { if(!fromAuto){ playSoundEffect('embedFail'); showGodUpgradeFailure(); } toast('升级失败'); }
   renderBag(); renderGod(); recalcCharacter();
 }
 
@@ -4618,8 +4629,8 @@ function toggleGodAuto(){
     if(gg.grade>=5&&gg.star>=5&&calcGodProgress(gg)>=100){ stopGodAuto(); toast('天神已达满级，自动升级停止'); return; }
     if(CURRENCY.bound<calcGodCost(gg)){ stopGodAuto(); toast('绑定金币不足，自动升级停止'); return; }
     var mats=godMaterials(gg); if(!mats.length){ stopGodAuto(); toast('缺少升级材料，自动升级停止'); return; }
-    doGodUpgrade();
-  },1000);
+    doGodUpgrade(true);
+  },333);
 }
 function initSystemsUI(){
   /* tooltip：点击物品显示、点击他处隐藏 */
