@@ -71,7 +71,7 @@ body.show-ach .stage{max-width:460px;display:flex;flex-direction:column;justify-
 body.show-shop .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 商店：同副本秘境垂直居中 */
 /* 神兵锻冶/万法归宗聚合页：垂直居中 + 顶部安全，内容限高内部滚动 */
 body.show-forge .stage,body.show-wanshou .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}
-#view-forge .forge-body,#view-wanshou .forge-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 118px);}
+#view-forge .forge-body,#view-wanshou .forge-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 292px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 72px);box-sizing:border-box;}
 /* 属性页单独加宽 50px：窗口约 390px，主页面不受影响 */
 body.show-attrs .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}
 /* 抽奖页：加宽舞台容纳轮盘 */
@@ -1145,9 +1145,9 @@ body.show-god .stage{max-width:680px;}
 .tr-char .tr-bar-fill.ch{background:linear-gradient(180deg,#58E08A,#1fa24a);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 0 8px rgba(88,224,138,.45);}   /* 翡翠亮绿+高光+微光 */
 /* 商店页 */
 .shop-tip{font-size:12px;color:#8a8375;padding:9px 10px 4px;letter-spacing:1px;}
-#view-shop{display:flex;flex-direction:column;box-sizing:border-box;}
-#view-shop .sys-body{flex:1;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
-#view-shop .shop-list{flex:1;overflow-y:hidden;display:flex;flex-direction:column;gap:5px;padding:4px 10px 6px;min-height:0;}
+#view-shop{box-sizing:border-box;}
+#view-shop .sys-body{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;}
+#view-shop .shop-list{display:flex;flex-direction:column;gap:5px;padding:4px 10px 6px;min-height:0;}
 #view-shop .shop-pager{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 0 8px;}
 #view-shop .shop-pager .btn{height:26px;padding:0 16px;font-size:12px;border-radius:5px;}
 #view-shop .shop-pager .pg-num{font-size:12px;color:#FFFFFF;min-width:44px;text-align:center;letter-spacing:1px;}
@@ -1791,8 +1791,9 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
 .tower-bar #ct-cp{color:#7BF1C4;}
 /* 塔内商店：固定宽高（对齐系统商店观感），背景与商品卡片同色 */
 #tower-shop-over .autosell-card{width:min(440px,94vw);height:540px;display:flex;flex-direction:column;background:linear-gradient(180deg,#1a1511,#130e0b);border:2px solid #C9A24B;border-radius:16px;box-shadow:0 0 34px rgba(201,162,75,.22),inset 0 0 20px rgba(201,162,75,.08);}
-#tower-shop-over .autosell-title{font-size:16px;font-weight:800;text-align:center;color:#E8CB74;letter-spacing:3px;margin-bottom:4px;flex:none;}
-#tower-shop-over .autosell-sub{font-size:11px;color:#b9afa0;text-align:center;line-height:1.6;margin-bottom:10px;flex:none;}
+#tower-shop-over .autosell-title{font-size:17px;font-weight:800;text-align:center;color:#E8CB74;letter-spacing:3px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(201,162,75,.28);text-shadow:0 0 12px rgba(232,203,116,.45),0 1px 2px rgba(0,0,0,.6);flex:none;}
+#tower-shop-over .autosell-sub{font-size:12px;color:#d9cfc0;text-align:center;line-height:1.5;margin-bottom:10px;padding:6px 10px;background:linear-gradient(180deg,rgba(201,162,75,.12),rgba(201,162,75,.03));border:1px solid rgba(201,162,75,.28);border-radius:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);flex:none;}
+#tower-shop-over .autosell-sub b{font-size:14px;color:#F2A93B;text-shadow:0 0 10px rgba(242,169,59,.5);}
 #tower-shop-over .autosell-list{flex:1;max-height:none;display:flex;flex-direction:column;overflow-y:auto;}
 #tower-shop-over .ts-row{background:#171310;border:1px solid #4a443c;border-radius:8px;margin-bottom:6px;flex:none;}
 #tower-shop-over .ts-row .shop-ico{background:#201c18;}
@@ -1800,10 +1801,13 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
 #tower-shop-over .ts-row .shop-sub{font-size:10px;color:#8a8375;}
 #tower-shop-over .ts-row .shop-price{font-size:12px;color:#F2A93B;}
 #tower-shop-over .ts-row .shop-buy.btn{height:28px;padding:0 14px;font-size:11px;}
-#tower-shop-over .ts-prev,#tower-shop-over .ts-next{flex:0 0 auto;width:36px;height:30px;padding:0;font-size:13px;background:linear-gradient(180deg,#3a2c12,#241b08);border-color:#C9A24B;color:#D6C07A;border-radius:6px;cursor:pointer;}
+#tower-shop-over .ts-prev,#tower-shop-over .ts-next{flex:0 0 auto;width:26px;height:22px;padding:0;font-size:11px;background:linear-gradient(180deg,#3a2c12,#241b08);border-color:#C9A24B;color:#D6C07A;border-radius:6px;cursor:pointer;}
 #tower-shop-over .ts-prev:disabled,#tower-shop-over .ts-next:disabled{opacity:.4;}
-#tower-shop-over .ts-pg{font-size:12px;color:#E8CB74;letter-spacing:1px;min-width:44px;text-align:center;}
+#tower-shop-over .ts-pg{font-size:11px;color:#E8CB74;letter-spacing:1px;min-width:40px;text-align:center;}
 #tower-shop-over .autosell-actions{flex:none;display:flex;gap:10px;justify-content:center;align-items:center;margin-top:12px;}
+#tower-shop-over .ts-pager{flex:none;display:flex;gap:8px;justify-content:center;align-items:center;margin:6px 0 4px;}
+#tower-shop-over .ts-close-row{flex:none;display:flex;justify-content:center;margin-top:10px;}
+#tower-shop-over .ts-close-row .cbtn{flex:1;max-width:120px;height:32px;font-size:13px;letter-spacing:2px;}
 /* ===== 统一页头小标题条（样例：三色体系） ===== */
 .page-head{display:flex;align-items:center;gap:8px;padding:8px 11px;margin:0 2px 8px;border-left:3px solid #52C6DA;background:linear-gradient(90deg,rgba(82,198,218,.10),rgba(82,198,218,0));border-radius:4px;}
 .page-head .ph-ico{color:#52C6DA;width:16px;height:16px;flex:none;}
@@ -5078,6 +5082,12 @@ function autoSellIf(item){   /* 命中自动出售配置：折算金币返回售
   unlockCollect(item.name);   /* 掉落图鉴：掉过即点亮，自动出售=卖掉而非没掉 */
   return amt;
 }
+function lotteryGive(g, viaPlace, win){   /* 抽奖物品发放：命中自动出售则直卖金币并改标签，否则入包 */
+  var _as=autoSellIf(g);
+  if(_as>0){ if(win) win.label=String(win.label)+' · 自动出售'; return _as; }
+  if(viaPlace) placeInBag(g); else addStackable(g);
+  return 0;
+}
 function openAutoSellPanel(){
   var old=document.getElementById('autosell-over'); if(old) old.remove();
   var over=document.createElement('div'); over.className='autosell-over'; over.id='autosell-over';
@@ -5746,16 +5756,16 @@ function ctShopPanel(){
   var star=function(col){ return '<svg viewBox="0 0 24 24" fill="none" stroke="'+col+'" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-2.9-5.4 2.9 1.2-6L3.4 8.8l6-.7z"/></svg>'; };
   var items=[
     {n:'全属性 +1万',ic:star('#E8CB74'),sub:'永久全属性提升',c:50,do:function(){ addPerm(10000,0); }},
+    {n:'完整属性卷轴 ×1',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#D6C07A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18H6z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>',sub:'洗炼材料',c:60,do:function(){ var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=1; addStackable(g); }},
+    {n:'7级镶嵌锤 ×1',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#F0CF8A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 3.5l6 6-10.5 10.5a3 3 0 0 1-4.2 0L3 18a3 3 0 0 1 0-4.2z"/><path d="M12 8l4 4M5.5 19l3-1"/></svg>',sub:'镶嵌工具',c:120,do:function(){ var g=mkLoot(ITEM_BLUEPRINTS.hammers[0]); g.count=1; addStackable(g); }},
+    {n:'混沌神石 ×1',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#B39DDB" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4.5v6.5L12 21l-7-7V7.5z"/><path d="M12 3v18M5 7.5l7 4.5 7-4.5"/></svg>',sub:'强化材料',c:200,do:function(){ var g=mkLoot(ITEM_BLUEPRINTS.godCrystal); g.count=1; addStackable(g); }},
     {n:'全属性 +10万',ic:star('#FFD700'),sub:'永久全属性提升',c:400,do:function(){ addPerm(100000,0); }},
     {n:'全属性 +100万',ic:star('#FFC24B'),sub:'永久全属性提升',c:5000,do:function(){ addPerm(1000000,0); }},
     {n:'全属性 +1000万',ic:star('#FFB020'),sub:'永久全属性提升',c:30000,do:function(){ addPerm(10000000,0); }},
     {n:'全属性 +1亿',ic:star('#FF9A3B'),sub:'永久全属性提升',c:150000,do:function(){ addPerm(100000000,0); }},
     {n:'全属性 +5亿',ic:star('#FF7A3B'),sub:'永久全属性提升',c:600000,do:function(){ addPerm(500000000,0); }},
     {n:'全属性 +10亿',ic:star('#FF5AD8'),sub:'永久全属性提升',c:1200000,do:function(){ addPerm(1000000000,0); }},
-    {n:'全属性 +100亿',ic:star('#C86BFF'),sub:'永久全属性提升',c:6000000,do:function(){ addPerm(10000000000,0); }},
-    {n:'混沌神石 ×1',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#B39DDB" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4.5v6.5L12 21l-7-7V7.5z"/><path d="M12 3v18M5 7.5l7 4.5 7-4.5"/></svg>',sub:'强化材料',c:200,do:function(){ var g=mkLoot(ITEM_BLUEPRINTS.godCrystal); g.count=1; addStackable(g); }},
-    {n:'完整属性卷轴 ×1',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#D6C07A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18H6z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>',sub:'洗炼材料',c:60,do:function(){ var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=1; addStackable(g); }},
-    {n:'7级镶嵌锤 ×1',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#F0CF8A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 3.5l6 6-10.5 10.5a3 3 0 0 1-4.2 0L3 18a3 3 0 0 1 0-4.2z"/><path d="M12 8l4 4M5.5 19l3-1"/></svg>',sub:'镶嵌工具',c:120,do:function(){ var g=mkLoot(ITEM_BLUEPRINTS.hammers[0]); g.count=1; addStackable(g); }}
+    {n:'全属性 +100亿',ic:star('#C86BFF'),sub:'永久全属性提升',c:6000000,do:function(){ addPerm(10000000000,0); }}
   ];
   var per=6, page=1, pages=Math.ceil(items.length/per);
   function render(){
@@ -5777,7 +5787,7 @@ function ctShopPanel(){
     if(prev) prev.disabled = page<=1;
     if(next) next.disabled = page>=pages;
   }
-  var h='<div class="autosell-card"><div class="autosell-title">塔内商店</div><div class="autosell-sub">持有塔币 <b style="color:#F2A93B">'+CT.coins.toLocaleString()+'</b> · 点击兑换</div><div class="autosell-list"></div><div class="autosell-actions"><button class="btn cbtn ts-prev">◀</button><span class="ts-pg">1 / '+pages+'</span><button class="btn cbtn ts-next">▶</button><button class="btn cbtn c-no">关闭</button></div></div>';
+  var h='<div class="autosell-card"><div class="autosell-title">塔内商店</div><div class="autosell-sub">持有塔币 <b style="color:#F2A93B">'+CT.coins.toLocaleString()+'</b> · 点击兑换</div><div class="ts-pager"><button class="btn cbtn ts-prev">◀</button><span class="ts-pg">1 / '+pages+'</span><button class="btn cbtn ts-next">▶</button></div><div class="autosell-list"></div><div class="ts-close-row"><button class="btn cbtn c-no">关闭</button></div></div>';
   over.innerHTML=h; document.body.appendChild(over);
   render();
   over.querySelector('.ts-prev').addEventListener('click',function(){ if(page>1){ page--; render(); } });
@@ -6361,6 +6371,7 @@ var ADVENTURES=[
   {n:'一夜暴富',tier:'rare',w:13,fx:'gold'},
   {n:'实力暴增',tier:'rare',w:11,fx:'boost'},
   {n:'随机精英',tier:'rare',w:8,fx:'elite'},
+  {n:'塔币宝藏',tier:'rare',w:6,fx:'coins'},
   {n:'逆天装备',tier:'legend',w:1.5,fx:'gear'},
   {n:'逆天药水',tier:'legend',w:1.5,fx:'potion'},
   {n:'一夜成神',tier:'legend',w:1,fx:'god'}
@@ -6370,14 +6381,16 @@ function tryTriggerAdventure(){
   if(ADV_OVER) return;
   try{ if(lotteryBusy) return; }catch(e){}
   var _in=advInnate();
-  if(Math.random()>0.001*_in) return;   /* 每击杀基础0.1%，先天运势越高越易触发 */
-  var lb=_in>=1.8?6:(_in>=1.4?3:(_in>=1.15?1.8:1.2));   /* 传说加成：1.8顶级×6，其余递减 */
-  var rb=_in>=1.8?3:(_in>=1.2?1.5:1);                     /* 稀有加成：1.8顶级×3，其余递减 */
+  if(Math.random()>0.003*_in) return;   /* 每击杀基础0.3%，先天运势越高越易触发 */
+  var lb=_in>=1.8?8:(_in>=1.4?4:(_in>=1.15?2.2:1.2));   /* 传说加成：1.8顶级×8，其余递减 */
+  var rb=_in>=1.8?3:(_in>=1.2?1.6:1);                     /* 稀有加成：1.8顶级×3，其余递减 */
+  var nb=_in>=1.8?0.35:(_in>=1.4?0.55:(_in>=1.15?0.75:1)); /* 普通加成：运势越高，普通奇遇越少 */
   var pool=[];
   ADVENTURES.forEach(function(a){
     var times=1;
     if(a.tier==='legend') times=lb;
     else if(a.tier==='rare') times=rb;
+    else times=nb;
     var n=Math.max(1,Math.round((a.w||1)*times));
     for(var i=0;i<n;i++) pool.push(a);
   });
@@ -6416,6 +6429,12 @@ function runAdventure(ev){
   } else if(ev.fx==='elite'){
     if(typeof TR!=='undefined'&&TR&&!TR.isBoss&&TR.dungeon!==0){ TR.isElite=true; try{ clearTimeout(TR.spawnTimer); trSpawnMon(); }catch(e){} msg='遭遇 <b>随机精英</b>！击杀掉落传说概率翻倍'; }
     else { var _cg=Math.max(500000000,Math.round((CURRENCY.gold||0)*0.5)); CURRENCY.gold+=_cg; renderCurrency(); msg='<b style="color:#FFD27A">遭遇精英！</b> 击退强敌，缴获 '+_cg.toLocaleString()+' 金币'; }
+  } else if(ev.fx==='coins'){
+    var _in3=advInnate();
+    var _cn=Math.round((500+4500*Math.pow(Math.random(),1/_in3))/100)*100;
+    if(typeof CT!=='undefined'&&CT){ CT.coins+=_cn; try{ towerSave(); }catch(e){} }
+    try{ var _tc=document.getElementById('ct-coins'); if(_tc) _tc.innerHTML='塔币 '+CT.coins.toLocaleString(); }catch(e){}
+    msg='发现 <b style="color:#F2A93B">塔币宝藏</b>！获得 '+_cn.toLocaleString()+' 塔币';
   } else if(ev.fx==='gear'){
     var _seals=[ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise];
     var _gpool=[ITEM_BLUEPRINTS.yitaiNecklace,ITEM_BLUEPRINTS.yitaiRing,ITEM_BLUEPRINTS.yitaiBracelet,ITEM_BLUEPRINTS.chaosStone,_seals[Math.floor(Math.random()*_seals.length)]];
@@ -6474,17 +6493,17 @@ var LOTTERY=[
   {label:'谢谢参与',short:'谢谢',prob:0.14,color:'#4A5A72',apply:function(){}}   /* 协调蓝灰：低调不刺眼，与整体暗金/蓝/金体系搭配 */,
   {label:'300万金币',short:'300万',prob:0.15,color:'#C08430',apply:function(){CURRENCY.gold+=3000000;}}   /* 亮金棕：与银白谢谢区分，金币主题呼应 */,
   {label:'全属性+10~50',short:'全属性+10~50',prob:0.107,color:'#4f7da0',apply:function(){this._addVal=10+Math.floor(Math.random()*41); addPerm(this._addVal,0);}},   /* 轮盘显示区间 10~50；日志/结果显示真实附加值 */
-  {label:'神符碎片',short:'神符碎片',prob:0.07,color:'#e2b04f',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=1; addStackable(g); }},
-  {label:'神力碎片',short:'神力碎片',prob:0.06,color:'#6fa8dc',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; addStackable(g); }},
+  {label:'神符碎片',short:'神符碎片',prob:0.07,color:'#e2b04f',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=1; lotteryGive(g,false,this); }},
+  {label:'神力碎片',short:'神力碎片',prob:0.06,color:'#6fa8dc',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
   {label:'1亿金币',short:'1亿',prob:0.11,color:'#f2c51e',apply:function(){CURRENCY.gold+=100000000;}},
-  {label:'神符天神牌子',short:'神符牌',prob:0.05,color:'#d4a017',apply:function(){var rs=[ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune]; var g=mkLoot(rs[Math.floor(Math.random()*rs.length)]); g.count=1; placeInBag(g); }},
+  {label:'神符天神牌子',short:'神符牌',prob:0.05,color:'#d4a017',apply:function(){var rs=[ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune]; var g=mkLoot(rs[Math.floor(Math.random()*rs.length)]); g.count=1; lotteryGive(g,true,this); }},
   {label:'生命+10000',short:'生命+1万',prob:0.04,color:'#D0715F',apply:function(){addPerm(0,10000);}}   /* 亮暖红：与相邻扇区视觉齐平 */,
-  {label:'神印碎片',short:'神印碎片',prob:0.03,color:'#9a5bd0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.sealFragment); g.count=1; addStackable(g); }},
-  {label:'锤7',short:'锤7',prob:0.13,color:'#e8b54a',apply:function(){var h=ITEM_BLUEPRINTS.hammers[0]; var g=mkLoot(h); g.count=1; g.maxStack=255; addStackable(g); }},
+  {label:'神印碎片',short:'神印碎片',prob:0.03,color:'#9a5bd0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.sealFragment); g.count=1; lotteryGive(g,false,this); }},
+  {label:'锤7',short:'锤7',prob:0.13,color:'#e8b54a',apply:function(){var h=ITEM_BLUEPRINTS.hammers[0]; var g=mkLoot(h); g.count=1; g.maxStack=255; lotteryGive(g,false,this); }},
   {label:'全属性+100',short:'全属性+100',prob:0.012,color:'#4fa05f',apply:function(){addPerm(100,0);}},
   {label:'全属性+50000',short:'全属性+50000',prob:0.001,color:'#a04fd4',apply:function(){addPerm(50000,0);}},
-  {label:'混沌神石',short:'混沌',prob:0.06,color:'#c8b0d0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=1; g.maxStack=255; addStackable(g); }},
-  {label:'完整属性卷轴',short:'完整卷轴',prob:0.04,color:'#e0d0a0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=1; addStackable(g); }}
+  {label:'混沌神石',short:'混沌',prob:0.06,color:'#c8b0d0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=1; g.maxStack=255; lotteryGive(g,false,this); }},
+  {label:'完整属性卷轴',short:'完整卷轴',prob:0.04,color:'#e0d0a0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=1; lotteryGive(g,false,this); }}
 ];
 function lotteryInnate(){ return (typeof CHARACTER!=='undefined'&&CHARACTER&&CHARACTER.innate)? CHARACTER.innate:1; }   /* 先天运势系数（0.9~1.8） */
 function adjustByInnate(innate, items, getP, isLg){   /* 传说级项概率×运势；普通项按比例缩放，保证总权重不变 */
@@ -6523,16 +6542,16 @@ function lotteryRarePool(){   /* 保底稀有奖池：含全属性+500、传说�
   var _jk='shenqi_jackpot_1e8', _jackN=10; try{ _jackN=parseInt(localStorage.getItem(_jk)||'10',10); if(isNaN(_jackN)||_jackN<0) _jackN=0; }catch(e){}
   if(_jackN>0){ pool.push({label:'全属性+1亿（含生命活力）',w:0.05,_lg:true,apply:function(){ addPerm(100000000,100000000); _jackN--; try{ localStorage.setItem(_jk,String(Math.max(0,_jackN))); }catch(e){} toast('天选之刻！全属性+1亿！（全服剩余 '+_jackN+' 份）'); }}); }   /* 全服仅10份、全奖最稀有大奖，抽完即永久移除 */
   pool=pool.concat([
-    {label:'寂灭之息药剂',w:0.12,_lg:true,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); g.count=1; addStackable(g);}},   /* 最珍稀：寂灭之息药剂（BOSS即死） */
+    {label:'寂灭之息药剂',w:0.12,_lg:true,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); g.count=1; lotteryGive(g,false,this);}},   /* 最珍稀：寂灭之息药剂（BOSS即死） */
     {label:'全属性+100万',w:0.3,_lg:true,apply:function(){addPerm(1000000,0);}},   /* 次珍稀：全属性+100万 */
     {label:'金币+100亿',w:0.5,_lg:true,apply:function(){CURRENCY.gold+=10000000000;}},   /* 次珍稀：100亿金币 */
     {label:'全属性+50000',w:1,_lg:true,apply:function(){addPerm(50000,0);}},
     {label:'永久生命+100000',w:1,_lg:true,apply:function(){addPerm(0,100000);}},
-    {label:'神印天神牌',w:1,_lg:true,apply:function(){var seals=[ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise]; var g=mkLoot(seals[Math.floor(Math.random()*seals.length)]); g.count=1; placeInBag(g); }},
+    {label:'神印天神牌',w:1,_lg:true,apply:function(){var seals=[ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise]; var g=mkLoot(seals[Math.floor(Math.random()*seals.length)]); g.count=1; lotteryGive(g,true,this); }},
     {label:'永久全属性+2000',w:2,apply:function(){addPerm(2000,0);}},
     {label:'永久生命+50000',w:2,apply:function(){addPerm(0,50000);}},
-    {label:'完整属性卷轴',w:3,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=100; addStackable(g); }},
-    {label:'混沌神石',w:3,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=100; g.maxStack=255; addStackable(g); }},
+    {label:'完整属性卷轴',w:3,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=100; lotteryGive(g,false,this); }},
+    {label:'混沌神石',w:3,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=100; g.maxStack=255; lotteryGive(g,false,this); }},
     {label:'永久全属性+1000',w:3,apply:function(){addPerm(1000,0);}}
   ]);
   var probs=adjustByInnate(lotteryInnate(), pool, function(it){return it.w;}, function(it){return it.w<=1;});   /* 最珍稀/次珍稀(权重<=1)为传说级：权重×先天运势，其余按比例缩放保总权重 */
