@@ -1146,7 +1146,7 @@ body.show-god .stage{max-width:680px;}
 /* 商店页 */
 .shop-tip{font-size:12px;color:#8a8375;padding:9px 10px 4px;letter-spacing:1px;}
 #view-shop{box-sizing:border-box;}
-#view-shop .sys-body{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;}
+#view-shop .sys-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 236px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 24px);box-sizing:border-box;}
 #view-shop .shop-list{display:flex;flex-direction:column;gap:5px;padding:4px 10px 6px;min-height:0;}
 #view-shop .shop-pager{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:14px;padding:6px 0 8px;}
 #view-shop .shop-pager .btn{height:26px;padding:0 16px;font-size:12px;border-radius:5px;}
@@ -5954,9 +5954,9 @@ function renderAchievement(){
     {c:'魔灵统御首饰',rows:['项链：全属性 +900','戒指：全属性 +600','手镯：全属性 +500'],note:'单件生效，无套装加成'},
     {c:'等级压制',rows:['等级差≥10级触发：等级高一方攻防×10，每多5级再翻倍'],note:'差距越大压制越强'},
     {c:'阶位压制',rows:['高阶对低阶：无视防御 10% + 伤害 +10%','低阶对高阶：攻击 -10%']},
-    {c:'神圣药水',rows:['攻击与防御翻倍、攻速翻倍'],note:'持续 2 小时'},
+    {c:'神圣药水',rows:['攻击与防御翻倍、攻速翻倍'],note:'持续 12 小时'},
     {c:'太阳',rows:['打怪获得经验翻倍'],note:'持续 12 小时'},
-    {c:'超级大太阳',rows:['打怪获得经验 ×5'],note:'持续 2 小时'}
+    {c:'超级大太阳',rows:['打怪获得经验 ×5'],note:'持续 12 小时'}
   ];
   var fel=document.getElementById('ach-effects');
   if(fel){ var fh='';
@@ -8113,7 +8113,7 @@ document.addEventListener('visibilitychange', function(){
 var SAVE_KEY='shenqi_save_v1';
 var POTION_UNTIL=0;   /* 神圣药水生效截止时间戳（0=未生效） */
 var SUN_UNTIL=0;   /* 太阳生效截止时间戳：打怪经验翻倍12小时（0=未生效） */
-var MEGA_SUN_UNTIL=0;   /* 超级大太阳生效截止时间戳：打怪经验5倍2小时（0=未生效） */
+var MEGA_SUN_UNTIL=0;   /* 超级大太阳生效截止时间戳：打怪经验5倍12小时（0=未生效） */
 setInterval(function(){ if(window.location.hash==='#treasure' && Date.now()<POTION_UNTIL) renderBuff(); },2000);   /* 性能优化：药水倒计时1s->2s刷新，返回页面会经renderChar刷新，功能不变 */
 var QUICK=[null,null,null,null];   /* 战斗快捷道具栏（存药水name，最多4格），随存档保存 */
 /* ===== 属性装备栏：攻/防各4个预设凹槽（水火风土），点击凹槽一键切换穿戴 ===== */
@@ -8243,9 +8243,9 @@ function renderQuick(){
 }
 function doPotionAction(it, tab, idx, noConfirm){
   if(it.type==='sun_potion'){
-    var isMega=!!it.mega, nm=isMega?'超级大太阳':'太阳', multi=isMega?5:2, hours=isMega?2:12;
+    var isMega=!!it.mega, nm=isMega?'超级大太阳':'太阳', multi=isMega?5:2, hours=isMega?12:12;
     function _run(){ it.count=(it.count||1)-1; if(it.count<=0){ bag[tab][idx]=null; }
-      if(isMega) MEGA_SUN_UNTIL=Date.now()+2*60*60*1000; else SUN_UNTIL=Date.now()+12*60*60*1000;
+      if(isMega) MEGA_SUN_UNTIL=Date.now()+12*60*60*1000; else SUN_UNTIL=Date.now()+12*60*60*1000;
       renderBag(); renderQuick(); saveGame(); toast(nm+'生效！打怪经验×'+multi+'，持续'+hours+'小时'); }
     if(noConfirm) _run();
     else confirmDialog('使用'+nm+'？<br>打怪获取经验×'+multi+'，持续 '+hours+' 小时', function(ok2){ if(!ok2) return; _run(); });
@@ -8265,13 +8265,13 @@ function doPotionAction(it, tab, idx, noConfirm){
     return;
   }
   function _run3(){ it.count=(it.count||1)-1; if(it.count<=0){ bag[tab][idx]=null; }
-    POTION_UNTIL=Date.now()+2*3600*1000;   /* 神圣药水持续2小时 */
+    POTION_UNTIL=Date.now()+12*3600*1000;   /* 神圣药水持续12小时 */
     if(typeof trSyncChar==='function') trSyncChar();
     if(typeof renderChar==='function') renderChar();
     renderBag(); renderQuick(); saveGame();
-    toast('神圣药水生效！攻击/防御/攻速翻倍，持续2小时'); }
+    toast('神圣药水生效！攻击/防御/攻速翻倍，持续12小时'); }
   if(noConfirm) _run3();
-  else confirmDialog('使用神圣药水？<br>攻击/防御/攻速翻倍，持续 2 小时', function(ok2){ if(!ok2) return; _run3(); });
+  else confirmDialog('使用神圣药水？<br>攻击/防御/攻速翻倍，持续 12 小时', function(ok2){ if(!ok2) return; _run3(); });
 }
 function usePotion(slotEl){
   var idx=parseInt(slotEl.getAttribute('data-slot'),10);
