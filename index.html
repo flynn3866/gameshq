@@ -152,7 +152,7 @@ body.show-god .stage{max-width:680px;}
 #attr-float .af-lvsep{color:#D8CFC2;font-size:9px;font-weight:600;letter-spacing:1px;}   /* 等级：去掉边框，纯文字 */
 #attr-float .af-tier{font-size:10px;color:#C9A4FF;font-weight:800;letter-spacing:1px;text-shadow:0 0 6px rgba(150,90,255,.55);}   /* 阶位：去掉边框，纯紫文字+微光 */
 #attr-float .af-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
-#attr-float .af-tier.ti-1{color:#C02942!important;text-shadow:none!important;}
+#attr-float .af-tier.ti-1{color:#3A3F9E!important;text-shadow:none!important;}
 #attr-float .af-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
 #attr-float .af-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
 #attr-float .af-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
@@ -1713,19 +1713,19 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .char-tier{display:inline-block;vertical-align:middle;margin-left:6px;font-weight:800;letter-spacing:1px;color:#A56BFF;background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;text-shadow:none;}   /* 阶位统一：纯净净值，档位配色见下 */
 /* ===== 阶位专属视觉：按档位配色递进（纯净纯色，无渐变无模糊） ===== */
 .char-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}   /* 锐凡：青蓝 */
-.char-tier.ti-1{color:#C02942!important;text-shadow:none!important;}   /* 半神：深电光蓝 */
+.char-tier.ti-1{color:#3A3F9E!important;text-shadow:none!important;}   /* 半神：深电光蓝 */
 .char-tier.ti-2{color:#9A5BFF!important;text-shadow:none!important;}   /* 神灵：亮紫罗兰 */
 .char-tier.ti-3{color:#7B28D9!important;text-shadow:none!important;}   /* 真神：帝王紫 */
 .char-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}   /* 神王：金橙 */
 .char-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;}   /* 大帝：品红紫静态光效 */
 .hh-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
-.hh-tier.ti-1{color:#C02942!important;text-shadow:none!important;}
+.hh-tier.ti-1{color:#3A3F9E!important;text-shadow:none!important;}
 .hh-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
 .hh-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
 .hh-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
 .hh-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;}
 .tr-rolecard-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
-.tr-rolecard-tier.ti-1{color:#C02942!important;text-shadow:none!important;}
+.tr-rolecard-tier.ti-1{color:#3A3F9E!important;text-shadow:none!important;}
 .tr-rolecard-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
 .tr-rolecard-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
 .tr-rolecard-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
@@ -1736,7 +1736,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .tier-fx::after{display:inline-block;margin-left:2px;font-size:.72em;line-height:1;vertical-align:super;pointer-events:none;opacity:.95;}   /* 阶位徽记：缀于阶位名右上 */
 .tier-fx.ti-0::after{content:'✦';color:#52C6DA;text-shadow:0 0 4px rgba(82,198,218,.9);}   /* 锐凡：星点 */
 .tier-fx.ti-0{text-shadow:0 0 3px rgba(82,198,218,.35);}   /* 锐凡：细青蓝描边，无呼吸 */
-.tier-fx.ti-1::after{content:'☽';color:#C02942;text-shadow:0 0 5px rgba(74,155,255,.95);}   /* 半神：月弧 */
+.tier-fx.ti-1::after{content:'☽';color:#3A3F9E;text-shadow:0 0 5px rgba(74,155,255,.95);}   /* 半神：月弧 */
 .tier-fx.ti-1{animation:none;}   /* 半神：去呼吸 */
 .tier-fx.ti-2::after{content:'✧';color:#6E9BFF;text-shadow:0 0 5px rgba(110,155,255,.95);}   /* 神灵：三芒 */
 .tier-fx.ti-2{animation:none;}   /* 神灵：去呼吸 */
@@ -3712,7 +3712,7 @@ function applyCharTier(){ var t=charTierName(), _ti=charTierIdx(); ['home-tier',
 function setTierEl(el){ if(!el) return; var i=charTierIdx(); el.textContent=(i>=0)?CHAR_TIERS[i].n:''; for(var k=0;k<=5;k++) el.classList.remove('ti-'+k); el.classList.add('tier-fx'); if(i>=0) el.classList.add('ti-'+i); }   /* 战斗场景阶位：档位配色+光效徽记 */
 function tierAscendShow(ti){
   if(ti<0||ti>5) return;
-  var marks=['✦','☽','✧','✶','♛','♚'], colors=['#52C6DA','#C02942','#6E9BFF','#A56BFF','#F2A93B','#FF5AD8'];
+  var marks=['✦','☽','✧','✶','♛','♚'], colors=['#52C6DA','#3A3F9E','#6E9BFF','#A56BFF','#F2A93B','#FF5AD8'];
   var c=colors[ti], ov=document.createElement('div'); ov.className='tier-ascend';
   ov.style.setProperty('--ta-glow', ti===5?'#FF5AD8':'#F2A93B');
   var _wave=(ti===5)?'radial-gradient(circle,#FF5AD8aa,#FFB30055 45%,transparent 72%)':'radial-gradient(circle,'+c+'88,transparent 72%)';
@@ -4070,7 +4070,7 @@ function toggleEnhAuto(){
     var need=ENH.equip.type==='weapon' ? weaponEnhCfg(ENH.equip.enhanceLevel||0).cost : armorEnhCfg(ENH.equip.enhanceLevel||0).cost;
     if(CURRENCY.gold<need){ stopEnhAuto(); toast('金币不足，自动强化停止'); return; }
     doEnhanceCore();
-  },1200);
+  },300);
 }
 
 /* ============ 宝石系统 ============ */
@@ -4591,7 +4591,7 @@ function enhFx(cls, slotId){
   document.body.appendChild(fx);
   setTimeout(function(){ if(fx.parentNode) fx.remove(); },2000);
 }
-function doGodUpgrade(fromAuto){
+function doGodUpgrade(){
   var g=GOD.upTarget; if(!g){ toast('请选择升级目标'); return; }
   if(g.grade>=5&&g.star>=5&&calcGodProgress(g)>=100){ toast('已达满级 5重5星'); return; }
   var cost=calcGodCost(g);
@@ -4601,7 +4601,7 @@ function doGodUpgrade(fromAuto){
   var ok=Math.random()<calcGodRate(g)/100;
   mats.forEach(function(m){ consumeStack(m,1); });
   CURRENCY.bound-=cost; renderCurrency();
-  if(ok){ if(!fromAuto){ playSoundEffect('embedSuccess'); showGodUpgradeSuccess(); }
+  if(ok){ playSoundEffect('embedSuccess'); showGodUpgradeSuccess();
     var prog=calcGodProgress(g);
     if(prog<100){ var lv=(g.grade*5)+g.star;
       var gain=lv===1?(Math.floor(Math.random()*3)+1):(Math.floor(Math.random()*lv*2+6));
@@ -4612,7 +4612,7 @@ function doGodUpgrade(fromAuto){
       if(g.grade>=5){ g.grade=5; g.star=5; g.currentExp=g.requiredExp; toast('已达满级'); }
       else { g.grade+=1; g.star=1; g.currentExp=0; g.requiredExp=calcReqExp(g); toast('升重成功！'+g.grade+'重'); }
     } else { g.star+=1; g.currentExp=0; g.requiredExp=calcReqExp(g); toast('升星成功！'+g.star+'星'); }
-  } else { if(!fromAuto){ playSoundEffect('embedFail'); showGodUpgradeFailure(); } toast('升级失败'); }
+  } else { playSoundEffect('embedFail'); showGodUpgradeFailure(); toast('升级失败'); }
   renderBag(); renderGod(); recalcCharacter();
 }
 
@@ -4629,7 +4629,7 @@ function toggleGodAuto(){
     if(gg.grade>=5&&gg.star>=5&&calcGodProgress(gg)>=100){ stopGodAuto(); toast('天神已达满级，自动升级停止'); return; }
     if(CURRENCY.bound<calcGodCost(gg)){ stopGodAuto(); toast('绑定金币不足，自动升级停止'); return; }
     var mats=godMaterials(gg); if(!mats.length){ stopGodAuto(); toast('缺少升级材料，自动升级停止'); return; }
-    doGodUpgrade(true);
+    doGodUpgrade();
   },333);
 }
 function initSystemsUI(){
@@ -4769,7 +4769,7 @@ function renderAttrs(){
     var m=0; ['力量','敏捷','体质','精神','智力','幸运'].forEach(function(k){ var v=(CHARACTER.base?CHARACTER.base[k]:0)+(CHARACTER.bonus?CHARACTER.bonus[k]:0); if(v>m)m=v; });
     var i=charTierIdx();
     if(i>=CHAR_TIERS.length-1){ el.innerHTML='<div class="tier-progress"><div class="tp-done">已达大帝 · 至高无上</div></div>'; return; }
-    var TC=['#52C6DA','#C02942','#6E9BFF','#A56BFF','#F2A93B','#FF5AD8'];
+    var TC=['#52C6DA','#3A3F9E','#6E9BFF','#A56BFF','#F2A93B','#FF5AD8'];
     var _steps=''; for(var _s=0;_s<CHAR_TIERS.length;_s++){ if(_s>0){ var _lg=_s<=i?'on':(_s===i+1?'cur':'off'); _steps+='<span class="tp-line '+_lg+'"></span>'; } var _on=_s<=i; _steps+='<span class="tp-node'+(_on?' on':' off')+(_s===i?' cur':'')+'"'+( _on?' style="color:'+TC[_s]+'"':'')+'><i class="tp-dot"></i><span class="tp-name">'+CHAR_TIERS[_s].n+'</span></span>'; }
     var cur=i>=0?CHAR_TIERS[i].m:0, nxt=CHAR_TIERS[i+1].m, pct=Math.min(100,Math.max(0,(m-cur)/(nxt-cur)*100));
     el.innerHTML='<div class="tier-progress"><div class="tp-steps">'+_steps+'</div><div class="tp-bar"><i style="width:'+pct.toFixed(1)+'%"></i></div><div class="tp-meta"><span>'+fmtWan(m)+'</span><span>下一阶 门槛 '+fmtWan(nxt)+' · '+pct.toFixed(0)+'%</span></div></div>';
@@ -5554,7 +5554,7 @@ function renderAchievement(){
     {r:'大帝',  rm:1000000000000,b:'神级',     br:'100亿 ~ 1000亿'}
   ];
   var cTier=charTierIdx();
-  var TIER_COLORS=['#52C6DA','#C02942','#9A5BFF','#7B28D9','#F2A93B','#FF5AD8'];   /* 档位配色：与角色属性/竞技/首页统一 */
+  var TIER_COLORS=['#52C6DA','#3A3F9E','#9A5BFF','#7B28D9','#F2A93B','#FF5AD8'];   /* 档位配色：与角色属性/竞技/首页统一 */
   var tel2=document.getElementById('ach-tiers');
   if(tel2){ var th='';
     for(var ti=0;ti<tierList.length;ti++){ var tt=tierList[ti], tg=ti<=cTier;
