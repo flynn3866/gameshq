@@ -110,8 +110,8 @@ body.show-god .stage{max-width:680px;}
 .lf-cell{width:100%;aspect-ratio:1;border-radius:9px;padding:1px;background:radial-gradient(130% 130% at 50% 0%, rgba(255,218,150,.09), transparent 55%), linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.22));background-clip:content-box;background-origin:content-box;box-shadow:inset 0 1px 0 rgba(255,255,255,.06), inset 0 -3px 7px rgba(0,0,0,.5);border:1px solid rgba(201,162,75,.10);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;overflow:hidden;}
 .lf-cell.empty{opacity:.5;cursor:default;}
 .lf-cell.revealed{border-color:rgba(232,203,116,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.08), inset 0 -3px 7px rgba(0,0,0,.5), 0 0 14px rgba(201,162,75,.3);}
-.lf-orb{width:48%;height:48%;border-radius:50%;position:relative;background:radial-gradient(circle at 38% 32%, rgba(255,244,180,.98) 0%, rgba(255,214,90,.85) 22%, rgba(255,178,30,.42) 56%, rgba(255,150,10,.10) 80%, rgba(255,140,0,0) 100%);box-shadow:0 0 6px rgba(255,215,120,.7), 0 0 16px rgba(255,200,60,.42), 0 0 32px rgba(255,180,30,.22);animation:orbPulse 1.9s ease-in-out infinite;}
-.lf-orb::before{content:'';position:absolute;inset:-34%;border-radius:50%;background:conic-gradient(from 0deg, transparent 0deg, rgba(255,222,130,.28) 42deg, transparent 92deg, rgba(255,222,130,.13) 180deg, transparent 260deg, rgba(255,222,130,.22) 322deg, transparent 360deg);filter:blur(5px);animation:orbSpin 6s linear infinite;}
+.lf-orb{width:48%;height:48%;border-radius:50%;position:relative;background:radial-gradient(circle at 38% 32%, rgba(255,244,180,.98) 0%, rgba(255,214,90,.85) 22%, rgba(255,178,30,.42) 56%, rgba(255,150,10,.10) 80%, rgba(255,140,0,0) 100%);box-shadow:0 0 6px rgba(255,215,120,.7), 0 0 16px rgba(255,200,60,.42), 0 0 32px rgba(255,180,30,.22);animation:orbPulse 3.8s ease-in-out infinite;   /* 省电：呼吸降频 */}
+.lf-orb::before{content:'';position:absolute;inset:-34%;border-radius:50%;background:conic-gradient(from 0deg, transparent 0deg, rgba(255,222,130,.28) 42deg, transparent 92deg, rgba(255,222,130,.13) 180deg, transparent 260deg, rgba(255,222,130,.22) 322deg, transparent 360deg);animation:orbSpin 12s linear infinite;   /* 省电：去blur、旋转降频 */}
 .lf-orb::after{content:'';position:absolute;left:26%;top:17%;width:20%;height:20%;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,.96), rgba(255,255,255,0) 70%);filter:blur(1px);}
 .lf-orb.purple{background:radial-gradient(circle at 38% 32%, rgba(250,226,255,.98) 0%, rgba(196,120,255,.85) 22%, rgba(150,60,235,.42) 56%, rgba(120,40,200,.10) 80%, rgba(110,30,190,0) 100%);box-shadow:0 0 6px rgba(210,150,255,.7), 0 0 16px rgba(190,110,255,.45), 0 0 34px rgba(160,70,235,.26);}
 .lf-orb.purple::before{background:conic-gradient(from 0deg, transparent 0deg, rgba(210,150,255,.30) 42deg, transparent 92deg, rgba(200,130,255,.14) 180deg, transparent 260deg, rgba(210,150,255,.22) 322deg, transparent 360deg);}
@@ -156,7 +156,7 @@ body.show-god .stage{max-width:680px;}
 #attr-float .af-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
 #attr-float .af-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
 #attr-float .af-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
-#attr-float .af-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 2.2s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}   /* 大帝：品红紫+呼吸流光+氛围光 */
+#attr-float .af-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 4.4s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}   /* 大帝：品红紫+呼吸流光+氛围光 */
 .ach-name.ti-5{position:relative;display:inline-block;box-shadow:0 0 18px rgba(255,90,200,.10);}
 #attr-float .af-powercard{flex:none;text-align:center;background:linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #C9A24B;border-radius:9px;padding:6px 11px;box-shadow:0 0 12px rgba(201,162,75,.22),inset 0 1px 0 rgba(255,255,255,.12);}
 #attr-float .af-powercard b{display:block;font-size:9px;color:#E8C77A;letter-spacing:3px;font-weight:600;margin-bottom:3px;text-shadow:0 0 8px rgba(230,190,110,.4);}
@@ -350,12 +350,12 @@ body.show-god .stage{max-width:680px;}
 /* ===== 稀有度视觉体系：稀有(青蓝粒子微光)/史诗(暖金流动光晕)/传说(品红紫呼吸流光) ===== */
 .slot.has-item.q-blue::after,.slot.has-item.q-gold::after,.slot.has-item.q-purple::after{content:'';position:absolute;inset:0;border-radius:4px;pointer-events:none;z-index:1;}
 .slot.has-item.q-blue::after{box-shadow:inset 0 0 0 1px rgba(64,224,208,.8),0 0 6px rgba(64,224,208,.4),0 0 12px rgba(64,224,208,.18);}
-.slot.has-item.q-gold::after{box-shadow:inset 0 0 0 1px rgba(255,186,50,.92),0 0 9px rgba(255,176,38,.5),0 0 16px rgba(255,150,20,.22);animation:qShine 2.6s ease-in-out infinite;}
-.slot.has-item.q-purple::after{box-shadow:inset 0 0 0 1px rgba(228,112,255,.95),0 0 12px rgba(214,90,255,.6),0 0 24px rgba(190,60,235,.35);animation:qPulse 2.2s ease-in-out infinite;}
+.slot.has-item.q-gold::after{box-shadow:inset 0 0 0 1px rgba(255,186,50,.92),0 0 9px rgba(255,176,38,.5),0 0 16px rgba(255,150,20,.22);animation:qShine 8s ease-in-out infinite;   /* 省电：再降频 */}
+.slot.has-item.q-purple::after{box-shadow:inset 0 0 0 1px rgba(228,112,255,.95),0 0 12px rgba(214,90,255,.6),0 0 24px rgba(190,60,235,.35);animation:qPulse 6s ease-in-out infinite;   /* 省电：再降频 */}
 .picker-grid .pick.q-blue::after,.picker-grid .pick.q-gold::after,.picker-grid .pick.q-purple::after{content:'';position:absolute;inset:0;border-radius:5px;pointer-events:none;z-index:1;}   /* 选择列表凹槽品质特效，与背包统一 */
 .picker-grid .pick.q-blue::after{box-shadow:inset 0 0 0 1px rgba(64,224,208,.8),0 0 6px rgba(64,224,208,.4),0 0 12px rgba(64,224,208,.18);}
-.picker-grid .pick.q-gold::after{box-shadow:inset 0 0 0 1px rgba(255,186,50,.92),0 0 9px rgba(255,176,38,.5),0 0 16px rgba(255,150,20,.22);animation:qShine 2.6s ease-in-out infinite;}
-.picker-grid .pick.q-purple::after{box-shadow:inset 0 0 0 1px rgba(228,112,255,.95),0 0 12px rgba(214,90,255,.6),0 0 24px rgba(190,60,235,.35);animation:qPulse 2.2s ease-in-out infinite;}
+.picker-grid .pick.q-gold::after{box-shadow:inset 0 0 0 1px rgba(255,186,50,.92),0 0 9px rgba(255,176,38,.5),0 0 16px rgba(255,150,20,.22);animation:qShine 8s ease-in-out infinite;   /* 省电：再降频 */}
+.picker-grid .pick.q-purple::after{box-shadow:inset 0 0 0 1px rgba(228,112,255,.95),0 0 12px rgba(214,90,255,.6),0 0 24px rgba(190,60,235,.35);animation:qPulse 6s ease-in-out infinite;   /* 省电：再降频 */}
 @keyframes qShine{0%,100%{opacity:.9;}50%{opacity:1;box-shadow:inset 0 0 0 1px rgba(255,200,64,1),0 0 13px rgba(255,190,48,.75),0 0 26px rgba(255,160,20,.4);}}
 @keyframes qPulse{0%,100%{opacity:.92;}50%{opacity:1;box-shadow:inset 0 0 0 1px rgba(240,124,255,1),0 0 16px rgba(224,100,255,.8),0 0 32px rgba(196,64,235,.5);}}
 @keyframes tierPulse{0%,100%{text-shadow:0 0 2px rgba(160,80,224,.6),0 0 6px rgba(255,90,200,.5);}50%{text-shadow:0 0 2px rgba(255,90,200,.95),0 0 7px rgba(160,80,224,.75),0 0 14px rgba(255,90,200,.5);}}   /* 大帝阶位：品红紫实心发光+紫罗兰立体呼吸流光 */
@@ -1063,7 +1063,7 @@ body.show-god .stage{max-width:680px;}
    radial-gradient(1.6px 1.6px, rgba(var(--dust),.45), transparent 70%);
   background-size:240px 240px,320px 320px,180px 180px;
   background-position:0 0,40px 60px,90px 30px;
-  animation:trDust 14s linear infinite;}
+  animation:none;   /* 省电：关闭粒子移动动画，保留静态尘点 */}
 @keyframes trDust{to{background-position:0 240px,40px 380px,90px 210px;}}
 .tr-scene[data-ambient=water]{background:radial-gradient(140px 100px at 30% 25%,rgba(60,150,180,.30),transparent 62%),radial-gradient(190px 130px at 75% 20%,rgba(20,80,110,.42),transparent 60%),linear-gradient(180deg,#0a1a26,#050e16);--dust:90,205,225;}
 .tr-scene[data-ambient=desert]{background:radial-gradient(140px 100px at 30% 25%,rgba(210,130,45,.32),transparent 62%),radial-gradient(190px 130px at 75% 20%,rgba(130,70,20,.36),transparent 60%),linear-gradient(180deg,#261607,#120b04);--dust:235,175,95;}
@@ -1083,9 +1083,9 @@ body.show-god .stage{max-width:680px;}
 .tr-monster.boss svg{width:120px;}
 .tr-monster.boss{filter:drop-shadow(0 0 16px rgba(255,90,42,.8)) drop-shadow(0 0 30px rgba(165,58,255,.5)) drop-shadow(0 0 56px rgba(255,30,0,.35));}   /* BOSS 红紫渐变光晕 */
 .tr-monster i{position:absolute;bottom:-8px;width:16px;height:26px;border-radius:50%;pointer-events:none;background:radial-gradient(closest-side,rgba(255,190,60,.95),rgba(255,70,10,.35) 55%,transparent 75%);z-index:-1;transform:translate(-50%,0);}
-.tr-f1{left:50%;animation:trFlame 1s ease-out infinite;}
-.tr-f2{left:18%;width:14px;height:20px;animation:trFlame .8s ease-out infinite;animation-delay:.35s;}
-.tr-f3{left:82%;width:14px;height:22px;animation:trFlame 1.15s ease-out infinite;animation-delay:.55s;}
+.tr-f1{left:50%;animation:none;}   /* 省电：火焰静止 */
+.tr-f2{left:18%;width:14px;height:20px;animation:none;}   /* 省电：火焰静止 */
+.tr-f3{left:82%;width:14px;height:22px;animation:none;}   /* 省电：火焰静止 */
 @keyframes trFlame{0%{opacity:0;}25%{opacity:1;}100%{opacity:0;transform:translate(-50%,-75px) scale(1.25);}}
 /* 怪物死亡：本体崩解 + 碎片飞散 */
 .tr-monster.die{animation:trMonDie .7s ease-out forwards !important;}   /* 死亡崩解：!important 确保不被击毙震动(shake-kill 后定义覆盖)顶掉 */
@@ -1246,7 +1246,7 @@ body.show-god .stage{max-width:680px;}
 .tr-drop.d-gold .drop-img{box-shadow:0 0 20px rgba(255,215,0,.95);filter:drop-shadow(0 0 9px rgba(255,200,0,.85));}
 .tr-drop.d-gold::after{content:'';position:absolute;inset:-7px;border-radius:50%;pointer-events:none;background:conic-gradient(from 0deg,transparent 0 55deg,rgba(255,220,90,.95) 55deg 90deg,transparent 90deg);animation:trSpin .85s linear infinite;z-index:-1;}
 .tr-drop.d-purple .drop-img{box-shadow:0 0 24px rgba(255,90,200,1);filter:drop-shadow(0 0 12px rgba(255,90,200,.95));}   /* 传说掉落：品红紫获得流光 */
-.tr-drop.d-purple::before{content:'';position:absolute;inset:-9px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(255,90,200,.8),transparent 68%);box-shadow:0 0 6px rgba(255,90,200,.6);animation:qPulse 2.2s ease-in-out infinite;z-index:-1;}   /* 复用qPulse：品红呼吸+收光 */
+.tr-drop.d-purple::before{content:'';position:absolute;inset:-9px;border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(255,90,200,.8),transparent 68%);box-shadow:0 0 6px rgba(255,90,200,.6);animation:qPulse 6s ease-in-out infinite;   /* 省电：再降频 */z-index:-1;}   /* 复用qPulse：品红呼吸+收光 */
 @keyframes trSpin{to{transform:rotate(360deg);}}
 @keyframes trPulse{0%,100%{opacity:.45;transform:scale(.85);}50%{opacity:1;transform:scale(1.18);}}
 /* Boss 战利品结算条 */
@@ -1681,6 +1681,7 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .ach-card{background:linear-gradient(180deg,#1d1916,#15110d);border:1px solid #3a352f;border-left:3px solid #3a352f;border-radius:9px;padding:9px 12px;filter:grayscale(.6);opacity:.82;}   /* 未解锁去饱和灰 */
 .ach-card.got{border-color:#d8b46a;border-left:3px solid #f5d998;background:linear-gradient(180deg,#221c15,#19130c);box-shadow:0 0 12px rgba(216,180,106,.35);filter:none;opacity:1;}   /* 已解锁金光描边+辉光 */
 .ach-top{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+#view-achievement,#view-achievement *{animation:none!important;box-shadow:none!important;transition:none!important;}   /* 省电：成就系统仅展示文字，去全部特效/呼吸 */
 .ach-name{font-size:18px;font-weight:700;letter-spacing:1px;color:#FFFFFF;}
 .ach-cond{font-size:11px;color:#9a8f7c;margin-top:3px;}
 .ach-attr{font-size:11px;color:#c9b78a;margin-top:3px;}
@@ -1698,17 +1699,17 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 @keyframes sceneGlow{0%,100%{box-shadow:0 0 0 rgba(201,162,75,0);}50%{box-shadow:0 0 30px rgba(201,162,75,.20);}}
 @keyframes icoGlow{0%,100%{box-shadow:inset 0 1px 0 #fff,0 0 6px rgba(201,162,75,.2);}50%{box-shadow:inset 0 1px 0 #fff,0 0 16px rgba(201,162,75,.45);}}
 /* 战斗场景角色战力、属性浮层战力的暖金呼吸 */
-.tr-rolecard-power,.af-powercard span{animation:glowBreathe 3.4s ease-in-out infinite;}
+.tr-rolecard-power,.af-powercard span{animation:none;}   /* 省电：去战力呼吸 */
 /* 3 首屏冲击：首页 hero 金色辉光呼吸 + 卡片 hover 上浮 + 图标呼吸 */
-#view-home .home-hero{animation:heroGlow 4s ease-in-out infinite;}
+#view-home .home-hero{animation:none;}   /* 省电：去首页辉光 */
 .home-card{transition:transform .28s cubic-bezier(.22,1,.36,1),box-shadow .28s,border-color .28s;}
-.home-card .home-ico{animation:icoGlow 3.8s ease-in-out infinite;}
+.home-card .home-ico{animation:none;}   /* 省电：去首页图标辉光 */
 @media(hover:hover){
   .home-card:hover{transform:translateY(-4px);box-shadow:0 12px 28px rgba(0,0,0,.2),0 0 20px rgba(201,162,75,.24);}
   .home-card:hover .home-ico{box-shadow:inset 0 1px 0 #fff,0 0 18px rgba(201,162,75,.5);background:#fbf4e2;}
 }
 /* 4 场景氛围：战斗场景光晕呼吸（副本/试炼/竞技统一），血条数值不闪 */
-#view-treasure .tr-scene,#view-trial .tr-scene,#view-arena .tr-scene{animation:sceneGlow 4.6s ease-in-out infinite;}
+#view-treasure .tr-scene,#view-trial .tr-scene,#view-arena .tr-scene{animation:none;}   /* 省电：关闭场景辉光呼吸 */
 .tr-scene .tr-bar-fill{transition:width .15s linear;}
 /* 5 全局 hover / 按压微反馈（统一缓动） */
 .btn,.forge-tab,.g-bag-btn,.arena-opp,.hub-card,.ach-toggle,.lottery-wallet{transition:transform .2s cubic-bezier(.22,1,.36,1),box-shadow .25s,border-color .25s;}
@@ -1720,32 +1721,33 @@ body.show-trial .stage{max-width:460px;display:flex;flex-direction:column;justif
 .char-tier.ti-2{color:#9A5BFF!important;text-shadow:none!important;}   /* 神灵：亮紫罗兰 */
 .char-tier.ti-3{color:#7B28D9!important;text-shadow:none!important;}   /* 真神：帝王紫 */
 .char-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}   /* 神王：金橙 */
-.char-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 2.2s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}   /* 大帝：品红紫+呼吸流光+氛围光 */
+.char-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 4.4s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}   /* 大帝：品红紫+呼吸流光+氛围光 */
 .hh-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
 .hh-tier.ti-1{color:#4A9BFF!important;text-shadow:none!important;}
 .hh-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
 .hh-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
 .hh-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
-.hh-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 2.2s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}
+.hh-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 4.4s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}
 .tr-rolecard-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
 .tr-rolecard-tier.ti-1{color:#4A9BFF!important;text-shadow:none!important;}
 .tr-rolecard-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
 .tr-rolecard-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
 .tr-rolecard-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
-.tr-rolecard-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 2.2s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}
+.tr-rolecard-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;animation:tierPulse 4.4s ease-in-out infinite;box-shadow:0 0 18px rgba(255,90,200,.10);}
 /* ===== 阶位专属视觉：光效递进 + 徽记（全载体统一） ===== */
 .tier-fx{position:relative;}
 .tier-fx::after{display:inline-block;margin-left:2px;font-size:.72em;line-height:1;vertical-align:super;pointer-events:none;opacity:.95;}   /* 阶位徽记：缀于阶位名右上 */
 .tier-fx.ti-0::after{content:'✦';color:#52C6DA;text-shadow:0 0 4px rgba(82,198,218,.9);}   /* 锐凡：星点 */
 .tier-fx.ti-0{text-shadow:0 0 3px rgba(82,198,218,.35);}   /* 锐凡：细青蓝描边，无呼吸 */
 .tier-fx.ti-1::after{content:'☽';color:#4A9BFF;text-shadow:0 0 5px rgba(74,155,255,.95);}   /* 半神：月弧 */
-.tier-fx.ti-1{animation:tierFx1 2.6s ease-in-out infinite;}   /* 半神：浅呼吸 */
+.tier-fx.ti-1{animation:tierFx1 5.2s ease-in-out infinite;}   /* 半神：浅呼吸 */
 .tier-fx.ti-2::after{content:'✧';color:#6E9BFF;text-shadow:0 0 5px rgba(110,155,255,.95);}   /* 神灵：三芒 */
-.tier-fx.ti-2{animation:tierFx2 2.4s ease-in-out infinite;}   /* 神灵：呼吸光晕 */
+.tier-fx.ti-2{animation:tierFx2 4.8s ease-in-out infinite;}   /* 神灵：呼吸光晕 */
 .tier-fx.ti-3::after{content:'★';color:#A56BFF;text-shadow:0 0 6px rgba(165,107,255,1);}   /* 真神：五角星 */
-.tier-fx.ti-3{animation:tierFx3 2.2s ease-in-out infinite;}   /* 真神：强光晕 */
+.tier-fx.ti-3{animation:tierFx3 4.4s ease-in-out infinite;}   /* 真神：强光晕 */
 .tier-fx.ti-4::after{content:'♛';color:#F2A93B;text-shadow:0 0 6px rgba(242,169,59,.95);}   /* 神王：王冠 */
-.tier-fx.ti-4{animation:tierFx4 2s ease-in-out infinite;}   /* 神王：燃烧辉光 */
+.tier-fx.ti-4{animation:tierFx4 4s ease-in-out infinite;}   /* 神王：燃烧辉光 */
+.low-power, .low-power *{animation-play-state:paused!important;transition:none!important;}   /* 低功耗：后台暂停全部动画 */
 .tier-fx.ti-5::after{content:'';width:.95em;height:.95em;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M4%2017%20L3%208%20l5%203.6%20L12%204.4%20l4%207.2%20L21%208%20l-1%209%20Z%27%20fill%3D%27%2523FFD700%27%20stroke%3D%27%2523FFF3C0%27%20stroke-width%3D%271%27/%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%272.6%27%20r%3D%271.8%27%20fill%3D%27%2523FF5AD8%27/%3E%3Cpath%20d%3D%27M6.5%2017%20h11%20v2%20h-11%20Z%27%20fill%3D%27%2523E6B800%27/%3E%3C/svg%3E") center/contain no-repeat;filter:drop-shadow(0 0 5px rgba(255,90,200,.95)) drop-shadow(0 0 2px rgba(255,215,0,.8));}   /* 大帝：SVG 帝冕（金冠+品红宝石+辉光） */
 @keyframes tierFx1{0%,100%{text-shadow:0 0 2px rgba(26,123,255,.4);}50%{text-shadow:0 0 9px rgba(26,123,255,.85);}}
 @keyframes tierFx2{0%,100%{text-shadow:0 0 3px rgba(154,91,255,.5);}50%{text-shadow:0 0 11px rgba(154,91,255,.9);}}
@@ -3286,7 +3288,10 @@ function fitMoney(el, n){
   el.style.fontSize=(s<=9?15:s<=11?14:s<=13?13:s<=16?12:11)+'px';
   el.style.whiteSpace='nowrap';
 }
-function renderCurrency(){
+var _rcLast=0;
+function renderCurrency(force){
+  if(!force && TR && TR.auto && Date.now()-_rcLast<400) return;   /* 省电：挂机时金币/saveGame 节流400ms，非挂机即时 */
+  _rcLast=Date.now();
   var gt = $('#gold-trade'), gb = $('#gold-bind');
   gt.textContent = fmtWan(CURRENCY.gold);
   gt.style.color = getCurrencyStyle(CURRENCY.gold);
@@ -6752,6 +6757,25 @@ function ithStart(){
 function ithStop(){ if(ITH_TIMER){ clearInterval(ITH_TIMER); ITH_TIMER=null; } }
 window.addEventListener('hashchange', function(){ if(location.hash.indexOf('#treasure')>=0){ ithStart(); renderQuick(); } else if(location.hash.indexOf('#trial')>=0 || location.hash.indexOf('#arena')>=0){ ithStop(); renderQuick(); } else { if(!(TR.auto && TR.dungeon===0 && ITH_LEFT.yitaiNecklace>0)) ithStop(); } });   /* 伊泰安掉落：进试炼/竞技停止；雕俱挂机切到其他页保留定时器继续掉落 */
 window.addEventListener('hashchange', function(){ if(typeof T!=='undefined'&&T.auto){ if(T.timer){ clearInterval(T.timer); T.timer=null; } T.timer=setInterval(tlTick, location.hash.indexOf('#trial')>=0?250:500); } });   /* ③试炼挂机切走降频：离开试炼页500ms、回到250ms，挂机不掉落不变 */
+document.addEventListener('visibilitychange',function(){
+  if(document.hidden){
+    document.body.classList.add('low-power');
+    if(TR&&TR.auto&&TR.timer){ clearTimeout(TR.timer); TR.timer=null; }   /* 后台暂停副本挂机 */
+    if(typeof T!=='undefined'&&T.auto&&T.timer){ clearInterval(T.timer); T.timer=null; }   /* 后台暂停试炼自动 */
+  } else {
+    document.body.classList.remove('low-power');
+    if(TR&&TR.auto&&!TR.timer){ (function loop(){ if(!TR.auto) return; trAtk(); sampleOffline(); TR.timer=setTimeout(loop,Math.max(250,charAtkSpeed())); })(); }   /* 回前台恢复副本挂机 */
+    if(typeof T!=='undefined'&&T.auto&&!T.timer){ T.timer=setInterval(tlTick,250); }   /* 回前台恢复试炼自动 */
+  }
+});   /* 省电：app切后台暂停全部动画与挂机tick，回前台自动恢复 */
+window.addEventListener('hashchange', function(){
+  if(TR && TR.auto && (location.hash.indexOf('#treasure')>=0 || location.hash.indexOf('#trial')>=0 || location.hash.indexOf('#arena')>=0)){
+    var _inTr = location.hash.indexOf('#treasure')>=0;
+    if(TR.timer){ clearTimeout(TR.timer); TR.timer=null; }
+    var _g = _inTr ? Math.max(250,charAtkSpeed()) : 1000;   /* 副本页恢复攻速；切走降频1000ms */
+    (function loop(){ if(!TR.auto) return; trAtk(); sampleOffline(); TR.timer=setTimeout(loop,_g); })();
+  }
+});   /* 省电：副本挂机切走降频、回到副本页恢复，掉落结算保留 */
 function luckRoll(p){ return Math.random() < p * lotteryInnate(); }   /* 传说级物品：掉落概率×先天运势（运势越高越易掉） */
 function antiRoll(p){ var k=1/(1+(lotteryInnate()-1)); return Math.random() < p*k; }   /* 非传说级物品：反向补偿（传说涨则非传说降，反之亦然，幅度温和） */
 function trRollDrop(){
@@ -7309,8 +7333,7 @@ function trStartRegen(){
     if(TR.hp>0 && TR.hp<TR.maxHp && (Date.now()-TR.lastAtk)>5000){
       TR.hp=Math.min(TR.maxHp, TR.hp+Math.max(2,Math.round(TR.maxHp*0.05))); renderChar();
     }
-  },1000);
-}
+  },2000);}
 function renderEnrage(){   /* Boss 狂暴倒计时条：未狂暴显示倒计时，狂暴显示状态 */
   var box=document.getElementById('tr-enrage');
   var host=document.getElementById('tr-mon-hp');
@@ -7383,7 +7406,7 @@ function trSetAuto(on){
   var b=document.getElementById('tr-auto'); if(b){ b.classList.toggle('on',on); b.textContent=on?'挂机中':'挂机'; }
   if(on){ stopTrialAuto(); stopArenaFight(); if(TR.timer) clearTimeout(TR.timer);   /* 开副本挂机：停试炼自动与竞技挑战 */
     OFFLINE.sampleGold=CURRENCY.gold; OFFLINE.sampleBound=CURRENCY.bound; OFFLINE.sampleExp=TR.exp; OFFLINE.winStart=Date.now(); OFFLINE.winGold=0; OFFLINE.winBound=0; OFFLINE.winExp=0; OFFLINE.goldRate=0; OFFLINE.boundRate=0; OFFLINE.expRate=0;
-    (function loop(){ if(!TR.auto) return; trAtk(); sampleOffline(); TR.timer=setTimeout(loop,charAtkSpeed()); })(); }
+    (function loop(){ if(!TR.auto) return; trAtk(); sampleOffline(); TR.timer=setTimeout(loop,Math.max(250,charAtkSpeed())); })();   /* 省电：挂机攻速下限250ms（<=4次/秒） */ }
   else { if(TR.timer){ clearTimeout(TR.timer); TR.timer=null; } }
   if(on){ trLog('开始挂机刷取…'); }
   else if(was){ trLog('停止挂机'); }
