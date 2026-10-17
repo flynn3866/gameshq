@@ -71,7 +71,8 @@ body.show-ach .stage{max-width:460px;display:flex;flex-direction:column;justify-
 body.show-shop .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}   /* 商店：同副本秘境垂直居中 */
 /* 神兵锻冶/万法归宗聚合页：垂直居中 + 顶部安全，内容限高内部滚动 */
 body.show-forge .stage,body.show-wanshou .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}
-#view-forge .forge-body,#view-wanshou .forge-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 292px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 72px);box-sizing:border-box;}
+#view-wanshou .forge-body{touch-action:none;}   /* 万法归宗(天神页)：禁触摸滚动，恢复拖拽上阵不被页面滚动打断 */
+#view-forge .forge-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 292px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 72px);box-sizing:border-box;}   /* 仅神兵锻冶上下滚动 */
 /* 属性页单独加宽 50px：窗口约 390px，主页面不受影响 */
 body.show-attrs .stage{max-width:460px;display:flex;flex-direction:column;justify-content:flex-start;box-sizing:border-box;padding-top:calc(1.5rem - 10px + env(safe-area-inset-top,0px))   /* 统一顶部起点：状态栏下方 + 1.5rem */}
 /* 抽奖页：加宽舞台容纳轮盘 */
@@ -91,7 +92,8 @@ body.show-god .stage{max-width:680px;}
 #fb-mask{position:fixed;inset:0;background:rgba(0,0,0,.28);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;}   /* 遮罩淡色，不遮挡后方场景 */
 #fb-mask.show{opacity:1;pointer-events:auto;}
 #view-home{position:relative;}
-#home-settings{position:absolute;top:calc(env(safe-area-inset-top,0px) + 26px);right:12px;z-index:20;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.07);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#fff;cursor:pointer;transition:transform .2s,background .2s;box-shadow:0 2px 8px rgba(0,0,0,.28);}
+#home-settings{position:absolute;top:6px;right:12px;z-index:20;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.07);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#fff;cursor:pointer;transition:transform .2s,background .2s;box-shadow:0 2px 8px rgba(0,0,0,.28);}   /* 相对 #view-home 定位，垂直居中标题栏右侧 */
+#home-settings svg{width:17px;height:17px;}
 #home-settings:active{transform:scale(.92);}
 #settings-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 72px);transform:translateX(-50%) translateY(-12px) scale(.97);transform-origin:center top;width:min(320px,calc(100% - 24px));background:linear-gradient(180deg,#26221c,#1a1714);border:1px solid #4a4034;border-radius:16px;padding:16px 14px;z-index:120;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 12px 40px rgba(0,0,0,.5);}
 #settings-float.open{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0) scale(1);}
@@ -1490,7 +1492,89 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
 .home-hero .hh-power{flex:none;margin-left:14px;font-size:15px;color:#9a6d00;font-weight:700;text-align:right;line-height:1.15;letter-spacing:.5px;}
 .home-hero .hh-power b{display:block;font-size:10px;color:#a89d88;font-weight:500;letter-spacing:1px;margin-bottom:2px;}
 .home-hero .hh-tier{flex:none;margin-left:18px;padding-left:16px;border-left:1px solid rgba(154,111,224,.26);font-size:17px;font-weight:800;color:#8A63D2;letter-spacing:2px;}   /* 首页右侧阶位：细竖线分区+沉稳深紫，内敛有层次，无框无渐变无辉光 */
-.home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}   /* 卡片间距=边缘间距=12px */
+.home-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}   /* 卡片间距=边缘间距=12px */   /* ===== 基地大厅 ===== */
+#view-home{display:block;width:100%;box-sizing:border-box;padding:0 0 calc(env(safe-area-inset-bottom,0px) + 92px);}
+#view-home .topbar{position:relative;display:flex;align-items:center;justify-content:center;height:auto;padding:11px 0 9px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0) 78%);border-bottom:1px solid rgba(226,186,122,.28);flex-shrink:0;}   /* 与其它导航页顶栏一致：auto 高+上下 padding，去掉标题上方多余半行 */
+#view-home .topbar h1{font-size:17px;letter-spacing:6px;color:#F2C96B;font-weight:800;text-shadow:0 0 10px rgba(232,203,116,.35);}
+body.hb-compact .stage{padding-top:calc(env(safe-area-inset-top,0px) + 6px);}   /* 仅缩小基地页顶栏上方到屏幕顶部的间隔，保留安全区，顶栏自身 padding 不变 */
+body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条，去掉标题栏上方多余的横线与间距 */
+.hb-res{display:flex;gap:8px;margin:12px 12px 0;}
+.hb-res-it{flex:1;display:flex;align-items:center;gap:6px;padding:9px 10px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.18));border:1px solid rgba(214,178,110,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);min-width:0;}
+.hb-ric{display:flex;align-items:center;justify-content:center;width:20px;height:20px;flex:none;}
+.hb-ric svg{width:18px;height:18px;}
+.hb-ri-tower svg{color:#E8CB74;}
+.hb-res-it b{font-size:11px;color:#a89d88;font-weight:500;letter-spacing:1px;flex:none;}
+.hb-res-it i{font-style:normal;flex:1;text-align:right;font-size:13px;font-weight:700;color:#FFF;letter-spacing:.5px;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.hb-hero{position:relative;margin:12px 12px 0;padding:14px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(0,0,0,.22));border:1px solid rgba(226,186,122,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 6px 18px rgba(0,0,0,.3);display:flex;align-items:center;cursor:pointer;overflow:hidden;}
+.hb-hero::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 130% at 12% 8%,rgba(242,201,107,.12),transparent 60%);pointer-events:none;}
+.hb-hero-ico{width:52px;height:52px;border-radius:15px;background:#f6efdd;border:1px solid #e6d6ae;box-shadow:inset 0 1px 0 #fff,0 0 12px rgba(201,162,75,.35);display:flex;align-items:center;justify-content:center;flex:none;position:relative;}
+.hb-hero-ico img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;}
+.hb-hero-main{flex:1;margin-left:13px;min-width:0;position:relative;}
+.hb-hero-name{font-size:19px;color:#FFF6D8;font-weight:800;letter-spacing:2px;text-shadow:0 0 10px rgba(242,201,107,.35);}
+.hb-hero-lv{font-size:11px;color:#a89d88;margin-top:4px;letter-spacing:1px;}
+.hb-hero-tier{flex:none;margin-left:10px;padding-left:12px;border-left:1px solid rgba(226,186,122,.3);font-size:15px;font-weight:800;letter-spacing:2px;position:relative;}
+.hb-hero-power{flex:none;margin-left:14px;text-align:right;position:relative;}
+.hb-hero-power b{display:block;font-size:10px;color:#a89d88;font-weight:500;letter-spacing:2px;margin-bottom:2px;}
+.hb-hero-power span{font-size:17px;color:#F2C96B;font-weight:800;letter-spacing:.5px;text-shadow:0 0 12px rgba(242,201,107,.5);}
+.hb-sec-tit{display:flex;align-items:center;gap:8px;margin:16px 14px 8px;font-size:14px;font-weight:800;color:#F2C96B;letter-spacing:3px;text-shadow:0 0 8px rgba(232,203,116,.3);}
+.hb-sec-bar{width:4px;height:14px;border-radius:2px;background:linear-gradient(180deg,#F2C96B,#C9A24B);box-shadow:0 0 8px rgba(233,201,122,.5);flex:none;}
+.hb-sec-note{margin-left:auto;font-size:11px;color:#8a8375;font-weight:400;letter-spacing:1px;}
+.hb-goals{display:flex;flex-direction:column;gap:8px;margin:0 12px;}
+.hb-goal{padding:10px 12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(0,0,0,.16));border:1px solid rgba(214,178,110,.2);}
+.hb-goal-top{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.hb-goal-ic{display:flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:8px;background:rgba(242,201,107,.12);border:1px solid rgba(233,201,122,.3);flex:none;}
+.hb-goal-ic svg{width:16px;height:16px;color:#F2C96B;}
+.hb-goal-t{font-size:13px;color:#EFE7D3;font-weight:700;letter-spacing:1px;}
+.hb-goal-d{margin-left:auto;font-size:11px;color:#a89d88;letter-spacing:.5px;white-space:nowrap;}
+.hb-goal-d b{color:#F2C96B;font-weight:700;}
+.hb-bar{position:relative;height:8px;border-radius:5px;background:rgba(0,0,0,.35);overflow:hidden;box-shadow:inset 0 1px 2px rgba(0,0,0,.5);}
+.hb-bar-fill{position:absolute;inset:0 auto 0 0;width:0%;border-radius:5px;background:linear-gradient(90deg,#C9A24B,#F2C96B,#FFE9AE);box-shadow:0 0 10px rgba(242,201,107,.6);transition:width .5s ease;}
+.hb-goal-cur{position:relative;height:26px;margin-top:7px;}
+.hb-goal-cur .hb-bar{height:26px;}
+.hb-goal-cur .hb-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#FFF;letter-spacing:1px;text-shadow:0 1px 2px rgba(0,0,0,.7);font-weight:600;z-index:1;}
+.hb-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:0 12px;}
+.hb-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:13px 6px 11px;border-radius:11px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.16));border:1px solid rgba(214,178,110,.2);cursor:pointer;transition:transform .12s ease,border-color .12s ease;position:relative;}
+.hb-card:active{transform:scale(.96);border-color:rgba(242,201,107,.55);}
+.hb-card-ic{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(180deg,rgba(242,201,107,.16),rgba(201,162,75,.06));border:1px solid rgba(233,201,122,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
+.hb-card-ic svg{width:20px;height:20px;color:#E8CB74;}
+.hb-card-cn{font-size:12px;color:#D9D0BC;letter-spacing:2px;font-weight:600;}   /* ===== 大厅色彩层次美化 ===== */
+#view-home{background:radial-gradient(120% 90% at 50% -12%,rgba(242,201,107,.18),transparent 55%),radial-gradient(80% 60% at 100% 38%,rgba(255,90,216,.10),transparent 60%),radial-gradient(80% 60% at 0% 70%,rgba(82,198,218,.10),transparent 62%),linear-gradient(180deg,#191510,#0f0c09);}   /* 舞台内容背景：深色+金/品红/青光晕，恢复层次与活力 */
+.hb-res-it:nth-child(1){background:linear-gradient(180deg,rgba(255,215,94,.16),rgba(255,180,60,.05));border-color:rgba(255,215,94,.4);}
+.hb-res-it:nth-child(1) i{color:#FFD75E;text-shadow:0 0 8px rgba(255,215,94,.5);}
+.hb-res-it:nth-child(1) .hb-ric svg{filter:drop-shadow(0 0 5px rgba(255,215,94,.55));}
+.hb-res-it:nth-child(2){background:linear-gradient(180deg,rgba(111,183,255,.16),rgba(60,120,220,.05));border-color:rgba(111,183,255,.4);}
+.hb-res-it:nth-child(2) i{color:#7FB8FF;text-shadow:0 0 8px rgba(111,183,255,.5);}
+.hb-res-it:nth-child(2) .hb-ric svg{filter:drop-shadow(0 0 5px rgba(111,183,255,.55));}
+.hb-res-it:nth-child(3){background:linear-gradient(180deg,rgba(255,122,216,.16),rgba(200,60,180,.05));border-color:rgba(255,122,216,.4);}
+.hb-res-it:nth-child(3) i{color:#FF8AE0;text-shadow:0 0 8px rgba(255,122,216,.5);}
+.hb-res-it:nth-child(3) .hb-ri-tower svg{color:#FF8AE0;filter:drop-shadow(0 0 5px rgba(255,122,216,.55));}
+.hb-res-it b{color:#CBBFA6;}
+.hb-hero{border-color:rgba(255,220,150,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 8px 26px rgba(0,0,0,.45);background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(0,0,0,.2)),linear-gradient(90deg,rgba(242,201,107,.18),rgba(201,162,75,.04));}
+.hb-hero::before{background:radial-gradient(120% 140% at 12% 8%,rgba(255,215,94,.2),transparent 60%);}
+.hb-hero-name{background:linear-gradient(180deg,#FFF6D8,#F2C96B);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 8px rgba(242,201,107,.45));}
+.hb-hero-power span{font-size:19px;color:#FFE9A8;text-shadow:0 0 14px rgba(255,215,94,.7),0 0 32px rgba(242,201,107,.4);}
+.hb-hero-ico{box-shadow:inset 0 1px 0 #fff,0 0 16px rgba(255,215,94,.55);}
+.hb-hero-tier{text-shadow:0 0 10px currentColor;}
+.hb-goal{border-color:rgba(255,255,255,.1);}
+.hb-goal:nth-child(1) .hb-goal-ic{background:rgba(255,215,94,.16);border-color:rgba(255,215,94,.4);}
+.hb-goal:nth-child(1) .hb-goal-ic svg{color:#FFD75E;}
+.hb-goal:nth-child(1) .hb-bar-fill{background:linear-gradient(90deg,#C9A24B,#FFD75E,#FFE9AE);box-shadow:0 0 12px rgba(255,215,94,.7);}
+.hb-goal:nth-child(1) .hb-goal-t b{color:#FFD75E;}
+.hb-goal:nth-child(2) .hb-goal-ic{background:rgba(82,198,218,.16);border-color:rgba(82,198,218,.4);}
+.hb-goal:nth-child(2) .hb-goal-ic svg{color:#52C6DA;}
+.hb-goal:nth-child(2) .hb-bar-fill{background:linear-gradient(90deg,#2A7BA0,#52C6DA,#9BEAFF);box-shadow:0 0 12px rgba(82,198,218,.7);}
+.hb-goal:nth-child(3) .hb-goal-ic{background:rgba(255,90,216,.16);border-color:rgba(255,90,216,.4);}
+.hb-goal:nth-child(3) .hb-goal-ic svg{color:#FF5AD8;}
+.hb-goal:nth-child(3) .hb-bar-fill{background:linear-gradient(90deg,#C2238E,#FF5AD8,#FF9BE8);box-shadow:0 0 12px rgba(255,90,216,.7);}
+.hb-goal-t{color:#F4EDDE;}
+.hb-goal-d{color:#B7AA93;}
+.hb-goal-d b{color:#FFD75E;}
+.hb-card{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(0,0,0,.14));border-color:rgba(255,255,255,.1);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 3px 10px rgba(0,0,0,.25);}
+.hb-card-cn{color:#EFE8D8;text-shadow:0 1px 2px rgba(0,0,0,.5);}
+.hb-card-ic{border-color:currentColor;filter:drop-shadow(0 0 6px currentColor);}
+.hb-card-ic svg{color:currentColor;}
+.hb-sec-tit{color:#FFF3D0;text-shadow:0 0 12px rgba(255,215,94,.45);}
+.hb-sec-bar{box-shadow:0 0 10px rgba(255,215,94,.7);}
 .home-card{background:#ffffff;border-radius:18px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:20px 8px 15px;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;border:1px solid #ece5d4;opacity:0;transition:box-shadow .3s,transform .3s cubic-bezier(.22,1,.36,1);animation:cardRise .5s cubic-bezier(.22,1,.36,1) forwards;animation-delay:calc(var(--i)*60ms + .08s);user-select:none;-webkit-user-select:none;}
 @keyframes cardRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .home-card:hover{box-shadow:0 8px 22px rgba(0,0,0,.18);}
@@ -1853,16 +1937,25 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
 <div class="stage">
   <div id="view-home">
     <button id="home-settings" aria-label="设置"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
-    <div class="home-hero">
-      <div class="hh-ico"><img src="logos/头像.png" alt="头像"></div>
-      <div class="hh-main">
-        <div class="hh-name" id="home-name">谜团<span class="hh-innate" id="home-innate"></span></div>
-        <div class="hh-lv" id="home-sub"></div>
-        <div class="hh-awards" id="home-awards"></div>
-      </div>
-      <span class="hh-tier" id="home-tier"></span>
+    <header class="topbar"><span class="title-glow"></span><h1>基地</h1></header>
+    <div class="hb-res">
+      <div class="hb-res-it"><span class="hb-ric hb-ri-gold"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e0b45a"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#8a6a2a" stroke-width="1.2"/><path d="M12 8.6v6.8M8.6 12h6.8" stroke="#8a6a2a" stroke-width="1.4" stroke-linecap="round"/></svg></span><b>金币</b><i id="hb-gold">0</i></div>
+      <div class="hb-res-it"><span class="hb-ric hb-ri-bind"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#5b86c9"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#2b4a78" stroke-width="1.2"/><path d="M12 8.6v6.8M8.6 12h6.8" stroke="#2b4a78" stroke-width="1.4" stroke-linecap="round"/></svg></span><b>绑定</b><i id="hb-bind">0</i></div>
+      <div class="hb-res-it"><span class="hb-ric hb-ri-tower"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3l1 5M17 3l-1 5M6 8l6 3 6-3M7 8v11M17 8v11M10 13h4M10 19l-1 2M14 19l1 2"/></svg></span><b>塔币</b><i id="hb-tower">0</i></div>
     </div>
-    <div class="home-grid" id="home-grid"></div>
+    <div class="hb-hero" id="hb-hero">
+      <div class="hb-hero-ico"><img src="logos/头像.png" alt="头像"></div>
+      <div class="hb-hero-main">
+        <div class="hb-hero-name" id="hb-name">谜团<span id="hb-innate"></span></div>
+        <div class="hb-hero-lv" id="hb-lv">Lv.0</div>
+      </div>
+      <div class="hb-hero-tier" id="hb-tier">锐凡</div>
+      <div class="hb-hero-power"><b>战力</b><span id="hb-power">0</span></div>
+    </div>
+    <div class="hb-sec-tit"><span class="hb-sec-bar"></span>目标追踪<span class="hb-sec-note">下一步追什么</span></div>
+    <div class="hb-goals" id="hb-goals"></div>
+    <div class="hb-sec-tit"><span class="hb-sec-bar"></span>功能入口</div>
+    <div class="hb-grid" id="hb-grid"></div>
   </div>
 
   <div class="window" id="view-main">
@@ -1894,7 +1987,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
         <span id="gold-bind" class="val">1,004,727</span>
       </div>
     </div>
-    <div class="bag-org-row"><button id="bag-reset">初始化</button><button id="bag-gm">GM生成</button><button id="bag-organize">一键整理</button><button id="bag-autosell">自动出售</button></div>
+    <div class="bag-org-row"><button id="bag-organize">一键整理</button><button id="bag-autosell">自动出售</button></div>
     <div class="divider"></div>
     <div class="actions" id="actions"></div>
 
@@ -5236,7 +5329,8 @@ function applyRoute(){
       refine = h.indexOf('#refine')>=0,
       gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0, lot = h.indexOf('#lottery')>=0, tl = h.indexOf('#trial')>=0, tower = h.indexOf('#tower')>=0, arena = h.indexOf('#arena')>=0, home = h.indexOf('#home')>=0, forge = h.indexOf('#forge')>=0, wanshou = h.indexOf('#wanshou')>=0, main = h.indexOf('#main')>=0, ach = h.indexOf('#achievement')>=0;
   var homeShow = home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||tower||arena||forge||wanshou||main||ach);   /* 挑战塔排除首页布局，避免内容被推到视口下方 */
-  document.body.classList.toggle('show-home', homeShow);      /* 首页顶部对齐 */
+  document.body.classList.remove('show-home');   /* 基地页与其它导航页统一使用 --bg-body 背景 */
+  document.body.classList.toggle('hb-compact', homeShow);   /* 基地页顶部紧凑：缩小顶栏上方到屏幕顶部的间隔 */
   document.body.classList.toggle('show-lottery', lot);         /* 抽奖页加宽舞台 */
   document.body.classList.toggle('show-attrs', attrs);   /* 属性页加宽舞台 */
   document.body.classList.toggle('show-god', god||wanshou);   /* 天神页（含万法归宗聚合页）宽屏两栏 */
@@ -5808,13 +5902,14 @@ window.addEventListener('hashchange', function(){ if(typeof CT!=='undefined'&&lo
 
 /* ===== 底部导航 + 二级页签（App 式布局，一次全局挂载） ===== */
 var SUB_TABS=[
+  {name:'基地',hash:'#home',views:['home'],items:[]},
   {name:'行囊',hash:'#main',views:['main','forge','wanshou'],items:[['#main','物品栏'],['#forge','神兵锻冶'],['#wanshou','万法归宗']]},
   {name:'人物',hash:'#attrs',views:['attrs','achievement'],items:[['#attrs','角色属性'],['#achievement','成就系统']]},
   {name:'秘境',hash:'#treasure',views:['treasure','trial','tower'],items:[['#treasure','副本秘境'],['#trial','无尽试炼'],['#tower','挑战塔']]},   /* 挑战塔也纳入秘境组，顶部副页签条才能出现、底部秘境按钮才能高亮 */
   {name:'论道',hash:'#arena',views:['arena'],items:[['#arena','竞技系统']]},
   {name:'玄鉴',hash:'#lottery',views:['lottery','shop'],items:[['#lottery','玄鉴抽奖'],['#shop','万宝商阁']]}
 ];
-var SUB_ICONS={行囊:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><path d="M4 13h16"/></svg>',人物:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></svg>',秘境:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 12 4l9 16z"/><path d="M7 20l5-9 5 9"/><path d="M3 16h18"/></svg>',论道:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v3.2c0 .8-.7 1.3-1.5 1.1L6 5.4v9l6.5-1.9c.8-.2 1.5.3 1.5 1.1V18c0 1.7 3 2.5 3 2.5V4.5S16 3 14 3z"/></svg>',玄鉴:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-5h16l1 5"/><path d="M4 9h16v11H4z"/><path d="M8 9c0 2 2 3 4 3s4-1 4-3"/></svg>'};
+var SUB_ICONS={基地:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>',行囊:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><path d="M4 13h16"/></svg>',人物:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></svg>',秘境:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 12 4l9 16z"/><path d="M7 20l5-9 5 9"/><path d="M3 16h18"/></svg>',论道:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v3.2c0 .8-.7 1.3-1.5 1.1L6 5.4v9l6.5-1.9c.8-.2 1.5.3 1.5 1.1V18c0 1.7 3 2.5 3 2.5V4.5S16 3 14 3z"/></svg>',玄鉴:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-5h16l1 5"/><path d="M4 9h16v11H4z"/><path d="M8 9c0 2 2 3 4 3s4-1 4-3"/></svg>'};
 function initBottomNav(){
   var nav=document.createElement('div'); nav.className='bottom-nav'; nav.id='bottom-nav';
   SUB_TABS.forEach(function(g){
@@ -5854,7 +5949,7 @@ function route(){
   if(!route._nav){ initBottomNav(); route._nav=true; }
   if(!route._grp){ route._grp={}; SUB_TABS.forEach(function(g){ g.views.forEach(function(v){ route._grp[v]=g.name; }); }); }   /* view名 -> 所属一级Tab group */
   var h = location.hash;
-  if(!h || h==='#' || h==='#home'){ location.replace('#main'); return; }   /* 首页已移除，默认进入底部导航第一个 Tab：行囊 */
+  if(!h || h==='#'){ location.replace('#home'); return; }   /* 默认进入基地大厅 */
   if (h.indexOf('#god')<0) stopGodAuto();   /* 离开天神页即停止自动升级 */
   if (h.indexOf('#enhance')<0) stopEnhAuto(); /* 离开强化页即停止自动强化 */
   if (h.indexOf('#arena')<0) stopArenaFight(); /* 离开竞技页即停止战斗 */
@@ -6280,17 +6375,38 @@ function renderHome(){
   var n2=document.getElementById('home-name'); if(n2){ n2.innerHTML='谜团<span class="hh-innate" id="home-innate"></span>'; var _i2=CHARACTER.innate||1, _it=document.getElementById('home-innate'); if(_it){ if(_i2>=1.8) _it.innerHTML='<span class="ih-badge ih-top">天运之主 · 全服唯一</span>'; else if(_i2>=1.2) _it.innerHTML='<span class="ih-badge ih-good">非酋 · 欧皇</span>'; } } applyCharTier();
   var s2=document.getElementById('home-sub'); if(s2){ var _tta=arenaTitle(); var _cs=ARENA_COLORS[arenaRank()]; s2.innerHTML=CHARACTER.info.cls+' · Lv.'+CHARACTER.info.level+' · 战力 '+fmtWan(rolePower())+(_tta?('<i style="display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;background:'+_cs+';box-shadow:0 0 6px '+_cs+'"></i>'+_tta.n):''); }
   var a2=document.getElementById('home-awards'); if(a2){ var tt=arenaTitle(), tc={璀璨星钻:'#C3A6FF',荣耀王者:'#D84AA0',战神:'#A56BFF'}[tt?tt.n:''], aw=[]; if(tt&&tc) aw.push('<span style="color:'+tc+';">'+tt.n+'</span>'); if(ARENA.killBoss>=1) aw.push('<span style="color:#D84AA0;">万军取首级</span>'); if(ARENA.killGod>=1) aw.push('<span style="color:#FFD700;">屠神者</span>'); if(TLM.s50.got) aw.push('<span style="color:#7CD8FF;">一举成名</span>'); if(TLM.s100.got) aw.push('<span style="color:#C3A6FF;">名震八方</span>'); if(TLM.s150.got) aw.push('<span style="color:#FF8A3D;">执掌乾坤</span>'); a2.innerHTML=aw.join('　'); }
-  var grid=document.getElementById('home-grid');
+  var grid=document.getElementById('hb-grid');
   if(grid && !grid.__b){
     grid.__b=true;
-    var items=[{name:'物品背包',ico:'bag',ct:'装备 · 背包',hash:'#main'},{name:'神兵锻冶',ico:'anvil',ct:'强化 · 洗炼 · 宝石',hash:'#forge'},{name:'万法归宗',ico:'star',ct:'天神 · 翅膀',hash:'#wanshou'},{name:'副本秘境',ico:'sword',ct:'组队刷宝',hash:'#treasure'},{name:'无尽试炼',ico:'tower',ct:'层层挑战',hash:'#trial'},{name:'竞技系统',ico:'user',ct:'决斗竞技',hash:'#arena'},{name:'玄鉴抽奖',ico:'wheel',ct:'幸运轮盘',hash:'#lottery'},{name:'万宝商阁',ico:'shop',ct:'买卖交易',hash:'#shop'},{name:'成就系统',ico:'gem',ct:'荣耀 · 称号 · 徽章',hash:'#achievement'}];
-    grid.innerHTML=items.map(function(it,i){ return '<div class="home-card" data-hash="'+it.hash+'" style="--i:'+i+'"><div class="home-ico">'+(HOME_ICONS[it.ico]||'')+'</div><div class="home-cn">'+it.name+'</div><div class="home-ct">'+it.ct+'</div></div>'; }).join('');
-    grid.addEventListener('click',function(e){ var c=e.target.closest('.home-card'); if(c){ var h2=c.getAttribute('data-hash'); if(h2) location.hash=h2; } });
+    var items=[{name:'物品背包',ic:HB_I.bag,c:'#FFD75E',hash:'#main'},{name:'神兵锻冶',ic:HB_I.forge,c:'#FF9A4A',hash:'#forge'},{name:'万法归宗',ic:HB_I.god,c:'#C79BFF',hash:'#wanshou'},{name:'副本秘境',ic:HB_I.tres,c:'#FF6B6B',hash:'#treasure'},{name:'无尽试炼',ic:HB_I.trial,c:'#52C6DA',hash:'#trial'},{name:'挑战塔',ic:HB_I.tower,c:'#6FB7FF',hash:'#tower'},{name:'竞技系统',ic:HB_I.arena,c:'#FF5AD8',hash:'#arena'},{name:'玄鉴抽奖',ic:HB_I.lot,c:'#FFE9A8',hash:'#lottery'},{name:'万宝商阁',ic:HB_I.shop,c:'#7BE6A0',hash:'#shop'},{name:'成就系统',ic:HB_I.ach,c:'#9A5BFF',hash:'#achievement'},{name:'角色属性',ic:HB_I.attr,c:'#FF9BE8',hash:'#attrs'}];
+    grid.innerHTML=items.map(function(it){ return '<div class="hb-card" data-hash="'+it.hash+'" style="color:'+it.c+'"><span class="hb-card-ic">'+it.ic+'</span><span class="hb-card-cn">'+it.name+'</span></div>'; }).join('');
+    grid.addEventListener('click',function(e){ var c=e.target.closest('.hb-card'); if(c){ var h2=c.getAttribute('data-hash'); if(h2) location.hash=h2; } });
   }
-  var he=document.getElementById('home-entry'); if(he && !he.__b){ he.__b=true; he.addEventListener('click',function(){ location.hash='#home'; }); }
-  var hero=document.querySelector('#view-home .home-hero'); if(hero && !hero.__b){ hero.__b=true; hero.addEventListener('click',function(){ location.hash='#attrs'; }); }
+  renderHomeData();
+  var hero=document.querySelector('#view-home .hb-hero'); if(hero && !hero.__b){ hero.__b=true; hero.addEventListener('click',function(){ location.hash='#attrs'; }); }
   ['forge','wanshou'].forEach(function(k){ var b=document.getElementById(k+'-back'); if(b&&!b.__b){ b.__b=true; b.addEventListener('click',function(){ location.hash='#home'; }); } });
   var hub=document.querySelector('#view-forge .hub-grid,#view-wanshou .hub-grid'); if(hub&&!hub.__b){ hub.__b=true; hub.addEventListener('click',function(e){ var c=e.target.closest('.hub-card'); if(!c) return; var h2=c.getAttribute('data-hash'); if(!h2){ toast('功能暂未开放'); return; } location.hash=h2; }); }
+}
+var HB_I={bag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><path d="M4 13h16"/></svg>',forge:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3l4 4-6 6-1 4 3 1 1 3 4-1 6-6 4-4"/><path d="M14 10l-3-3"/></svg>',god:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.5 6 6 .5-4.6 4 1.4 6-5.3-3-5.3 3 1.4-6-4.6-4 6-.5z"/></svg>',tres:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 12 4l9 16z"/><path d="M7 20l5-9 5 9"/><path d="M3 16h18"/></svg>',trial:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6v4h4v6l-3 8H8l-3-8V7h4z"/><path d="M9 13h6"/></svg>',tower:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3l1 5M17 3l-1 5M6 8l6 3 6-3M7 8v11M17 8v11M10 13h4M10 19l-1 2M14 19l1 2"/></svg>',arena:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v3.2c0 .8-.7 1.3-1.5 1.1L6 5.4v9l6.5-1.9c.8-.2 1.5.3 1.5 1.1V18c0 1.7 3 2.5 3 2.5V4.5S16 3 14 3z"/></svg>',lot:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 12l4-4M12 6v6M4 12h2M18 12h2"/></svg>',shop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-5h16l1 5"/><path d="M4 9h16v11H4z"/><path d="M8 9c0 2 2 3 4 3s4-1 4-3"/></svg>',ach:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2 5 5 1-3.5 4 .8 5L12 16l-4.3 2 .8-5L5 9l5-1z"/></svg>',attr:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></svg>'};
+function renderHomeData(){
+  var g=document.getElementById('hb-gold'); if(g) g.textContent=fmtWan(CURRENCY.gold||0);
+  var b=document.getElementById('hb-bind'); if(b) b.textContent=fmtWan(CURRENCY.bound||0);
+  var t=document.getElementById('hb-tower'); if(t) t.textContent=fmtWan((typeof CT!=='undefined'&&CT&&CT.coins)||0);
+  var nm=document.getElementById('hb-name'); if(nm){ nm.innerHTML='谜团<span id="hb-innate"></span>'; var _i=CHARACTER.innate||1, _it=document.getElementById('hb-innate'); if(_it){ if(_i>=1.8) _it.innerHTML='<span class="ih-badge ih-top">天运之主</span>'; else if(_i>=1.2) _it.innerHTML='<span class="ih-badge ih-good">欧皇</span>'; } }
+  var lv=document.getElementById('hb-lv'); if(lv) lv.textContent=(CHARACTER.info.cls||'')+' · Lv.'+(CHARACTER.info.level||0);
+  var ti=document.getElementById('hb-tier'); if(ti){ ti.textContent=charTierName(); for(var i=0;i<=5;i++) ti.classList.remove('ti-'+i); ti.classList.add('tier-fx'); var _x=charTierIdx(); if(_x>=0) ti.classList.add('ti-'+_x); }
+  var pw=document.getElementById('hb-power'); if(pw) pw.textContent=fmtWan(rolePower());
+  var gl=document.getElementById('hb-goals'); if(gl) gl.innerHTML=buildGoals();
+}
+function buildGoals(){
+  var pw=rolePower(), idx=charTierIdx(), h='';
+  if(idx>=CHAR_TIERS.length-1){ h+='<div class="hb-goal"><div class="hb-goal-top"><span class="hb-goal-ic">'+HB_I.tres+'</span><span class="hb-goal-t">战力 · 已达大帝</span><span class="hb-goal-d"><b>'+fmtWan(pw)+'</b></span></div><div class="hb-goal-cur"><div class="hb-bar"><div class="hb-bar-fill" style="width:100%"></div><span class="hb-num">至高无上 · 圆满</span></div></div></div>'; }
+  else { var nm=CHAR_TIERS[idx+1].n, tm=CHAR_TIERS[idx+1].m, pct=Math.max(0,Math.min(100,pw/tm*100)); h+='<div class="hb-goal"><div class="hb-goal-top"><span class="hb-goal-ic">'+HB_I.tres+'</span><span class="hb-goal-t">战力 · 冲击 <b style="color:#F2C96B">'+nm+'</b></span><span class="hb-goal-d">还差 <b>'+fmtWan(Math.max(0,tm-pw))+'</b></span></div><div class="hb-goal-cur"><div class="hb-bar"><div class="hb-bar-fill" style="width:'+pct.toFixed(1)+'%"></div><span class="hb-num">'+fmtWan(pw)+' / '+fmtWan(tm)+'</span></div></div></div>'; }
+  var list=collectItemList(), got=0; for(var li=0;li<list.length;li++){ if(COLLECT[list[li].name]) got++; } var tp=list.length||1, p2=Math.max(0,Math.min(100,got/tp*100));
+  h+='<div class="hb-goal"><div class="hb-goal-top"><span class="hb-goal-ic">'+HB_I.ach+'</span><span class="hb-goal-t">装备图鉴</span><span class="hb-goal-d"><b>'+got+'</b> / '+tp+'</span></div><div class="hb-bar"><div class="hb-bar-fill" style="width:'+p2.toFixed(1)+'%"></div></div></div>';
+  var done=0; for(var g2=0;g2<COLLECT_SETS.length;g2++){ if(COLLECT_DONE[COLLECT_SETS[g2].k]) done++; } var p3=Math.max(0,Math.min(100,done/COLLECT_SETS.length*100));
+  h+='<div class="hb-goal"><div class="hb-goal-top"><span class="hb-goal-ic">'+HB_I.shop+'</span><span class="hb-goal-t">收藏奖励</span><span class="hb-goal-d"><b>'+done+'</b> / '+COLLECT_SETS.length+'</span></div><div class="hb-bar"><div class="hb-bar-fill" style="width:'+p3.toFixed(1)+'%"></div></div></div>';
+  return h;
 }
 var WANSHOU_TAB='god';
 function switchWanshouTab(tab){
