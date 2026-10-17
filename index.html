@@ -2086,7 +2086,7 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .hb-hero-tags{display:flex;gap:6px;flex-wrap:wrap;}
 /* 首页(基地)：内部滚动容器，顶栏+资源栏 sticky 固定，下方内容可上下滚动（同其他页面，修复移动端 flex 滚动失效） */
 html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外层禁滚，内容由 #view-home 内部滚动，去掉双层滚动条（html 层仍 visible 是双层根源） */
-#view-home{max-height:calc(100vh - env(safe-area-inset-top,0px) - 152px);max-height:calc(100dvh - env(safe-area-inset-top,0px) - 152px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;}   /* 100dvh 兜底：手机地址栏变化时不溢出可用视口，内容滚动到底不被底部导航盖住 */
+#view-home{max-height:calc(100vh - env(safe-area-inset-top,0px) - 152px);max-height:calc(100dvh - env(safe-area-inset-top,0px) - 152px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 100px);}   /* 100dvh 兜底：手机地址栏变化时不溢出可用视口；底部 padding 让内容滚动到底也不被导航盖住（黄金神坛等底部入口完整可见） */
 #view-home .topbar{position:sticky;top:0;z-index:6;background:#191510;}
 #view-home .hb-res{position:sticky;top:41px;z-index:5;background:#0f0c09;}
 /* 轮回顶部卡：锁定提示精化为居中小状态条；达成按钮保留大按钮 */
@@ -2194,12 +2194,6 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
       <div class="alt-gold"><span>持有金币</span><b id="alt-gold">0</b></div>
       <div class="alt-sec-t">金币灌注 · 永久成长</div>
       <div class="alt-pour" id="alt-pour"></div>
-      <div class="alt-sec-t">金币献祭 · 欧气抽奖</div>
-      <div class="alt-sac">
-        <div class="alt-pledge"><span>保底进度</span><div class="alt-pbar"><div class="alt-pfill" id="alt-pfill"></div></div><span id="alt-pnum">0 / 50</span></div>
-        <div class="alt-btns"><button class="btn cbtn c-ok" id="alt-sac1">献祭一次 · 5000万</button><button class="btn cbtn c-ok" id="alt-sac10">献祭十连 · 5亿</button></div>
-        <div class="alt-tip">高运势提升珍稀档 · 每10抽保底珍品 · 每50抽必出传说</div>
-      </div>
     </div>
   </div>
   <div class="window" id="view-main">
@@ -2903,7 +2897,7 @@ var ITEM_BLUEPRINTS = {
     enhanceLevel:0, defense:50000000, resistance:50000000, attribute:"无",
     maxHp:100000000, maxVitality:100000000, strength:200000000, agility:200000000, constitution:200000000,
     intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0,
-    price:1000000000, durability:"1000/1000", category:"头盔", equipLevel:80,
+    price:1000000000, durability:"1000/1000", category:"头盔", equipLevel:1,
     gemSlots:Array(6).fill(null)
   },
   legendOgdenChest: {
@@ -2911,7 +2905,7 @@ var ITEM_BLUEPRINTS = {
     enhanceLevel:0, defense:50000000, resistance:50000000, attribute:"无",
     maxHp:100000000, maxVitality:100000000, strength:200000000, agility:200000000, constitution:200000000,
     intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0,
-    price:1000000000, durability:"1200/1200", category:"胸甲", equipLevel:80,
+    price:1000000000, durability:"1200/1200", category:"胸甲", equipLevel:1,
     gemSlots:Array(6).fill(null)
   },
   legendOgdenGloves: {
@@ -2919,7 +2913,7 @@ var ITEM_BLUEPRINTS = {
     enhanceLevel:0, defense:50000000, resistance:50000000, attribute:"无",
     maxHp:100000000, maxVitality:100000000, strength:200000000, agility:200000000, constitution:200000000,
     intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0,
-    price:1000000000, durability:"800/800", category:"护手", equipLevel:80,
+    price:1000000000, durability:"800/800", category:"护手", equipLevel:1,
     gemSlots:Array(6).fill(null)
   },
   legendOgdenLeggings: {
@@ -2927,7 +2921,7 @@ var ITEM_BLUEPRINTS = {
     enhanceLevel:0, defense:50000000, resistance:50000000, attribute:"无",
     maxHp:100000000, maxVitality:100000000, strength:200000000, agility:200000000, constitution:200000000,
     intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0,
-    price:1000000000, durability:"1000/1000", category:"护腿", equipLevel:80,
+    price:1000000000, durability:"1000/1000", category:"护腿", equipLevel:1,
     gemSlots:Array(6).fill(null)
   },
   legendOgdenBoots: {
@@ -2935,7 +2929,7 @@ var ITEM_BLUEPRINTS = {
     enhanceLevel:0, defense:50000000, resistance:50000000, attribute:"无",
     maxHp:100000000, maxVitality:100000000, strength:200000000, agility:200000000, constitution:200000000,
     intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0,
-    price:1000000000, durability:"900/900", category:"护鞋", equipLevel:80,
+    price:1000000000, durability:"900/900", category:"护鞋", equipLevel:1,
     gemSlots:Array(6).fill(null)
   },
   demonWings: {
@@ -2968,13 +2962,13 @@ var ITEM_BLUEPRINTS = {
     name:"伊泰安戒指", type:"ring", img:"logos/戒指.png",
     strength:600000000, agility:600000000, constitution:600000000, intelligence:600000000, spirit:600000000, luck:600000000,
     maxHp:600000000, maxVitality:600000000,
-    price:1000000000, category:"戒指", equipLevel:80, gemSlots:Array(6).fill(null)
+    price:1000000000, category:"戒指", equipLevel:1, gemSlots:Array(6).fill(null)
   },
   yitaiBracelet: {
     name:"伊泰安手镯", type:"bracelet", img:"logos/手镯.png",
     strength:500000000, agility:500000000, constitution:500000000, intelligence:500000000, spirit:500000000, luck:500000000,
     maxHp:500000000, maxVitality:500000000,
-    price:1000000000, category:"手镯", equipLevel:80, gemSlots:Array(6).fill(null)
+    price:1000000000, category:"手镯", equipLevel:1, gemSlots:Array(6).fill(null)
   },
   dominationRing: {
     name:"魔灵统御戒指", type:"ring", img:"logos/戒指.png",
@@ -6706,7 +6700,7 @@ var GD_MODS=[
  {n:'成就系统', ic:HB_I.ach, c:'#9A5BFF', lock:'随时', hash:'#achievement', d:'信息图鉴：阶位/特性/特效/段位/称号/徽章，看设定查攻略。', out:'查询 · 解锁'},
  {n:'角色属性 · 天赋流派', ic:HB_I.attr, c:'#FF9BE8', lock:'半神起', hash:'#attrs', d:'加点六维 + 被动流派：半神暴击/神灵吸血/真神金币，花金币重洗。', out:'六维 · 流派'},
  {n:'轮回祭坛', ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l3.5 6.2 6.5.9-4.7 4.6 1.1 6.5L12 17.5l-6.4 3.7 1.1-6.5L2 10.1l6.5-.9z"/><circle cx="12" cy="11" r="2"/></svg>', c:'#B47AFF', lock:'大帝+1万亿', hash:'#rebirth', d:'转生重置等级/装备，永久全属性+30%可叠加复利；99世+战力百万亿 → 超脱·轮回主宰。', out:'永久全属性'},
- {n:'黄金神坛', ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M5 12v3c0 2 3 3 7 3s7-1 7-3v-3"/><path d="M5 15v3c0 2 3 3 7 3s7-1 7-3v-3"/></svg>', c:'#F2C96B', lock:'大帝后', hash:'#altar', d:'灌注攻/守/生/敛财/会心/真伤六线永久成长(金币)，或献祭抽奖赌传说。', out:'攻 · 守 · 生 · 运 永久'}
+ {n:'黄金神坛', ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M5 12v3c0 2 3 3 7 3s7-1 7-3v-3"/><path d="M5 15v3c0 2 3 3 7 3s7-1 7-3v-3"/></svg>', c:'#F2C96B', lock:'大帝后', hash:'#altar', d:'灌注攻/守/生/敛财/会心/真伤六线永久成长(金币)。', out:'攻 · 守 · 生 · 运 永久'}
 ];
 function renderGuide(){
   var b=document.getElementById('guide-body'); if(!b) return;
@@ -6728,7 +6722,7 @@ function gdTimeline(){
    ['成长期 · 半神→神灵','5亿 ~ 20亿','<b>暴击流派</b>解锁；无限深渊/克里普特刷宝石与天神牌子，无尽试炼前段。目标：冲神灵(20亿)。'],
    ['强盛期 · 神灵→真神','20亿 ~ 100亿','解锁<b>吸血/金币流派</b>；奥利森刷首饰、沙漠刷防具，玄鉴抽奖补装备。目标：冲真神(100亿)。'],
    ['巅峰期 · 真神→大帝','100亿 ~ 1万亿','狄奥多雷斯海量升级经验，挑战塔/竞技拿称号徽章，凑传说奥格顿套装。目标：冲大帝(1万亿)。'],
-   ['终极期 · 大帝→轮回→超脱','1万亿 ~ 100万亿','<b>轮回转生</b>(+30%永久可复利)、黄金神坛灌注/献祭；99世圆满+战力百万亿 → <b>超脱·轮回主宰</b>。']
+   ['终极期 · 大帝→轮回→超脱','1万亿 ~ 100万亿','<b>轮回转生</b>(+30%永久可复利)、黄金神坛灌注；99世圆满+战力百万亿 → <b>超脱·轮回主宰</b>。']
   ].map(function(g){ return '<div class="gd-tl"><span class="gd-tl-dot"></span><span class="gd-tl-t">'+g[0]+'</span><span class="gd-tl-r">'+g[1]+'</span><div class="gd-tl-d">'+g[2]+'</div></div>'; }).join('');
 }
 function gdTips(){
@@ -6737,7 +6731,7 @@ function gdTips(){
    ['副本全刷','8个副本按等级全通，每副本掉专属宝物，<b>图鉴集齐</b>拿永久属性奖励(最高全属性+100亿)。'],
    ['早点轮回','转生永久全属性+30%，<b>越早轮回复利越厚</b>；条件到了立刻转，别拖。'],
    ['药水拉满','<b>神圣药水</b>(攻防翻倍)、<b>太阳</b>(经验×2)/<b>超级大太阳</b>(经验×5)，12小时全程。'],
-   ['黄金神坛','<b>灌注</b>攻/守/生/敛财/会心/真伤六线永久成长，多余金币砸这里；<b>献祭</b>十连碰运气拿传说。'],
+   ['黄金神坛','<b>灌注</b>攻/守/生/敛财/会心/真伤六线永久成长，多余金币砸这里。'],
    ['最终冲刺','99世+战力百万亿即可<b>超脱·轮回主宰</b>：永久全属性+1000%，配太初本源、轮回尽头。']
   ].map(function(g,i){ return '<div class="gd-tip"><span class="gd-tip-n">'+(i+1)+'</span><div class="gd-tip-d">'+g[0]+' · '+g[1]+'</div></div>'; }).join('');
 }
@@ -6781,9 +6775,6 @@ var RB_LAST_TALENT=null, RB_LAST_RELIC=null;   /* 轮回祭坛：天赋/法器�
 var ALTAR_BASE={atk:1000000,def:1000000,hp:1000000,gold:3000000,crit:5000000,true:10000000};
 var ALTAR_NAMES={atk:['斩天','攻'],def:['不灭','守'],hp:['永寿','生'],gold:['敛财','敛'],crit:['会心','会'],true:['破妄','真']};
 var ALTAR_STAGE=['凡尘','尘阶','灵阶','仙阶','圣阶','至尊'];
-var ALTAR_BP_POOL=['refineScroll','refineScrollFull','sealFragment','godPowerFragment','runeFragment','earthBlessingGem','fireBlessingGem','waterBlessingGem','windBlessingGem'];
-var ALTAR_BP_RARE=['epicOgdenHelmet','epicOgdenChest','epicOgdenGloves','epicOgdenLeggings','epicOgdenBoots','demonWings','dominationNecklace','dominationRing','dominationBracelet'];
-var ALTAR_BP_LEGEND=['warGodsFavor','adamBone','mercuryRam','omniscientOracle','godCrystal','godsPraise'];
 function altarStage(lv){ return ALTAR_STAGE[Math.min(ALTAR_STAGE.length-1, Math.floor(lv/20))]; }
 function altarPourCost(k){ var lv=ALTAR[k]||0; return Math.round(ALTAR_BASE[k]*Math.pow(1.6,lv)); }
 function altarAtkMult(){ return 1+(ALTAR.atk||0)*0.001; }
@@ -6803,41 +6794,6 @@ function altarPour(k){
   if((lv+1)%20===0) triggerLegendFX();
   toast(ALTAR_NAMES[k][0]+' 灌注至 Lv.'+(lv+1)+' · '+altarStage(lv+1));
 }
-function altarSacRoll(force){
-  var _li=lotteryInnate();
-  var pool=[
-    {w:26/_li, t:'金币 500万', c:'#C08430', f:function(){CURRENCY.gold+=5000000;}},
-    {w:18, t:'魂石 +2', c:'#B47AFF', f:function(){REBIRTH.stones+=2;}},
-    {w:10, t:'本源结晶 +1', c:'#FFD75E', f:function(){REBIRTH.essence+=1;}},
-    {w:10, t:'塔币 +5000', c:'#7BF1C4', f:function(){ if(typeof CT!=='undefined'&&CT) CT.coins+=5000; }},
-    {w:12, t:'洗炼卷轴', c:'#52C6DA', f:function(){ altarGiveBP('refineScroll'); }},
-    {w:8, t:'祝福宝石', c:'#6E9BFF', f:function(){ altarGiveBP(['earthBlessingGem','fireBlessingGem','waterBlessingGem','windBlessingGem'][Math.floor(Math.random()*4)]); }},
-    {w:11*_li, t:'随机珍品', c:'#F2A93B', f:function(){ altarGiveBP(ALTAR_BP_RARE[Math.floor(Math.random()*ALTAR_BP_RARE.length)]); }},
-    {w:4*_li, t:'神印天神牌', c:'#FF5AD8', f:function(){ altarGiveBP('godsPraise'); }},
-    {w:2*_li, t:'传说 · 大惊喜', c:'#FF9BE8', f:function(){ altarGiveBP(ALTAR_BP_LEGEND[Math.floor(Math.random()*ALTAR_BP_LEGEND.length)]); triggerLegendFX(); }}
-  ];
-  var chosen=null;
-  if(force==='legend') chosen=pool[8];
-  else if(force==='rare') chosen=pool[6];
-  if(!chosen){
-    var total=0; for(var i=0;i<pool.length;i++) total+=pool[i].w;
-    var rr=Math.random()*total, acc=0;
-    for(var i=0;i<pool.length;i++){ acc+=pool[i].w; if(rr<acc){ chosen=pool[i]; break; } }
-    if(!chosen) chosen=pool[0];
-  }
-  chosen.f();
-  return {t:chosen.t, c:chosen.c};
-}
-function altarSac(n){
-  var cost=(n>=10?500000000:50000000);
-  if((CURRENCY.gold||0)<cost){ toast('金币不足：需 '+fmtWan(cost)); return; }
-  CURRENCY.gold-=cost; renderCurrency();
-  var res=[];
-  for(var i=0;i<n;i++){ ALTAR.sac++; var force=((ALTAR.sac)%50===0)?'legend':((ALTAR.sac%10===0)?'rare':'none'); res.push(altarSacRoll(force)); }
-  recalcCharacter(); renderAltar(); saveGame();
-  var h=''; res.forEach(function(r){ h+='<div class="tr-log-it" style="color:'+r.c+'">'+r.t+'</div>'; });
-  trToastList(h);
-}
 function trToastList(h){ var o=document.createElement('div'); o.className='lg-flash-list'; o.innerHTML='<div class="lg-flash-card">'+h+'</div>'; document.body.appendChild(o); setTimeout(function(){ o.classList.add('out'); setTimeout(function(){ if(o.parentNode)o.parentNode.removeChild(o); },420); },1600); }
 function renderAltar(){
   var g=document.getElementById('alt-gold'); if(g) g.textContent=fmtWan(CURRENCY.gold||0);
@@ -6851,13 +6807,9 @@ function renderAltar(){
     pour.innerHTML=h;
     pour.onclick=function(e){ var t=e.target.closest('.alt-p-btn'); if(t&&!t.disabled) altarPour(t.getAttribute('data-k')); };
   }
-  var pf=document.getElementById('alt-pfill'); if(pf) pf.style.width=Math.min(100,(ALTAR.sac%50)/50*100)+'%';
-  var pn=document.getElementById('alt-pnum'); if(pn) pn.textContent=(ALTAR.sac%50)+' / 50';
 }
 function mountAltar(){
   var b=document.getElementById('altar-back'); if(b&&!b.__b){ b.__b=true; b.addEventListener('click',function(){ location.hash='#home'; }); }
-  var s1=document.getElementById('alt-sac1'); if(s1&&!s1.__b){ s1.__b=true; s1.addEventListener('click',function(){ altarSac(1); }); }
-  var s10=document.getElementById('alt-sac10'); if(s10&&!s10.__b){ s10.__b=true; s10.addEventListener('click',function(){ altarSac(10); }); }
   renderAltar();
 }
 function isAscended(){ var r=typeof REBIRTH!=='undefined'&&REBIRTH?REBIRTH:null; return !!(r&&r.ascended); }
@@ -9058,6 +9010,13 @@ function doReset(){
   CHARACTER.innateRollCount=0;   /* 生成次数从初始化开始重新累加 */
   CHARACTER.innate=randomRollOrigin();   /* 初始化：先随机先天运势，再按运势分档生成角色属性（与“重新随机”按钮逻辑一致） */
   itemIdCounter = 1;
+  REBIRTH.count=0; REBIRTH.stones=0; REBIRTH.tp=0; REBIRTH.ascended=0; REBIRTH.essence=0;
+  REBIRTH.talents={all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0};
+  REBIRTH.relic={eye:0,codex:0,amulet:0,realm:0,banner:0,end:0};
+  RB_LAST_TALENT=null; RB_LAST_RELIC=null;   /* 初始化重置轮回祭坛：转生次数/魂石/轮回点/天赋/法器全部回到初始 */
+  ALTAR.atk=0; ALTAR.def=0; ALTAR.hp=0; ALTAR.gold=0; ALTAR.crit=0; ALTAR.true=0; ALTAR.sac=0;
+  ALTAR_LAST_POUR=null;   /* 初始化重置黄金神坛：灌注/献祭全部回到初始 */
+  COLLECT={}; COLLECT_DONE={};   /* 初始化重置成就-图鉴收集点亮数据：全部回到未收集初始状态 */
   LOTTERY_LOG = [];   /* 初始化清空抽奖记录 */
   ADV_LOG = []; try{ localStorage.removeItem('shenqi_adv_log'); }catch(e){}   /* 初始化清空奇遇记录 */
   try{ localStorage.removeItem('shenqi_daily_stats'); }catch(e){}   /* 初始化清空今日掉落统计：dailyGet 自动重建为当天全0 */
@@ -9067,6 +9026,7 @@ function doReset(){
   LOTTERY_FREE = LOTTERY_FREE_MAX; saveLotteryFree();   /* 初始化重置每日免费抽奖次数为上限 */
   renderLotteryLog();
   recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); renderCurrency();
+  if(typeof renderRebirth==='function') renderRebirth(); if(typeof renderAltar==='function') renderAltar();   /* 初始化后同步刷新轮回/黄金神坛显示 */
   if(typeof renderTrStats==='function') renderTrStats();   /* 初始化后刷新掉落统计为全0 */
   saveGame();
   toast('已恢复到初始状态');
