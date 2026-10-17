@@ -81,10 +81,11 @@ body.show-god .stage{max-width:680px;}
 @media(max-width:480px){ body.show-god .stage{max-width:100%;} }
 
 /* ===== 全局背包折叠条（统一二级页顶部） ===== */
-.g-bag-bar{display:flex;align-items:center;justify-content:flex-start;gap:6px;height:30px;margin:10px 0 10px;padding:0 4px;}   /* 去卡片包裹：极简一行，层次靠留白与下方内容区边框 */
+.g-bag-bar{display:flex;align-items:center;justify-content:center;gap:8px;height:30px;margin:10px 2px 10px;padding:0;}
 .g-bag-gold{font-size:12px;color:#e0b45a;font-weight:500;white-space:nowrap;}
-.g-bag-tit{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:3px;text-shadow:none;margin-right:auto;flex-shrink:0;}   /* 中间标题弱化：半透明白、无发光，不抢两端按钮 */
-.g-bag-btn{font-size:12px;color:#FFFFFF;background:rgba(255,255,255,.03);border:1px solid rgba(214,177,110,.28);border-radius:14px;padding:3px 11px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 3px rgba(0,0,0,.35);}   /* 胶囊外凸立体：文字纯净白，顶部微高光+淡投影 */
+.g-bag-tit{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:3px;text-shadow:none;flex-shrink:0;margin-right:8px;}
+.g-bag-btn{flex:none;height:26px;padding:0 10px;font-size:12px;color:#FFFFFF;background:rgba(255,255,255,.03);border:1px solid rgba(214,177,110,.28);border-radius:14px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 1px 3px rgba(0,0,0,.35);white-space:nowrap;text-align:center;line-height:1;}
+.g-bag-btn:hover{border-color:rgba(232,203,116,.55);}
 .g-bag-btn:active{transform:scale(.96);}
 /* ===== 全局背包浮层 ===== */
 #fb-mask{position:fixed;inset:0;background:rgba(0,0,0,.28);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:80;opacity:0;pointer-events:none;transition:opacity .2s;}   /* 遮罩淡色，不遮挡后方场景 */
@@ -197,7 +198,7 @@ body.show-god .stage{max-width:680px;}
 }
 
 /* ===== 标题条：已隐藏（副页签为页面主导航，独占顶部；保留元素作 JS 插入锚点） ===== */
-.topbar{display:none;}
+.topbar{display:none;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0) 85%);border-bottom:1px solid rgba(201,162,75,.14);}
 .topbar h1{
   position:relative;z-index:1;
   font-size:16px;font-weight:600;letter-spacing:3px;padding:0 12px;
@@ -1502,10 +1503,10 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
 #view-main .back-arrow{position:absolute;left:2px;top:50%;transform:translateY(-50%);width:34px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;background:transparent;border:none;cursor:pointer;z-index:3;}
 #view-main .back-arrow svg{width:20px;height:20px;stroke:#cfc4a8;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6));}
 #view-main .back-arrow:active svg{opacity:.45;}
-.forge-nav{display:flex;gap:8px;justify-content:center;padding:10px 10px 12px;background:linear-gradient(180deg,rgba(201,162,75,.06),transparent);border-bottom:1px solid rgba(201,162,75,.16);margin-bottom:6px;}
+.forge-nav{display:flex;gap:6px;align-items:flex-end;padding:4px 2px 0;margin-bottom:10px;background:transparent;border:none;}
 #view-main{max-width:360px;margin:0 auto;}   /* 物品背包：保持紧凑 360px，不受全局加宽影响 */
-.forge-tab{flex:1;max-width:82px;height:32px;border:1px solid rgba(201,162,75,.28);border-radius:7px;background:linear-gradient(180deg,#2a241d,#1a1613);color:#C9B68A;font-size:14px;letter-spacing:1px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.05), 0 1px 4px rgba(0,0,0,.3);}
-.forge-tab.on{background:linear-gradient(180deg,#5a4a33,#3a2c12);border-color:rgba(214,177,110,.6);color:#F6E4A8;font-weight:700;box-shadow:0 0 10px rgba(201,162,75,.4), inset 0 1px 0 rgba(255,255,255,.16);}
+.forge-tab{flex:1;height:28px;border:1px solid #685F55;border-radius:5px 5px 0 0;background:linear-gradient(180deg,#232120,#161413);color:#8a8375;font-size:13px;letter-spacing:2px;cursor:pointer;box-sizing:border-box;}
+.forge-tab.on{height:34px;color:#fff;font-weight:600;background:#25221D;border:1px solid #685F55;border-bottom:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
 .forge-body{position:relative;overflow-y:auto;border-radius:9px;}
 .forge-inline{margin:0 auto;}
 .wings-pane{min-height:300px;display:flex;align-items:center;justify-content:center;color:#C9B68A;font-size:15px;letter-spacing:2px;border:1px solid rgba(201,162,75,.22);border-radius:10px;background:linear-gradient(180deg,rgba(201,162,75,.05),transparent);box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
@@ -1783,7 +1784,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
     rgba(166,118,52,.05) 70%,rgba(166,118,52,0) 86%);
   filter:blur(3px);pointer-events:none;z-index:0;
 }
-.sub-tab.on{color:#17120c;background:linear-gradient(180deg,#FFF6D8,#E9C97A);border-color:#FFE9AE;box-shadow:0 4px 16px rgba(233,201,122,.5),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 5px rgba(190,150,70,.35);font-weight:700;transform:scale(1.05);}   /* 选中：更亮鲜艳的金色渐变 + 顶部高光 + 外发光 + 微放大 → 外凸浮起 */
+.sub-tab.on{color:#17120c;background:linear-gradient(180deg,#FFF6D8,#E9C97A);border-color:#FFE9AE;box-shadow:0 4px 16px rgba(233,201,122,.5),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -2px 5px rgba(190,150,70,.35);font-weight:700;}   /* 选中：更亮鲜艳的金色渐变 + 顶部高光 + 外发光 + 微放大 → 外凸浮起 */
 
 /* ===== 挑战塔专用（独立 id，全兼容） ===== */
 #view-tower .tr-scene{background:radial-gradient(150px 110px at 62% 16%,rgba(205,70,45,.20),transparent 62%),radial-gradient(150px 110px at 30% 22%,rgba(201,162,75,.10),transparent 65%),linear-gradient(180deg,#130b09,#1a100c);}
@@ -1809,10 +1810,11 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
 #tower-shop-over .ts-close-row{flex:none;display:flex;justify-content:center;margin-top:10px;}
 #tower-shop-over .ts-close-row .cbtn{flex:1;max-width:120px;height:32px;font-size:13px;letter-spacing:2px;}
 /* ===== 统一页头小标题条（样例：三色体系） ===== */
-.page-head{display:flex;align-items:center;gap:8px;padding:8px 11px;margin:0 2px 8px;border-left:3px solid #52C6DA;background:linear-gradient(90deg,rgba(82,198,218,.10),rgba(82,198,218,0));border-radius:4px;}
+.page-head{display:flex;align-items:center;gap:8px;padding:8px 11px;margin:4px 2px 8px;border-left:3px solid #52C6DA;background:linear-gradient(90deg,rgba(82,198,218,.14),rgba(82,198,218,0) 72%);border-radius:4px;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
 .page-head .ph-ico{color:#52C6DA;width:16px;height:16px;flex:none;}
-.page-head .ph-t{font-size:14px;font-weight:700;color:#E8CB74;letter-spacing:1px;}
-.page-head .ph-s{font-size:10px;color:#8a8375;margin-left:auto;}
+.page-head .ph-t{font-size:14px;font-weight:800;color:#F2C96B;letter-spacing:1px;text-shadow:0 0 8px rgba(232,203,116,.3);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.page-head .ph-s{display:none;}
+.page-head .g-bag-bar{display:flex;align-items:center;gap:5px;margin-left:auto;flex:none;height:auto;padding:0;}
 .page-head.ph-gold{border-left-color:#C9A24B;background:linear-gradient(90deg,rgba(201,162,75,.12),transparent);}
 .page-head.ph-gold .ph-ico{color:#C9A24B;}
 .page-head.ph-magenta{border-left-color:#FF5AD8;background:linear-gradient(90deg,rgba(255,90,216,.12),transparent);}
@@ -1867,8 +1869,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
 
     <!-- ===== 顶栏：物品栏（白字） ===== -->
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="main-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>物品栏</h1></header>
-    <div class="page-head"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><path d="M4 13h16"/></svg><span class="ph-t">行囊 · 物品栏</span><span class="ph-s">装备 · 背包 · 一键出售</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><path d="M4 13h16"/></svg><span class="ph-t">行囊</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
 
     <!-- ===== 第一部分：装备面板 ===== -->
     <section class="panel equip-panel"><div id="equip" class="equip"></div></section>
@@ -1901,8 +1902,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
   <!-- ===== 二级页面：神兵锻冶（聚合：强化/洗炼/宝石） ===== -->
   <div class="window sys" id="view-forge">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="forge-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>神兵锻冶</h1></header>
-    <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v3H6z"/><path d="M4 8h16v3H4z"/><path d="M12 11v4M8 15h8"/></svg><span class="ph-t">神兵锻冶 · 强化 洗炼 宝石</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v3H6z"/><path d="M4 8h16v3H4z"/><path d="M12 11v4M8 15h8"/></svg><span class="ph-t">神兵锻冶</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="forge-nav">
       <button class="forge-tab on" data-tab="gem">镶嵌</button>
       <button class="forge-tab" data-tab="extract">拆卸</button>
@@ -1914,8 +1914,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
   <!-- ===== 二级页面：万法归宗（聚合：天神/翅膀） ===== -->
   <div class="window sys" id="view-wanshou">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="wanshou-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>万法归宗</h1></header>
-    <div class="page-head ph-magenta"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-2.9-5.4 2.9 1.2-6L3.4 8.8l6-.7z"/></svg><span class="ph-t">万法归宗 · 天神 翅膀</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head ph-magenta"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-2.9-5.4 2.9 1.2-6L3.4 8.8l6-.7z"/></svg><span class="ph-t">万法归宗</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="forge-nav">
       <button class="forge-tab on" data-tab="god">天神</button>
       <button class="forge-tab" data-tab="wings">翅膀</button>
@@ -1927,8 +1926,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
   <!-- ===== 二级页面：竞技系统 ===== -->
   <div class="window sys" id="view-arena">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="arena-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>竞技系统</h1></header>
-    <div class="page-head "><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v3.2c0 .8-.7 1.3-1.5 1.1L6 5.4v9l6.5-1.9c.8-.2 1.5.3 1.5 1.1V18c0 1.7 3 2.5 3 2.5V4.5S16 3 14 3z"/></svg><span class="ph-t">竞技系统 · 决斗 排行榜</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head "><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v3.2c0 .8-.7 1.3-1.5 1.1L6 5.4v9l6.5-1.9c.8-.2 1.5.3 1.5 1.1V18c0 1.7 3 2.5 3 2.5V4.5S16 3 14 3z"/></svg><span class="ph-t">竞技系统</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="sys-body arena-body">
       <div class="arena-hero">
         <div class="arena-id"><img class="arena-av" src="logos/头像.png" alt=""><div class="arena-idmain"><span class="arena-name">谜团</span><div class="arena-idtier"><span class="char-tier" id="arena-tier"></span><span class="arena-rn" id="arena-rank">青铜</span></div></div></div>
@@ -1975,8 +1973,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
   <!-- ===== 二级页面：成就系统 ===== -->
   <div class="window sys" id="view-achievement">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="ach-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>成就系统</h1></header>
-    <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="5"/><path d="M12 2v3M5 8l-2 2 4 1M19 8l2 2-4 1"/><path d="M12 15v6M8 21h8"/></svg><span class="ph-t">成就系统 · 称号 图鉴 徽章</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="5"/><path d="M12 2v3M5 8l-2 2 4 1M19 8l2 2-4 1"/><path d="M12 15v6M8 21h8"/></svg><span class="ph-t">成就系统</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="sys-body ach-body">
       <div class="ach-sec-title">掉落图鉴 · 收集奖励</div>
       <div class="ach-list" id="ach-collect"></div>
@@ -2003,8 +2000,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
       </button>
       <h1>角色属性</h1>
     </header>
-    <div class="page-head "><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></svg><span class="ph-t">人物 · 角色属性  属性 阶位 运势</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head "><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></svg><span class="ph-t">人物</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="attrs-body">
       <div class="attrs-overview">
       <!-- 第一部分：角色身份卡（头像+名字+阶位+战力） -->
@@ -2058,7 +2054,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
       <button class="back-arrow" id="enhance-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>强化</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body gem-body">
       <div class="gem-sec gem-target-sec">
         <div class="enh-name" id="enh-name"></div>
@@ -2096,7 +2092,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
       <button class="back-arrow" id="refine-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>洗炼</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body gem-body">
       <div class="gem-sec gem-target-sec">
         <div class="enh-name" id="refine-name"></div>
@@ -2130,7 +2126,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
       <button class="back-arrow" id="gem-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>宝石</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body gem-body">
       <div class="pgtabs"><button class="pgtab on" data-mode="embed">镶嵌</button><button class="pgtab" data-mode="extract">拆卸</button></div>
       <div class="gem-pane" id="gem-embed">
@@ -2194,7 +2190,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
       <button class="back-arrow" id="god-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>天神之力</h1>
     </header>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
     <div class="sys-body">
       <div class="god-head">
         <div class="god-titlebar">天神列表</div>
@@ -2272,8 +2268,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
       <button class="back-arrow" id="treasure-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>副本秘境</h1>
     </header>
-    <div class="page-head "><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v3.2c0 .8-.7 1.3-1.5 1.1L6 5.4v9l6.5-1.9c.8-.2 1.5.3 1.5 1.1V18c0 1.7 3 2.5 3 2.5V4.5S16 3 14 3z"/></svg><span class="ph-t">副本秘境 · 组队刷宝 挂机</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head "><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v3.2c0 .8-.7 1.3-1.5 1.1L6 5.4v9l6.5-1.9c.8-.2 1.5.3 1.5 1.1V18c0 1.7 3 2.5 3 2.5V4.5S16 3 14 3z"/></svg><span class="ph-t">副本秘境</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="sys-body">
       <div id="offline-bar" style="display:none">
         <span id="offline-txt"></span>
@@ -2330,8 +2325,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
       <button class="back-arrow" id="trial-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>无尽试炼</h1>
     </header>
-    <div class="page-head ph-magenta"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v18H8z"/><path d="M4 8h4M4 12h4M4 16h4M16 8h4M16 12h4M16 16h4"/></svg><span class="ph-t">无尽试炼 · 层层挑战</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head ph-magenta"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8v18H8z"/><path d="M4 8h4M4 12h4M4 16h4M16 8h4M16 12h4M16 16h4"/></svg><span class="ph-t">无尽试炼</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="sys-body">
       <div class="tl-banner" id="tl-banner">第 <b style="color:#52C6DA">1</b> 层</div>
       <div class="tl-best" id="tl-best"></div>
@@ -2371,8 +2365,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
       <button class="back-arrow" id="tower-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>挑战塔</h1>
     </header>
-    <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M7 9h10M9 13h6M5 20h14M9 4h6"/></svg><span class="ph-t">挑战塔 · 爬塔 塔币商店</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M7 9h10M9 13h6M5 20h14M9 4h6"/></svg><span class="ph-t">挑战塔</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="sys-body">
       <div class="tl-banner" id="ct-banner">第 <b style="color:#52C6DA">1</b> 层</div>
       <div class="tl-best" id="ct-best"></div>
@@ -2412,8 +2405,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
       <button class="back-arrow" id="shop-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>商店</h1>
     </header>
-    <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16v10H4z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><span class="ph-t">万宝商阁 · 买卖 兑换</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h16v10H4z"/><path d="M9 9V6a3 3 0 0 1 6 0v3"/></svg><span class="ph-t">万宝商阁</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="sys-body">
       <div class="pgtabs" style="margin-bottom:6px;">
         <button class="pgtab on" data-sm="system">系统商店</button>
@@ -2434,8 +2426,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
       <button class="back-arrow" id="lottery-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
       <h1>幸运轮盘</h1>
     </header>
-    <div class="page-head"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l6 3"/></svg><span class="ph-t">玄鉴抽奖 · 幸运轮盘</span></div>
-    <div class="g-bag-bar"><span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">查看背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div>
+    <div class="page-head"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><path d="M12 4v8l6 3"/></svg><span class="ph-t">玄鉴抽奖</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="sys-body">
       <div class="lottery-panel">
         <div class="lottery-head"><span id="lottery-pity-num"></span><button class="lot-limited" id="lot-limited-hint">限量</button></div>
@@ -3440,11 +3431,11 @@ function ensureBagBar(viewEl){
   if(!viewEl) return;
   if(viewEl.querySelector('.g-bag-bar')) return;
   var bar=document.createElement('div'); bar.className='g-bag-bar';
-  bar.innerHTML='<span class="g-bag-tit">快捷导航</span><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn" id="g-bar-open">查看背包 (<span id="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button>';
+  bar.innerHTML='<button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn" id="g-bar-open">背包 (<span id="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button>';
   applyNavTitle();
-  var top=viewEl.querySelector('.topbar');
-  if(top){ top.parentNode.insertBefore(bar, top.nextSibling); }
-  else { viewEl.insertBefore(bar, viewEl.firstChild); }
+  var ph=viewEl.querySelector('.page-head');
+  if(ph){ ph.appendChild(bar); }
+  else { var top=viewEl.querySelector('.topbar'); if(top){ top.parentNode.insertBefore(bar, top.nextSibling); } else { viewEl.insertBefore(bar, viewEl.firstChild); } }
   var _btn=bar.querySelector('#g-bar-open'); if(_btn) _btn.addEventListener('click', function(){ openFloatBag(); });   /* 防御：按钮缺失不中断注入 */
   syncBagBar();
 }
@@ -3485,7 +3476,7 @@ function renderFloatBag(){
   syncBagBar();
 }
 (function initFloatBag(){
-  document.addEventListener('click', function(e){ var b=e.target.closest ? e.target.closest('.g-bar-open') : null; if(b){ openFloatBag(); } }, false);   /* 静态背包条：点击查看背包 */
+  document.addEventListener('click', function(e){ var b=e.target.closest ? e.target.closest('.g-bar-open') : null; if(b){ openFloatBag(); } }, false);   /* 静态背包条：点击背包 */
   document.addEventListener('click', function(e){ var fb=$('#float-bag'); if(fb && fb.classList.contains('open') && !fb.contains(e.target)) closeFloatBag(); }, true);   /* capture：点击浮层外必收起 */
   var mk=$('#fb-mask'); if(mk) mk.addEventListener('click', closeFloatBag);
   document.addEventListener('click', function(e){ var c=e.target.closest ? e.target.closest('#fb-close') : null; if(c) closeFloatBag(); }, false);   /* 委托绑定：不依赖浮层 HTML 就绪时机 */
@@ -8279,7 +8270,6 @@ function usePotion(slotEl){
   doPotionAction(it, currentTab, idx);
 }
 function useQuickPotion(nm){
-  if(location.hash.indexOf('#treasure')<0 && location.hash.indexOf('#trial')<0 && location.hash.indexOf('#arena')<0){ toast('请在战斗场景中使用'); return; }
   for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.name===nm){ doPotionAction(it,p,i,true); return; } }
   toast('背包中无此药水');
 }
