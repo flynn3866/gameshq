@@ -2085,8 +2085,8 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .hb-hero-power span{font-size:17px;color:#FFD98A;font-weight:800;font-variant-numeric:tabular-nums;text-shadow:0 0 12px rgba(255,200,110,.5);}
 .hb-hero-tags{display:flex;gap:6px;flex-wrap:wrap;}
 /* 首页(基地)：内部滚动容器，顶栏+资源栏 sticky 固定，下方内容可上下滚动（同其他页面，修复移动端 flex 滚动失效） */
-body.hb-compact{overflow-y:hidden;}   /* 主页：外层禁滚，内容由 #view-home 内部滚动，去掉双层滚动条 */
-#view-home{max-height:calc(100vh - env(safe-area-inset-top,0px) - 152px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;}
+html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外层禁滚，内容由 #view-home 内部滚动，去掉双层滚动条（html 层仍 visible 是双层根源） */
+#view-home{max-height:calc(100vh - env(safe-area-inset-top,0px) - 152px);max-height:calc(100dvh - env(safe-area-inset-top,0px) - 152px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;box-sizing:border-box;}   /* 100dvh 兜底：手机地址栏变化时不溢出可用视口，内容滚动到底不被底部导航盖住 */
 #view-home .topbar{position:sticky;top:0;z-index:6;background:#191510;}
 #view-home .hb-res{position:sticky;top:41px;z-index:5;background:#0f0c09;}
 /* 轮回顶部卡：锁定提示精化为居中小状态条；达成按钮保留大按钮 */
@@ -5585,6 +5585,7 @@ function applyRoute(){
   var homeShow = home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||tower||arena||forge||wanshou||main||ach||rebirth||altar||guide);   /* 挑战塔/万法指南排除首页布局 */
   document.body.classList.remove('show-home');   /* 基地页与其它导航页统一使用 --bg-body 背景 */
   document.body.classList.toggle('hb-compact', homeShow);   /* 基地页顶部紧凑：缩小顶栏上方到屏幕顶部的间隔 */
+  document.documentElement.classList.toggle('hb-compact', homeShow);   /* 同步给 html 加类：禁 html 层外层滚动，杜绝双层滚动条 */
   document.body.classList.toggle('show-lottery', lot);         /* 抽奖页加宽舞台 */
   document.body.classList.toggle('show-attrs', attrs);   /* 属性页加宽舞台 */
   document.body.classList.toggle('show-god', god||wanshou);   /* 天神页（含万法归宗聚合页）宽屏两栏 */
@@ -9013,7 +9014,7 @@ function loadGame(){
   if(s.elemSlot){ ['atk','def'].forEach(function(sk){ if(s.elemSlot[sk]&&Object.prototype.toString.call(s.elemSlot[sk])==='[object Array]'){ var na=[]; for(var _i=0;_i<4;_i++) na[_i]=link(s.elemSlot[sk][_i]); ELEM_SLOT[sk]=na; } }); }
   if(typeof s.innate==='number'&&s.innate>=0.9&&s.innate<=1.8) CHARACTER.innate=s.innate;
   if(s.origin&&Object.prototype.toString.call(s.origin)==='[object Object]'){ CHARACTER.origin=Object.assign({力量:10,敏捷:10,体质:10,精神:10,智力:10,幸运:10,hp:0,patk:0,pdef:0},s.origin); }
-  if(!CHARACTER.growth) CHARACTER.growth=calcGrowth(CHARACTER.innate||0.9);   /* 旧档兼容：按当前先天运势补齐每级成长 */
+  CHARACTER.growth=calcGrowth(CHARACTER.innate||0.9);   /* 每级成长：始终按当前先天运势重算（先天运势决定区间，1.8→每级6维+5000万/生命+5万/物防+3000） */
   if(s.collected) COLLECT=s.collected;
   if(s.collectDone) COLLECT_DONE=s.collectDone;
   if(s.altar){ ALTAR.atk=s.altar.atk||0; ALTAR.def=s.altar.def||0; ALTAR.hp=s.altar.hp||0; ALTAR.gold=s.altar.gold||0; ALTAR.crit=s.altar.crit||0; ALTAR.true=s.altar.true||0; ALTAR.sac=s.altar.sac||0; }
