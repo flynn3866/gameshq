@@ -7828,7 +7828,7 @@ function trGainExp(monLv, af, isBoss){
   else if(monLv<40){ exp=Math.round((100+(monLv-30)/10*900)*(0.9+af)); }  /* 30~40：100~1000 */
   else if(monLv<50){ exp=Math.round((1000+(monLv-40)/10*9000)*(0.9+af)); } /* 40~50：1000~10000 */
   else { exp=Math.round((10000+(monLv-50)/10*40000)*(0.9+af)); }          /* 50~60：1万~5万 */
-  exp=Math.round(exp*Math.pow(1.1,Math.min(6,TR.dungeon))*(isPhantomDungeon(TR.dungeon)?2:1)*(DUNGEONS[TR.dungeon].mode==='level'?4:1));   /* 副本经验加成：狄奥多雷斯×4(全场最高)、神之幻境×2 */
+  exp=Math.round(exp*Math.pow(1.1,Math.min(6,TR.dungeon))*(isPhantomDungeon(TR.dungeon)?2:1)*(DUNGEONS[TR.dungeon].mode==='level'?40:1));   /* 副本经验加成：狄奥多雷斯×40(全场最高，已按用户要求乘10)、神之幻境×2 */
   exp=Math.round(exp*trExpScale(monLv));   /* 等级差调整：同等级×1、越级加成、刷低级怪递减至0（一分辛苦一分收获，仅经验） */
   if(!isBoss && TR.dungeon!==0) exp*=10;   /* 小怪经验×10（Boss 不乘；雕俱星座特例保留每怪5点，不×10） */
   if(isBoss) exp*=60;   /* Boss 经验显著奖励：该副本小怪 60 倍（击杀耗时×DPS 校准） */
