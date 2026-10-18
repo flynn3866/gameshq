@@ -97,6 +97,7 @@ body.show-god .stage{max-width:680px;}
 #home-settings{position:absolute;top:6px;right:12px;z-index:20;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.07);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);color:#fff;cursor:pointer;transition:transform .2s,background .2s;box-shadow:0 2px 8px rgba(0,0,0,.28);}   /* 相对 #view-home 定位，垂直居中标题栏右侧 */
 #home-settings svg{width:17px;height:17px;}
 #home-settings:active{transform:scale(.92);}
+#home-settings::after{content:"";position:absolute;inset:-7px;border-radius:50%;}   /* 触摸目标：齿轮视觉30px，点击区扩至44px（iOS 下限） */
 #settings-float{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 72px);transform:translateX(-50%) translateY(-12px) scale(.97);transform-origin:center top;width:min(320px,calc(100% - 24px));background:linear-gradient(180deg,#26221c,#1a1714);border:1px solid #4a4034;border-radius:16px;padding:16px 14px;z-index:120;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;box-shadow:0 12px 40px rgba(0,0,0,.5);}
 #settings-float.open{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0) scale(1);}
 #settings-float .sf-title{color:#e8d5a0;font-weight:600;font-size:15px;text-align:center;margin-bottom:14px;}
@@ -157,9 +158,9 @@ body.show-god .stage{max-width:680px;}
 #attr-float .af-lvsep{color:#D8CFC2;font-size:9px;font-weight:600;letter-spacing:1px;}   /* 等级：去掉边框，纯文字 */
 #attr-float .af-tier{font-size:10px;color:#C9A4FF;font-weight:800;letter-spacing:1px;text-shadow:0 0 6px rgba(150,90,255,.55);}   /* 阶位：去掉边框，纯紫文字+微光 */
 #attr-float .af-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
-#attr-float .af-tier.ti-1{color:#3D6BFF!important;text-shadow:none!important;}
-#attr-float .af-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
-#attr-float .af-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
+#attr-float .af-tier.ti-1{color:#84A8EB!important;text-shadow:none!important;}
+#attr-float .af-tier.ti-2{color:#B58CFF!important;text-shadow:none!important;}
+#attr-float .af-tier.ti-3{color:#7B28D9!important;text-shadow:none!important;}
 #attr-float .af-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
 #attr-float .af-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;}   /* 大帝：品红紫静态光效 */
 .ach-name.ti-5{position:relative;display:inline-block;box-shadow:0 0 18px rgba(255,90,200,.10);}
@@ -447,6 +448,7 @@ body.show-god .stage{max-width:680px;}
   background:linear-gradient(180deg,#141311,#0c0b0a);
   box-shadow:inset 0 2px 5px rgba(0,0,0,.7), 0 0 0 1px rgba(214,173,90,.28), 0 0 10px rgba(214,173,90,.18);
 }
+button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 
 /* ===== Toast ===== */
 #toast{
@@ -479,7 +481,7 @@ body.show-god .stage{max-width:680px;}
 
 /* ===== 二级页面：角色属性（参考游戏属性面板布局） ===== */
 .attrs{display:none;padding:4px 0 10px;}   /* 覆盖 .window 的左右内边距，让面板贴近页面边线 */
-.attrs-body{padding:22px 2px 12px;}
+.attrs-body{padding:22px 0 12px;}
 #view-attrs .attrs-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 236px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 72px);box-sizing:border-box;}   /* 属性页：固定滚动区高度+底部留白，顶部固定，特性等内容可滚到底不被弹性回弹遮挡 */
 .attrs .topbar{justify-content:center;}
 .attrs .back-arrow{
@@ -512,6 +514,7 @@ body.show-god .stage{max-width:680px;}
 .info-cls{margin-top:6px;font-size:12px;color:#c9bfa8;letter-spacing:1px;}
 /* ===== 属性页第二部分：分配属性点（整块含标题） ===== */
 .attrs-panel{
+  margin:2px 12px 12px;
   background:linear-gradient(180deg,#282A2A,#262320);
   border:1px solid #5A5550;border-radius:6px;
   padding:4px 12px 8px;
@@ -561,7 +564,7 @@ body.show-god .stage{max-width:680px;}
 .alloc-points.innate{display:flex;align-items:center;gap:8px;margin-top:8px;padding:8px 10px;border-radius:9px;background:radial-gradient(120% 90% at 50% -20%, rgba(180,120,255,.22), rgba(0,0,0,0) 60%), linear-gradient(180deg,#2c2436,#1a1522);border:1px solid rgba(178,120,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.12), inset 0 -7px 12px rgba(0,0,0,.55), 0 0 18px rgba(150,90,255,.22);}
 .alloc-points.innate .cl{font-size:13px;font-weight:700;letter-spacing:2px;background:linear-gradient(90deg,#e8c97a,#fff2c8,#e8c97a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
 /* ===== 属性页第三部分：最终属性（全部加成后） ===== */
-.final-panel{position:relative;margin-top:10px;padding:11px 12px 12px;border-radius:11px;overflow:hidden;background:radial-gradient(130% 95% at 50% -15%, rgba(255,222,150,.16), rgba(0,0,0,0) 62%), linear-gradient(180deg,#332b20,#211a12);border:1px solid rgba(202,166,96,.42);box-shadow:inset 0 1px 0 rgba(255,255,255,.09), inset 0 -10px 16px rgba(0,0,0,.55), 0 8px 20px rgba(0,0,0,.5);}
+.final-panel{position:relative;margin:10px 12px 12px;padding:11px 12px 12px;border-radius:11px;overflow:hidden;background:radial-gradient(130% 95% at 50% -15%, rgba(255,222,150,.16), rgba(0,0,0,0) 62%), linear-gradient(180deg,#332b20,#211a12);border:1px solid rgba(202,166,96,.42);box-shadow:inset 0 1px 0 rgba(255,255,255,.09), inset 0 -10px 16px rgba(0,0,0,.55), 0 8px 20px rgba(0,0,0,.5);}
 .final-panel::before{content:"";position:absolute;left:-30%;right:-30%;top:-55%;height:130%;background:radial-gradient(50% 45% at 50% 0%, rgba(255,222,160,.18), transparent 70%);pointer-events:none;}
 .final-title{position:relative;display:flex;align-items:baseline;gap:8px;justify-content:center;font-size:15px;font-weight:800;letter-spacing:3px;background:linear-gradient(90deg,#f4d98a,#fff4cf,#f4d98a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
 .final-title::after{content:"";position:absolute;left:16px;right:16px;bottom:-2px;height:1px;background:linear-gradient(90deg,transparent,#C9A24B 30%,#C9A24B 70%,transparent);}
@@ -575,6 +578,8 @@ body.show-god .stage{max-width:680px;}
 .f-row.big{grid-column:span 2;}
 .f-row.big .f-v{color:#FFD06A;font-size:14px;font-weight:800;text-shadow:0 0 10px rgba(255,190,80,.4);}
 .f-row.hp .f-v{color:#FF7B72;}
+.f-row.best .f-v{color:#FFD98A;font-weight:800;text-shadow:0 0 10px rgba(255,200,110,.45);}
+.f-row.best{background:linear-gradient(90deg,rgba(201,162,75,.16),rgba(255,255,255,.03));border-color:rgba(201,162,75,.46);}   /* 六大属性最高项：金色强弱项高亮 */
 .f-row.vit .f-v{color:#6FD6C9;}
 #innate-val{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;letter-spacing:1px;background:linear-gradient(90deg,#b56bff,#f0dbff,#b56bff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 14px rgba(160,100,255,.45);}
 .innate-roll{flex:none;margin-left:auto;padding:0 10px;height:24px;font-size:11px;letter-spacing:1px;color:#FFFFFF;background:linear-gradient(180deg,#6b5d42,#4a3e2c);border:1px solid rgba(214,177,110,.5);border-radius:5px;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.14);}
@@ -599,14 +604,14 @@ body.show-god .stage{max-width:680px;}
   background:linear-gradient(90deg,transparent,#6D6354 25%,#6D6354 75%,transparent);
 }
 /* 第三部分（战斗属性/战绩）无面板，行距页面边线 16px（attrs-body 2px + 内补 14px） */
-#combat-list, #record-list{padding:0 14px;}
+#combat-list, #record-list{padding:0 12px;}
 /* ===== 属性页：角色特性卡片条 ===== */
-.tt-panel-title{font-size:14px;color:#fff;font-weight:300;letter-spacing:2px;text-align:center;padding:10px 0 6px;margin:4px 14px 2px;border-bottom:1px solid rgba(109,99,84,.22);}
-.tt-card{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:5px 14px;padding:7px 10px;background:linear-gradient(180deg,rgba(40,42,42,.55),rgba(38,35,32,.35));border:1px solid #6D6354;border-radius:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);}
-.tt-card .tt-name{font-size:13px;color:#ff9a3c;font-weight:500;}
-.tt-card .tt-pct{font-size:13px;color:#E0B900;font-weight:300;font-variant-numeric:tabular-nums;}
-.tt-card .tt-desc{width:100%;font-size:11px;color:#a89f8d;line-height:1.45;}
-.tt-empty{font-size:12px;color:#8a8171;text-align:center;padding:12px 0;margin:0 14px;}
+.tt-panel-title{font-size:15px;color:#fff;font-weight:500;letter-spacing:2px;text-align:center;padding:10px 0 6px;margin:4px 12px 2px;border-bottom:1px solid rgba(109,99,84,.22);}   /* 特性标题与舞台统一 12px */
+.tt-card{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;margin:5px 12px;padding:8px 12px;background:linear-gradient(180deg,rgba(40,42,42,.55),rgba(38,35,32,.35));border:1px solid #6D6354;border-radius:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.03);}   /* 特性卡统一 12px，微增内边距 */
+.tt-card .tt-name{font-size:15px;color:#ff9a3c;font-weight:600;}
+.tt-card .tt-pct{font-size:15px;color:#E0B900;font-weight:600;font-variant-numeric:tabular-nums;}
+.tt-card .tt-desc{width:100%;font-size:12px;color:#a89f8d;line-height:1.5;}
+.tt-empty{font-size:12px;color:#8a8171;text-align:center;padding:12px 0;margin:0 12px;}
 /* ===== 属性页身份卡 + 荣耀徽章（与浮层样式统一） ===== */
 .attrs-overview{margin:2px 12px 10px;border-radius:14px;overflow:hidden;border:1px solid rgba(201,162,75,.48);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,0) 55%),linear-gradient(180deg,#2E2822,#201A14);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 6px 16px rgba(0,0,0,.38),0 0 8px rgba(201,162,75,.28);}
 .attrs-overview .attrs-id,.attrs-overview .tier-progress,.attrs-overview .attrs-badges,.attrs-overview .innate-card{border:0!important;background:none!important;box-shadow:none!important;border-radius:0;margin:0;}
@@ -624,7 +629,8 @@ body.show-god .stage{max-width:680px;}
 .attrs-id-avatar img{width:100%;height:100%;object-fit:cover;display:block;}
 .attrs-id-main{flex:1;min-width:0;}
 .attrs-id-name{font-size:23px;color:#FFFFFF;font-weight:800;letter-spacing:3px;text-shadow:0 0 10px rgba(255,255,255,.12);}
-.attrs-id-tier{margin-top:5px;}
+.attrs-id-bottom{flex-basis:100%;margin-top:8px;padding-top:10px;border-top:1px solid rgba(201,162,75,.2);display:flex;flex-direction:column;gap:7px;}   /* 头像下横线：阶位+灌注标签独立成区（参考主页角色卡） */
+.attrs-id-tier{margin-top:0;}
 .attrs-id-tier .char-tier{font-size:16px;font-weight:800;letter-spacing:2px;margin-left:0;}
 .attrs-id-lvtier{display:flex;align-items:center;gap:7px;margin-top:5px;font-size:13px;color:#D8CFC2;letter-spacing:1px;font-variant-numeric:tabular-nums;}
 .attrs-id-lvtier .attrs-id-cls{margin:0;font-size:10px;color:#D8CFC2;letter-spacing:1px;}
@@ -651,13 +657,13 @@ body.show-god .stage{max-width:680px;}
 .tier-progress .tp-node{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:0;}
 .tier-progress .tp-dot{width:7px;height:7px;border-radius:50%;border:1.5px solid #6b645c;background:transparent;flex:none;}
 .tier-progress .tp-node.on .tp-dot{background:currentColor;border-color:currentColor;}
-.tier-progress .tp-node.cur .tp-dot{width:9px;height:9px;box-shadow:0 0 9px currentColor;}
+.tier-progress .tp-node.cur .tp-dot{width:9px;height:9px;}   /* 当前阶段圆点：去掉光晕，放大高亮 */
 .tier-progress .tp-name{font-size:11px;font-weight:700;letter-spacing:.5px;white-space:nowrap;}
 .tier-progress .tp-node.off .tp-name{color:#6b645c;font-weight:600;}
-.tier-progress .tp-node.cur .tp-name{font-size:12px;text-shadow:0 0 8px currentColor;}
+.tier-progress .tp-node.cur .tp-name{font-size:12px;font-weight:800;}   /* 当前阶段：去掉光晕，纯色加粗 */
 .tier-progress .tp-line{flex:1;min-width:4px;height:2px;border-radius:1px;background:#4a443c;}
 .tier-progress .tp-line.on{background:#C9A24B;}
-.tier-progress .tp-line.cur{background:#FFD98A;box-shadow:0 0 6px rgba(255,200,110,.5);}
+.tier-progress .tp-line.cur{background:#FFD98A;}   /* 当前阶段连线：去掉光晕 */
 .attrs-badge{display:flex;align-items:center;gap:7px;padding:5px 8px;margin-bottom:4px;border:1px solid rgba(201,162,75,.18);border-radius:6px;background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.01));font-size:11px;}
 .attrs-badge i{display:inline-block;width:7px;height:7px;border-radius:2px;flex:none;box-shadow:0 0 6px currentColor;}
 .attrs-badge b{font-weight:600;letter-spacing:1px;color:#EDE4D4;}
@@ -1226,7 +1232,7 @@ body.show-god .stage{max-width:680px;}
 .tr-ss-none{color:#8a8375;font-size:11px;padding:4px 2px;}
 /* 暴击 / 稀有掉落 / 震屏特效 */
 /* 伤害飘字：普通白/MISS白/暴击数字白+CRIT金色小字 */
-.tr-float.miss{color:#FFFFFF;font-weight:bold;} .tr-float.crit{animation:trFloat .7s ease-out forwards;}
+.tr-float.miss{color:#8a8375;font-weight:700;} .tr-float.crit{color:#FF8A3D;text-shadow:0 0 10px rgba(255,120,50,.7);animation:trFloat .7s ease-out forwards;}
 .tr-float .tr-crit{position:absolute;top:-26px;left:50%;transform:translateX(-50%);font-style:normal;font-size:13px;color:#FFD700;font-weight:bold;letter-spacing:1px;text-shadow:0 0 6px rgba(255,215,0,.85);animation:trCritUp .7s ease-out forwards;white-space:nowrap;pointer-events:none;}   /* 头顶-26px；随容器上浮40px+自身10px=50px */
 @keyframes trCritUp{0%{transform:translate(-50%,0);}100%{transform:translate(-50%,-10px);}}   /* CRIT自身额外上浮10px(总50px)，透明度由容器统一(alpha同步) */
 @keyframes trCritShake{0%,100%{transform:translateX(0);}25%{transform:translateX(-2px);}50%{transform:translateX(2px);}75%{transform:translateX(-1px);}}
@@ -1289,7 +1295,7 @@ body.show-god .stage{max-width:680px;}
 @keyframes trLogIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:none;}}
 #revive-tip,#tl-revive-tip{position:fixed;left:50%;top:44%;transform:translateX(-50%);z-index:9999;background:rgba(205,205,205,.16);color:var(--text-hi);padding:9px 20px;border-radius:8px;border:1px solid rgba(225,225,225,.28);backdrop-filter:blur(4px);font-size:14px;letter-spacing:1px;text-align:center;pointer-events:none;display:none;box-shadow:0 4px 18px rgba(0,0,0,.4);white-space:nowrap;}
 /* 受击飘字 */
-.tr-float{position:absolute;font-size:20px;font-weight:bold;color:#FFFFFF;z-index:5;pointer-events:none;
+.tr-float{position:absolute;font-size:20px;font-weight:bold;color:#FFD98A;text-shadow:0 0 8px rgba(255,200,110,.55);z-index:5;pointer-events:none;
   animation:trFloat .7s ease-out forwards;}
 .tr-float.mon{color:#FFFFFF;}
 .tr-float.heal{color:#39FF66;text-shadow:0 0 6px rgba(57,255,102,.55);}   /* 吸血绿字 */
@@ -1552,9 +1558,11 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .hb-tag-rb b{color:#C9A4FF;font-weight:800;}
 .hb-tag-pour{color:#F2C96B;background:rgba(242,201,107,.1);border:1px solid rgba(242,201,107,.3);}
 .hb-tag-pour b{color:#FFD75E;font-weight:800;}
-.attrs-id-tags{font-size:10px;color:#9a8f7c;letter-spacing:.5px;margin-top:4px;}
+.attrs-id-tags{font-size:10px;color:#9a8f7c;letter-spacing:.5px;margin-top:5px;display:flex;flex-direction:column;gap:4px;}
+.attrs-id-tags .ait-rb{color:#C9A4FF;font-weight:800;letter-spacing:.6px;}
+.attrs-id-tags .ait-pour{color:#F2C96B;font-weight:700;letter-spacing:.4px;font-variant-numeric:tabular-nums;}
 .attrs-id-tags b{font-weight:800;}
-.alt-wrap{width:100%;box-sizing:border-box;max-height:calc(100vh - env(safe-area-inset-top,0px) - 179px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:2px 2px calc(env(safe-area-inset-bottom,0px) + 8px);}   /* 黄金神坛：同轮回祭坛，标题固顶、alt-wrap 内部滚动，滚动区底部与人物页对齐 */
+.alt-wrap{width:100%;box-sizing:border-box;max-height:calc(100vh - env(safe-area-inset-top,0px) - 224px);overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:2px 2px calc(env(safe-area-inset-bottom,0px) + 8px);}   /* 黄金神坛：持有金币条并入标题固顶，滚动区从金币条下方开始，底部仍与人物页对齐 */
 .alt-gold{display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(242,201,107,.18),rgba(242,201,107,.06));border:1px solid rgba(242,201,107,.32);border-radius:6px;padding:8px 12px;margin-bottom:8px;}
 .alt-gold span{font-size:11px;color:#cbbf9e;letter-spacing:1px;}
 .alt-gold b{font-size:16px;color:#FFD75E;text-shadow:0 0 10px rgba(255,215,94,.45);}
@@ -1661,6 +1669,16 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .hb-card-ic svg{color:currentColor;}
 .hb-sec-tit{color:#FFF3D0;text-shadow:0 0 12px rgba(255,215,94,.45);}
 .hb-sec-bar{box-shadow:0 0 10px rgba(255,215,94,.7);}
+/* 移动端字号：辅助文字 11→12px、卡片名 12→13px，均不换行不挤压 */
+@media (max-width:640px){
+  .hb-card-cn{font-size:13px;letter-spacing:1.5px;}
+  .hb-goal-d{font-size:12px;}
+  .hb-goal-d b{font-size:12px;}
+  .hb-goal-cur .hb-num{font-size:12px;}
+  .hb-goal .hb-go-btn{font-size:12px;padding:2px 9px;}
+  #hb-lv{font-size:12px;}
+  #hb-innate .ih-badge,#home-innate .ih-badge{font-size:12px;padding:1px 8px;}
+}
 .home-card{background:#ffffff;border-radius:18px;box-shadow:0 4px 14px rgba(0,0,0,.12);padding:20px 8px 15px;display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer;border:1px solid #ece5d4;opacity:0;transition:box-shadow .3s,transform .3s cubic-bezier(.22,1,.36,1);animation:cardRise .5s cubic-bezier(.22,1,.36,1) forwards;animation-delay:calc(var(--i)*60ms + .08s);user-select:none;-webkit-user-select:none;}
 @keyframes cardRise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 .home-card:hover{box-shadow:0 8px 22px rgba(0,0,0,.18);}
@@ -1717,6 +1735,7 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .arena-opps{display:flex;flex-direction:column;gap:6px;}
 .arena-opp{display:flex;align-items:center;gap:8px;padding:7px 8px;background:linear-gradient(180deg,#262220,#1b1815);border:1px solid rgba(201,162,75,.20);border-radius:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}
 .arena-opp .op-ico{width:34px;height:34px;flex:none;border-radius:6px;background:#1F1B19;border:1px solid #5E5E5E;display:flex;align-items:center;justify-content:center;color:#8a8375;font-size:17px;box-shadow:inset 0 2px 5px rgba(0,0,0,.6);}
+.arena-opp .op-ico img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;}   /* 静态头像，不耗电 */
 .arena-opp .op-info{flex:1;min-width:0;}
 .arena-opp .op-n{font-size:13px;color:#FFFFFF;}
 .arena-opp .op-r{font-size:10px;color:#8a8375;margin-top:1px;line-height:1.5;overflow-wrap:break-word;word-break:break-word;}
@@ -1883,22 +1902,22 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 
 .char-tier{display:inline-block;vertical-align:middle;margin-left:6px;font-weight:800;letter-spacing:1px;color:#A56BFF;background:none;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;text-shadow:none;}   /* 阶位统一：纯净净值，档位配色见下 */
 /* ===== 阶位专属视觉：按档位配色递进（纯净纯色，无渐变无模糊） ===== */
-.char-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}   /* 锐凡：青蓝 */
-.char-tier.ti-1{color:#3D6BFF!important;text-shadow:none!important;}   /* 半神：深电光蓝 */
-.char-tier.ti-2{color:#9A5BFF!important;text-shadow:none!important;}   /* 神灵：亮紫罗兰 */
-.char-tier.ti-3{color:#7B28D9!important;text-shadow:none!important;}   /* 真神：帝王紫 */
-.char-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}   /* 神王：金橙 */
-.char-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;}   /* 大帝：品红紫静态光效 */
+.char-tier.ti-0,.hb-hero-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}   /* 锐凡：青蓝 */
+.char-tier.ti-1,.hb-hero-tier.ti-1{color:#84A8EB!important;text-shadow:none!important;}   /* 半神：深电光蓝 */
+.char-tier.ti-2,.hb-hero-tier.ti-2{color:#B58CFF!important;text-shadow:none!important;}   /* 神灵：亮紫罗兰 */
+.char-tier.ti-3,.hb-hero-tier.ti-3{color:#7B28D9!important;text-shadow:none!important;}   /* 真神：帝王紫 */
+.char-tier.ti-4,.hb-hero-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}   /* 神王：金橙 */
+.char-tier.ti-5,.hb-hero-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;}   /* 大帝：品红紫静态光效 */
 .hh-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
-.hh-tier.ti-1{color:#3D6BFF!important;text-shadow:none!important;}
-.hh-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
-.hh-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
+.hh-tier.ti-1{color:#84A8EB!important;text-shadow:none!important;}
+.hh-tier.ti-2{color:#B58CFF!important;text-shadow:none!important;}
+.hh-tier.ti-3{color:#7B28D9!important;text-shadow:none!important;}
 .hh-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
 .hh-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;}
 .tr-rolecard-tier.ti-0{color:#52C6DA!important;text-shadow:none!important;}
-.tr-rolecard-tier.ti-1{color:#3D6BFF!important;text-shadow:none!important;}
-.tr-rolecard-tier.ti-2{color:#6E9BFF!important;text-shadow:none!important;}
-.tr-rolecard-tier.ti-3{color:#A56BFF!important;text-shadow:none!important;}
+.tr-rolecard-tier.ti-1{color:#84A8EB!important;text-shadow:none!important;}
+.tr-rolecard-tier.ti-2{color:#B58CFF!important;text-shadow:none!important;}
+.tr-rolecard-tier.ti-3{color:#7B28D9!important;text-shadow:none!important;}
 .tr-rolecard-tier.ti-4{color:#F2A93B!important;text-shadow:none!important;}
 .tr-rolecard-tier.ti-5{position:relative;color:#FF5AD8!important;text-shadow:0 0 10px rgba(255,90,200,.65)!important;}
 .tr-rolecard-tier.tier-fx{animation:none!important;box-shadow:none!important;}   /* 战斗卡：非大帝阶位去呼吸 */
@@ -1908,11 +1927,11 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .tier-fx::after{display:inline-block;margin-left:2px;font-size:.72em;line-height:1;vertical-align:super;pointer-events:none;opacity:.95;}   /* 阶位徽记：缀于阶位名右上 */
 .tier-fx.ti-0::after{content:'✦';color:#52C6DA;text-shadow:0 0 4px rgba(82,198,218,.9);}   /* 锐凡：星点 */
 .tier-fx.ti-0{text-shadow:0 0 3px rgba(82,198,218,.35);}   /* 锐凡：细青蓝描边，无呼吸 */
-.tier-fx.ti-1::after{content:'☽';color:#3D6BFF;text-shadow:0 0 5px rgba(74,155,255,.95);}   /* 半神：月弧 */
+.tier-fx.ti-1::after{content:'☽';color:#84A8EB;text-shadow:0 0 5px rgba(132,168,235,.95);}   /* 半神：月弧 */
 .tier-fx.ti-1{animation:none;}   /* 半神：去呼吸 */
-.tier-fx.ti-2::after{content:'✧';color:#6E9BFF;text-shadow:0 0 5px rgba(110,155,255,.95);}   /* 神灵：三芒 */
+.tier-fx.ti-2::after{content:'✧';color:#B58CFF;text-shadow:0 0 5px rgba(181,140,255,.95);}   /* 神灵：三芒 */
 .tier-fx.ti-2{animation:none;}   /* 神灵：去呼吸 */
-.tier-fx.ti-3::after{content:'★';color:#A56BFF;text-shadow:0 0 6px rgba(165,107,255,1);}   /* 真神：五角星 */
+.tier-fx.ti-3::after{content:'★';color:#7B28D9;text-shadow:0 0 6px rgba(123,40,217,1);}   /* 真神：五角星 */
 .tier-fx.ti-3{animation:none;}   /* 真神：去呼吸 */
 .tier-fx.ti-4::after{content:'♛';color:#F2A93B;text-shadow:0 0 6px rgba(242,169,59,.95);}   /* 神王：王冠 */
 .tier-fx.ti-4{animation:none;}   /* 神王：去呼吸 */
@@ -1989,6 +2008,12 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .page-head.ph-gold{border-left-color:#C9A24B;background:linear-gradient(90deg,rgba(201,162,75,.12),transparent);}
 .page-head.ph-gold .ph-ico{color:#C9A24B;}
 .page-head.ph-magenta{border-left-color:#FF5AD8;background:linear-gradient(90deg,rgba(255,90,216,.12),transparent);}
+/* ===== 每页主色身份：window 容器 data-theme，卡片/面板浮起主题色细描边（outline 不占布局、零耗电）===== */
+.window[data-theme="gold"]{--th:#C9A24B;--th-rgb:201,162,75;}
+.window[data-theme="mag"]{--th:#FF5AD8;--th-rgb:255,90,216;}
+.window[data-theme="cyan"]{--th:#52C6DA;--th-rgb:82,198,218;}
+.window[data-theme] .panel,.window[data-theme] [class$="-card"],.window[data-theme] [class*="-card"]{outline:1px solid rgba(var(--th-rgb),.15);outline-offset:-1px;}
+.window[data-theme] .panel{border-radius:6px;}
 .page-head.ph-magenta .ph-ico{color:#FF5AD8;}
 /* ===== 天赋流派系统 ===== */
 .attrs-talent{background:rgba(20,16,12,.55);border:1px solid rgba(201,162,75,.35);border-radius:8px;padding:10px 12px;margin:10px 12px;}
@@ -1996,7 +2021,7 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .at-cur{font-size:11px;margin-bottom:8px;}
 .at-list{display:flex;flex-direction:column;gap:7px;}
 .at-card{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.08);border-radius:6px;cursor:pointer;transition:border-color .15s;}
-.at-card.on{border-color:#52C6DA;background:rgba(82,198,218,.08);}
+.at-card.on{border-color:#52C6DA;background:rgba(82,198,218,.08);box-shadow:0 0 12px rgba(82,198,218,.28),inset 0 0 8px rgba(82,198,218,.10);}   /* 天赋选中：青蓝微光强化 */
 .at-card.locked{opacity:.55;cursor:not-allowed;}
 .at-name{font-size:12px;font-weight:700;}
 .at-desc{font-size:9px;color:#8a8375;display:block;margin-top:2px;}
@@ -2147,13 +2172,13 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
 
-  <div class="window sys" id="view-guide">
+  <div class="window sys" id="view-guide" data-theme="cyan">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="guide-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>玩法指南</h1></header>
     <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V6a2 2 0 0 1 2-2h9l5 5v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M9 15h6M9 11h4"/></svg><span class="ph-t">玩法</span><div class="g-bag-bar"><button class="g-bag-btn" onclick="location.hash='#home'">返回基地</button></div></div>
     <div class="gd-wrap" id="guide-body"></div>
   </div>
 
-  <div class="window" id="view-rebirth">
+  <div class="window" id="view-rebirth" data-theme="cyan">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="rebirth-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>轮回祭坛</h1></header>
     <div class="page-head"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l3.5 6.2 6.5.9-4.7 4.6 1.1 6.5L12 17.5l-6.4 3.7 1.1-6.5L2 10.1l6.5-.9z"/><circle cx="12" cy="11" r="2"/></svg><span class="ph-t">轮回</span><div class="g-bag-bar"><button class="g-bag-btn" onclick="location.hash=&#39;#home&#39;">返回基地</button></div></div>
     <div class="rb-wrap" id="rebirth-body">
@@ -2192,16 +2217,16 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
 
-  <div class="window" id="view-altar">
+  <div class="window" id="view-altar" data-theme="gold">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="altar-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>黄金神坛</h1></header>
     <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M5 12v3c0 2 3 3 7 3s7-1 7-3v-3"/><path d="M5 15v3c0 2 3 3 7 3s7-1 7-3v-3"/></svg><span class="ph-t">黄金神坛</span><div class="g-bag-bar"><button class="g-bag-btn" onclick="location.hash=&#39;#home&#39;">返回基地</button></div></div>
+    <div class="alt-gold"><span>持有金币</span><b id="alt-gold">0</b></div>
     <div class="alt-wrap" id="altar-body">
-      <div class="alt-gold"><span>持有金币</span><b id="alt-gold">0</b></div>
       <div class="alt-sec-t">金币灌注 · 永久成长</div>
       <div class="alt-pour" id="alt-pour"></div>
     </div>
   </div>
-  <div class="window" id="view-main">
+  <div class="window" id="view-main" data-theme="cyan">
 
     <!-- ===== 顶栏：物品栏（白字） ===== -->
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="main-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>物品栏</h1></header>
@@ -2236,7 +2261,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 
   </div>
   <!-- ===== 二级页面：神兵锻冶（聚合：强化/洗炼/宝石） ===== -->
-  <div class="window sys" id="view-forge">
+  <div class="window sys" id="view-forge" data-theme="gold">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="forge-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>神兵锻冶</h1></header>
     <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 4h12v3H6z"/><path d="M4 8h16v3H4z"/><path d="M12 11v4M8 15h8"/></svg><span class="ph-t">神兵锻冶</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="forge-nav">
@@ -2248,7 +2273,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     <div class="forge-body" id="forge-body"></div>
   </div>
   <!-- ===== 二级页面：万法归宗（聚合：天神/翅膀） ===== -->
-  <div class="window sys" id="view-wanshou">
+  <div class="window sys" id="view-wanshou" data-theme="mag">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="wanshou-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>万法归宗</h1></header>
     <div class="page-head ph-magenta"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-2.9-5.4 2.9 1.2-6L3.4 8.8l6-.7z"/></svg><span class="ph-t">万法归宗</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="forge-nav">
@@ -2260,7 +2285,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
   <!-- ===== 二级页面：竞技系统 ===== -->
-  <div class="window sys" id="view-arena">
+  <div class="window sys" id="view-arena" data-theme="cyan">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="arena-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>竞技系统</h1></header>
     <div class="page-head "><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v3.2c0 .8-.7 1.3-1.5 1.1L6 5.4v9l6.5-1.9c.8-.2 1.5.3 1.5 1.1V18c0 1.7 3 2.5 3 2.5V4.5S16 3 14 3z"/></svg><span class="ph-t">竞技系统</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="sys-body arena-body">
@@ -2307,7 +2332,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
   <!-- ===== 二级页面：成就系统 ===== -->
-  <div class="window sys" id="view-achievement">
+  <div class="window sys" id="view-achievement" data-theme="gold">
     <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="ach-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>成就系统</h1></header>
     <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="5"/><path d="M12 2v3M5 8l-2 2 4 1M19 8l2 2-4 1"/><path d="M12 15v6M8 21h8"/></svg><span class="ph-t">成就系统</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
     <div class="sys-body ach-body">
@@ -2328,7 +2353,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
   <!-- ===== 二级页面：角色属性 ===== -->
-  <div class="window attrs" id="view-attrs">
+  <div class="window attrs" id="view-attrs" data-theme="cyan">
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="attrs-back" aria-label="返回">
@@ -2345,10 +2370,13 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
           <div class="attrs-id-avatar"><img src="logos/头像.png" alt=""></div>
           <div class="attrs-id-main">
             <div class="attrs-id-name" id="ch-name"></div>
-            <div class="attrs-id-tier"><span class="char-tier" id="ch-tier"></span></div><div class="attrs-id-lvtier"><span class="attrs-id-cls" id="ch-cls"></span><span class="attrs-id-lvsep">·</span><span class="attrs-id-lv" id="ch-lv"></span></div>
-            <div class="attrs-id-tags" id="attrs-tags"></div>
+            <div class="attrs-id-lvtier"><span class="attrs-id-cls" id="ch-cls"></span><span class="attrs-id-lvsep">·</span><span class="attrs-id-lv" id="ch-lv"></span></div>
           </div>
           <div class="attrs-id-power"><b>战 力</b><span id="ch-power"></span></div>
+        </div>
+        <div class="attrs-id-bottom">
+          <div class="attrs-id-tier"><span class="char-tier" id="ch-tier"></span></div>
+          <div class="attrs-id-tags" id="attrs-tags"></div>
         </div>
         <div id="tier-progress"></div>
       </div>
@@ -2385,7 +2413,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
   <!-- ===== 二级页面：强化 ===== -->
-  <div class="window sys" id="view-enhance">
+  <div class="window sys" id="view-enhance" data-theme="cyan">
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="enhance-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
@@ -2423,7 +2451,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
   <!-- ===== 二级页面：洗炼 ===== -->
-  <div class="window sys" id="view-refine">
+  <div class="window sys" id="view-refine" data-theme="cyan">
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="refine-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
@@ -2457,7 +2485,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
   <!-- ===== 二级页面：宝石 ===== -->
-  <div class="window sys" id="view-gem">
+  <div class="window sys" id="view-gem" data-theme="cyan">
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="gem-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
@@ -2521,7 +2549,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
   <!-- ===== 二级页面：天神 ===== -->
-  <div class="window sys" id="view-god">
+  <div class="window sys" id="view-god" data-theme="cyan">
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="god-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
@@ -2599,7 +2627,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
   <!-- ===== 二级页面：寻宝 ===== -->
-  <div class="window sys" id="view-treasure">
+  <div class="window sys" id="view-treasure" data-theme="cyan">
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="treasure-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
@@ -2656,7 +2684,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
   </div>
 
   <!-- ===== 二级页面：无尽试炼 ===== -->
-  <div class="window sys" id="view-trial">
+  <div class="window sys" id="view-trial" data-theme="mag">
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="trial-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
@@ -2696,7 +2724,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
   <!-- ===== 二级页面：挑战塔 ===== -->
-  <div class="window sys trial-like" id="view-tower">
+  <div class="window sys trial-like" id="view-tower" data-theme="gold">
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="tower-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
@@ -2736,7 +2764,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
     </div>
   </div>
   <!-- ===== 二级页面：商店 ===== -->
-  <div class="window sys" id="view-shop">
+  <div class="window sys" id="view-shop" data-theme="gold">
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="shop-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
@@ -2757,7 +2785,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
       </div>
     </div>
   </div>
-  <div class="window sys" id="view-lottery">
+  <div class="window sys" id="view-lottery" data-theme="cyan">
     <header class="topbar">
       <span class="title-glow"></span>
       <button class="back-arrow" id="lottery-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button>
@@ -5231,7 +5259,7 @@ function renderAttrs(){
     var m=0; ['力量','敏捷','体质','精神','智力','幸运'].forEach(function(k){ var v=(CHARACTER.base?CHARACTER.base[k]:0)+(CHARACTER.bonus?CHARACTER.bonus[k]:0); if(v>m)m=v; });
     var i=charTierIdx();
     if(i>=CHAR_TIERS.length-1){ el.innerHTML='<div class="tier-progress"><div class="tp-done">已达大帝 · 至高无上</div></div>'; return; }
-    var TC=['#52C6DA','#3D6BFF','#6E9BFF','#A56BFF','#F2A93B','#FF5AD8'];
+    var TC=['#52C6DA','#84A8EB','#B58CFF','#7B28D9','#F2A93B','#FF5AD8'];
     var _steps=''; for(var _s=0;_s<CHAR_TIERS.length;_s++){ if(_s>0){ var _lg=_s<=i?'on':(_s===i+1?'cur':'off'); _steps+='<span class="tp-line '+_lg+'"></span>'; } var _on=_s<=i; _steps+='<span class="tp-node'+(_on?' on':' off')+(_s===i?' cur':'')+'"'+( _on?' style="color:'+TC[_s]+'"':'')+'><i class="tp-dot"></i><span class="tp-name">'+CHAR_TIERS[_s].n+'</span></span>'; }
     var cur=i>=0?CHAR_TIERS[i].m:0, nxt=CHAR_TIERS[i+1].m, pct=Math.min(100,Math.max(0,(m-cur)/(nxt-cur)*100));
     el.innerHTML='<div class="tier-progress"><div class="tp-steps">'+_steps+'</div><div class="tp-bar"><i style="width:'+pct.toFixed(1)+'%"></i></div><div class="tp-meta"><span>'+fmtWan(m)+'</span><span>下一阶 门槛 '+fmtWan(nxt)+' · '+pct.toFixed(0)+'%</span></div></div>';
@@ -5262,7 +5290,7 @@ function renderAttrs(){
   $('#record-list').innerHTML = cRows(CHARACTER.record);
   var _fs=document.getElementById('final-stats'); if(_fs){ var _fst=CHARACTER.finalStat||{};
     function _fr(k,v,cls){ return '<div class="f-row '+(cls||'')+'"><span class="f-k">'+k+'</span><span class="f-v">'+fmtWan(v)+'</span></div>'; }
-    var _six=['力量','敏捷','体质','精神','智力','幸运'].map(function(k){return _fr(k,_fst[k]||0);}).join('');
+    var _sixArr=['力量','敏捷','体质','精神','智力','幸运'].map(function(k){return {k:k,v:_fst[k]||0};}); var _sx=Math.max.apply(null,_sixArr.map(function(x){return x.v;}))||1; var _six=_sixArr.map(function(x){return _fr(x.k,x.v,x.v===_sx?'best':'');}).join('');
     _fs.innerHTML='<div class="f-sec"><div class="f-sub">六大属性 · 最终</div><div class="f-grid">'+_six+'</div></div>'
       +'<div class="f-sec"><div class="f-sub">生命与活力</div><div class="f-grid">'+_fr('生命',_fst.hp||0,'hp big')+_fr('活力',_fst.vitality||0,'vit big')+'</div></div>'
       +'<div class="f-sec"><div class="f-sub">攻击与防御</div><div class="f-grid">'+_fr('物理攻击',_fst.patk||0,'big')+_fr('物理防御',_fst.pdef||0)+_fr('魔法防御',_fst.mdef||0)+'</div></div>'; }
@@ -5494,7 +5522,10 @@ function isShopExcluded(it){
   return isArmorType(t);   /* helmet/chest/gloves/leggings/boots/shield/cloak */
 }
 function sysShopList(){ return SYS_ITEMS.filter(function(it){ return !isShopExcluded(it); }); }
-function buyShopItem(idx){ var bp=sysShopList()[idx]; if(!bp) return; var price=sysBuyPrice(bp); if(CURRENCY.gold<price){ toast('金币不足'); return; } confirmDialog('确认购买 '+bp.name+'？<br>价格 '+price.toLocaleString()+' 金币', function(ok){ if(!ok) return; if(CURRENCY.gold<price){ toast('金币不足'); return; } CURRENCY.gold-=price; renderCurrency(); var cp=mkLoot(bp); cp.count=1; addStackable(cp); renderShop(); renderBag(); saveGame(); if(itemQuality(bp)==='purple') triggerLegendFX(); toast('已购买 '+bp.name); }); }
+function buyShopItem(idx){ var bp=sysShopList()[idx]; if(!bp) return; var price=sysBuyPrice(bp);
+  var qty=1; if(bp.name==='神力碎片') qty=5000; else if(bp.name==='神力结晶') qty=500;
+  var cost=price*qty; if(CURRENCY.gold<cost){ toast('金币不足'); return; }
+  confirmDialog('确认购买 '+bp.name+(qty>1?(' ×'+qty):'')+'？<br>价格 '+cost.toLocaleString()+' 金币', function(ok){ if(!ok) return; if(CURRENCY.gold<cost){ toast('金币不足'); return; } CURRENCY.gold-=cost; renderCurrency(); var cp=mkLoot(bp); cp.count=qty; addStackable(cp); renderShop(); renderBag(); saveGame(); if(itemQuality(bp)==='purple') triggerLegendFX(); toast('已购买 '+bp.name+' ×'+qty); }); }
 function renderShop(){
   if(SHOP_MODE==='system'){ renderSysShop(); return; }
   var list=document.getElementById('shop-list'); if(!list) return;
@@ -6265,7 +6296,7 @@ function renderAchievement(){
     {r:'超脱 · 轮回主宰', rm:100000000000000, b:'超越神级', br:'超越一切'}
   ];
   var cTier=charTierIdx();
-  var TIER_COLORS=['#52C6DA','#3D6BFF','#9A5BFF','#7B28D9','#F2A93B','#FF5AD8','#FFD75E'];   /* 档位配色：与角色属性/竞技/首页统一；第7档超脱=金 */
+  var TIER_COLORS=['#52C6DA','#84A8EB','#B58CFF','#7B28D9','#F2A93B','#FF5AD8','#FFD75E'];   /* 档位配色：统一为权威阶位色；第7档超脱=金(渐变覆盖) */
   var tel2=document.getElementById('ach-tiers');
   if(tel2){ var th='';
     for(var ti=0;ti<tierList.length;ti++){ var tt=tierList[ti], tg=(ti>=tierList.length-1)? isAscended() : (ti<=cTier);
@@ -6455,7 +6486,7 @@ function renderOppList(){
     var _ac=['#CD7F32','#C0C0C0','#FFD700','#D5E8F0','#C3A6FF','#D84AA0','#A56BFF'];
     var rankTxt=o.boss?(o.tier==='god'?'<span style="color:#B08CFF;text-shadow:0 0 8px rgba(150,90,255,.6);font-weight:700">传说·神级</span>':'<span style="color:#B08CFF;text-shadow:0 0 8px rgba(150,90,255,.6);font-weight:700">传说·首领</span>'):(o.rank?'<span style="color:'+_ac[Math.min(o.ri||0,_ac.length-1)]+'">'+o.rank.n+'</span>':'');
     var _fi=ARENA.fight&&ARENA.oppIdx===idx, _lk=ARENA.fight;
-    var _eb=elemBadgesText(o.atkElem,o.defElem); return '<div class="arena-opp'+(o.boss?' boss':'')+(_fi?' fighting':'')+'"><div class="op-ico"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M5 19 19 5"/><path d="M15 4h5v5l-3 2-4-4z"/><path d="M5 19l4-1-3-3z"/></svg></div><div class="op-info">'+on+'<div class="op-r">'+rankTxt+' · 难度 '+o.diff+' · 战力 '+fmtWan(oppEffectivePower(o))+' · 血 '+fmtWan(oppEffHp(o))+'</div>'+(_eb?'<div class="op-elem">'+_eb+'</div>':'')+t+'</div><button class="op-btn'+(_fi?' on':'')+'" data-i="'+idx+'"'+(_lk?' disabled':'')+'>'+(_fi?'挑战中':'挑战')+'</button></div>';
+    var _eb=elemBadgesText(o.atkElem,o.defElem); return '<div class="arena-opp'+(o.boss?' boss':'')+(_fi?' fighting':'')+'"><div class="op-ico"><img src="logos/opp-avatar.png" alt=""></div><div class="op-info">'+on+'<div class="op-r">'+rankTxt+' · 难度 '+o.diff+' · 战力 '+fmtWan(oppEffectivePower(o))+' · 血 '+fmtWan(oppEffHp(o))+'</div>'+(_eb?'<div class="op-elem">'+_eb+'</div>':'')+t+'</div><button class="op-btn'+(_fi?' on':'')+'" data-i="'+idx+'"'+(_lk?' disabled':'')+'>'+(_fi?'挑战中':'挑战')+'</button></div>';
   }).join('');
   if(!el.__b){ el.__b=true; el.addEventListener('click',function(e){ var b=e.target.closest('.op-btn'); if(b&&!b.disabled) startFight(parseInt(b.getAttribute('data-i'))); }); }
 }
@@ -6639,7 +6670,7 @@ function renderHeroTags(){
   if(typeof REBIRTH!=='undefined'&&REBIRTH&&(REBIRTH.count||0)>0){ rbTxt='轮回 <b>'+REBIRTH.count+'</b> 世 · 永久 +<b>'+Math.round((reincMult()-1)*100)+'%</b>'; }
   if(typeof ALTAR!=='undefined'&&ALTAR&&((ALTAR.atk||0)+(ALTAR.def||0)+(ALTAR.hp||0)+(ALTAR.luck||0)>0)){ aTxt='灌注 攻'+ALTAR.atk+' / 守'+ALTAR.def+' / 生'+ALTAR.hp+' / 敛'+ALTAR.gold+' / 会'+ALTAR.crit+' / 真'+ALTAR.true+' / 命'+ALTAR.hit+' / 御'+ALTAR.fdr+' / 噬'+ALTAR.ls+' / 福'+ALTAR.drop; }
   var ht=document.getElementById('hb-tags'); if(ht) ht.innerHTML=(rbTxt?'<span class="hb-tag hb-tag-rb">'+rbTxt+'</span>':'')+(aTxt?'<span class="hb-tag hb-tag-pour">'+aTxt+'</span>':'');
-  var at=document.getElementById('attrs-tags'); if(at) at.innerHTML=(rbTxt?rbTxt:'')+(rbTxt&&aTxt?' · ':'')+(aTxt?'<b style="color:#F2C96B">'+aTxt+'</b>':'');
+  var at=document.getElementById('attrs-tags'); if(at) at.innerHTML=(rbTxt?'<div class="ait-rb">'+rbTxt+'</div>':'')+(aTxt?'<div class="ait-pour">'+aTxt+'</div>':'');
 }
 function renderHome(){
   var ab=document.getElementById('arena-back'); if(ab&&!ab.__b){ ab.__b=true; ab.addEventListener('click',function(){ location.hash='#home'; }); }
@@ -6649,9 +6680,9 @@ function renderHome(){
   var grid=document.getElementById('hb-grid');
   if(grid && !grid.__b){
     grid.__b=true;
-    var items=[{name:'物品背包',ic:HB_I.bag,c:'#FFD75E',hash:'#main'},{name:'神兵锻冶',ic:HB_I.forge,c:'#FF9A4A',hash:'#forge'},{name:'万法归宗',ic:HB_I.god,c:'#C79BFF',hash:'#wanshou'},{name:'副本秘境',ic:HB_I.tres,c:'#FF6B6B',hash:'#treasure'},{name:'无尽试炼',ic:HB_I.trial,c:'#52C6DA',hash:'#trial'},{name:'挑战塔',ic:HB_I.tower,c:'#6FB7FF',hash:'#tower'},{name:'竞技系统',ic:HB_I.arena,c:'#FF5AD8',hash:'#arena'},{name:'玄鉴抽奖',ic:HB_I.lot,c:'#FFE9A8',hash:'#lottery'},{name:'万宝商阁',ic:HB_I.shop,c:'#7BE6A0',hash:'#shop'},{name:'成就系统',ic:HB_I.ach,c:'#9A5BFF',hash:'#achievement'},{name:'角色属性',ic:HB_I.attr,c:'#FF9BE8',hash:'#attrs'},{name:'轮回祭坛',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l3.5 6.2 6.5.9-4.7 4.6 1.1 6.5L12 17.5l-6.4 3.7 1.1-6.5L2 10.1l6.5-.9z"/><circle cx="12" cy="11" r="2"/></svg>',c:'#B47AFF',hash:'#rebirth'},{name:'黄金神坛',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M5 12v3c0 2 3 3 7 3s7-1 7-3v-3"/><path d="M5 15v3c0 2 3 3 7 3s7-1 7-3v-3"/></svg>',c:'#F2C96B',hash:'#altar'}];
+    var items=[{name:'物品背包',ic:HB_I.bag,c:'#FFD75E',hash:'#main'},{name:'神兵锻冶',ic:HB_I.forge,c:'#FF9A4A',hash:'#forge'},{name:'万法归宗',ic:HB_I.god,c:'#C79BFF',hash:'#wanshou'},{name:'副本秘境',ic:HB_I.tres,c:'#FF6B6B',hash:'#treasure'},{name:'无尽试炼',ic:HB_I.trial,c:'#52C6DA',hash:'#trial'},{name:'挑战塔',ic:HB_I.tower,c:'#6FB7FF',hash:'#tower'},{name:'竞技系统',ic:HB_I.arena,c:'#FF5AD8',hash:'#arena'},{name:'玄鉴抽奖',ic:HB_I.lot,c:'#FFE9A8',hash:'#lottery'},{name:'万宝商阁',ic:HB_I.shop,c:'#7BE6A0',hash:'#shop'},{name:'成就系统',ic:HB_I.ach,c:'#9A5BFF',hash:'#achievement'},{name:'角色属性',ic:HB_I.attr,c:'#FF9BE8',hash:'#attrs'},{name:'轮回祭坛',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l3.5 6.2 6.5.9-4.7 4.6 1.1 6.5L12 17.5l-6.4 3.7 1.1-6.5L2 10.1l6.5-.9z"/><circle cx="12" cy="11" r="2"/></svg>',c:'#B47AFF',hash:'#rebirth'},{name:'黄金神坛',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M5 12v3c0 2 3 3 7 3s7-1 7-3v-3"/><path d="M5 15v3c0 2 3 3 7 3s7-1 7-3v-3"/></svg>',c:'#F2C96B',hash:'#altar'},{name:'每日活跃',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>',c:'#8FD6FF',hash:''},{name:'世界BOSS榜',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M8 4h8v6a4 4 0 0 1-8 0z"/><path d="M6 5H3v2a3 3 0 0 0 3 3M18 5h3v2a3 3 0 0 1-3 3M12 14v4M8 20h8M10 20a2 2 0 0 1 4 0"/></svg>',c:'#FF7A45',hash:''}];
     grid.innerHTML=items.map(function(it){ return '<div class="hb-card" data-hash="'+it.hash+'" style="color:'+it.c+'"><span class="hb-card-ic">'+it.ic+'</span><span class="hb-card-cn">'+it.name+'</span></div>'; }).join('');
-    grid.addEventListener('click',function(e){ var c=e.target.closest('.hb-card'); if(c){ var h2=c.getAttribute('data-hash'); if(h2) location.hash=h2; } });
+    grid.addEventListener('click',function(e){ var c=e.target.closest('.hb-card'); if(c){ var h2=c.getAttribute('data-hash'); if(h2) location.hash=h2; else toast('功能暂未开放 · 敬请期待'); } });
   }
   renderHomeData();
   var hero=document.querySelector('#view-home .hb-hero'); if(hero && !hero.__b){ hero.__b=true; hero.addEventListener('click',function(){ location.hash='#attrs'; }); }
