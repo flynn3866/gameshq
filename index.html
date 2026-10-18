@@ -5026,11 +5026,12 @@ function setupGodDrag(){
     godDrag=null;
   });
 }
+var GOD_BREAK_REQ={0:50,1:10,2:20,3:40,4:100};   /* 天神破重：当前重数→破到下一重所需神符/神印碎片数 */
 function godMaterials(g){
   var mats=[]; function find(t){ for (var p=0;p<BAG_NUM;p++) for (var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.type===t&&it.count>0) return it; } return null; }
   var power=find('god_power_material'); if(power) mats.push(power);
   if(calcGodProgress(g)>=100){ var cry=find('god_crystal'); if(cry) mats.push(cry);
-    if((g.star||1)>=5){ var bt=find(g.type==='god_rune'?'god_rune_material':'god_seal_material'); if(bt) mats.push(bt); }
+    if((g.star||1)>=5 && g.grade<5){ var _bt=null; for (var _p2=0;_p2<BAG_NUM;_p2++) for (var _i2=0;_i2<BAG_SLOTS;_i2++){ var _it2=bag[_p2][_i2]; if(_it2&&_it2.type===(g.type==='god_rune'?'god_rune_material':'god_seal_material')){ _bt=_it2; break; } } if(_bt) mats.push(_bt); }
   }
   return mats;
 }
@@ -5087,8 +5088,17 @@ function doGodUpgrade(){
   if(CURRENCY.bound<cost){ toast('绑定金币不足'); return; }
   var mats=godMaterials(g);
   if(!mats.length){ toast('缺少升级材料'); return; }
+  var _br=(calcGodProgress(g)>=100 && (g.star||1)>=5 && g.grade<5);   /* 本次为破重 */
+  if(_br){   /* 破重前检查碎片足够：神印牌用神印碎片、神符牌用神符碎片 */
+    var _need=GOD_BREAK_REQ[g.grade]||10;
+    var _bt=null; for(var _p=0;_p<BAG_NUM;_p++) for(var _i=0;_i<BAG_SLOTS;_i++){ var _it=bag[_p][_i]; if(_it&&_it.type===(g.type==='god_rune'?'god_rune_material':'god_seal_material')&&_it.count>0) _bt=_it; }
+    if(!_bt||_bt.count<_need){ toast('破重材料不足 · 需 '+_need+' 个'+(g.type==='god_rune'?'神符':'神印')+'碎片'); renderGod(); return; }
+  }
   var ok=Math.random()<calcGodRate(g)/100;
-  mats.forEach(function(m){ consumeStack(m,1); });
+  mats.forEach(function(m){
+    if(m.type==='god_rune_material'||m.type==='god_seal_material'){ if(_br) consumeStack(m, GOD_BREAK_REQ[g.grade]||10); }
+    else consumeStack(m,1);
+  });
   CURRENCY.bound-=cost; renderCurrency();
   if(ok){ playSoundEffect('embedSuccess'); showGodUpgradeSuccess();
     var prog=calcGodProgress(g);
@@ -5116,6 +5126,7 @@ function toggleGodAuto(){
     var gg=GOD.upTarget;
     if(!gg){ stopGodAuto(); return; }
     if(gg.grade>=5&&gg.star>=5&&calcGodProgress(gg)>=100){ stopGodAuto(); toast('天神已达满级，自动升级停止'); return; }
+    if(gg.star>=5&&calcGodProgress(gg)>=100&&gg.grade<5){ stopGodAuto(); toast('天神已满5星，自动升级停下 · 需手动点击破重'); return; }
     if(CURRENCY.bound<calcGodCost(gg)){ stopGodAuto(); toast('绑定金币不足，自动升级停止'); return; }
     var mats=godMaterials(gg); if(!mats.length){ stopGodAuto(); toast('缺少升级材料，自动升级停止'); return; }
     doGodUpgrade();
