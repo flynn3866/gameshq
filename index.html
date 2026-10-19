@@ -8944,7 +8944,7 @@ function trExpScale(monLv){   /* 等级差经验系数：同等级×1；越级�
   return Math.pow(0.7,low);
 }
 
-var OFFLINE={lastActive:0};   /* 离线收益：最后活跃时间戳（秒） */
+var OFFLINE={lastActive:0, hang:false};   /* 离线收益：最后活跃时间戳（秒）+ 上次关闭时是否挂机 */
 var LUCK={lottery:0,drop:0};  /* 保底幸运值：抽奖传说 / 副本掉落传说 */
 function offExpPerKill(monLv,d){   /* 离线单只小怪经验（纯计算，不触发副作用/事件） */
   var exp;
@@ -8968,6 +8968,7 @@ function offGoldPerKill(d){   /* 离线单只小怪金币期望 */
 }
 function offlineSettle(){   /* 页面加载时结算离线收益（副本挂机产出，封顶8小时，打折60%） */
   var now=Date.now();
+  if(!OFFLINE.hang) return;     /* 只有上次关闭时处于挂机状态才累计离线收益，否则不给 */
   var sec=(now-OFFLINE.lastActive)/1000;
   if(sec<90) return;            /* 阈值90秒：刷新/切页不误判为离线 */
   sec=Math.min(sec, 8*3600);    /* 封顶8小时 */
@@ -8977,19 +8978,9 @@ function offlineSettle(){   /* 页面加载时结算离线收益（副本挂机�
   var exp=Math.round(offExpPerKill(monLv,d)*kills*0.6);
   var gold=Math.round(offGoldPerKill(d)*kills*0.6);
   var bound=0;
-  if(d===0){ bound=gold; gold=0; CURRENCY.bound+=bound; }
-  else CURRENCY.gold+=gold;
-  var oldLv=TR.level;
-  TR.exp+=exp;
-  while(TR.level<80 && TR.exp>=TR.reqExp){
-    TR.exp-=TR.reqExp; TR.level++; TR.reqExp=trReqExp(TR.level);
-    dailyBump('lv'); CHARACTER.info.level=TR.level;
-  }
-  var lvUp=TR.level-oldLv;
-  recalcCharacter(); trSyncChar();
-  if(lvUp>0){ TR.hp=TR.maxHp; gLog('升级','离线结算升至 Lv.'+TR.level); }
-  renderChar(); renderCurrency(); saveGame();
-  if(exp>0 || gold>0 || bound>0 || lvUp>0) showOffline(sec, exp, gold, bound, lvUp);
+  if(d===0){ bound=gold; gold=0; }
+  OFFLINE.pending={sec:sec, exp:exp, gold:gold, bound:bound};   /* 只暂存，不直接改数据 */
+  if(exp>0 || gold>0 || bound>0) showOffline(sec, exp, gold, bound, 0);   /* 仅展示离线收益，点「收下」才按当时数据结算 */
 }
 function showOffline(sec, exp, gold, bound, lvUp){
   var h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60);
@@ -9004,7 +8995,18 @@ function showOffline(sec, exp, gold, bound, lvUp){
   document.body.appendChild(ov);
   setTimeout(function(){ ov.classList.add('show'); },20);
   var bd=ov.querySelector('.off-close');
-  bd.addEventListener('click',function(){ ov.classList.remove('show'); setTimeout(function(){ if(ov.parentNode) ov.remove(); },320); });
+  bd.addEventListener('click',function(){
+    var p=OFFLINE.pending||{};
+    if(p.bound>0) CURRENCY.bound+=p.bound;
+    if(p.gold>0) CURRENCY.gold+=p.gold;
+    var _old=TR.level, _exp=p.exp||0;
+    if(_exp>0){ TR.level=Math.max(0, CHARACTER.info.level||0); TR.reqExp=trReqExp(TR.level); TR.exp+=_exp; while(TR.level<80 && TR.exp>=TR.reqExp){ TR.exp-=TR.reqExp; TR.level++; TR.reqExp=trReqExp(TR.level); dailyBump('lv'); CHARACTER.info.level=TR.level; } }   /* 收下前先以存档真实等级为基准再升级，杜绝时序偏差 */
+    var _up=TR.level-_old;
+    recalcCharacter(); trSyncChar(); renderChar(); renderCurrency(); saveGame();
+    if(_up>0){ TR.hp=TR.maxHp; gLog('升级','离线结算升至 Lv.'+TR.level); }
+    OFFLINE.pending=null;
+    ov.classList.remove('show'); setTimeout(function(){ if(ov.parentNode) ov.remove(); },320);
+  });   /* 收下：按当前角色数据加经验金币升级，等级只增不降 */
 }
 
 function trGainExp(monLv, af, isBoss){
@@ -10322,7 +10324,7 @@ function saveGame(){
       characterLevel:CHARACTER.info.level, trExp:TR.exp, potionUntil:POTION_UNTIL, sunUntil:SUN_UNTIL, megaSunUntil:MEGA_SUN_UNTIL, perm:PERM,
       arena:{ score:ARENA.score, win:ARENA.win, lose:ARENA.lose, streak:ARENA.streak, _rank:ARENA._rank, titleOn:ARENA.titleOn, killBoss:ARENA.killBoss, medalOn:ARENA.medalOn, killGod:ARENA.killGod, godMedalOn:ARENA.godMedalOn, killSupreme:ARENA.killSupreme, supremeMedalOn:ARENA.supremeMedalOn, tlm:{s50:TLM.s50,s100:TLM.s100,s150:TLM.s150}, lastDaily:ARENA.lastDaily },
       ith:ITH_LEFT, jiMie:SJD_LEFT, quick:QUICK, elemSlot:ELEM_SLOT, innate:CHARACTER.innate, origin:CHARACTER.origin,
-      collected:COLLECT, collectDone:COLLECT_DONE, rebirth:REBIRTH, altar:ALTAR, wboss:WBOSS, daily:DAILY, lastActive:Date.now(), luck:LUCK
+      collected:COLLECT, collectDone:COLLECT_DONE, rebirth:REBIRTH, altar:ALTAR, wboss:WBOSS, daily:DAILY, lastActive:Date.now(), offlineHang:TR.auto, luck:LUCK
     }));
   }catch(e){}
 }
@@ -10356,6 +10358,7 @@ function loadGame(){
   if(s.ith){ ITH_LEFT=s.ith; }
   if(typeof s.jiMie==='number') SJD_LEFT=s.jiMie;
   if(typeof s.lastActive==='number') OFFLINE.lastActive=s.lastActive;
+  if(typeof s.offlineHang==='boolean') OFFLINE.hang=s.offlineHang;
   if(s.luck){ if(typeof s.luck.lottery==='number') LUCK.lottery=s.luck.lottery; if(typeof s.luck.drop==='number') LUCK.drop=s.luck.drop; }
   if(s.quick&&Object.prototype.toString.call(s.quick)==='[object Array]'){ QUICK=s.quick.slice(0,4); }
   if(s.elemSlot){ ['atk','def'].forEach(function(sk){ if(s.elemSlot[sk]&&Object.prototype.toString.call(s.elemSlot[sk])==='[object Array]'){ var na=[]; for(var _i=0;_i<4;_i++) na[_i]=link(s.elemSlot[sk][_i]); ELEM_SLOT[sk]=na; } }); }
@@ -10424,7 +10427,7 @@ function doReset(){
   try{ localStorage.removeItem('shenqi_jackpot_1e8'); }catch(e){}   /* 初始化重置抽奖稀有池'全属性+1亿'限量：回默认全服10份 */
   LOTTERY_COUNT=0; saveLotteryCount(); updatePity(); updateLotteryGold();   /* 初始化将保底计数写回落盘(0)并即时刷新抽奖页显示，避免进入时残留上次值 */
   LOTTERY_FREE = LOTTERY_FREE_MAX; saveLotteryFree();   /* 初始化重置每日免费抽奖次数为上限 */
-  LUCK={lottery:0,drop:0}; OFFLINE.lastActive=0;   /* 初始化重置保底幸运值/离线时间戳 */
+  LUCK={lottery:0,drop:0}; OFFLINE.lastActive=0; OFFLINE.hang=false;   /* 初始化重置保底幸运值/离线时间戳/挂机标记 */
   renderLotteryLog();
   recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); renderCurrency();
   if(typeof renderRebirth==='function') renderRebirth(); if(typeof renderAltar==='function') renderAltar();   /* 初始化后同步刷新轮回/黄金神坛显示 */
