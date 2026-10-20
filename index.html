@@ -7302,8 +7302,8 @@ function renderArena(){
   renderArenaReward();
 }
 var ARENA_SHOP=[
-  {n:'神印神力碎片 ×100',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#C86BFF" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4.5v6.5L12 21l-7-7V7.5z"/><path d="M12 3v18M5 7.5l7 4.5 7-4.5"/></svg>',sub:'天神·神印破重材料',c:3000,do:function(){ var m=mkLoot(ITEM_BLUEPRINTS.sealFragment); m.count=100; addStackable(m); }},
-  {n:'神符神力碎片 ×100',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#7BE6A0" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h12v18H6z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>',sub:'天神·神符破重材料',c:3000,do:function(){ var m=mkLoot(ITEM_BLUEPRINTS.runeFragment); m.count=100; addStackable(m); }},
+  {n:'神印神力碎片 ×100',ic:'<img src="logos/神印神力碎片.png" style="width:100%;height:100%;object-fit:contain">',sub:'天神·神印破重材料',c:3000,do:function(){ var m=mkLoot(ITEM_BLUEPRINTS.sealFragment); m.count=100; addStackable(m); }},
+  {n:'神符神力碎片 ×100',ic:'<img src="logos/神符神力碎片.png" style="width:100%;height:100%;object-fit:contain">',sub:'天神·神符破重材料',c:3000,do:function(){ var m=mkLoot(ITEM_BLUEPRINTS.runeFragment); m.count=100; addStackable(m); }},
   {n:'本源结晶 +1',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#52C6DA" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 4.5v6.5L12 21l-7-7V7.5z"/><path d="M12 3v18M5 7.5l7 4.5 7-4.5"/><path d="M12 12l5 2M12 12l-5 2"/></svg>',sub:'太初本源成长材料（超脱核心）',c:12000,do:function(){ REBIRTH.essence+=1; }},
   {n:'全属性 +1亿',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#E8CB74" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-2.9-5.4 2.9 1.2-6L3.4 8.8l6-.7z"/></svg>',sub:'永久全属性提升',c:4000,do:function(){ addPerm(100000000,0,'竞技积分商店'); }},
   {n:'全属性 +10亿',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#FFC24B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-2.9-5.4 2.9 1.2-6L3.4 8.8l6-.7z"/></svg>',sub:'永久全属性提升',c:20000,do:function(){ addPerm(1000000000,0,'竞技积分商店'); }},
