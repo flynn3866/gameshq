@@ -511,6 +511,34 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
   max-width:84%;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.notice-bar{
+  position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);transform:translateX(-50%) translateY(-24px);
+  z-index:2147483600;max-width:min(94vw,470px);width:94vw;
+  display:flex;align-items:center;gap:12px;
+  background:radial-gradient(130% 180% at 50% -40%,rgba(255,211,77,.34),rgba(255,211,77,0) 58%),
+             linear-gradient(180deg,#4c3516,#221708);
+  border:1px solid rgba(255,211,77,.78);
+  border-radius:14px;padding:12px 14px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.42),0 10px 30px rgba(0,0,0,.68),0 0 26px rgba(255,200,80,.5),inset 0 1px 0 rgba(255,255,255,.24);
+  opacity:0;pointer-events:none;cursor:pointer;
+  transition:opacity .3s, transform .3s;
+}
+.notice-bar::before{content:'';position:absolute;left:12px;right:12px;top:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,238,170,.95),transparent);}
+.notice-bar.on{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
+.nb-badge{flex:none;width:40px;height:40px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 35% 28%,#ffe9a8,#ffc04d 48%,#b57a1a);
+  color:#2b1a04;font-size:21px;font-weight:900;
+  box-shadow:0 0 14px rgba(255,205,90,.95),inset 0 -2px 4px rgba(0,0,0,.4);
+  animation:lgPulse 1.2s ease-in-out infinite;}
+.nb-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.nb-title{color:#FFE9A8;font-size:11px;font-weight:800;letter-spacing:3px;text-shadow:0 0 8px rgba(255,211,77,.65);}
+.nb-tx{color:#FFFFFF;font-size:13.5px;font-weight:700;letter-spacing:.5px;line-height:1.32;
+  text-shadow:0 1px 0 rgba(0,0,0,.55),0 0 10px rgba(255,220,120,.35);}
+.nb-go{flex:none;display:inline-flex;align-items:center;gap:2px;padding:6px 13px;border-radius:20px;
+  background:linear-gradient(180deg,#ffd98a,#c98a24);color:#2b1a04;font-size:12px;font-weight:900;letter-spacing:.5px;
+  box-shadow:0 2px 8px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.55);}
 
 /* 确认框 */
 .confirm-mask{position:fixed;inset:0;background:rgba(8,7,6,.55);z-index:120;display:flex;align-items:center;justify-content:center;}
@@ -1683,6 +1711,8 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
 .lg-dot{width:12px;height:12px;border-radius:3px;border:1px solid rgba(255,255,255,.3);}
 .lottery-log-wrap{width:min(352px,86vw);margin:2px auto 0;}   /* 与轮盘同宽对齐，左右居中 */
 .ll-title{font-size:12px;color:#E8CB74;letter-spacing:3px;text-align:center;margin-bottom:8px;text-shadow:0 0 8px rgba(232,203,116,.35);}
+.xianji-collect{margin-top:18px;padding-top:14px;border-top:1px solid rgba(201,162,75,.28);}
+.xianji-collect .ach-card{margin-bottom:8px;}   /* 玄鉴神藏图鉴：卡片间距，复用成就页 ach-card 样式 */
 .cfetti{position:fixed;top:38%;left:50%;z-index:9999;pointer-events:none;opacity:0;border-radius:2px;
   box-shadow:0 0 5px rgba(255,255,255,.45);animation:cf 2.6s ease-out forwards;}
 @keyframes cf{
@@ -2467,6 +2497,11 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 .wb-top b{color:#FFD98A;font-size:13px;font-weight:800;text-shadow:0 0 8px rgba(255,200,110,.4);}
 .wb-boss{position:relative;margin:0;padding:14px;border-radius:12px;background:radial-gradient(130% 95% at 50% -25%,rgba(255,90,120,.18),rgba(0,0,0,0) 62%),linear-gradient(180deg,#3a2320,#200f0c);border:1px solid rgba(255,120,90,.42);box-shadow:inset 0 1px 0 rgba(255,255,255,.09),0 6px 16px rgba(0,0,0,.42),0 0 12px rgba(231,76,60,.18);text-align:center;}
 .wb-bname{font-size:16px;font-weight:900;color:#FF6B5E;text-shadow:0 0 12px rgba(255,90,80,.75),0 1px 0 #000;letter-spacing:2px;}
+.wb-status{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;letter-spacing:1.5px;padding:3px 10px;border-radius:20px;margin-bottom:8px;border:1px solid;}
+.wb-status.st-wait{color:#AEB6C0;border-color:rgba(174,182,192,.5);background:rgba(174,182,192,.12);}
+.wb-status.st-fight{color:#FF6B5E;border-color:rgba(255,107,94,.6);background:rgba(255,90,80,.15);animation:lgPulse 1.8s ease-in-out infinite;}
+.wb-status.st-reward{color:#FFD34D;border-color:rgba(255,211,77,.6);background:rgba(255,211,77,.14);animation:lgPulse 1.4s ease-in-out infinite;}
+.wb-status.st-done{color:#7BF1C4;border-color:rgba(123,241,196,.55);background:rgba(123,241,196,.12);}
 .wb-btier{display:inline-block;font-size:9px;font-weight:700;color:#FFB08C;margin-top:5px;padding:2px 8px;border-radius:8px;border:1px solid rgba(255,140,100,.5);background:rgba(255,120,80,.12);letter-spacing:1px;}
 .wb-bmeta{font-size:10px;color:#D8CDB8;margin-top:6px;letter-spacing:.5px;}
 .wb-bmeta b{color:#FFD98A;}
@@ -3327,6 +3362,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
     <div class="sys-body">
       <div class="lottery-panel">
         <div class="lottery-head"><span id="lottery-pity-num"></span><button class="lot-limited" id="lot-limited-hint">限量</button></div>
+        <div class="lottery-legend" id="lottery-legend"></div>
         <div class="wheel-wrap">
           <div class="wheel" id="wheel"><div class="wheel-gear" id="wheel-gear"></div></div>
           <div class="wheel-pointer"></div>
@@ -3341,6 +3377,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
           <div class="lottery-log" id="lottery-log"></div>
         </div>
       </div>
+      <div class="xianji-collect" id="xianji-collect"></div>
     </div>
   </div>
 </div>
@@ -3353,6 +3390,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
 </div>
 <div id="tooltip"></div>
 <div id="toast"></div>
+<div id="notice-bar" class="notice-bar"></div>
 
 <script>
 (function(){
@@ -5173,6 +5211,12 @@ function stackItems(type){
 ENH.reset=function(){ this.equip=null; this.mats=[null,null,null,null,null,null]; this.availPage=0; this.hammer=null; };
 /* ============ 锻造工坊：分解/重铸经济 ============ */
 var CRAFT={tab:'decomp', recast:null, decompPage:0, recastPage:0, smeltPage:0, exchPage:0, decompPick:null, evolvePick:null};
+function craftSortDesc(a,b){
+  var m={grey:0,blue:1,gold:2,purple:3};
+  var ra=(m[itemQuality(a)]||0)*2 + (a&&a.specialEffect?1:0);
+  var rb=(m[itemQuality(b)]||0)*2 + (b&&b.specialEffect?1:0);
+  return rb-ra;   /* 质量倒序：传说>史诗>稀有>普通；同质量带异能条(特殊效果)者在前；同分保持原顺序(V8稳定排序) */
+}
 function craftEssenceCount(){ var n=0; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(s&&s.name==='锻造精华') n+=(s.count||1); } return n; }
 function mkEssence(n){ return {name:'锻造精华',type:'craft_mat',img:'logos/神力碎片.png',count:n,maxStack:999999,quality:'grey'}; }
 function isDecompEquip(it){ if(!it)return false; var q=itemQuality(it); if(q!=='gold'&&q!=='purple')return false; return !!EQUIPPABLE[it.type]; }
@@ -5258,7 +5302,7 @@ function craftNameHTML(it){
 function renderCraft(){
   var b=document.getElementById('craft-body'); if(!b) return;
   var ess=craftEssenceCount();
-  var eqs=[]; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(isDecompEquip(s)) eqs.push(s); }
+  var eqs=[]; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(isDecompEquip(s)) eqs.push(s); } eqs.sort(craftSortDesc);
   if(CRAFT.decompPage*6>=eqs.length) CRAFT.decompPage=0; var eqsP=eqs.slice(CRAFT.decompPage*6,(CRAFT.decompPage+1)*6);
   var html='<div class="craft-mats"><div class="cm-block cm-g"><span class="cm-ic">铸</span><div class="cm-txt"><span class="cm-lb">锻造精华</span><b class="cm-n">'+ess.toLocaleString()+'</b></div></div><div class="cm-block cm-g"><span class="cm-ic">金</span><div class="cm-txt"><span class="cm-lb">金币</span><b class="cm-n">'+fmtWan(CURRENCY.gold)+'</b></div></div><div class="cm-block cm-le"><span class="cm-ic">粹</span><div class="cm-txt"><span class="cm-lb">传说精粹</span><b class="cm-n">'+legendEssenceCount()+'</b></div></div></div>';
   html+='<div class="craft-tabs">'
@@ -5270,7 +5314,7 @@ function renderCraft(){
     +'<button class="ct-btn'+(CRAFT.tab==='auto'?' on':'')+'" data-t="auto">自动</button>'
     +'</div>';
   if(CRAFT.tab==='decomp'){
-  var eqs=[]; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(isDecompEquip(s)) eqs.push(s); }
+  var eqs=[]; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(isDecompEquip(s)) eqs.push(s); } eqs.sort(craftSortDesc);
   if(CRAFT.decompPage*6>=eqs.length) CRAFT.decompPage=0; var eqsP=eqs.slice(CRAFT.decompPage*6,(CRAFT.decompPage+1)*6);
   html+='<div class="craft-card"><div class="craft-card-t"><span class="craft-ic gold">熔</span>熔铸分解<span class="craft-tip">史诗+15 · 传说+50</span></div>';
   if(eqs.length===0){ var eRows=''; for(var ei0=0;ei0<6;ei0++) eRows+='<div class="craft-row craft-row-empty"></div>'; html+='<div class="craft-list" style="padding-top:8px">'+eRows+'</div>'; html+=craftPager('decomp',eqs.length,CRAFT.decompPage); }
@@ -5278,7 +5322,7 @@ function renderCraft(){
   html+='</div>';
   }
   else if(CRAFT.tab==='recast'){
-  var rec=allEquipmentForPick(); var cur=CRAFT.recast; if(CRAFT.recastPage*6>=rec.length) CRAFT.recastPage=0; var recP=rec.slice(CRAFT.recastPage*6,(CRAFT.recastPage+1)*6);
+  var rec=allEquipmentForPick(); rec.sort(craftSortDesc); var cur=CRAFT.recast; if(CRAFT.recastPage*6>=rec.length) CRAFT.recastPage=0; var recP=rec.slice(CRAFT.recastPage*6,(CRAFT.recastPage+1)*6);
   html+='<div class="craft-card"><div class="craft-card-t"><span class="craft-ic purple">淬</span>重铸淬炼<span class="craft-tip">精华×100 · 金币10亿</span></div><div class="craft-card-s">选定一件装备，随机淬炼出更强属性词条（2~6条，在原有词条上叠加）</div>';
   if(rec.length===0){ var rRows=''; for(var ri0=0;ri0<6;ri0++) rRows+='<div class="craft-row craft-row-empty"></div>'; html+='<div class="craft-list" style="padding-top:8px">'+rRows+'</div>'; } else{ var rRows=recP.map(function(it){ var q=itemQuality(it); return '<div class="craft-row q-'+q+(cur&&cur.id===it.id?' sel':'')+'" data-r="'+it.id+'"><div class="cr-slot"><img src="'+it.img+'" alt="">'+((it.gemAttributes&&it.gemAttributes.additionalAttribute)&&(it.type==='weapon'||it.type==='chest')?attrBadge(String(it.gemAttributes.additionalAttribute)):'')+(it.specialEffect?abilityBadge(it.specialEffect):'')+'</div><div class="cr-info"><div class="cr-name" style="color:'+qualityColor(q)+'">'+craftNameHTML(it)+'</div><div class="cr-sub">'+qualityName(q)+' · 重铸需：精华×100 · 金币10亿</div></div><button class="cr-btn" data-qid="'+it.id+'">淬炼</button></div>'; }).join(''); for(var ri=recP.length; ri<6; ri++) rRows+='<div class="craft-row craft-row-empty"></div>'; html+='<div class="craft-list">'+rRows+'</div>'; } html+=craftPager('recast',rec.length,CRAFT.recastPage);
   html+='</div>';
@@ -5297,7 +5341,7 @@ function renderCraft(){
   }
   }
   else if(CRAFT.tab==='smelt'){
-  var lgs=[]; for(var lp=0;lp<BAG_NUM;lp++)for(var li=0;li<BAG_SLOTS;li++){ var ls0=bag[lp][li]; if(isLegendEquip(ls0)) lgs.push(ls0); }
+  var lgs=[]; for(var lp=0;lp<BAG_NUM;lp++)for(var li=0;li<BAG_SLOTS;li++){ var ls0=bag[lp][li]; if(isLegendEquip(ls0)) lgs.push(ls0); } lgs.sort(craftSortDesc);
   if(CRAFT.smeltPage*6>=lgs.length) CRAFT.smeltPage=0; var lgsP=lgs.slice(CRAFT.smeltPage*6,(CRAFT.smeltPage+1)*6);
   html+='<div class="craft-card"><div class="craft-card-t"><span class="craft-ic purple">熔</span>传说熔铸<span class="craft-tip">传说装备熔成精粹</span></div><div class="craft-card-s">将多余的传说装备熔成「传说精粹」（首饰 2 个 · 其他 1 个），用于兑换成长资源</div><div class="craft-list">';
   if(lgs.length===0){ for(var li0=0;li0<6;li0++) html+='<div class="craft-row craft-row-empty"></div>'; }
@@ -7368,7 +7412,7 @@ function route(){
   if(!h || h==='#'){ location.replace('#home'); return; }   /* 默认进入基地大厅 */
   if (h.indexOf('#god')<0) stopGodAuto();   /* 离开天神页即停止自动升级 */
   if (h.indexOf('#arena')<0) stopArenaFight(); /* 离开竞技页即停止战斗 */
-  if (typeof WBOSS!=='undefined' && h.indexOf('#wboss')<0) wbStop(); /* 离开世界BOSS页即停止战斗 */
+  if (typeof WBOSS!=='undefined' && h.indexOf('#wboss')<0){ wbStop(); if(WB_REFRESH){ clearInterval(WB_REFRESH); WB_REFRESH=null; } } /* 离开世界BOSS页即停止战斗与血条刷新 */
   /* 统一绑定所有二级页返回按钮（不依赖 renderHome，刷新/直开页面也有效） */
   ['arena','forge','wanshou','gem','enhance','refine','shop','treasure','trial','lottery','achievement','attrs','main','rebirth','altar','guide','season'].forEach(function(k){
     var b=document.getElementById(k+'-back'); if(b&&!b.__b){ b.__b=true; b.addEventListener('click',function(){ location.hash='#home'; }); }
@@ -7853,6 +7897,7 @@ function stopArenaFight(){ if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.ti
 /* ===== 世界BOSS榜：全服共享超厚血条 · 分时段讨伐 · 伤害排名 ===== */
 var WBOSS={day:'',slot:-1,mul:1,boss:null,bossMax:1,bossHp:1,my:0,ai:[],lastVisit:0,killed:false,reward:{got:false},coins:0,totalKill:0,totalDmg:0,bestDmg:0};
 var WB_SESSION=null;
+var WB_REFRESH=null;   /* 世界BOSS页血条动态刷新定时器（3秒，仅页面停留时运行） */
 var WB_NAMES=['剑尊·破天','血刀·修罗','风神·无痕','星陨·落','霜华·冷','雷帝·狂','焚天·焰','幽影·匿','苍狼·啸','月蚀·冥','云麾·苍','渊帝·影'];
 var WB_SHOP=[
  {n:'神力碎片',qty:5000,cost:60,bp:'godPowerFragment'},
@@ -8001,16 +8046,22 @@ function wbRenderMeta(){
 }
 function wbRenderBoss(){
   var el=document.getElementById('wb-boss'); if(!el) return;
-  if(!WBOSS.boss){ el.innerHTML='<div class="wb-bname">世界BOSS 即将降临…</div>'; return; }
+  if(!WBOSS.boss){ el.innerHTML='<span class="wb-status st-wait">未开始 · 等待刷新</span><div class="wb-bname">世界BOSS 即将降临…</div>'; return; }
   var o=WBOSS.boss;
   var pct=WBOSS.bossMax?Math.max(0,Math.min(100,WBOSS.bossHp/WBOSS.bossMax*100)):0;
-  var txt=WBOSS.killed||WBOSS.bossHp<=0
-    ?'<div class="wb-bname" style="color:#7BF1C4;text-shadow:0 0 14px rgba(123,241,196,.8)">世界BOSS · 已讨伐</div><div class="wb-btier">已覆灭 · 点击领取奖励</div>'
-    :'<div class="wb-bname">'+o.n+'</div><span class="wb-btier">'+BOSS_TIERS[o.tier==='supreme'?6:(o.tier==='god'?5:4)]+'</span>'
+  var txt;
+  if(WBOSS.killed||WBOSS.bossHp<=0){
+    txt=(WBOSS.reward.got?'<span class="wb-status st-done">已讨伐 · 奖励已领取</span>':'<span class="wb-status st-reward">已讨伐 · 待领取奖励</span>')
+      +'<div class="wb-bname" style="color:#7BF1C4;text-shadow:0 0 14px rgba(123,241,196,.8)">世界BOSS · 已讨伐</div>'
+      +'<div class="wb-btier">'+(WBOSS.reward.got?'奖励已领取 · 下时段再战':'已覆灭 · 点击领取奖励')+'</div>';
+  } else {
+    txt='<span class="wb-status st-fight">讨伐中 · 全服合力</span>'
+      +'<div class="wb-bname">'+o.n+'</div><span class="wb-btier">'+BOSS_TIERS[o.tier==='supreme'?6:(o.tier==='god'?5:4)]+'</span>'
       +'<div class="wb-bmeta">战力 <b>'+fmtWan(dispVal(o.pw))+'</b> · 档位 ×'+WBOSS.mul+'</div>'
       +'<div class="wb-bar"><i style="width:'+pct.toFixed(1)+'%"></i></div>'
       +'<div class="wb-bar-t"><span class="cur">残血 '+fmtWan(WBOSS.bossHp)+'</span><span>共享 '+fmtWan(WBOSS.bossMax)+'</span></div>'
       +'<div class="wb-slot">时段 '+(WBOSS.slot*6)+':00 刷新 · 全服合力 · 越晚越接近讨伐</div>';
+  }
   el.innerHTML=txt;
 }
 function wbFightView(){
@@ -8097,8 +8148,50 @@ function wbRenderShop(){
   el.innerHTML=h;
   if(!el.__b){ el.__b=true; el.addEventListener('click', function(e){ var b=e.target.closest('.wb-sbuy'); if(b&&!b.disabled) wbBuy(parseInt(b.id.split('-')[2])); }); }
 }
+function wbStatus(){
+  if(!WBOSS.boss) return {text:'即将降临', sub:'下一时段刷新'};
+  if(WBOSS.reward.got) return {text:'已讨伐', sub:'本时段奖励已领取'};
+  if(WBOSS.killed||WBOSS.bossHp<=0) return {text:'已讨伐', sub:'速去领取奖励！'};
+  var _p=WBOSS.bossMax?Math.max(0,Math.round(WBOSS.bossHp/WBOSS.bossMax*100)):0;
+  return {text:'激战中', sub:WBOSS.boss.n+' 残血 '+_p+'% · 全服合力'};
+}
+function showServerNotice(txt, hash){   /* 服务器公告横幅：点击跳转 + 3秒自动收起（调用方控制去重） */
+  var bar=document.getElementById('notice-bar'); if(!bar) return;
+  bar.innerHTML='<span class="nb-badge">✦</span><div class="nb-body"><b class="nb-title">✦ 全服公告 ✦</b><span class="nb-tx">'+txt+'</span></div><span class="nb-go">前往 ›</span>';
+  bar.classList.add('on');
+  if(bar.__h){ bar.removeEventListener('click',bar.__h); }
+  bar.__h=function(){ bar.classList.remove('on'); if(hash) location.hash=hash; };
+  bar.addEventListener('click',bar.__h);
+  clearTimeout(bar.__t); bar.__t=setTimeout(function(){ bar.classList.remove('on'); },3000);
+}
+function wbServerNotice(){   /* 打开系统：公告世界BOSS当前状态（会话内一次；该时段开打提醒置满，避免重复） */
+  try{ if(typeof wbEnsure==='function') wbEnsure(); }catch(e){}
+  try{
+    if(sessionStorage.getItem('_notice_wb_once')) return;
+    sessionStorage.setItem('_notice_wb_once','1');
+    sessionStorage.setItem('_wb_notice_slot', (WBOSS.day||'')+'@'+(WBOSS.slot||-1));
+    sessionStorage.setItem('_wb_notice_n','3');
+  }catch(e){}
+  var st=wbStatus(); if(!st) return;
+  showServerNotice(st.text+' · '+st.sub, '#wboss');
+}
+function wbServerTick(){   /* 每60秒：世界BOSS时段刷新(开打)时弹全服公告，每个时段最多弹3次 */
+  try{ if(typeof wbEnsure==='function') wbEnsure(); }catch(e){}
+  var sl=(WBOSS.day||'')+'@'+(WBOSS.slot||-1);
+  var cur=null, n=0;
+  try{
+    cur=sessionStorage.getItem('_wb_notice_slot');
+    n=parseInt(sessionStorage.getItem('_wb_notice_n')||'0',10)||0;
+  }catch(e){}
+  if(cur!==sl){ n=0; try{ sessionStorage.setItem('_wb_notice_slot', sl); }catch(e){} }
+  if(!WBOSS.killed && WBOSS.bossHp>0 && !WBOSS.reward.got && n<3){
+    showServerNotice('世界BOSS已刷新开打！'+WBOSS.boss.n+' 残血 100% · 全服合力讨伐','#wboss');
+    n+=1; try{ sessionStorage.setItem('_wb_notice_n',''+n); }catch(e){}
+  }
+}
 function mountWboss(){
   wbEnsure();
+  if(!WB_REFRESH){ WB_REFRESH=setInterval(function(){ try{ wbEnsure(); wbRenderBoss(); wbRenderReward(); }catch(e){} },10000); }   /* 页面停留：10秒推进AI+刷新残血（低频，更省电） */
   var bk=document.getElementById('wb-back'); if(bk&&!bk.__b){ bk.__b=true; bk.addEventListener('click',function(){ location.hash='#home'; }); }
   var g=document.getElementById('wb-go'); if(g&&!g.__b){ g.__b=true; g.addEventListener('click',wbGo); }
   var st=document.getElementById('wb-stop'); if(st&&!st.__b){ st.__b=true; st.addEventListener('click',function(){ wbStop(); wbRender(); }); }
@@ -8721,21 +8814,21 @@ document.addEventListener('click',function(e){ var b=e.target.closest&&e.target.
 
 
 /* 抽奖概率=真实概率（总和1.0）；prob<0.01 为稀有档（保底奖池） */
-var LOTTERY=[
-  {label:'谢谢参与',short:'谢谢',prob:0.14,color:'#4A5A72',apply:function(){}}   /* 协调蓝灰：低调不刺眼，与整体暗金/蓝/金体系搭配 */,
-  {label:'300万金币',short:'300万',prob:0.15,color:'#C08430',apply:function(){CURRENCY.gold+=3000000;}}   /* 亮金棕：与银白谢谢区分，金币主题呼应 */,
-  {label:'全属性+10~50',short:'全属性+10~50',prob:0.107,color:'#4f7da0',apply:function(){this._addVal=10+Math.floor(Math.random()*41); addPerm(this._addVal,0,'抽奖轮盘');}},   /* 轮盘显示区间 10~50；日志/结果显示真实附加值 */
-  {label:'神符碎片',short:'神符碎片',prob:0.07,color:'#e2b04f',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=1; lotteryGive(g,false,this); }},
-  {label:'神力碎片',short:'神力碎片',prob:0.06,color:'#6fa8dc',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
-  {label:'1亿金币',short:'1亿',prob:0.11,color:'#f2c51e',apply:function(){CURRENCY.gold+=Math.round(100000000*altarGoldMult());}},
-  {label:'神符天神牌子',short:'神符牌',prob:0.05,color:'#d4a017',apply:function(){var rs=[ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune]; var g=mkLoot(rs[Math.floor(Math.random()*rs.length)]); g.count=1; lotteryGive(g,true,this); }},
-  {label:'生命+10000',short:'生命+1万',prob:0.04,color:'#D0715F',apply:function(){addPerm(0,10000,'抽奖轮盘');}}   /* 亮暖红：与相邻扇区视觉齐平 */,
-  {label:'神印碎片',short:'神印碎片',prob:0.03,color:'#9a5bd0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.sealFragment); g.count=1; lotteryGive(g,false,this); }},
-  {label:'锤7',short:'锤7',prob:0.13,color:'#e8b54a',apply:function(){var h=ITEM_BLUEPRINTS.hammers[0]; var g=mkLoot(h); g.count=1; g.maxStack=255; lotteryGive(g,false,this); }},
-  {label:'全属性+100',short:'全属性+100',prob:0.012,color:'#4fa05f',apply:function(){addPerm(100,0,'抽奖轮盘');}},
-  {label:'全属性+50000',short:'全属性+50000',prob:0.001,color:'#a04fd4',apply:function(){addPerm(50000,0,'抽奖轮盘');}},
-  {label:'混沌神石',short:'混沌',prob:0.06,color:'#c8b0d0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=1; g.maxStack=255; lotteryGive(g,false,this); }},
-  {label:'完整属性卷轴',short:'完整卷轴',prob:0.04,color:'#e0d0a0',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=1; lotteryGive(g,false,this); }}
+var LOTTERY=[   /* 玄鉴神藏：稀缺资源池（去空奖，整体价值上移；传说档 prob<0.01 触发彩带/稀有判定） */
+  {label:'锻造精华 ×20',short:'锻造精华',prob:0.12,color:'#C08A3E',_xj:'锻造精华',apply:function(){addStackable(mkEssence(20));}},
+  {label:'镶嵌之锤 Lv7 ×2',short:'镶嵌锤Lv7',prob:0.10,color:'#e8b54a',_xj:'镶嵌之锤 Lv7',apply:function(){var h=mkLoot(ITEM_BLUEPRINTS.hammers[0]); h.count=2; h.maxStack=255; lotteryGive(h,false,this); }},
+  {label:'祝福宝石 ×1',short:'祝福宝石',prob:0.09,color:'#E05A3A',_xj:'祝福宝石',apply:function(){var pool=[ITEM_BLUEPRINTS.earthBlessingGem,ITEM_BLUEPRINTS.fireBlessingGem,ITEM_BLUEPRINTS.waterBlessingGem,ITEM_BLUEPRINTS.windBlessingGem]; var b=mkLoot(pool[Math.floor(Math.random()*pool.length)]); b.count=1; lotteryGive(b,false,this); }},
+  {label:'神力碎片',short:'神力碎片',prob:0.08,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
+  {label:'神印碎片 ×2',short:'神印碎片',prob:0.06,color:'#9a5bd0',_xj:'神印碎片',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.sealFragment); g.count=2; lotteryGive(g,false,this); }},
+  {label:'神符碎片 ×2',short:'神符碎片',prob:0.06,color:'#e2b04f',_xj:'神符碎片',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=2; lotteryGive(g,false,this); }},
+  {label:'混沌神石 ×2',short:'混沌',prob:0.05,color:'#c8b0d0',_xj:'混沌神石',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=2; g.maxStack=255; lotteryGive(g,false,this); }},
+  {label:'金币 5亿',short:'5亿金币',prob:0.10,color:'#f2c51e',apply:function(){CURRENCY.gold+=Math.round(500000000*altarGoldMult());}},
+  {label:'本源结晶 ×1',short:'本源结晶',prob:0.05,color:'#9f6bff',_xj:'本源结晶',apply:function(){REBIRTH.essence+=1; toast('获得 本源结晶 +1');}},
+  {label:'传说精粹 ×2',short:'传说精粹',prob:0.05,color:'#e702e7',_xj:'传说精粹',apply:function(){addStackable(mkLegendEssence(2));}},
+  {label:'全属性 +200',short:'全属性+200',prob:0.07,color:'#4f7da0',_xj:'全属性+200',apply:function(){addPerm(200,0,'玄鉴神藏');}},
+  {label:'完整属性卷轴 ×1',short:'完整卷轴',prob:0.04,color:'#e0d0a0',_xj:'完整属性卷轴',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=1; lotteryGive(g,false,this); }},
+  {label:'全属性 +5万',short:'全属性+5万',prob:0.008,color:'#a04fd4',_xj:'全属性+5万',apply:function(){addPerm(50000,0,'玄鉴神藏');}},   /* 传说档：prob<0.01 */
+  {label:'随机传说武器',short:'传说武器',prob:0.006,color:'#E702E7',_xj:'传说武器',_lg:true,apply:function(){var ws=[ITEM_BLUEPRINTS.legendWings,ITEM_BLUEPRINTS.shencaiBlade]; var g=mkLoot(ws[Math.floor(Math.random()*ws.length)]); g.id='xw'+Math.floor(Math.random()*1e9); g.maxStack=1; lotteryGive(g,false,this); }}   /* 传说档：随机传说魔翼/神裁之刃入包 */
 ];
 function lotteryInnate(){ var _i=(typeof CHARACTER!=='undefined'&&CHARACTER&&CHARACTER.innate)? CHARACTER.innate:1; return Math.min(1.8,_i); }   /* 先天运势系数（0.9~1.8）· 黄金神坛运势灌注 */
 function adjustByInnate(innate, items, getP, isLg){   /* 传说级项概率×运势；普通项按比例缩放，保证总权重不变 */
@@ -8772,10 +8865,10 @@ function itemDropFx(label){
 function lotteryRarePool(){   /* 保底稀有奖池：含全属性+500、传说装备、神印牌、完整卷轴；越珍贵权重越小 */
   var pool=[];
   var _jk='shenqi_jackpot_1e8', _jackN=10; try{ _jackN=parseInt(localStorage.getItem(_jk)||'10',10); if(isNaN(_jackN)||_jackN<0) _jackN=0; }catch(e){}
-  if(_jackN>0){ pool.push({label:'全属性+1亿（含生命活力）',w:0.05,_lg:true,apply:function(){ addPerm(100000000,100000000,'抽奖·天选之刻'); _jackN--; try{ localStorage.setItem(_jk,String(Math.max(0,_jackN))); }catch(e){} toast('天选之刻！全属性+1亿！（全服剩余 '+_jackN+' 份）'); }}); }   /* 全服仅10份、全奖最稀有大奖，抽完即永久移除 */
+  if(_jackN>0){ pool.push({label:'全属性+1亿（含生命活力）',w:0.05,_lg:true,_xj:'全属性+1亿',apply:function(){ addPerm(100000000,100000000,'抽奖·天选之刻'); _jackN--; try{ localStorage.setItem(_jk,String(Math.max(0,_jackN))); }catch(e){} toast('天选之刻！全属性+1亿！（全服剩余 '+_jackN+' 份）'); }}); }   /* 全服仅10份、全奖最稀有大奖，抽完即永久移除 */
   pool=pool.concat([
-    {label:'寂灭之息药剂',w:0.12,_lg:true,apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); g.count=1; lotteryGive(g,false,this);}},   /* 最珍稀：寂灭之息药剂（BOSS即死） */
-    {label:'全属性+100万',w:0.3,_lg:true,apply:function(){addPerm(1000000,0,'抽奖');}},   /* 次珍稀：全属性+100万 */
+    {label:'寂灭之息药剂',w:0.12,_lg:true,_xj:'寂灭之息药剂',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); g.count=1; lotteryGive(g,false,this);}},   /* 最珍稀：寂灭之息药剂（BOSS即死） */
+    {label:'全属性+100万',w:0.3,_lg:true,_xj:'全属性+100万',apply:function(){addPerm(1000000,0,'抽奖');}},   /* 次珍稀：全属性+100万 */
     {label:'金币+100亿',w:0.5,_lg:true,apply:function(){CURRENCY.gold+=10000000000;}},   /* 次珍稀：100亿金币 */
     {label:'全属性+50000',w:1,_lg:true,apply:function(){addPerm(50000,0,'抽奖');}},
     {label:'永久生命+100000',w:1,_lg:true,apply:function(){addPerm(0,100000,'抽奖');}},
@@ -8849,6 +8942,45 @@ var COLLECT_SETS=[
   {k:'legChest20', n:'强20奥格顿胸甲 · 四象', items:null, check:function(){ var set={}; allEquipInstances().forEach(function(e){ if(e.name==='传说 奥格顿胸甲'&&(e.enhanceLevel||0)>=20){ var a=eqAttrs(e); for(var k in a) set[k]=1; } }); var n=Object.keys(set).length; return {ok:n>=4,have:n,total:4}; }, r:{all:1000000000,hp:1000000000}, desc:'全属性 +10亿 · 生命活力 +10亿'},
   {k:'perfectRefine', n:'洗炼至臻 · 十全', items:null, check:function(){ var n=0; allEquipInstances().forEach(function(e){ var w=e.washAttrs||{}; if(w.力量===9990000&&w.敏捷===9990000&&w.体质===9990000&&w.智力===9990000&&w.精神===9990000&&w.幸运===9990000&&w.生命===9990000&&w.活力===9990000) n++; }); return {ok:n>=10,have:n,total:10}; }, r:{all:1000000000,hp:1000000000}, desc:'全属性 +10亿 · 生命活力 +10亿'}
 ];
+/* ============ 玄鉴神藏图鉴（抽奖专属·点亮稀缺资源） ============ */
+var XIANJI={}, XIANJI_DONE={}, _xjToastLast=0;
+var XIANJI_SETS=[
+  {k:'xz_mat', n:'神藏·材料', items:['锻造精华','镶嵌之锤 Lv7','祝福宝石','混沌神石','完整属性卷轴','神力碎片','神印碎片','神符碎片'], r:{all:1000000,hp:1000000}, desc:'全属性 +100万 · 生命活力 +100万'},
+  {k:'xz_growth', n:'神藏·成长至宝', items:['本源结晶','传说精粹'], r:{all:3000000,hp:3000000}, desc:'全属性 +300万 · 生命活力 +300万'},
+  {k:'xz_perm', n:'神藏·永久属性', items:['全属性+200','全属性+5万','全属性+100万','全属性+1亿'], r:{all:50000000,hp:50000000}, desc:'全属性 +5000万 · 生命活力 +5000万'},
+  {k:'xz_rare', n:'神藏·稀珍', items:['传说武器','寂灭之息药剂'], r:{all:100000000,hp:100000000}, desc:'全属性 +1亿 · 生命活力 +1亿'}
+];
+function unlockXianji(name){
+  if(!name||XIANJI[name]) return false;
+  XIANJI[name]=1; checkXianji(); renderXianji();   /* 点亮后即时刷新底部神藏图鉴（无需刷新浏览器） */
+  var now=Date.now();
+  if(document.visibilityState==='visible' && now-_xjToastLast>1200){ _xjToastLast=now; toast('玄鉴神藏点亮：<b style="color:#E8CB74">'+name+'</b>'); }
+  saveGame(); return true;
+}
+function checkXianji(){
+  XIANJI_SETS.forEach(function(g){
+    if(XIANJI_DONE[g.k]) return;
+    var ok=true; for(var i=0;i<g.items.length;i++){ if(!XIANJI[g.items[i]]){ ok=false; break; } }
+    if(ok){ XIANJI_DONE[g.k]=1; addPerm(g.r.all||0,g.r.hp||0,'玄鉴图鉴·'+g.n); toast('玄鉴图鉴达成！<b style="color:#FFD700">'+g.n+'</b>：'+g.desc); saveGame(); }
+  });
+}
+function renderXianji(){
+  var el=document.getElementById('xianji-collect'); if(!el) return;
+  var h='<div class="ll-title">玄鉴神藏图鉴</div>';
+  XIANJI_SETS.forEach(function(g){
+    var done=!!XIANJI_DONE[g.k], have=0;
+    for(var i=0;i<g.items.length;i++){ if(XIANJI[g.items[i]]) have++; }
+    h+='<div class="ach-card'+(done?' got':'')+'" style="filter:none;opacity:1"><div class="ach-top"><span class="ach-name" style="color:'+(done?'#FFD34D':'#D8B46A')+'">'+g.n+'</span><span class="ach-name" style="color:#7BF1C4">'+have+' / '+g.items.length+'</span></div><div class="ach-cond">奖励：'+g.desc+(done?' <span class="ach-unlocked">· 已领取</span>':'')+'</div></div>';
+  });
+  var got=0, tot=0; XIANJI_SETS.forEach(function(g){ tot+=g.items.length; g.items.forEach(function(n){ if(XIANJI[n]) got++; }); });
+  h+='<div style="font-size:12px;color:#b8935a;margin:8px 0 2px;letter-spacing:1px">已点亮 '+got+' / '+tot+'</div>';
+  XIANJI_SETS.forEach(function(g){
+    g.items.forEach(function(n){ var on=!!XIANJI[n];
+      h+='<div class="ach-card'+(on?' got':'')+'" style="filter:none;opacity:1;padding:4px 8px;margin:3px 0"><div class="ach-top"><span class="ach-name" style="'+(on?'color:#D8B46A;':'color:#7a7467;')+'">'+n+'</span><span class="ach-name" style="color:'+(on?'#7BF1C4':'#4a463f')+';font-size:12px">'+(on?'✦ 已点亮':'未点亮')+'</span></div></div>';
+    });
+  });
+  el.innerHTML=h;
+}
 function checkCollect(){
   var allNames=null;
   COLLECT_SETS.forEach(function(g){
@@ -8969,7 +9101,7 @@ function showDrops(win, x10results){
   if(x10results){
     /* 10连抽结算：立刻弹浮层，随后一次性发放+日志 */
     showLotteryFloat(x10results.map(function(rs){ return rs.win; }));   /* 立刻弹出奖品浮层 */
-    x10results.forEach(function(rs){ rs.win.apply(); lotteryLog([rs.win]); });   /* 浮层弹出后一次性发放+日志 */
+    x10results.forEach(function(rs){ rs.win.apply(); unlockXianji(rs.win._xj); lotteryLog([rs.win]); });   /* 浮层弹出后一次性发放+日志 */
     renderCurrency(); renderBag(); saveGame(); updateLotteryGold();   /* 同步剩余金币（10连抽中奖加币） */
     lotteryBusy=false;
     return;
@@ -8977,6 +9109,7 @@ function showDrops(win, x10results){
   /* 单抽结算：立刻弹浮层，随后一次性发放+写日志 */
   showLotteryFloat([win]);   /* 立刻弹出奖品浮层 */
   win.apply();
+  unlockXianji(win._xj);   /* 玄鉴神藏图鉴：抽中即点亮 */
   updateLotteryGold();   /* 同步刷新轮盘上方剩余金币（中奖加币等） */
   lotteryLog([win]);
   renderCurrency(); renderBag(); saveGame();
@@ -8984,7 +9117,7 @@ function showDrops(win, x10results){
 }
 function lotteryImg(label){   /* 奖品图标：物品类按 label 匹配蓝图图标，非物品返回 null（显示文字） */
   var bp=ITEM_BLUEPRINTS, m=[
-    ['神符碎片',bp.runeFragment],['神力碎片',bp.godPowerFragment],['神印碎片',bp.sealFragment],['锤7',bp.hammers[0]],
+    ['锻造精华',{img:'logos/神力碎片.png'}],['镶嵌之锤 Lv7',bp.hammers[0]],['祝福宝石',bp.earthBlessingGem],['本源结晶',{img:'logos/神力碎片.png'}],['传说精粹',{img:'logos/神力碎片.png'}],['传说武器',bp.legendWings],['神符碎片',bp.runeFragment],['神力碎片',bp.godPowerFragment],['神印碎片',bp.sealFragment],['锤7',bp.hammers[0]],
     ['混沌神石',bp.statGems[bp.statGems.length-1]],['完整属性卷轴',bp.refineScrollFull],['完整卷轴',bp.refineScrollFull],
     ['寂灭之息药剂',bp.jiMiePotion],['神符天神牌子',bp.warGodsPowerRune],['神印天神牌',bp.warGodsFavor],['坐骑',bp.mount]
   ];
@@ -9017,7 +9150,7 @@ function lotteryReveal(cell, win){   /* 点开光团：显示具体奖品图标/
   var img=lotteryImg(win.label);
   cell.innerHTML = img ? '<div class="lf-reveal"><div class="lf-ico"><img src="'+img+'"></div></div>' : '<div class="lf-reveal"><span class="lf-text">'+text+'</span></div>';
   cell.classList.add('revealed');
-  if(win._lg && /寂灭之息|全属性\+1亿/.test(win.label)) triggerLegendFX(); if(win.prob===undefined || win.prob<=0.01) celebrateConfetti();   /* 稀有池最珍稀/次珍稀两档：传说级特效（带弹幕） */
+  if(win._lg && /寂灭之息|全属性\+1亿|传说武器/.test(win.label)) triggerLegendFX(); if(win.prob===undefined || win.prob<=0.01) celebrateConfetti();   /* 稀有池最珍稀/次珍稀两档 + 轮盘传说武器：传说级特效（带弹幕） */
   else if(win.prob===undefined || win.prob<=0.01) celebrateConfetti();
   else if((win.label||'')!=='谢谢参与') goldFlashFx(text);
 }
@@ -9180,7 +9313,7 @@ function initLottery(){
   if(x10 && !x10.__bound){ x10.__bound=true; x10.addEventListener('click', runLottery10); }
   var rc=document.getElementById('lottery-recharge');
   if(rc && !rc.__bound){ rc.__bound=true; rc.addEventListener('click', rechargeGold); }
-  renderWheel(); buildLegend(); updateLotteryGold(); loadLotteryCount(); updatePity(); loadLotteryFree();
+  renderWheel(); buildLegend(); updateLotteryGold(); loadLotteryCount(); updatePity(); loadLotteryFree(); checkXianji(); renderXianji();   /* 进入玄鉴页：先补算已集齐套装奖励，再渲染神藏图鉴 */
 }
 function fmtYi(n){ if(n>=1e20) return (n/1e20).toFixed(2)+'垓'; if(n>=1e16) return (n/1e16).toFixed(2)+'京'; if(n>=1e12) return (n/1e12).toFixed(2)+'兆'; if(n>=1e8) return (n/1e8).toFixed(2)+'亿'; return n.toLocaleString(); }   /* 余额以亿/兆/京显示 */
 function updateLotteryGold(){ var g=document.getElementById('lottery-wallet-gold'); if(g) g.textContent=fmtYi(CURRENCY.gold); }
@@ -10866,7 +10999,7 @@ function saveGame(){
       characterLevel:CHARACTER.info.level, trExp:TR.exp, potionUntil:POTION_UNTIL, sunUntil:SUN_UNTIL, megaSunUntil:MEGA_SUN_UNTIL, perm:PERM,
       arena:{ score:ARENA.score, maxScore:ARENA.maxScore, win:ARENA.win, lose:ARENA.lose, streak:ARENA.streak, _rank:ARENA._rank, titleOn:ARENA.titleOn, killBoss:ARENA.killBoss, medalOn:ARENA.medalOn, killGod:ARENA.killGod, godMedalOn:ARENA.godMedalOn, killSupreme:ARENA.killSupreme, supremeMedalOn:ARENA.supremeMedalOn, tlm:{s50:TLM.s50,s100:TLM.s100,s150:TLM.s150}, lastDaily:ARENA.lastDaily },
       ith:ITH_LEFT, jiMie:SJD_LEFT, quick:QUICK, elemSlot:ELEM_SLOT, innate:CHARACTER.innate, origin:CHARACTER.origin,
-      collected:COLLECT, collectDone:COLLECT_DONE, rebirth:REBIRTH, altar:ALTAR, wboss:WBOSS, daily:DAILY, lastActive:Date.now(), offlineHang:TR.auto, luck:LUCK, mutate:MUT, store:store
+      collected:COLLECT, collectDone:COLLECT_DONE, xianji:XIANJI, xianjiDone:XIANJI_DONE, rebirth:REBIRTH, altar:ALTAR, wboss:WBOSS, daily:DAILY, lastActive:Date.now(), offlineHang:TR.auto, luck:LUCK, mutate:MUT, store:store
     }));
   }catch(e){}
 }
@@ -10912,6 +11045,8 @@ function loadGame(){
   CHARACTER.growth=calcGrowth(CHARACTER.innate||0.9);   /* 每级成长：始终按当前先天运势重算（先天运势决定区间，1.8→每级6维+5000万/生命+5万/物防+3000） */
   if(s.collected) COLLECT=s.collected;
   if(s.collectDone) COLLECT_DONE=s.collectDone;
+  if(s.xianji) XIANJI=s.xianji;
+  if(s.xianjiDone) XIANJI_DONE=s.xianjiDone;
   if(s.altar){ ALTAR.atk=s.altar.atk||0; ALTAR.def=s.altar.def||0; ALTAR.hp=s.altar.hp||0; ALTAR.gold=s.altar.gold||0; ALTAR.crit=s.altar.crit||0; ALTAR.true=s.altar.true||0; ALTAR.hit=s.altar.hit||0; ALTAR.fdr=s.altar.fdr||0; ALTAR.ls=s.altar.ls||0; ALTAR.drop=s.altar.drop||0; ALTAR.sac=s.altar.sac||0; }
   if(s.wboss){ WBOSS.coins=s.wboss.coins||0; WBOSS.totalKill=s.wboss.totalKill||0; WBOSS.totalDmg=s.wboss.totalDmg||0; WBOSS.bestDmg=s.wboss.bestDmg||0; }
   if(s.mutate){ MUT.crystal=(s.mutate.crystal!=null)?Math.floor(s.mutate.crystal):3; MUT.on=!!s.mutate.on; MUT.tier=s.mutate.tier||0; MUT.aff=(s.mutate.aff||[]).slice(); MUT.up=(s.mutate.up||{1:0,2:0,3:0}); MUT.exP=(s.mutate.exP||0); }
@@ -10966,6 +11101,7 @@ function doReset(){
   ALTAR_LAST_POUR=null;   /* 初始化重置黄金神坛：灌注/献祭全部回到初始 */
   WBOSS.coins=0; WBOSS.totalKill=0; WBOSS.totalDmg=0; WBOSS.bestDmg=0; WBOSS.day=''; WBOSS.slot=-1; WBOSS.boss=null; WBOSS.bossMax=1; WBOSS.bossHp=1; WBOSS.my=0; WBOSS.ai=[]; WBOSS.killed=false; WBOSS.reward={got:false}; if(WB_SESSION){ wbStop(); }   /* 初始化重置世界BOSS榜 */
   COLLECT={}; COLLECT_DONE={};   /* 初始化重置成就-图鉴收集点亮数据：全部回到未收集初始状态 */
+  XIANJI={}; XIANJI_DONE={};   /* 初始化重置玄鉴神藏图鉴 */
   DAILY=null; dailyEnsure();   /* 初始化重置每日活跃：当日全0、宝箱未领、签到重来 */
   LOTTERY_LOG = [];   /* 初始化清空抽奖记录 */
   ADV_LOG = []; try{ localStorage.removeItem('shenqi_adv_log'); }catch(e){}   /* 初始化清空奇遇记录 */
@@ -11000,7 +11136,9 @@ renderCurrency();
 history.replaceState(null, '', location.pathname + location.search);   /* 刷新/直开一律清掉锚点，回到打开主页，避免二级页刷新时数据未就绪导致数字错误 */
 route();          /* 进入主页并重算角色属性 */
 offlineSettle();  /* 结算离线收益（放置核心） */
-bindEvents();})();
+bindEvents();
+  wbServerNotice(); /* 打开系统：服务器公告世界BOSS状态（会话内一次） */
+  setInterval(wbServerTick,60000); /* 世界BOSS时段刷新(开打)时弹全服公告（低频60秒，耗电极低） */})();
 
 </script>
 <div id="lottery-float">
