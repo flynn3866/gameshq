@@ -372,6 +372,8 @@ body.show-god .stage{max-width:680px;}
 #bag-gm{background:linear-gradient(180deg,#6b5d9c,#4a3e6e);border-color:rgba(176,140,255,.5);}
 #bag-autosell{flex:none;padding:0 14px;height:27px;font-size:12px;letter-spacing:1px;color:#FFFFFF;background:linear-gradient(180deg,#6b5d9c,#4a3e6e);border:1px solid rgba(176,140,255,.5);border-radius:6px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}   /* 自动出售：与GM生成同款紫色渐变 */
 #bag-autosell:active{transform:translateY(1px);}
+#bag-store{flex:none;padding:0 14px;height:27px;font-size:12px;letter-spacing:1px;color:#FFFFFF;background:linear-gradient(180deg,#4aa0b8,#316f86);border:1px solid rgba(120,200,220,.5);border-radius:6px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);}   /* 仓库：与自动出售同款胶囊，青色 */
+#bag-store:active{transform:translateY(1px);}
 .eq-cell.drag-over .slot{box-shadow:inset 0 0 0 2px rgba(214,173,90,.75), 0 0 8px rgba(214,173,90,.3);}
 
 /* ===== 凹槽：空槽 #212020 + 边框 #5E5E5E + 内凹凹陷 ===== */
@@ -1975,6 +1977,18 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 #view-main .back-arrow:active svg{opacity:.45;}
 .forge-nav{display:flex;gap:6px;align-items:flex-end;padding:4px 2px 0;margin-bottom:10px;background:transparent;border:none;}
 #view-main{max-width:360px;margin:0 auto;}   /* 物品背包：保持紧凑 360px，不受全局加宽影响 */
+#view-store{max-width:360px;margin:0 auto;padding-bottom:14px;}   /* 仓库页：紧凑 360px */
+#view-store .store-wrap{display:flex;flex-direction:column;gap:8px;padding:8px 8px 0;}
+#view-store .store-col{background:rgba(0,0,0,.20);border:1px solid #322c22;border-radius:12px;padding:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);}   /* 仓库栏：自然高度，整页滚动（去掉栏内滚动条） */
+#view-store .store-col-t{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:800;letter-spacing:2px;color:#F2C96B;margin-bottom:6px;}
+#view-store .store-col-t em{font-style:normal;font-size:10px;color:#a89d88;font-weight:400;letter-spacing:.5px;}
+#view-store .store-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;justify-items:center;}   /* 仓库 8 列 */
+#view-store .store-grid .slot{width:36px;height:36px;max-width:36px;max-height:36px;justify-self:center;}   /* 精确 36×36 正方形（覆盖 .bag-grid .slot 的 46px 高），列内居中 */
+#view-store .store-tip{text-align:center;font-size:10px;color:#a89d88;letter-spacing:.5px;padding:4px 0 8px;}
+#view-store .store-tip b{color:#F2C96B;}
+#view-store .slot.transfer-src{border-color:#FFD75E;box-shadow:0 0 0 2px rgba(255,215,94,.5),0 0 14px rgba(255,215,94,.4),inset 0 0 8px rgba(255,215,94,.25);}
+#view-store .bag-tabs{justify-content:center;position:static;top:auto;left:auto;right:auto;z-index:auto;align-items:flex-end;}   /* 覆盖 .bag-tabs 的 absolute 回到文档流；align-items:flex-end 底部持平，选中项经 .bag-tab.on 的更高高度向上抬升，与行囊页背包 tab 一致 */
+
 .forge-tab{flex:1;height:28px;border:1px solid #685F55;border-radius:5px 5px 0 0;background:linear-gradient(180deg,#232120,#161413);color:#8a8375;font-size:13px;letter-spacing:2px;cursor:pointer;box-sizing:border-box;}
 .forge-tab.on{height:34px;color:#fff;font-weight:600;background:#25221D;border:1px solid #685F55;border-bottom:none;box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
 .forge-body{position:relative;overflow-y:auto;border-radius:9px;}
@@ -2688,6 +2702,22 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
     <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18"/><path d="M12 13v4M10 15h4"/></svg><span class="ph-t">每日活跃</span><div class="g-bag-bar"><button class="g-bag-btn" onclick="location.hash=&#39;#home&#39;">返回基地</button></div></div>
     <div class="dl-wrap" id="daily-body"></div>
   </div>
+  <div class="window" id="view-store" data-theme="cyan">
+    <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="store-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>仓库</h1></header>
+    <div class="store-wrap">
+      <div class="store-col">
+        <div class="store-col-t"><span>背包</span><em>点击看详情 · 长按或拖拽存入仓库</em></div>
+        <div id="store-bag-tabs" class="bag-tabs"></div>
+        <div id="store-bag-grid" class="bag-grid"></div>
+      </div>
+      <div class="store-col">
+        <div class="store-col-t"><span>仓库</span><em>长按或拖拽取出到背包 · 存仓物品受保护</em></div>
+        <div id="store-tabs" class="bag-tabs"></div>
+        <div id="store-grid" class="bag-grid store-grid"></div>
+      </div>
+      <div id="store-tip" class="store-tip"></div>
+    </div>
+  </div>
   <div class="window" id="view-main" data-theme="cyan">
 
     <!-- ===== 顶栏：物品栏（白字） ===== -->
@@ -2717,7 +2747,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
         <span id="gold-bind" class="val">1,004,727</span>
       </div>
     </div>
-    <div class="bag-org-row"><button id="bag-organize">一键整理</button><button id="bag-autosell">自动出售</button></div>
+    <div class="bag-org-row"><button id="bag-organize">一键整理</button><button id="bag-autosell">自动出售</button><button id="bag-store" onclick="location.hash='#store'">仓库</button></div>
     <div class="divider"></div>
     <div class="actions" id="actions"></div>
 
@@ -3357,6 +3387,11 @@ var BAG_NUM = 5, BAG_SLOTS = 24;
 var bag = [];
 for (var p = 0; p < BAG_NUM; p++){ bag.push([]); for (var i=0;i<BAG_SLOTS;i++) bag[p].push(null); }
 var currentTab = 0;
+var STORE_NUM = 5, STORE_SLOTS = 64;   /* 仓库 8×8 = 64 格/页 */
+var store = [];
+for (var _stp = 0; _stp < STORE_NUM; _stp++){ store.push([]); for (var _sti=0;_sti<STORE_SLOTS;_sti++) store[_stp].push(null); }
+var storeTab = 0;   /* 仓库当前页签 */
+var storeBagTab = 0;   /* 仓库页内背包栏当前页签（独立于行囊 currentTab） */
 
 var LOOT = [
   {name:'碎裂红宝石', color:'#c85a3f'},
@@ -4001,6 +4036,154 @@ function organizeBag(){
 }
 
 /* ===== 穿戴/卸下：装备槽位 <-> 物品类型 映射 ===== */
+/* ===== 仓库页：上背包 / 下仓库 双栏 + 转移（长按选中 / 拖拽，仅限背包↔仓库） ===== */
+function stRowEmpty(tab, side){
+  var arr = side==='bag' ? bag[tab] : store[tab];
+  for (var i=0;i<arr.length;i++) if (!arr[i]) return i;
+  return -1;
+}
+function storeMove(fromSide, fromTab, fromIdx, toSide, toTab, toIdx){
+  var src = fromSide==='bag' ? bag : store, dst = toSide==='bag' ? bag : store;
+  var it = src[fromTab][fromIdx]; if (!it) return false;
+  if (dst[toTab][toIdx]){   /* 目标格被占 → 自动寻同栏空格 */
+    var si = stRowEmpty(toTab, toSide);
+    if (si < 0){ toast(toSide==='bag' ? '背包已满，请先整理' : '仓库已满，请先整理'); return false; }
+    toIdx = si;
+  }
+  src[fromTab][fromIdx] = null; dst[toTab][toIdx] = it;
+  saveGame(); renderStore();
+  toast((toSide==='bag' ? '取出到背包：' : '存入仓库：') + it.name);
+  return true;
+}
+function renderStore(){
+  var sbTabs = $('#store-bag-tabs'), stTabs = $('#store-tabs');
+  var sbGrid = $('#store-bag-grid'), stGrid = $('#store-grid');
+  if (!sbGrid || !stGrid) return;
+  var letters=['I','II','III','IV','V'];
+  if (sbTabs){ var bh=''; for (var b=0;b<BAG_NUM;b++) bh+='<div class="bag-tab'+(b===storeBagTab?' on':'')+'" data-tab="'+b+'">'+letters[b]+'</div>'; sbTabs.innerHTML=bh; }
+  sbGrid.innerHTML = bag[storeBagTab].map(function(it, idx){ return slotHTML(it, false, null, idx, true); }).join('');
+  var sbs = sbGrid.querySelectorAll('.slot.has-item'); for (var i=0;i<sbs.length;i++){ sbs[i]._item = bag[storeBagTab][+sbs[i].getAttribute('data-slot')]; }
+  if (stTabs){ var sh=''; for (var s2=0;s2<STORE_NUM;s2++) sh+='<div class="bag-tab'+(s2===storeTab?' on':'')+'" data-tab="'+s2+'">'+letters[s2]+'</div>'; stTabs.innerHTML=sh; }
+  stGrid.innerHTML = store[storeTab].map(function(it, idx){ return slotHTML(it, false, null, idx, false); }).join('');
+  var ss = stGrid.querySelectorAll('.slot.has-item'); for (var j=0;j<ss.length;j++){ ss[j]._item = store[storeTab][+ss[j].getAttribute('data-slot')]; }
+}
+function initStore(){
+  var sbTabs = $('#store-bag-tabs'), stTabs = $('#store-tabs');
+  var sbGrid = $('#store-bag-grid'), stGrid = $('#store-grid');
+  renderStore();
+  if (!sbGrid || !stGrid || sbGrid.__st) return;
+  sbGrid.__st = stGrid.__st = true;
+  var stTip = $('#store-tip');
+  var back = $('#store-back');
+  if (back && !back.__b){ back.__b = true; back.addEventListener('click', function(){ location.hash = '#main'; }); }
+  if (sbTabs){ sbTabs.addEventListener('click', function(e){ var t = e.target.closest ? e.target.closest('.bag-tab') : null; if(!t) return; storeBagTab = parseInt(t.getAttribute('data-tab'),10); stCancelTransfer(); renderStore(); }); }
+  if (stTabs){ stTabs.addEventListener('click', function(e){ var t = e.target.closest ? e.target.closest('.bag-tab') : null; if(!t) return; storeTab = parseInt(t.getAttribute('data-tab'),10); stCancelTransfer(); renderStore(); }); }
+  var dragSt = null, ghost = null, dist = 0, suppress = false, lpTimer = null, transfer = null;
+  function stShowTip(html){ if (stTip) stTip.innerHTML = html; }
+  function stMarkTransfer(){
+    var g = transfer.side==='bag' ? sbGrid : stGrid;
+    var olds = g.querySelectorAll('.slot.transfer-src'); for (var i=0;i<olds.length;i++) olds[i].classList.remove('transfer-src');
+    var el = g.querySelector('.slot[data-slot="'+transfer.idx+'"]'); if (el) el.classList.add('transfer-src');
+  }
+  function stCancelTransfer(){
+    if (transfer){ var g = transfer.side==='bag' ? sbGrid : stGrid; var el = g.querySelector('.slot.transfer-src'); if (el) el.classList.remove('transfer-src'); }
+    transfer = null; if (stTip) stTip.innerHTML = '';
+  }
+  function stLongPress(side, tab, idx){
+    lpTimer = null;
+    if (dragSt && dragSt.active) return;
+    var it = (side==='bag' ? bag : store)[tab][idx]; if (!it) return;
+    transfer = { side:side, tab:tab, idx:idx };
+    stShowTip('已选中 <b>' + it.name + '</b> · 点击另一栏' + (side==='bag' ? '仓库空格' : '背包空格') + '转移，点空白/源格取消');
+    stMarkTransfer();
+    dragSt = null;
+    if (navigator.vibrate) navigator.vibrate(15);
+  }
+  function stGhost(item){
+    var g = document.createElement('div'); g.className = 'drag-ghost';
+    var inner = item.img ? '<img src="' + item.img + '" alt="">' : '<span class="fill" style="--c:' + item.color + '"></span>';
+    g.innerHTML = inner + (item.count > 1 ? '<span class="qty">' + item.count + '</span>' : '');
+    document.body.appendChild(g); return g;
+  }
+  function bindGrid(grid, side){
+    grid.addEventListener('pointerdown', function(e){
+      var s = e.target.closest ? e.target.closest('.slot') : null;
+      var tab = side==='bag' ? storeBagTab : storeTab;
+      if (transfer && transfer.active){
+        if (transfer.side !== side || transfer.tab !== tab || transfer.idx !== parseInt(s ? s.getAttribute('data-slot') : '-1', 10)){
+          if (s && s.closest && (sbGrid.contains(s) || stGrid.contains(s))){
+            var tIdx = parseInt(s.getAttribute('data-slot'), 10);
+            var tSide = sbGrid.contains(s) ? 'bag' : 'store';
+            var tTab = tSide==='bag' ? storeBagTab : storeTab;
+            if (tSide !== transfer.side){ storeMove(transfer.side, transfer.tab, transfer.idx, tSide, tTab, tIdx); }
+          }
+          stCancelTransfer(); suppress = true; dragSt = null;
+        } else { stCancelTransfer(); suppress = true; dragSt = null; }
+        return;
+      }
+      if (!s || !s.classList.contains('has-item')) return;
+      var idx = parseInt(s.getAttribute('data-slot'), 10);
+      var it = (side==='bag' ? bag : store)[tab][idx]; if (!it) return;
+      clearTimeout(lpTimer); lpTimer = null;
+      dragSt = { side:side, tab:tab, from:idx, x:e.clientX, y:e.clientY, active:false };
+      dist = 0;
+      s.classList.add('drag-from');
+      try { grid.setPointerCapture(e.pointerId); } catch (e2){}
+      lpTimer = setTimeout(function(){ stLongPress(side, tab, idx); }, 520);
+    });
+    grid.addEventListener('click', function(e){
+      if (suppress){ suppress = false; return; }
+      var s = e.target.closest ? e.target.closest('.slot') : null;
+      var tab = side==='bag' ? storeBagTab : storeTab;
+      if (s && s.classList.contains('has-item')){
+        var idx = parseInt(s.getAttribute('data-slot'), 10);
+        var it = (side==='bag' ? bag : store)[tab][idx];
+        if (it) showTooltip(it, s);
+      } else { stCancelTransfer(); hideTooltip(); }
+    });
+  }
+  bindGrid(sbGrid, 'bag');
+  bindGrid(stGrid, 'store');
+  document.addEventListener('pointermove', function(e){
+    if (!dragSt || (transfer && transfer.active)) return;
+    var dx = e.clientX - dragSt.x, dy = e.clientY - dragSt.y;
+    dist = Math.max(dist, Math.sqrt(dx*dx + dy*dy));
+    if (dist > 7){
+      if (lpTimer){ clearTimeout(lpTimer); lpTimer = null; }
+      if (!dragSt.active){
+        dragSt.active = true;
+        var it = (dragSt.side==='bag' ? bag : store)[dragSt.tab][dragSt.from];
+        ghost = stGhost(it);
+        ghost.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)';
+        e.preventDefault();
+      }
+    }
+    if (dragSt.active && ghost){ ghost.style.transform = 'translate3d(' + e.clientX + 'px,' + e.clientY + 'px,0) translate(-50%,-50%)'; }
+  });
+  document.addEventListener('pointerup', function(e){
+    if (!dragSt) return;
+    if (dragSt.active){
+      var el = document.elementFromPoint(e.clientX, e.clientY);
+      var s = el && el.closest ? el.closest('.slot') : null;
+      if (s){
+        var inBag = sbGrid.contains(s), inStore = stGrid.contains(s);
+        if ((inBag || inStore) && (inBag !== (dragSt.side==='bag'))){
+          var tSide = inBag ? 'bag' : 'store';
+          var tTab = tSide==='bag' ? storeBagTab : storeTab;
+          var tIdx = parseInt(s.getAttribute('data-slot'), 10);
+          storeMove(dragSt.side, dragSt.tab, dragSt.from, tSide, tTab, tIdx);
+        }
+      }
+      suppress = true;
+    }
+    if (ghost){ ghost.remove(); ghost = null; }
+    var df = sbGrid.querySelector('.slot.drag-from'); if (df) df.classList.remove('drag-from');
+    var df2 = stGrid.querySelector('.slot.drag-from'); if (df2) df2.classList.remove('drag-from');
+    dragSt = null;
+    if (lpTimer){ clearTimeout(lpTimer); lpTimer = null; }
+  });
+}
+
 var EQ_ACCEPT = {
   neck:'necklace', helm:'helmet', cloak:'cloak',
   ring1:'ring', ring2:'ring',
@@ -6476,8 +6659,8 @@ function applyRoute(){
   var h = location.hash;
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
       refine = h.indexOf('#refine')>=0,
-      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0, lot = h.indexOf('#lottery')>=0, tl = h.indexOf('#trial')>=0, tower = h.indexOf('#tower')>=0, arena = h.indexOf('#arena')>=0, home = h.indexOf('#home')>=0, forge = h.indexOf('#forge')>=0, wanshou = h.indexOf('#wanshou')>=0, main = h.indexOf('#main')>=0, ach = h.indexOf('#achievement')>=0, rebirth = h.indexOf('#rebirth')>=0, altar = h.indexOf('#altar')>=0, guide = h.indexOf('#guide')>=0, craft = h.indexOf('#craft')>=0, wb = h.indexOf('#wboss')>=0, season = h.indexOf('#season')>=0, daily = h.indexOf('#daily')>=0;
-  var homeShow = home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||tower||arena||forge||wanshou||main||ach||rebirth||altar||guide||craft||wb||season||daily);   /* 挑战塔/万法指南/世界BOSS/赛季征途排除首页布局 */
+      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0, lot = h.indexOf('#lottery')>=0, tl = h.indexOf('#trial')>=0, tower = h.indexOf('#tower')>=0, arena = h.indexOf('#arena')>=0, home = h.indexOf('#home')>=0, forge = h.indexOf('#forge')>=0, wanshou = h.indexOf('#wanshou')>=0, main = h.indexOf('#main')>=0, ach = h.indexOf('#achievement')>=0, rebirth = h.indexOf('#rebirth')>=0, altar = h.indexOf('#altar')>=0, guide = h.indexOf('#guide')>=0, craft = h.indexOf('#craft')>=0, wb = h.indexOf('#wboss')>=0, season = h.indexOf('#season')>=0, daily = h.indexOf('#daily')>=0, store = h.indexOf('#store')>=0;
+  var homeShow = home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||tower||arena||forge||wanshou||main||ach||rebirth||altar||guide||craft||wb||season||daily||store);   /* 挑战塔/万法指南/世界BOSS/赛季征途排除首页布局 */
   document.body.classList.remove('show-home');   /* 基地页与其它导航页统一使用 --bg-body 背景 */
   document.body.classList.toggle('hb-compact', homeShow);   /* 基地页顶部紧凑：缩小顶栏上方到屏幕顶部的间隔 */
   document.documentElement.classList.toggle('hb-compact', homeShow);   /* 同步给 html 加类：禁 html 层外层滚动，杜绝双层滚动条 */
@@ -6496,8 +6679,9 @@ function applyRoute(){
   document.body.classList.toggle('show-forge', forge);   /* 神兵锻冶垂直居中 */
   document.body.classList.toggle('show-wanshou', wanshou);   /* 万法归宗垂直居中 */
   var map = {
-    '#view-home':    home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||tower||arena||forge||wanshou||main||ach||rebirth||altar||guide||craft||wb||season||daily),   /* 挑战塔/玩法指南/锻造工坊/世界BOSS/赛季也排除首页 */
+    '#view-home':    home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||tower||arena||forge||wanshou||main||ach||rebirth||altar||guide||craft||wb||season||daily||store),   /* 挑战塔/玩法指南/锻造工坊/世界BOSS/赛季/仓库也排除首页 */
     '#view-craft':  craft,   /* 锻造工坊（分解/重铸） */
+    '#view-store':  store,   /* 仓库（背包↔仓库物品转移） */
     '#view-main':    main,
     '#view-forge':   forge,
     '#view-wanshou': wanshou,
@@ -6527,6 +6711,7 @@ function applyRoute(){
   if (tower){ stopArenaFight(); initTower(); }   /* 进入挑战塔：停竞技；不再停试炼自动（切回试炼页自动恢复），点挑战塔自动攻击时才互斥停试炼 */
   if (shop) renderShop();
   if (arena) renderArena();
+  if (store) initStore();   /* 进入仓库页：渲染上背包/下仓库并绑定转移 */
   if (!(attrs||enh||refine||gem||god||trs||shop||guide)){ renderEquip(); renderBag(); renderCurrency(); }   /* 返回主页/万法指南时刷新背包/装备/金币 */
   recalcCharacter();   /* 统一刷新角色属性（装备/宝石/天神变化后生效） */
 }
@@ -7192,10 +7377,10 @@ function route(){
   /* 挂机不因切换页面而停止：只有点「停止挂机」才停 */
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
       refine = h.indexOf('#refine')>=0,
-      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0, lot = h.indexOf('#lottery')>=0, tl = h.indexOf('#trial')>=0, tower = h.indexOf('#tower')>=0, arena = h.indexOf('#arena')>=0, home = h.indexOf('#home')>=0, forge = h.indexOf('#forge')>=0, wanshou = h.indexOf('#wanshou')>=0, main = h.indexOf('#main')>=0, ach = h.indexOf('#achievement')>=0, rebirth = h.indexOf('#rebirth')>=0, altar = h.indexOf('#altar')>=0, guide = h.indexOf('#guide')>=0, craft = h.indexOf('#craft')>=0, wb = h.indexOf('#wboss')>=0, season = h.indexOf('#season')>=0, daily = h.indexOf('#daily')>=0;
+      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0, lot = h.indexOf('#lottery')>=0, tl = h.indexOf('#trial')>=0, tower = h.indexOf('#tower')>=0, arena = h.indexOf('#arena')>=0, home = h.indexOf('#home')>=0, forge = h.indexOf('#forge')>=0, wanshou = h.indexOf('#wanshou')>=0, main = h.indexOf('#main')>=0, ach = h.indexOf('#achievement')>=0, rebirth = h.indexOf('#rebirth')>=0, altar = h.indexOf('#altar')>=0, guide = h.indexOf('#guide')>=0, craft = h.indexOf('#craft')>=0, wb = h.indexOf('#wboss')>=0, season = h.indexOf('#season')>=0, daily = h.indexOf('#daily')>=0, store = h.indexOf('#store')>=0;
   if (enh) FORGE_TAB='enhance'; else if (refine) FORGE_TAB='refine'; else if (typeof enhAutoTimer!=='undefined'&&enhAutoTimer) FORGE_TAB='enhance'; else FORGE_TAB='gem';   /* 自动强化中切回保留强化页 */
   if (god) WANSHOU_TAB='god';
-  var view = season ? '#view-season' : guide ? '#view-guide' : altar ? '#view-altar' : rebirth ? '#view-rebirth' : home ? '#view-home' : craft ? '#view-craft' : daily ? '#view-daily' : (forge||enh||refine||gem) ? '#view-forge' : (wanshou||god) ? '#view-wanshou' : attrs ? '#view-attrs' : trs ? '#view-treasure' : shop ? '#view-shop' : lot ? '#view-lottery' : tower ? '#view-tower' : tl ? '#view-trial' : arena ? '#view-arena' : wb ? '#view-wboss' : ach ? '#view-achievement' : main ? '#view-main' : '#view-main';   /* 默认进第一个 Tab：行囊；强化/洗炼/宝石并入神兵锻冶 */
+  var view = season ? '#view-season' : guide ? '#view-guide' : altar ? '#view-altar' : rebirth ? '#view-rebirth' : home ? '#view-home' : craft ? '#view-craft' : daily ? '#view-daily' : (forge||enh||refine||gem) ? '#view-forge' : (wanshou||god) ? '#view-wanshou' : attrs ? '#view-attrs' : trs ? '#view-treasure' : shop ? '#view-shop' : lot ? '#view-lottery' : tower ? '#view-tower' : tl ? '#view-trial' : arena ? '#view-arena' : wb ? '#view-wboss' : ach ? '#view-achievement' : store ? '#view-store' : main ? '#view-main' : '#view-main';   /* 默认进第一个 Tab：行囊；强化/洗炼/宝石并入神兵锻冶 */
   /* 背包条静态默认显示（CSS display:flex），不随 route 显隐 */
   var needMount = (view==='#view-forge'||view==='#view-wanshou');
   if(needMount){ if(view==='#view-forge') mountForge(); else mountWanshou(); }   /* 先同步挂载子面板（含 move 节点）→ transition/首屏快照已含内容，规避 Safari 异步过渡竞态致子面板不显示 */
@@ -7220,6 +7405,7 @@ function route(){
   if (view==='#view-wboss') mountWboss();
   if (view==='#view-daily') mountDaily();
   if (view==='#view-craft') initCraft();
+  if (view==='#view-store') initStore();   /* 仓库页：渲染双栏并绑定转移 */
   if (view==='#view-season') mountSeason();
   if (view==='#view-achievement') renderAchievement();
   updateBottomNav();
@@ -10680,7 +10866,7 @@ function saveGame(){
       characterLevel:CHARACTER.info.level, trExp:TR.exp, potionUntil:POTION_UNTIL, sunUntil:SUN_UNTIL, megaSunUntil:MEGA_SUN_UNTIL, perm:PERM,
       arena:{ score:ARENA.score, maxScore:ARENA.maxScore, win:ARENA.win, lose:ARENA.lose, streak:ARENA.streak, _rank:ARENA._rank, titleOn:ARENA.titleOn, killBoss:ARENA.killBoss, medalOn:ARENA.medalOn, killGod:ARENA.killGod, godMedalOn:ARENA.godMedalOn, killSupreme:ARENA.killSupreme, supremeMedalOn:ARENA.supremeMedalOn, tlm:{s50:TLM.s50,s100:TLM.s100,s150:TLM.s150}, lastDaily:ARENA.lastDaily },
       ith:ITH_LEFT, jiMie:SJD_LEFT, quick:QUICK, elemSlot:ELEM_SLOT, innate:CHARACTER.innate, origin:CHARACTER.origin,
-      collected:COLLECT, collectDone:COLLECT_DONE, rebirth:REBIRTH, altar:ALTAR, wboss:WBOSS, daily:DAILY, lastActive:Date.now(), offlineHang:TR.auto, luck:LUCK, mutate:MUT
+      collected:COLLECT, collectDone:COLLECT_DONE, rebirth:REBIRTH, altar:ALTAR, wboss:WBOSS, daily:DAILY, lastActive:Date.now(), offlineHang:TR.auto, luck:LUCK, mutate:MUT, store:store
     }));
   }catch(e){}
 }
@@ -10698,7 +10884,9 @@ function loadGame(){
   for(var ek in (s.equipState||{})) reg(s.equipState[ek]);
   var lg=s.loadedGods||[]; for(var j=0;j<lg.length;j++) reg(lg[j]);
   for(var fk in (s.formation||{})) reg(s.formation[fk]);
+  var _sts=(s.store||[]); for(var _stp=0;_stp<_sts.length;_stp++){ var _spg=_sts[_stp]; if(_spg) for(var _sti=0;_sti<_spg.length;_sti++) reg(_spg[_sti]); }
   bag=[]; for(var q=0;q<BAG_NUM;q++){ var row=[]; var pq=(s.bag&&s.bag[q])||[]; for(var iq=0;iq<BAG_SLOTS;iq++) row[iq]=link(pq[iq]); bag.push(row); }
+  store=[]; for(var _sq=0;_sq<STORE_NUM;_sq++){ var _srow=[]; var _psq=(s.store&&s.store[_sq])||[]; for(var _isq=0;_isq<STORE_SLOTS;_isq++) _srow[_isq]=link(_psq[_isq]); store.push(_srow); }
   equipState={}; for(var ekk in (s.equipState||{})) equipState[ekk]=link(s.equipState[ekk]);
   LOADED_GODS=[]; var lg2=s.loadedGods||[]; for(var lq=0;lq<lg2.length;lq++) LOADED_GODS.push(link(lg2[lq]));
   GOD.formation={ main:link(s.formation&&s.formation.main), sub1:link(s.formation&&s.formation.sub1), sub2:link(s.formation&&s.formation.sub2), sub3:link(s.formation&&s.formation.sub3) };
@@ -10754,6 +10942,7 @@ function doLottery(){
 function doReset(){
   /* 回到完全初始状态：等级1、装备背包与物品全空、天神清空、金币默认 */
   for (var p = 0; p < BAG_NUM; p++) for (var i = 0; i < BAG_SLOTS; i++) bag[p][i] = null;
+  for (var sp = 0; sp < STORE_NUM; sp++) for (var si = 0; si < STORE_SLOTS; si++) store[sp][si] = null;   /* 初始化清空仓库 */
   equipState = {};
   LOADED_GODS.length = 0;
   GOD.formation = { main:null, sub1:null, sub2:null, sub3:null };
