@@ -9699,12 +9699,14 @@ function trLevelUp(lv){
   setTimeout(function(){ if(veil.parentNode) veil.remove(); },3000);
   setTimeout(function(){ if(banner.parentNode) banner.remove(); },3000);
 }
+/* 异能条仅限可穿戴装备 */
+function isWearable(it){ if(!it) return false; var _t=it.type; return _t==='weapon'||_t==='helmet'||_t==='chest'||_t==='leggings'||_t==='boots'||_t==='gloves'||_t==='shield'||_t==='necklace'||_t==='ring'||_t==='bracelet'; }
 /* 生成可叠加的掉落物品：count=当前1个，maxStack=蓝图最大堆叠 */
 function mkLoot(bp){
   var it=createItem(bp,{id:itemIdCounter++});
   it.count=1;
   it.maxStack=(bp.maxStack)||((bp.count>1)?bp.count:1);
-  if(bp && itemQuality(bp)==='purple' && Math.random()<0.30){ var _ab=ABILITY_POOL[Math.floor(Math.random()*ABILITY_POOL.length)]; it.specialEffect=_ab.k; }
+  if(bp && itemQuality(bp)==='purple' && isWearable(bp) && Math.random()<0.30){ var _ab=ABILITY_POOL[Math.floor(Math.random()*ABILITY_POOL.length)]; it.specialEffect=_ab.k; }
   return it;
 }
 /* 叠加放入背包：同名字物品累加，满 maxStack 再开新凹槽 */
@@ -11117,6 +11119,8 @@ function loadGame(){
   Object.keys(equipState||{}).forEach(function(k){ _seedCol(equipState[k]); });
   (LOADED_GODS||[]).forEach(_seedCol);
   Object.keys(GOD.formation||{}).forEach(function(k){ _seedCol(GOD.formation[k]); });
+  /* 净化：异能条仅限可穿戴装备（修复宝石/材料误带异能的历史数据） */
+  (function(){ function _cln(a){ for(var _i=0;_i<a.length;_i++){ var _it=a[_i]; if(_it&&!isWearable(_it)&&_it.specialEffect) delete _it.specialEffect; } } bag.forEach(_cln); store.forEach(_cln); var _es=[]; for(var _k in (equipState||{})) _es.push(equipState[_k]); _cln(_es); (LOADED_GODS||[]).forEach(_cln); })();
   return true;
 }
 
@@ -11135,6 +11139,7 @@ function doLottery(){
 function doReset(){
   /* 回到完全初始状态：等级1、装备背包与物品全空、天神清空、金币默认 */
   for (var p = 0; p < BAG_NUM; p++) for (var i = 0; i < BAG_SLOTS; i++) bag[p][i] = null;
+  currentTab = 0;   /* 初始化重置背包当前页签 */
   for (var sp = 0; sp < STORE_NUM; sp++) for (var si = 0; si < STORE_SLOTS; si++) store[sp][si] = null;   /* 初始化清空仓库 */
   equipState = {};
   LOADED_GODS.length = 0;
