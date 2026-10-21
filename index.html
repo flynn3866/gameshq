@@ -2981,7 +2981,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div id="wb-rank"></div>
       <div class="wb-sec-tit">BOSS商店 · 讨伐币兑换</div>
       <div id="wb-shop"></div>
-      <div class="wb-hint">每日 0 / 6 / 12 / 18 点刷新世界BOSS，全服共同讨伐超厚血条，按本时段伤害排名发奖。越晚参与，全服已磨掉越多。每次出战限时 30 秒，可重复出战。BOSS 讨伐后点「领取奖励」发奖；BOSS币可在商店兑换稀有物资。</div>
+      <div class="wb-hint">每日 8 点刷新世界BOSS，全服共同讨伐超厚血条，按本时段伤害排名发奖。全服AI随服务器成长提速磨血（10小时→6小时）。太古遗物匣每轮固定 60 个：第1名独占 36 个，2~6名按 12/6/3/2/1 递减，未达标或 7 名后无遗物匣。每次出战限时 30 秒，可重复出战；BOSS 讨伐后点「领取奖励」发奖，BOSS币可在商店兑换稀有物资。</div>
     </div>
   </div>
   <!-- ===== 二级页面：域外战场 ===== -->
@@ -8090,10 +8090,10 @@ function checkRankUp(){
 function stopArenaFight(){ if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.timer=null; } ARENA.fight=false; renderOppList(); }
 
 /* ===== 世界BOSS榜：全服共享超厚血条 · 分时段讨伐 · 伤害排名 ===== */
-var WBOSS={day:'',slot:-1,mul:1,boss:null,bossMax:1,bossHp:1,my:0,ai:[],lastVisit:0,killed:false,reward:{got:false},coins:0,totalKill:0,totalDmg:0,bestDmg:0};
+var WBOSS={day:'',slot:-1,mul:1,boss:null,bossMax:1,bossHp:1,my:0,ai:[],lastVisit:0,startTime:0,killed:false,reward:{got:false},coins:0,totalKill:0,totalDmg:0,bestDmg:0,timeBase:0};   /* timeBase=服务器开刷时间戳(天数成长)；startTime=本轮8点开刷固定锚点，AI磨血据此单调累加 */
 var WB_SESSION=null;
 var WB_REFRESH=null;   /* 世界BOSS页血条动态刷新定时器（3秒，仅页面停留时运行） */
-var WB_NAMES=['剑尊·破天','血刀·修罗','风神·无痕','星陨·落','霜华·冷','雷帝·狂','焚天·焰','幽影·匿','苍狼·啸','月蚀·冥','云麾·苍','渊帝·影'];
+var WB_AI_FIXED=[{n:'剑尊·破天',dps:0.0000120,hit:0.92},{n:'血刀·修罗',dps:0.0000090,hit:0.90},{n:'风神·无痕',dps:0.0000060,hit:0.88},{n:'星陨·落',dps:0.0000045,hit:0.88},{n:'霜华·冷',dps:0.0000030,hit:0.86},{n:'雷帝·狂',dps:0.0000023,hit:0.86},{n:'焚天·焰',dps:0.0000016,hit:0.84},{n:'幽影·匿',dps:0.0000013,hit:0.84},{n:'苍狼·啸',dps:0.0000010,hit:0.82},{n:'月蚀·冥',dps:0.00000085,hit:0.82},{n:'云麾·苍',dps:0.00000070,hit:0.80},{n:'渊帝·影',dps:0.00000055,hit:0.80}];   /* 世界BOSS固定参战玩家梯队：dps=每秒占共享血比例(攻击区间)，hit=命中率(模拟MISS)，无输出上限，按各自dps×BOSS存活时长持续磨血直至被杀 */
 var WB_SHOP=[
  {n:'神力碎片',qty:5000,cost:60,bp:'godPowerFragment'},
  {n:'神力结晶',qty:500,cost:120,bp:'godCrystal'},
@@ -8103,7 +8103,7 @@ var WB_SHOP=[
  {n:'传说宝箱 · 随机传说装备',qty:1,cost:400,bp:'',legend:true}
 ];
 var WB_DUR=30;   /* 一次出战秒数 */
-function wbSlotIdx(){ return Math.floor(new Date().getHours()/6); }
+function wbSlotIdx(){ var d=new Date(); if(d.getHours()<8) d.setDate(d.getDate()-1); return d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate(); }   /* 每日8点一轮：8点前归属上一日、8点后归属当日 */
 function wbMakeBoss(){
   var b=isAscended()?makeSupremeOpp():makeBossOpp();   /* 超脱玩家：世界BOSS升级为超脱终极BOSS；未超脱=神级 */
   b.hp=Math.round(b.hp*WBOSS.mul*3);   /* 全服共享血量：按档位×3 放大，需多次出战+AI合力 */
@@ -8111,8 +8111,7 @@ function wbMakeBoss(){
 }
 function wbMakeAI(){
   var ai=[];
-  for(var i=0;i<10;i++){ ai.push({n:WB_NAMES[i%WB_NAMES.length], target:0, dmg:0, rate:0.05+Math.random()*0.025}); }   /* 每个AI目标=BOSS血5%~7.5%，合计≤75%，永不独杀 */
-  ai.forEach(function(a){ a.target=Math.round(WBOSS.bossMax*a.rate); });
+  for(var i=0;i<WB_AI_FIXED.length;i++){ ai.push({n:WB_AI_FIXED[i].n, target:0, dmg:0, dps:WB_AI_FIXED[i].dps, hit:WB_AI_FIXED[i].hit}); }   /* 固定12名玩家梯队：顶尖长期霸榜，按各自dps×存活时长磨血累加，跨轮排名稳定、不再换一批 */
   return ai;
 }
 function wbEnsure(){
@@ -8120,25 +8119,28 @@ function wbEnsure(){
   if(WBOSS.day!==d || WBOSS.slot!==sl){
     if(WBOSS.boss && WBOSS.bossHp>0 && WBOSS.my>0 && !WBOSS.killed) toast('上一时段BOSS未被讨伐，功亏一篑！');
     wbStop();
-    WBOSS.day=d; WBOSS.slot=sl; WBOSS.mul=[1,2,4,8][sl];
+    WBOSS.day=d; WBOSS.slot=sl; WBOSS.mul=8; if(!WBOSS.timeBase){ WBOSS.timeBase=Date.now(); } saveGame();   /* 每日8点单轮最高8倍；首次记录服务器开刷时间戳（AI成长基准） */
     WBOSS.boss=wbMakeBoss(); WBOSS.bossMax=WBOSS.boss.hp; WBOSS.bossHp=WBOSS.bossMax; WBOSS.my=0;
     WBOSS.ai=wbMakeAI(); WBOSS.killed=false; WBOSS.reward={got:false};
-    var _sh=WBOSS.slot*6, _ss=new Date(); _ss.setHours(_sh,0,0,0); WBOSS.lastVisit=_ss.getTime();   /* 修复：AI磨血从时段起点算起，中途打开也补足全服已磨血量 */
+    var _ss=new Date(); if(_ss.getHours()<8) _ss.setDate(_ss.getDate()-1); _ss.setHours(8,0,0,0); WBOSS.startTime=WBOSS.lastVisit=_ss.getTime();   /* 本轮每日8点开刷（8点前归属上一日）：startTime为固定锚点，AI磨血单调累加，不随tick/切页重置 */
   }
   wbAdvanceAI();
 }
 function wbAdvanceAI(){
   if(!WBOSS.boss || WBOSS.killed) return;
-  var now=Date.now(), slotMs=6*3600*1000;
-  var el=Math.min(slotMs, now-(WBOSS.lastVisit||now));
-  var progress=Math.min(1, el/slotMs);
+  var now=Date.now(), base=WBOSS.startTime||WBOSS.lastVisit||now;   /* 固定锚点：本轮8点开刷时刻，AI从8点持续磨血、不随tick/切页重置 */
+  var elSec=Math.max(0,(now-base)/1000);   /* BOSS存活时长(秒)：从开刷到当前/被杀 */
+  var incTotal=0;
   WBOSS.ai.forEach(function(a){
-    var nd=Math.min(a.target, Math.round(a.target*progress));
-    var inc=Math.max(0, nd-a.dmg); a.dmg=nd;
-    if(inc>0) WBOSS.bossHp=Math.max(0, WBOSS.bossHp-inc);
+    var nd=Math.round(a.dps*WBOSS.bossMax*elSec*a.hit);   /* 攻击区间×存活时长×命中率(模拟MISS)，无输出上限 */
+    var inc=Math.max(0, nd-a.dmg); a.dmg=Math.max(a.dmg,nd);
+    incTotal+=inc;
   });
-  WBOSS.lastVisit=now;
+  if(incTotal>0){ WBOSS.bossHp=Math.max(0, WBOSS.bossHp-incTotal); }
+  if(WBOSS.bossHp<=0 && !WBOSS.killed){ WBOSS.killed=true; try{ wbStop(); wbCelebrate(); }catch(e){} }   /* AI自身即可磨死BOSS：血量归零即被杀，排名定格 */
 }
+function wbServerDays(){ if(!WBOSS.timeBase) return 0; return Math.max(0,Math.floor((Date.now()-WBOSS.timeBase)/86400000)); }   /* 服务器运行天数：从首次开刷时间戳起算 */
+function wbAICycleMs(){ var d=wbServerDays(), h=10-4*(1-Math.exp(-d/40)); h=Math.max(6,Math.min(10,h)); return Math.round(h*3600*1000); }   /* AI磨血周期：前期10小时，随服务器天数按饱和曲线(先快后慢)渐降到6小时封顶——体现AI攻击力越到后期越强 */
 function wbCalcDmg(){
   var s=arenaStat(), o=WBOSS.boss;
   var gap=CHARACTER.info.level-(o.level||1);
@@ -8302,16 +8304,23 @@ function wbClaim(){
   var all=wbRankList(), rank=1;
   for(var i=0;i<all.length;i++){ if(all[i].me){ rank=i+1; break; } }
   var mul=WBOSS.mul||1;
+  var minDmg=Math.max(1,Math.round(WBOSS.bossMax*0.005));   /* 参战门槛：本轮累计伤害需达共享血量0.5%才计奖，未达标无奖励 */
+  if(WBOSS.my<minDmg){
+    WBOSS.reward.got=true;
+    toast('本次伤害未达标（需 ≥'+fmtWan(minDmg)+'）· 无奖励');
+    saveGame(); wbRender(); return;
+  }
   var gold=0, coins=0;
   if(rank===1){ gold=Math.round(WBOSS.bossMax*0.12); coins=200*mul; }
   else if(rank<=3){ gold=Math.round(WBOSS.bossMax*0.05); coins=120*mul; }
   else if(rank<=10){ coins=60*mul; }
   else { coins=25*mul; }
   dailyBump('wb'); CURRENCY.gold+=gold; WBOSS.coins+=coins; WBOSS.totalKill++;
-  var bx=rank===1?3:(rank<=3?2:1); REBIRTH.reliquary=(REBIRTH.reliquary||0)+bx;   /* 世界BOSS独有：太古遗物匣（第1×3/2~3×2/其余×1） */
+  var _pool=[0,36,12,6,3,2,1]; var bx=(rank<=6)?_pool[rank]:0;   /* 太古遗物匣固定池60个：第1名36(60%)垄断，2~6名按12/6/3/2/1递减，7名后=0不派发（伤害达标点后结束） */
+  if(bx>0){ REBIRTH.reliquary=(REBIRTH.reliquary||0)+bx; }
   WBOSS.bestDmg=Math.max(WBOSS.bestDmg||0, WBOSS.my||0);
   WBOSS.reward.got=true;
-  var logTxt='世界BOSS第 '+rank+' 名：+'+fmtWan(gold)+'金币 +'+coins+' BOSS币';
+  var logTxt='世界BOSS第 '+rank+' 名：+'+fmtWan(gold)+'金币 +'+coins+' BOSS币'+(bx>0?(' · 太古遗物匣 ×'+bx):' · 遗物匣已派发完');
   if(rank===1){ var _lg=wbLegendDrop(); logTxt+=_lg?' · 掉落 '+_lg.name:''; }
   if(WBOSS.boss && WBOSS.boss.tier==='supreme'){ REBIRTH.essence+=5; logTxt+=' · 本源结晶+5'; triggerLegendFX(); }   /* 超脱世界BOSS被讨伐：本源结晶（终局材料） */
   saveGame(); renderCurrency(); wbRender();
