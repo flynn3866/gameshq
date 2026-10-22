@@ -2570,6 +2570,10 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 .wb-rn{flex:1;font-size:12px;color:#D8CDB8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .wb-rank-row.me .wb-rn{color:#8FFFD0;font-weight:700;}
 .wb-rv{font-size:11px;color:#F2C96B;font-weight:700;font-variant-numeric:tabular-nums;}
+.wb-ab{display:inline-block;width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.13);overflow:hidden;vertical-align:middle;margin-right:6px;flex:none;}
+.wb-ab i{display:block;height:100%;background:linear-gradient(90deg,#ffd76a,#ff9a3c);border-radius:2px;transition:width .3s;}
+.wb-ab-me i{background:linear-gradient(90deg,#7bf1c4,#2fd9a0);}
+.wb-adead{font-size:10px;color:#f06a6a;vertical-align:middle;margin-right:6px;opacity:.85;flex:none;letter-spacing:1px;}
 .wb-shop-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;margin:6px 0 0;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(0,0,0,.18));border:1px solid rgba(214,178,110,.24);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
 .wb-sn{flex:1;font-size:12px;color:#E8CB74;font-weight:700;letter-spacing:.5px;}
 .wb-sc{font-size:10px;color:#B7AB95;}
@@ -2579,6 +2583,42 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 .wb-cele{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(20,6,2,.82);z-index:5;border-radius:12px;}
 .wb-cele b{font-size:20px;font-weight:900;color:#FFD75E;text-shadow:0 0 18px rgba(255,215,94,.9);letter-spacing:4px;}
 .wb-cele span{font-size:12px;color:#FFD98A;margin-top:8px;letter-spacing:1px;}
+.wb-loot-mask{position:fixed;inset:0;z-index:9999;background:linear-gradient(180deg,rgba(40,12,70,.92),rgba(8,4,18,.96));display:flex;align-items:center;justify-content:center;animation:wblFade .25s ease}
+.wb-loot{width:min(92vw,400px);background:linear-gradient(165deg,#3c2364,#1e0d3a 45%,#2b1a52);border:1px solid #C89A3C;border-radius:22px;box-shadow:inset 0 0 0 1px rgba(255,215,94,.4),inset 0 2px 0 rgba(255,255,255,.08),inset 0 -3px 6px rgba(0,0,0,.5),0 2px 0 rgba(0,0,0,.4),0 8px 0 rgba(0,0,0,.22),0 16px 0 rgba(0,0,0,.12),0 26px 40px rgba(0,0,0,.5);text-align:center;animation:wblPop .32s cubic-bezier(.2,1.5,.4,1);max-height:84vh;display:flex;flex-direction:column;overflow:hidden;position:relative}
+.wb-loot::before{content:'';position:absolute;inset:0;border-radius:22px;background:linear-gradient(180deg,rgba(255,215,94,.14),rgba(255,215,94,0) 30%,rgba(0,0,0,.22) 82%);pointer-events:none}
+@keyframes wblFade{from{opacity:0}to{opacity:1}}
+@keyframes wblPop{from{transform:scale(.8) translateY(14px);opacity:0}to{transform:scale(1);opacity:1}}
+.wl-head{position:relative;flex:0 0 auto;padding:20px 20px 14px;border-bottom:1px solid rgba(200,154,60,.5);background:linear-gradient(180deg,rgba(255,215,94,.18),rgba(255,215,94,.03) 70%,rgba(0,0,0,.15));z-index:2;box-shadow:0 6px 0 rgba(0,0,0,.2),inset 0 2px 0 rgba(255,255,255,.06)}
+.wl-head::after{content:'';position:absolute;left:6%;right:6%;bottom:-1px;height:2px;background:linear-gradient(90deg,rgba(255,215,94,0),#FFD75E,rgba(255,215,94,0))}
+.wl-glow{position:absolute;top:0;left:10%;right:10%;height:3px;border-radius:2px;background:linear-gradient(90deg,rgba(255,215,94,0),#FFD75E,rgba(255,215,94,0));box-shadow:0 1px 0 rgba(255,255,255,.4),0 -1px 0 rgba(120,74,14,.9)}
+.wl-tt{font-size:34px;font-weight:900;color:#FFFFFF;text-shadow:0 1px 0 rgba(255,255,255,.55),0 2px 0 rgba(0,0,0,.42),0 3px 0 rgba(0,0,0,.55);letter-spacing:5px;margin-bottom:4px;line-height:1.2}
+.wl-tt-w{color:#FFFFFF;-webkit-text-fill-color:#FFFFFF;-webkit-text-stroke:1px rgba(255,255,255,.55)}
+.wl-boss{color:#8FF5CF;font-size:15px;font-weight:800;text-shadow:0 2px 0 rgba(20,80,55,.6),0 1px 0 rgba(255,255,255,.2)}
+.wl-rank{color:#e6dcc4;font-size:13px;margin:7px 0 0}.wl-rank b{color:#FFD75E;text-shadow:0 1px 0 rgba(120,74,14,.7),0 2px 0 rgba(90,55,10,.6)}
+.wl-body{flex:1 1 auto;overflow-y:auto;min-height:0;padding:4px 20px 8px}
+.wl-body::-webkit-scrollbar{width:6px}.wl-body::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#E0B44A,#a97a1f);border-radius:3px}.wl-body::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
+.wl-close-wrap{flex:0 0 auto;padding:14px 20px 22px;background:linear-gradient(180deg,rgba(18,8,40,0),rgba(18,8,40,.94) 48%)}
+.wl-close-wrap::before{content:'';display:block;height:1px;background:linear-gradient(90deg,rgba(255,215,94,0),rgba(255,215,94,.5),rgba(255,215,94,0));margin-bottom:14px}
+.wl-sec{margin:16px 0 10px;text-align:left;font-size:14px;color:#FFE9B0;font-weight:900;letter-spacing:2px;text-shadow:0 1px 0 rgba(120,74,14,.7),0 2px 0 rgba(90,55,10,.5);padding-left:10px;position:relative}
+.wl-sec::before{content:'';position:absolute;left:0;top:1px;bottom:1px;width:4px;border-radius:2px;background:linear-gradient(180deg,#FFD75E,#B8860B);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
+.wl-grid{display:grid;grid-template-columns:1fr;gap:10px}
+.wb-loot-it{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;text-align:left;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -1px 0 rgba(0,0,0,.3),0 2px 0 rgba(0,0,0,.28),0 5px 0 rgba(0,0,0,.12)}
+.wb-loot-it.rare{border-color:#C89A3C;background:linear-gradient(90deg,rgba(255,215,94,.18),rgba(180,70,160,.10));box-shadow:inset 0 0 0 1px rgba(255,235,180,.35),inset 0 1px 0 rgba(255,235,180,.25),inset 0 -1px 0 rgba(90,50,10,.5),0 2px 0 rgba(0,0,0,.28),0 5px 0 rgba(0,0,0,.14)}
+.wb-loot-it .wl-ic{width:40px;height:40px;flex:0 0 40px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.02));border-radius:10px;box-shadow:inset 0 2px 0 rgba(255,255,255,.18),inset 0 -2px 3px rgba(0,0,0,.35),0 1px 0 rgba(0,0,0,.3),0 3px 0 rgba(0,0,0,.12)}
+.wb-loot-it .wl-ic img,.wb-loot-it .wl-ic svg{width:31px;height:31px;object-fit:contain;filter:drop-shadow(0 1px 0 rgba(0,0,0,.4))}
+.wb-loot-it .wl-nm{flex:1;font-size:13px;color:#f4eedd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;text-shadow:0 1px 0 rgba(0,0,0,.35)}
+.wb-loot-it.rare .wl-nm{color:#FFEEC0;font-weight:800;text-shadow:0 1px 0 rgba(90,50,10,.7)}
+.wb-loot-it .wl-nm.wl-mg{color:#FF5AD8;-webkit-text-stroke:0.5px rgba(255,255,255,.14);text-shadow:0 1px 0 rgba(80,15,55,.85),0 2px 0 rgba(60,10,45,.65)}
+.wb-loot-it .wl-c{font-size:12px;color:#7EE8C2;white-space:nowrap;font-weight:700;background:linear-gradient(180deg,rgba(126,232,194,.16),rgba(126,232,194,.06));border:1px solid rgba(126,232,194,.28);padding:3px 9px;border-radius:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.22)}
+.wb-loot-none{color:#d8a9a9;font-size:14px;padding:16px;text-align:center;grid-column:1/-1}
+.wl-close{width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(180deg,#FFF3C4,#FFD75E 38%,#E0A83A 76%,#C88A24);color:#2a1800;font-size:16px;font-weight:900;cursor:pointer;box-shadow:inset 0 2px 0 rgba(255,255,255,.75),inset 0 -2px 0 rgba(150,95,20,.55),0 4px 0 rgba(120,74,14,.75),0 8px 0 rgba(60,35,5,.5);letter-spacing:2px;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+.wl-close:active{transform:scale(.96) translateY(3px);box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(150,95,20,.5),0 2px 0 rgba(120,74,14,.6),0 4px 0 rgba(60,35,5,.35)}
+.lb-over{position:fixed;inset:0;z-index:9998;background:rgba(5,3,12,.72);display:flex;align-items:center;justify-content:center}
+.lb-pick{width:min(86vw,360px);background:linear-gradient(165deg,#3a2160,#221040 60%);border:1px solid rgba(255,215,94,.55);border-radius:16px;padding:18px;text-align:center;box-shadow:0 0 34px rgba(255,215,94,.35),0 12px 30px rgba(0,0,0,.5)}
+.lb-pick-t{color:#FFD75E;font-size:16px;font-weight:900;letter-spacing:2px;margin-bottom:12px;text-shadow:0 0 10px rgba(255,215,94,.5)}
+.lb-pick-row{display:flex;gap:10px;margin-bottom:10px}
+.lb-pk{flex:1;padding:13px 6px;border:none;border-radius:10px;background:linear-gradient(180deg,#FFE9A8,#E0A83A 70%,#C88A24);color:#2a1800;font-size:13px;font-weight:900;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,.4) inset,0 4px 10px rgba(0,0,0,.3);letter-spacing:1px}
+.lb-pk:active{transform:scale(.96)}
 
 
 /* ===== 世界BOSS榜 · 质感增强（纯静态零耗电） ===== */
@@ -2609,6 +2649,10 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 .bf-btn:active{transform:translateY(1px);}
 .bf-empty{padding:26px 0;text-align:center;font-size:13px;color:#8a8375;}
 .bf-hint{padding:10px 12px;margin-top:12px;font-size:11px;line-height:1.8;color:#8f8a78;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:9px;}
+.wb-next{display:flex;align-items:center;gap:8px;justify-content:center;margin-top:10px;padding:9px 16px;background:linear-gradient(180deg,rgba(255,215,94,.16),rgba(255,160,60,.04));border:1px solid rgba(255,215,94,.45);border-radius:999px;box-shadow:0 0 18px rgba(255,180,80,.20),inset 0 0 10px rgba(255,215,94,.12);}
+.wb-next-ic{color:#FFD75E;font-size:15px;line-height:1;}
+.wb-next b{color:#FFE9A8;font-weight:700;font-size:12px;letter-spacing:2px;}
+.wb-next-t{color:#FFD75E;font-family:Consolas,Menlo,monospace;font-size:12px;text-shadow:0 0 10px rgba(255,215,94,.55);}
 .bf-reroll{flex:none;margin-left:auto;padding:4px 12px;border:none;border-radius:7px;font-size:11px;font-weight:600;color:#241a06;background:linear-gradient(180deg,#FFE9A8,#F2C96B 50%,#C9921A);box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 8px rgba(242,201,107,.25);}
 .bf-type{display:inline-block;margin-left:8px;padding:1px 7px;border-radius:5px;font-size:10px;font-weight:600;letter-spacing:1px;background:rgba(255,215,94,.12);border:1px solid rgba(255,215,94,.35);color:#FFD75E;}
 .bf-deep-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;padding:11px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(0,0,0,.16));border:1px solid rgba(214,178,110,.24);border-radius:10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
@@ -2624,7 +2668,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 .wb-top span{position:relative;flex:1;}
 .wb-top span+span::before{content:"";position:absolute;left:-4px;top:9px;bottom:9px;width:1px;background:linear-gradient(180deg,rgba(242,201,107,0),rgba(242,201,107,.4),rgba(242,201,107,0));}
 .wb-top b{color:#FFE9AE;font-size:14px;text-shadow:0 0 10px rgba(255,215,94,.55);}
-.wb-boss{overflow:hidden;}
+.wb-boss{margin-bottom:12px;overflow:hidden;}   /* 与下方出战战斗面板留间距 */
 .wb-boss::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,rgba(255,90,80,0),#FF6B5E,rgba(255,90,80,0));box-shadow:0 0 12px rgba(255,107,94,.65);}
 .wb-boss::after{content:"";position:absolute;inset:0;border-radius:12px;background:radial-gradient(120% 60% at 50% 0%,rgba(255,160,120,.14),rgba(0,0,0,0) 70%);pointer-events:none;}
 .wb-bname{font-size:18px;letter-spacing:3px;position:relative;}
@@ -2972,7 +3016,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div class="wb-boss" id="wb-boss"></div>
       <div class="arena-fight" id="wb-fight"><div class="af-wait">点击「出战」· 讨伐世界BOSS</div></div>
       <div class="wb-ctrl">
-        <button class="wb-btn go" id="wb-go">出战（30秒）</button>
+        <button class="wb-btn go" id="wb-go">出战</button>
         <button class="wb-btn stop" id="wb-stop" style="display:none">停止</button>
         <span class="wb-btn remain" id="wb-remain"></span>
         <button class="wb-btn reward" id="wb-reward">领取奖励</button>
@@ -2981,7 +3025,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div id="wb-rank"></div>
       <div class="wb-sec-tit">BOSS商店 · 讨伐币兑换</div>
       <div id="wb-shop"></div>
-      <div class="wb-hint">每日 8 点刷新世界BOSS，全服共同讨伐超厚血条，按本时段伤害排名发奖。全服AI随服务器成长提速磨血（10小时→6小时）。太古遗物匣每轮固定 60 个：第1名独占 36 个，2~6名按 12/6/3/2/1 递减，未达标或 7 名后无遗物匣。每次出战限时 30 秒，可重复出战；BOSS 讨伐后点「领取奖励」发奖，BOSS币可在商店兑换稀有物资。</div>
+      <div class="wb-hint">每日 8 点刷新世界BOSS，全服共同讨伐超厚血条，按本时段伤害排名发奖。全服AI随服务器成长提速磨血（10小时→6小时）。太古遗物匣每轮固定 60 个：第1名独占 36 个，2~6名按 12/6/3/2/1 递减，未达标或 7 名后无遗物匣。每次出战不限时，可持续讨伐直至 BOSS 被讨伐或角色被击败；可重复出战；BOSS 讨伐后点「领取奖励」发奖，BOSS币可在商店兑换稀有物资。</div>
     </div>
   </div>
   <!-- ===== 二级页面：域外战场 ===== -->
@@ -3593,6 +3637,10 @@ var ITEM_BLUEPRINTS = {
   /* --- 洗炼卷轴 --- */
   refineScroll:    { name:"属性卷轴",       type:"normal_scroll", img:"logos/属性卷轴.png",       count:255, maxStack:255 },   /* 仅用于洗炼 */
   refineScrollFull:{ name:"完整的属性卷轴", type:"full_scroll",  img:"logos/完整的属性卷轴.png", count:255, maxStack:255 },   /* 仅用于洗炼 */
+  godOrigin:{ name:"神格本源", type:"god_origin", img:"logos/神力结晶.png", count:99, maxStack:99, quality:"purple" },   /* 世界BOSS重宝：使用提升当前神格本元1级 */
+  legendBox:{ name:"传说宝箱", type:"legend_box", img:"logos/太古匣子.png", count:99, maxStack:99, quality:"gold" },   /* 世界BOSS重宝：开启自选部位随机传说装备 */
+  enhBless:{ name:"强化祝福卷轴", type:"enh_bless", img:"logos/属性卷轴.png", count:999, maxStack:999, quality:"blue" },   /* 世界BOSS重宝：强化时提升成功率/冲击满级 */
+  inheritPill:{ name:"远古传承丹", type:"inherit_pill", img:"logos/神圣药水.png", count:99, maxStack:99, quality:"gold" },   /* 世界BOSS重宝：永久全属性小幅提升（上限100颗） */
   /* --- 坐骑 --- */
   mount: {
     name:"坐骑", type:"mount", img:"logos/坐骑.png",
@@ -4459,6 +4507,10 @@ function bindEvents(){
     if (!s) return;
     var it = bag[currentTab][parseInt(s.getAttribute('data-slot'),10)];
     if (it && (it.type==='potion'||it.type==='sun_potion')){ usePotion(s); e.stopPropagation(); return; }   /* 优先处理物品类型：药水使用不受拖拽抑制点击影响 */
+    if (it && it.type==='god_origin'){ useGodOrigin(currentTab, parseInt(s.getAttribute('data-slot'),10)); e.stopPropagation(); return; }
+    if (it && it.type==='legend_box'){ useLegendBox(currentTab, parseInt(s.getAttribute('data-slot'),10)); e.stopPropagation(); return; }
+    if (it && it.type==='inherit_pill'){ useInheritPill(currentTab, parseInt(s.getAttribute('data-slot'),10)); e.stopPropagation(); return; }
+    if (it && it.type==='enh_bless'){ useEnhBless(currentTab, parseInt(s.getAttribute('data-slot'),10)); e.stopPropagation(); return; }
     if (suppressClick){ suppressClick = false; return; }
     if (!it) toast('背包格 · 空');   /* 有物品由 document 点击委托显示 tooltip */
   });
@@ -5301,7 +5353,8 @@ function recalcCharacter(){
 }
 
 /* ============ 强化系统 ============ */
-var ENH={ equip:null, mats:[null,null,null,null,null,null] };
+var ENH={ equip:null, mats:[null,null,null,null,null,null], bless:0 };
+var INHERIT_USED=0;
 /* 武器强化：独立概率与金币消耗表（参照官方公示），材料消耗忽略；攻击加成见 WEAPON_ENH_ATK */
 var WEAPON_ENH_COST=[1000,4500,12000,23500,39000,58500,82000,109500,141000,176500,216000,259500,307000,358500,414000,473500,537000,604500,676000,751500];
 var WEAPON_ENH_RATE=[0.9,0.8,0.7,0.6,0.4,0.2,0.1,0.08,0.06,0.01,0.006,0.002,0.001,0.0006,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002];
@@ -5323,15 +5376,15 @@ function unlockGodMedal(){ if(ARENA.killGod>=1) return; ARENA.killGod=1; saveGam
 function unlockSupremeMedal(){ if(ARENA.killSupreme>=1) return; ARENA.killSupreme=1; saveGame(); renderArena(); toast('获得徽章·弑神者！真实伤害+20%'); }
 /* ===== 域外战场 & 神格本元深化 ===== */
 var BATTLE={ merit:0, crystal:0, opps:[], fight:false };   /* 域外战场：战功/神格结晶/对手/战斗态 */
-var DEEP={ shen:0, wang:0, diyu:0, tian:0 };   /* 神格本元深化等级：神性初显/王者威压/帝御山河/天道共鸣 */
+var DEEP={ total:0, shen:0, wang:0, diyu:0, tian:0 };   /* 神格本元深化等级：单一永久总等级（total），跨阶位/轮回统一延续；shen/wang/diyu/tian 仅存档兼容 */
 function deepBonus(lv){ if(!lv||lv<=0) return 0; if(lv<=10) return lv*1.0; if(lv<=20) return 10+(lv-10)*0.5; if(lv<=40) return 15+(lv-20)*0.2; return 19+(lv-40)*0.1; }   /* 递减曲线：1-10级+1%/级、11-20+0.5%、21-40+0.2%、41++0.1%（无硬上限） */
 function _dbTxt(lv){ var b=deepBonus(lv); return b>0?'（深化 +'+b.toFixed(1)+'%）':''; }
 function deepCostMerit(lv){ return Math.round(60*(lv+1)*(1+lv*0.08)); }
 function deepCostCrystal(lv){ return lv<10?1:(lv<20?2:(lv<30?3:4)); }
 function deepKeyOf(){ var _a=isAscended(), i=charTierIdx(); if(_a) return 'tian'; if(i>=5) return 'diyu'; if(i>=4) return 'wang'; if(i>=3) return 'shen'; return null; }
 function deepTraitName(){ var _a=isAscended(), i=charTierIdx(); if(_a) return '天道共鸣'; if(i>=5) return '帝御山河'; if(i>=4) return '王者威压'; if(i>=3) return '神性初显'; return null; }
-function deepTraitDesc(){ var _key=deepKeyOf(), _db=_dbTxt(DEEP[_key]||0), _a=isAscended(), i=charTierIdx(); if(_a) return '无视防御 +30%'+_db+'、真实伤害 +30%'+_db+'；攻击附带生命上限 3% 真实伤害'; if(i>=5) return '无视防御 +20%'+_db+'、真实伤害 +20%'+_db; if(i>=4) return '无视防御 +8%'+_db+'、真实伤害 +8%'+_db; if(i>=3) return '无视防御 +5%'+_db; return ''; }
-function deepUp(key){ var lv=DEEP[key]||0, mk=deepCostMerit(lv), cc=deepCostCrystal(lv); if(BATTLE.merit<mk||BATTLE.crystal<cc){ toast('战功或神格结晶不足'); return; } BATTLE.merit-=mk; BATTLE.crystal-=cc; DEEP[key]=lv+1; saveGame(); recalcCharacter(); if(typeof renderBattle==='function') renderBattle(); if(typeof renderAttrs==='function') renderAttrs(); if(typeof renderRebirth==='function') renderRebirth(); applyGodSigil(); toast(deepTraitName()+' 深化 · 升至 Lv.'+(lv+1)); }
+function deepTraitDesc(){ var _db=_dbTxt(DEEP.total||0), _a=isAscended(), i=charTierIdx(); if(_a) return '无视防御 +30%'+_db+'、真实伤害 +30%'+_db+'；攻击附带生命上限 3% 真实伤害'; if(i>=5) return '无视防御 +20%'+_db+'、真实伤害 +20%'+_db; if(i>=4) return '无视防御 +8%'+_db+'、真实伤害 +8%'+_db; if(i>=3) return '无视防御 +5%'+_db; return ''; }
+function deepUp(key){ var lv=DEEP.total||0, mk=deepCostMerit(lv), cc=deepCostCrystal(lv); if(BATTLE.merit<mk||BATTLE.crystal<cc){ toast('战功或神格结晶不足'); return; } BATTLE.merit-=mk; BATTLE.crystal-=cc; DEEP.total=lv+1; saveGame(); recalcCharacter(); if(typeof renderBattle==='function') renderBattle(); if(typeof renderAttrs==='function') renderAttrs(); if(typeof renderRebirth==='function') renderRebirth(); applyGodSigil(); toast(deepTraitName()+' 深化 · 升至 Lv.'+(lv+1)); }
 function mkFieldOpps(){ var my=rolePower(), out=[], nm=['天谕','墨玄','洛璃','苍冥','无涯','疏影','白夜','曜光','清晏','流火'], _layers=[
 {t:'平民',inL:0.90,inH:1.0,eq:0.15,enh:0.05,th:0,wpn:0.12,feat:0.08,chg:0,tiMin:0,tiMax:1,pwMin:0.10,pwMax:0.3,w:37,c:'#9AA5B1'},
 {t:'普通',inL:1.00,inH:1.2,eq:0.35,enh:0.18,th:0.25,wpn:0.3,feat:0.22,chg:0,tiMin:1,tiMax:3,pwMin:0.3,pwMax:0.7,w:34,c:'#8FA3B8'},
@@ -5367,16 +5420,16 @@ function oppAtkGap(o){ var a=o.agi||(o.lv*3+10); return Math.min(1280, Math.max(
 function fightStep(){ if(!BFF) return; var B=BFF; B.tick++; var log=document.getElementById('ff-log'); var _aC=bfCharAtk(), _dO=bfOppDef(B.o), _aO=bfOppAtk(B.o), _dC=bfCharDef(); var _lvC=Math.min(80,CHARACTER.info.level||80); var fr=520; B.myAtkAcc=(B.myAtkAcc||0)+fr; B.oAtkAcc=(B.oAtkAcc||0)+fr; while(B.oHp>0&&B.myAtkAcc>=B.myGap){ B.myAtkAcc-=B.myGap; if(Math.random()>hitRate(HIT_P2M,_aC.atk,_aO.atk,_lvC,B.o.lv,null,altarHitBonus(),0)){ log.innerHTML+='<div><span class="dmg-m">你的攻击</span> <i style="color:#8b8272">被闪避</i></div>'; } else { var d1=Math.max(1,calcHit(_aC,_dO)); B.oHp-=d1; log.innerHTML+='<div><span class="dmg-m">你的攻击</span> 造成 <b>'+fmtWan(dispVal(d1))+'</b> 伤害</div>'; } if(B.oHp<=0){ B.win=true; break; } } while(B.myHp>0&&B.oAtkAcc>=B.oGap){ B.oAtkAcc-=B.oGap; if(Math.random()>hitRate(HIT_M2P,_aO.atk,_aC.atk,B.o.lv,_lvC,null,0,0)){ log.innerHTML+='<div><span class="dmg-o">对手反击</span> <i style="color:#8b8272">被你闪避</i></div>'; } else { var d2=Math.max(1,calcHit(_aO,_dC)); B.myHp-=d2; log.innerHTML+='<div><span class="dmg-o">对手反击</span> 造成 <b>'+fmtWan(dispVal(d2))+'</b> 伤害</div>'; } if(B.myHp<=0){ B.win=false; break; } } log.scrollTop=log.scrollHeight; var myPct=Math.max(0,B.myHp/B.myHp0*100), oPct=Math.max(0,B.oHp/B.oHp0*100); document.getElementById('ff-hp-my').style.width=myPct+'%'; document.getElementById('ff-hp-opp').style.width=oPct+'%'; setHpNum('my',B.myHp); setHpNum('opp',B.oHp); if(B.win!=null){ finishFight(); } }
 function finishFight(){ if(!BFF) return; var B=BFF, my=rolePower(); clearInterval(B.timer); var merit=B.win?Math.round(50+(B.o.pw/Math.max(1,my))*300):0; var cr=(B.win&&Math.random()<0.4)?1:0; BATTLE.merit+=merit; BATTLE.crystal+=cr; saveGame(); var res=document.getElementById('ff-result'); var _tu=B.timeUp?'<span style="color:#b7ac9a;font-size:11px">限时结束·</span>':''; if(B.win) res.innerHTML=_tu+'<b style="color:#FFD75E">讨伐成功</b> · 战功 <b style="color:#FFD75E">+'+merit+'</b>'+(cr?' · 神格结晶 <b style="color:#7EE8C2">+'+cr+'</b>':''); else res.innerHTML=_tu+'<b style="color:#FF5A5A">讨伐失利</b> · <span style="color:#FF5A5A">未获得战功</span>'; document.getElementById('ff-end').classList.add('show'); }
 function closeBattleFight(){ var over=document.getElementById('bf-fight-over'); over.classList.remove('on'); BFF=null; renderBattle(); }
-function renderBattle(){ var hn=document.getElementById('bf-hero-name'); if(hn){ var _i=CHARACTER.innate||1; hn.innerHTML='谜团'+(_i>=1.8?'<span class="ih-badge ih-top">天运之主</span>':(_i>=1.2?'<span class="ih-badge ih-good">欧皇</span>':'')); } var hl=document.getElementById('bf-hero-lv'); if(hl) hl.textContent=(CHARACTER.info.cls||'')+' · Lv.'+(CHARACTER.info.level||0); var ht=document.getElementById('bf-hero-tier'); if(ht){ ht.textContent=charTierName(); for(var _ti=0;_ti<=5;_ti++) ht.classList.remove('ti-'+_ti); ht.classList.add('tier-fx'); if(isAscended()) ht.classList.add('tier-ascended'); else { var _x=charTierIdx(); if(_x>=0) ht.classList.add('ti-'+_x); } } var hpw=document.getElementById('bf-hero-pw'); if(hpw) hpw.textContent=fmtWan(dispVal(rolePower())); var m=document.getElementById('bf-merit'); if(m) m.textContent=fmtWan(BATTLE.merit||0); var c=document.getElementById('bf-crystal'); if(c) c.textContent=(BATTLE.crystal||0); var dd=document.getElementById('bf-deep'); if(dd){ var _key=deepKeyOf(); if(_key){ var lv=DEEP[_key]||0, mk=deepCostMerit(lv), cc=deepCostCrystal(lv), _name=deepTraitName(); dd.innerHTML='<div class="bf-deep-row"><div class="bf-deep-ic">✦</div><div class="bf-deep-info"><div class="bf-deep-n">'+_name+'</div><div class="bf-deep-d">'+deepTraitDesc()+'</div><div class="bf-deep-lv">当前 Lv.'+lv+' · 递减曲线已生效</div></div><button class="bf-deep-btn" data-k="'+_key+'"'+((BATTLE.merit<mk||BATTLE.crystal<cc)?' disabled':'')+'>升级<br><span style="font-size:9px;opacity:.9">战功'+fmtWan(mk)+' · 结晶'+cc+'</span></button></div>'; var _bb=dd.querySelector('.bf-deep-btn'); if(_bb&&!_bb.__b){ _bb.__b=true; _bb.addEventListener('click',function(){ deepUp(_key); }); } } else { dd.innerHTML='<div class="bf-deep-empty">尚未觉醒神格本元 · 真神阶解锁后可深化</div>'; } }
+function renderBattle(){ var hn=document.getElementById('bf-hero-name'); if(hn){ var _i=CHARACTER.innate||1; hn.innerHTML='谜团'+(_i>=1.8?'<span class="ih-badge ih-top">天运之主</span>':(_i>=1.2?'<span class="ih-badge ih-good">欧皇</span>':'')); } var hl=document.getElementById('bf-hero-lv'); if(hl) hl.textContent=(CHARACTER.info.cls||'')+' · Lv.'+(CHARACTER.info.level||0); var ht=document.getElementById('bf-hero-tier'); if(ht){ ht.textContent=charTierName(); for(var _ti=0;_ti<=5;_ti++) ht.classList.remove('ti-'+_ti); ht.classList.add('tier-fx'); if(isAscended()) ht.classList.add('tier-ascended'); else { var _x=charTierIdx(); if(_x>=0) ht.classList.add('ti-'+_x); } } var hpw=document.getElementById('bf-hero-pw'); if(hpw) hpw.textContent=fmtWan(dispVal(rolePower())); var m=document.getElementById('bf-merit'); if(m) m.textContent=fmtWan(BATTLE.merit||0); var c=document.getElementById('bf-crystal'); if(c) c.textContent=(BATTLE.crystal||0); var dd=document.getElementById('bf-deep'); if(dd){ var _key=deepKeyOf(); if(_key){ var lv=DEEP.total||0, mk=deepCostMerit(lv), cc=deepCostCrystal(lv), _name=deepTraitName(); dd.innerHTML='<div class="bf-deep-row"><div class="bf-deep-ic">✦</div><div class="bf-deep-info"><div class="bf-deep-n">'+_name+'</div><div class="bf-deep-d">'+deepTraitDesc()+'</div><div class="bf-deep-lv">当前 Lv.'+lv+' · 递减曲线已生效</div></div><button class="bf-deep-btn" data-k="'+_key+'"'+((BATTLE.merit<mk||BATTLE.crystal<cc)?' disabled':'')+'>升级<br><span style="font-size:9px;opacity:.9">战功'+fmtWan(mk)+' · 结晶'+cc+'</span></button></div>'; var _bb=dd.querySelector('.bf-deep-btn'); if(_bb&&!_bb.__b){ _bb.__b=true; _bb.addEventListener('click',function(){ deepUp(_key); }); } } else { dd.innerHTML='<div class="bf-deep-empty">尚未觉醒神格本元 · 真神阶解锁后可深化</div>'; } }
   var oo=document.getElementById('bf-opps'); if(oo){ oo.innerHTML=BATTLE.opps.map(function(o,idx){ return '<div class="bf-card"><div class="op-ico"><img src="logos/opp-avatar.png" alt=""></div><div class="bf-info"><div class="bf-n">'+o.name+'<span class="bf-type" style="color:'+o.typeC+'">'+o.type+'</span></div><div class="bf-meta"><span>运势 '+o.sp+'</span><span>装备 <i>'+(({大能:'全传说满石',强者:'传说套装',精英:'史诗套装',普通:'散件混搭',平民:'入门装备'})[o.type]||'散件')+'</i></span><span>强化 <i style="color:#FFD75E">+'+o.enhLv+'</i></span><span>天神 <i style="color:#C79AFF">'+(o.thStar?o.thStar+'星':'未觉醒')+'</i></span><span>奇遇 <i>'+(({大能:'天命眷顾',强者:'欧皇附体',精英:'奇遇丰厚',普通:'偶遇机缘',平民:'初入战场'})[o.type]||'偶遇')+'</i></span>'+(o.charge?('<span>充值 <i style="color:#FFB347">'+({大能:'神豪',强者:'氪金',精英:'微氪'}[o.type]||'微氪')+'</i></span>'):'')+'</div><div class="bf-pw">战力 <b>'+fmtWan(dispVal(o.pw))+'</b> · Lv.'+o.lv+'</div></div><button class="bf-btn" data-i="'+idx+'">讨伐</button></div>'; }).join('')||'<div class="bf-empty">暂无对手</div>'; if(!oo.__b){ oo.__b=true; oo.addEventListener('click',function(e){ var b=e.target.closest('.bf-btn'); if(b) fieldFight(parseInt(b.getAttribute('data-i'))); }); var fe=document.getElementById('ff-end'); if(fe&&!fe.__b){ fe.__b=true; fe.addEventListener('click',function(){ closeBattleFight(); }); } } }
 }
 function mountBattle(){ if(!BATTLE.opps.length) mkFieldOpps(); var rr=document.getElementById('bf-reroll'); if(rr&&!rr.__b){ rr.__b=true; rr.addEventListener('click',function(){ mkFieldOpps(); renderBattle(); toast('已刷新战场对手'); }); } renderBattle(); }
-function roleTierAtk(){ var i=charTierIdx(), _asc=isAscended(), ig=0,tr=0,dk=''; if(_asc){ ig=0.30;tr=0.30;dk='tian'; } else if(i>=5){ ig=0.20;tr=0.20;dk='diyu'; } else if(i>=4){ ig=0.08;tr=0.08;dk='wang'; } else if(i>=3){ ig=0.05;dk='shen'; } var db=deepBonus(DEEP[dk]||0)/100; return {ig:ig+db, tr:(dk==='shen'?0:tr+db)}; }   /* 角色阶位攻击特性+神格本元深化（真神5%、神王8%+真伤8%、大帝20%+真伤20%、超脱30%+真伤30%，叠加深化递减加成） */
+function roleTierAtk(){ var i=charTierIdx(), _asc=isAscended(), ig=0,tr=0,dk=''; if(_asc){ ig=0.30;tr=0.30;dk='tian'; } else if(i>=5){ ig=0.20;tr=0.20;dk='diyu'; } else if(i>=4){ ig=0.08;tr=0.08;dk='wang'; } else if(i>=3){ ig=0.05;dk='shen'; } var db=deepBonus(DEEP.total||0)/100; return {ig:ig+db, tr:(dk==='shen'?0:tr+db)}; }   /* 角色阶位攻击特性+神格本元深化（真神5%、神王8%+真伤8%、大帝20%+真伤20%、超脱30%+真伤30%，叠加深化递减加成） */
 function roleTierTraits(){ var _asc=isAscended(), i=charTierIdx(), out=[]; if((CHARACTER.innate||1)>=1.8) out.unshift({n:'天运之主', p:'全服唯一', d:'全属性+100%（含生命/活力）；提升传说级物品掉落概率'});   /* 天运之主：先天命格根基，置顶于神格本元栏 */
-  if(_asc){ out.push({n:'天道共鸣', p:'超脱·轮回主宰', d:'无视防御 +30%'+_dbTxt(DEEP.tian||0)+'、真实伤害 +30%'+_dbTxt(DEEP.tian||0)+'；攻击附带生命上限 3% 的真实伤害'}); }
-  else if(i>=5){ out.push({n:'帝御山河', p:'大帝', d:'无视防御 +20%'+_dbTxt(DEEP.diyu||0)+'、真实伤害 +20%'+_dbTxt(DEEP.diyu||0)}); }
-  else if(i>=4){ out.push({n:'王者威压', p:'神王', d:'无视防御 +8%'+_dbTxt(DEEP.wang||0)+'、真实伤害 +8%'+_dbTxt(DEEP.wang||0)}); }
-  else if(i>=3){ out.push({n:'神性初显', p:'真神', d:'无视防御 +5%'+_dbTxt(DEEP.shen||0)}); }
+  if(_asc){ out.push({n:'天道共鸣', p:'超脱·轮回主宰', d:'无视防御 +30%'+_dbTxt(DEEP.total||0)+'、真实伤害 +30%'+_dbTxt(DEEP.total||0)+'；攻击附带生命上限 3% 的真实伤害'}); }
+  else if(i>=5){ out.push({n:'帝御山河', p:'大帝', d:'无视防御 +20%'+_dbTxt(DEEP.total||0)+'、真实伤害 +20%'+_dbTxt(DEEP.total||0)}); }
+  else if(i>=4){ out.push({n:'王者威压', p:'神王', d:'无视防御 +8%'+_dbTxt(DEEP.total||0)+'、真实伤害 +8%'+_dbTxt(DEEP.total||0)}); }
+  else if(i>=3){ out.push({n:'神性初显', p:'真神', d:'无视防御 +5%'+_dbTxt(DEEP.total||0)}); }
   return out; }   /* 本命特性：角色自身固有，随成长一直存在，不随轮回/换装备丢失；战斗数值由 roleTierAtk 累加 */
 function ascendSkyDmg(maxHp){ return isAscended()?Math.round(maxHp*0.03):0; }   /* 超脱·天道共鸣：攻击附带生命上限 3% 真实伤害 */
 function titleAtk(){ if(!ARENA.titleOn) return {ig:0,tr:0,ls:0}; var t=arenaTitle(); if(!t) return {ig:0,tr:0,ls:0}; return {ig:t.ig,tr:t.tr,ls:t.ls}; }   /* 称号攻击特性累加：星钻吸血30%、王者无视防御5%、战神无视防御10%+真实伤害10%（戴上生效） */
@@ -5583,7 +5636,7 @@ function renderCraft(){
   b.querySelectorAll('.craft-row[data-lid]').forEach(function(el){ var id=+el.getAttribute('data-lid'); var itl=null; for(var pl=0;pl<BAG_NUM;pl++)for(var il=0;il<BAG_SLOTS;il++){ if(bag[pl][il]&&bag[pl][il].id===id){ itl=bag[pl][il]; break; } } el._item=itl||null; var slotL=el.querySelector('.cr-slot'); if(slotL&&itl){ slotL.addEventListener('click',function(ev){ if(('ontouchstart' in window)||(window.matchMedia&&window.matchMedia('(hover: none)').matches)){ ev.stopPropagation(); showTooltip(itl, slotL); } }); } });
   b.querySelectorAll('.cr-btn[data-ls]').forEach(function(el){ el.addEventListener('click',function(ev){ ev.stopPropagation(); legendSmelt(+el.getAttribute('data-ls')); }); });
   b.querySelectorAll('.cr-btn[data-lx]').forEach(function(el){ el.addEventListener('click',function(ev){ ev.stopPropagation(); legendExchange(+el.getAttribute('data-lx')); }); });
-  b.querySelectorAll('.ap-row[data-ap]').forEach(function(el){ el.addEventListener('click',function(){ var k=el.getAttribute('data-ap'); AUTO_PROC[k]=!AUTO_PROC[k]; el.classList.toggle('on',AUTO_PROC[k]); var t=el.querySelector('.autosell-toggle'); if(t) t.classList.toggle('on',AUTO_PROC[k]); saveAutoProc(); }); });
+  b.querySelectorAll('.ap-row[data-ap]').forEach(function(el){ el.addEventListener('click',function(){ var k=el.getAttribute('data-ap'); if(k==='on'){ AUTO_PROC.on=!AUTO_PROC.on; if(!AUTO_PROC.on){ AUTO_PROC.evolve=false; AUTO_PROC.decomp=false; AUTO_PROC.smelt=false; } } else { AUTO_PROC[k]=!AUTO_PROC[k]; if(AUTO_PROC[k]) AUTO_PROC.on=true; } saveAutoProc(); renderCraft(); }); });
   b.querySelectorAll('.ap-q[data-q]').forEach(function(el){ el.addEventListener('click',function(){ AUTO_PROC.q=el.getAttribute('data-q'); saveAutoProc(); renderCraft(); }); });
   b.querySelectorAll('.ap-pdel[data-pi]').forEach(function(el){ el.addEventListener('click',function(ev){ ev.stopPropagation(); AUTO_PROC.protect.splice(+el.getAttribute('data-pi'),1); saveAutoProc(); renderCraft(); }); });
   b.querySelectorAll('.ap-srow[data-sm]').forEach(function(el){ el.addEventListener('click',function(){ var n=el.getAttribute('data-sm'); var i=AUTO_PROC.smeltList.indexOf(n); if(i>=0) AUTO_PROC.smeltList.splice(i,1); else AUTO_PROC.smeltList.push(n); el.classList.toggle('on'); var t=el.querySelector('.autosell-toggle'); if(t) t.classList.toggle('on'); saveAutoProc(); }); });
@@ -5787,19 +5840,26 @@ function doEnhanceCore(){
     var wcfg=weaponEnhCfg(lv);
     if(CURRENCY.gold<wcfg.cost){ toast('金币不足'); return; }
     CURRENCY.gold-=wcfg.cost; renderCurrency();
-    ok=Math.random()<wcfg.rate;
+    ok=Math.random()<enhRateBoost(wcfg.rate);
   } else {
     if(lv>=20){ toast('强化已达到上限'); return; }
     var acfg=armorEnhCfg(lv);
     if(CURRENCY.gold<acfg.cost){ toast('金币不足'); return; }
     CURRENCY.gold-=acfg.cost; renderCurrency();
-    ok=Math.random()<acfg.rate;
+    ok=Math.random()<enhRateBoost(acfg.rate);
   }
   if(ok){ dailyBump('enh'); eq.enhanceLevel=lv+1; playSoundEffect('embedSuccess'); enhFx('success'); toast('强化成功 <b style="color:#52C6DA">+'+eq.enhanceLevel+'</b>'); }
   else { playSoundEffect('embedFail'); toast('强化失败'); }
   ENH.mats=[null,null,null,null,null,null]; ENH.hammer=null;
   renderEquip(); renderBag(); renderEnhance(); recalcCharacter();
 }
+function enhRateBoost(rate){ if(ENH.bless>0){ ENH.bless--; saveGame(); return Math.min(0.5, rate*10+0.02); } return rate; }   /* 强化祝福卷轴：消耗1次，本次强化成功率大幅提升（含冲击满级20） */
+function useGodOrigin(p,i){ var it=bag[p][i]; if(!it) return; var k=deepKeyOf(); if(!k){ toast('尚未觉醒神格本元 · 需真神阶'); return; } var nm=deepTraitName(), nk=(DEEP.total||0)+1; confirmDialog('使用 神格本源 ×1？<br>「'+nm+'」Lv.'+(DEEP.total||0)+' → Lv.'+nk+'<br><span style="color:#7EE8C2">免消耗 战功 / 神格结晶</span>', function(ok){ if(!ok) return; bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; DEEP.total=nk; saveGame(); recalcCharacter(); if(typeof renderBattle==='function') renderBattle(); if(typeof renderAttrs==='function') renderAttrs(); if(typeof renderRebirth==='function') renderRebirth(); applyGodSigil(); renderBag(); toast('<b style="color:#7BF1C4">'+nm+' 深化 · 升至 Lv.'+nk+'</b>'); }); }
+function showLegendBoxPick(cb){ var ov=document.createElement('div'); ov.className='lb-over'; ov.id='lb-pick-over'; ov.innerHTML='<div class="lb-pick"><div class="lb-pick-t">传说宝箱 · 自选部位</div><div class="lb-pick-row"><button class="lb-pk" data-k="legendWings">传说 魔翼</button><button class="lb-pk" data-k="shencaiBlade">神裁之刃</button></div><div class="lb-pick-row"><button class="lb-pk" data-k="legendOgdonChest">奥格顿胸甲</button><button class="lb-pk" data-k="yitaiNecklace">伊泰安项链</button></div></div>'; document.body.appendChild(ov); ov.addEventListener('click', function(e){ var b=e.target.closest('.lb-pk'); if(b){ ov.remove(); cb(b.getAttribute('data-k')); } else if(e.target===ov){ ov.remove(); } }); }
+function useLegendBox(p,i){ var it=bag[p][i]; if(!it) return; showLegendBoxPick(function(k){ var bp=ITEM_BLUEPRINTS[k]; if(!bp){ toast('部位不可用'); return; } var m=mkLoot(bp); var f=addStackable(m); if(!f){ toast('背包已满'); return; } bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; if(m.name.indexOf('伊泰安')>=0) triggerLegendFX(); saveGame(); renderBag(); toast('获得 <b style="color:#B06CFF">'+m.name+'</b>'); }); }
+function useInheritPill(p,i){ var it=bag[p][i]; if(!it) return; var used=INHERIT_USED||0; if(used>=100){ toast('远古传承丹已达使用上限（100颗）'); return; } confirmDialog('使用 远古传承丹 ×1？<br>永久全属性 +5000万<br><span style="color:#7EE8C2">已使用 '+used+' / 100 颗</span>', function(ok){ if(!ok) return; bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; INHERIT_USED=used+1; addPerm(50000000,0,'远古传承丹'); saveGame(); renderBag(); toast('<b style="color:#FFD75E">永久全属性 +5000万</b>'); }); }
+function useEnhBless(p,i){ var it=bag[p][i]; if(!it) return; confirmDialog('使用 强化祝福卷轴 ×1？<br>获得 1 次强化祝福（下次强化成功率大幅提升）<br><span style="color:#7EE8C2">当前祝福 '+ENH.bless+' 次</span>', function(ok){ if(!ok) return; bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; ENH.bless=(ENH.bless||0)+1; saveGame(); renderBag(); toast('强化祝福 +1 · 当前 '+ENH.bless+' 次'); }); }
+function wbDrop4(k,n){ var _bp=ITEM_BLUEPRINTS[k]; if(!_bp) return; var _m=mkLoot(_bp); _m.count=n; addStackable(_m); loot.push({n:_m.name,ic:'<img src="'+_m.img+'">',c:n,rare:true}); }
 function doEnhance(){
   stopEnhAuto();   /* 点击手动强化：自动强化停止 */
   if(!ENH.equip){ toast('请先选择强化目标'); return; }
@@ -7606,7 +7666,7 @@ function route(){
   if(!h || h==='#'){ location.replace('#home'); return; }   /* 默认进入基地大厅 */
   if (h.indexOf('#god')<0) stopGodAuto();   /* 离开天神页即停止自动升级 */
   if (h.indexOf('#arena')<0) stopArenaFight(); /* 离开竞技页即停止战斗 */
-  if (typeof WBOSS!=='undefined' && h.indexOf('#wboss')<0){ wbStop(); if(WB_REFRESH){ clearInterval(WB_REFRESH); WB_REFRESH=null; } } /* 离开世界BOSS页即停止战斗与血条刷新 */
+  if (typeof WBOSS!=='undefined' && h.indexOf('#wboss')<0){ if(WB_REFRESH){ clearInterval(WB_REFRESH); WB_REFRESH=null; } } /* 离开世界BOSS页：仅停血条刷新，出战战斗后台持续（进入副本/试炼/塔/竞技/域外讨伐才停） */
   /* 统一绑定所有二级页返回按钮（不依赖 renderHome，刷新/直开页面也有效） */
   ['arena','forge','wanshou','gem','enhance','refine','shop','treasure','trial','lottery','achievement','attrs','main','rebirth','altar','guide','season','battle'].forEach(function(k){
     var b=document.getElementById(k+'-back'); if(b&&!b.__b){ b.__b=true; b.addEventListener('click',function(){ location.hash='#home'; }); }
@@ -8090,7 +8150,7 @@ function checkRankUp(){
 function stopArenaFight(){ if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.timer=null; } ARENA.fight=false; renderOppList(); }
 
 /* ===== 世界BOSS榜：全服共享超厚血条 · 分时段讨伐 · 伤害排名 ===== */
-var WBOSS={day:'',slot:-1,mul:1,boss:null,bossMax:1,bossHp:1,my:0,ai:[],lastVisit:0,startTime:0,killed:false,reward:{got:false},coins:0,totalKill:0,totalDmg:0,bestDmg:0,timeBase:0};   /* timeBase=服务器开刷时间戳(天数成长)；startTime=本轮8点开刷固定锚点，AI磨血据此单调累加 */
+var WBOSS={day:'',slot:-1,mul:1,boss:null,bossMax:1,bossHp:1,my:0,ai:[],lastVisit:0,startTime:0,killed:false,reward:{got:false},coins:0,totalKill:0,totalDmg:0,bestDmg:0,timeBase:0,smiteTs:0,revive:null,loot:null};   /* loot=击杀战利品记录(即时入账后展示，持久化，击杀后至下次刷新可重查) */   /* timeBase=服务器开刷时间戳(天数成长)；startTime=本轮8点开刷固定锚点，AI磨血据此单调累加；smiteTs=BOSS上次集火AI时间戳；revive=玩家被杀后自动复活定时器 */
 var WB_SESSION=null;
 var WB_REFRESH=null;   /* 世界BOSS页血条动态刷新定时器（3秒，仅页面停留时运行） */
 var WB_AI_FIXED=[{n:'剑尊·破天',dps:0.0000120,hit:0.92},{n:'血刀·修罗',dps:0.0000090,hit:0.90},{n:'风神·无痕',dps:0.0000060,hit:0.88},{n:'星陨·落',dps:0.0000045,hit:0.88},{n:'霜华·冷',dps:0.0000030,hit:0.86},{n:'雷帝·狂',dps:0.0000023,hit:0.86},{n:'焚天·焰',dps:0.0000016,hit:0.84},{n:'幽影·匿',dps:0.0000013,hit:0.84},{n:'苍狼·啸',dps:0.0000010,hit:0.82},{n:'月蚀·冥',dps:0.00000085,hit:0.82},{n:'云麾·苍',dps:0.00000070,hit:0.80},{n:'渊帝·影',dps:0.00000055,hit:0.80}];   /* 世界BOSS固定参战玩家梯队：dps=每秒占共享血比例(攻击区间)，hit=命中率(模拟MISS)，无输出上限，按各自dps×BOSS存活时长持续磨血直至被杀 */
@@ -8110,8 +8170,9 @@ function wbMakeBoss(){
   return b;
 }
 function wbMakeAI(){
+  var o=WBOSS.boss||{atk:1}, _hp=Math.round((o.atk||1)*(50+Math.random()*50));   /* 个人血量：BOSS集火榜一时扣血，血空即阵亡退出磨血；血量各异（顶尖更厚） */
   var ai=[];
-  for(var i=0;i<WB_AI_FIXED.length;i++){ ai.push({n:WB_AI_FIXED[i].n, target:0, dmg:0, dps:WB_AI_FIXED[i].dps, hit:WB_AI_FIXED[i].hit}); }   /* 固定12名玩家梯队：顶尖长期霸榜，按各自dps×存活时长磨血累加，跨轮排名稳定、不再换一批 */
+  for(var i=0;i<WB_AI_FIXED.length;i++){ ai.push({n:WB_AI_FIXED[i].n, target:0, dmg:0, dps:WB_AI_FIXED[i].dps, hit:WB_AI_FIXED[i].hit, hp:_hp, hp0:_hp, dead:false, deadAt:0}); }   /* 固定12名玩家梯队：顶尖长期霸榜，按各自dps×存活时长磨血累加，跨轮排名稳定、不再换一批 */
   return ai;
 }
 function wbEnsure(){
@@ -8132,12 +8193,27 @@ function wbAdvanceAI(){
   var elSec=Math.max(0,(now-base)/1000);   /* BOSS存活时长(秒)：从开刷到当前/被杀 */
   var incTotal=0;
   WBOSS.ai.forEach(function(a){
+    if(a.dead){ if(now-(a.deadAt||0)>=10000){ a.dead=false; a.hp=a.hp0||1; a.deadAt=0; } else { return; } }   /* 阵亡AI 10秒复活归队：满血继续磨血；未到复活时差则伤害冻结 */
     var nd=Math.round(a.dps*WBOSS.bossMax*elSec*a.hit);   /* 攻击区间×存活时长×命中率(模拟MISS)，无输出上限 */
     var inc=Math.max(0, nd-a.dmg); a.dmg=Math.max(a.dmg,nd);
     incTotal+=inc;
   });
   if(incTotal>0){ WBOSS.bossHp=Math.max(0, WBOSS.bossHp-incTotal); }
-  if(WBOSS.bossHp<=0 && !WBOSS.killed){ WBOSS.killed=true; try{ wbStop(); wbCelebrate(); }catch(e){} }   /* AI自身即可磨死BOSS：血量归零即被杀，排名定格 */
+  if(WBOSS.bossHp<=0 && !WBOSS.killed){ WBOSS.killed=true; try{ wbStop(); wbOnKill(); }catch(e){} }   /* AI自身即可磨死BOSS：血量归零即被杀，排名定格并结算战利品弹框 */
+  wbBossSmiteAI(now);   /* BOSS集火当前伤害榜第一的活人：玩家是榜一则由出战反击处理，否则打榜一AI */
+}
+function wbBossSmiteAI(now){   /* BOSS只集火当前伤害榜第一的活人：玩家非榜一/未参与/被击杀时，转打榜一活AI */
+  if(!WBOSS.boss || WBOSS.killed) return;
+  var _lead=-1; WBOSS.ai.forEach(function(a){ if(!a.dead && a.dmg>_lead) _lead=a.dmg; });
+  if(WBOSS.my>0 && WB_SESSION && WB_SESSION.myHp>0 && WBOSS.my>=_lead) return;   /* 玩家是当前榜一且存活：BOSS由出战反击(wbTick)打玩家 */
+  var gap=wbBossGap()||1, last=WBOSS.smiteTs||now; WBOSS.smiteTs=now;
+  var hits=Math.max(1, Math.floor((now-last)/gap));   /* 按BOSS攻速换算本间隔击中数 */
+  var lead=null, _mx=-1;
+  WBOSS.ai.forEach(function(a){ if(!a.dead && a.dmg>_mx){ _mx=a.dmg; lead=a; } });
+  if(!lead) return;   /* 无活AI可打 */
+  var per=Math.max(1, Math.round(calcHit({atk:WBOSS.boss.atk,realAtk:WBOSS.boss.atk,ig:0.2,real:0.15,add:0},{def:0,fdr:0,mdef:0,attrDefDR:0,abs:0})));   /* BOSS集火AI：复用统一calcHit（真伤+无视打穿AI） */
+  lead.hp=Math.max(0,(lead.hp||0)-per*hits);
+  if(lead.hp<=0){ lead.dead=true; lead.hp=0; lead.deadAt=now; }   /* 血空阵亡：10秒后自动复活归队，BOSS转打下一榜一 */
 }
 function wbServerDays(){ if(!WBOSS.timeBase) return 0; return Math.max(0,Math.floor((Date.now()-WBOSS.timeBase)/86400000)); }   /* 服务器运行天数：从首次开刷时间戳起算 */
 function wbAICycleMs(){ var d=wbServerDays(), h=10-4*(1-Math.exp(-d/40)); h=Math.max(6,Math.min(10,h)); return Math.round(h*3600*1000); }   /* AI磨血周期：前期10小时，随服务器天数按饱和曲线(先快后慢)渐降到6小时封顶——体现AI攻击力越到后期越强 */
@@ -8156,18 +8232,34 @@ function wbCalcDmg(){
   var dmg=Math.max(1, Math.round(calcHit({atk:s.patk*lvR*(isCrit?2*altarCritMul()*shencaiCritMul():1), realAtk:s.patk*lvR, ig:_ig+reincIgnore(), real:_rl+reincTrue(), add:_add, attackElem:elemKey((CHARACTER.combat[4]||{}).v), atkElemPct:(((CHARACTER.combat[4]||{}).v!=='无')?0.3:0)}, {def:o.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(o.defElem?0.3:0), defElemResist:(o.defElem?0.3:0), nativeElem:o.defElem||null, abs:0})));
   return {dmg:dmg, crit:isCrit};
 }
+function wbBusyElsewhere(){   /* 判断是否在其他战斗挂机/进行（副本/无尽试炼/挑战塔/竞技/域外战场）：玩家只能在一处战斗 */
+  try{ if((typeof TR!=='undefined'&&TR&&TR.auto)) return true; }catch(e){}
+  try{ if((typeof T!=='undefined'&&T&&T.auto)) return true; }catch(e){}
+  try{ if((typeof CT!=='undefined'&&CT&&CT.auto)) return true; }catch(e){}
+  try{ if(ARENA&&ARENA.timer) return true; }catch(e){}
+  try{ if(BFF&&BFF.timer) return true; }catch(e){}
+  return false;
+}
+function wbPlayerRevive(){   /* 玩家被击杀后10秒自动复活重新出战（仅当未在别处挂机、BOSS仍存活且未手动重出） */
+  WBOSS.revive=null;
+  if(!WBOSS.boss || WBOSS.killed || WBOSS.bossHp<=0) return;
+  if(WB_SESSION) return;   /* 已手动重新出战 */
+  if(wbBusyElsewhere()) return;   /* 正在副本/试炼/塔/竞技/域外战场挂机：不自动复活出战 */
+  wbGo();
+}
+function wbOnPage(){ return window.location.hash.indexOf('#wboss')>-1; }   /* 是否正停留世界BOSS页：后台（切到其他页）时跳过特效/DOM，仅保核心伤害结算 */
 function wbPlayerAttack(){
-  var s=arenaStat(), o=WBOSS.boss;
-  if(Math.random()>hitRate(HIT_P2M,s.patk,o.atk,CHARACTER.info.level,(o.level||1),'BOSS',altarHitBonus())){ wbFloat('MISS','enemy',true); return; }
+  var s=arenaStat(), o=WBOSS.boss, _on=wbOnPage();
+  if(Math.random()>hitRate(HIT_P2M,s.patk,o.atk,CHARACTER.info.level,(o.level||1),'BOSS',altarHitBonus())){ if(_on) wbFloat('MISS','enemy',true); return; }
   var r=wbCalcDmg(), dmg=r.dmg;
   WB_SESSION.dmg+=dmg; WBOSS.my+=dmg; WBOSS.totalDmg+=dmg;
   WBOSS.bossHp=Math.max(0, WBOSS.bossHp-dmg);
-  wbFloat((r.crit?'暴击 ':'')+fmtDmg(dmg),'enemy',false);
-  if(r.crit){ var _e=document.querySelector('#wb-fight .af-enemy'); if(_e){ _e.classList.remove('shake'); void _e.offsetWidth; _e.classList.add('shake'); } }
-  if(WBOSS.bossHp<=0){ WBOSS.killed=true; wbStop(); wbCelebrate(); }
-  wbSetHp();
-  wbRenderMeta();
-  wbRenderRank();
+  if(_on){
+    wbFloat((r.crit?'暴击 ':'')+fmtDmg(dmg),'enemy',false);
+    if(r.crit){ var _e=document.querySelector('#wb-fight .af-enemy'); if(_e){ _e.classList.remove('shake'); void _e.offsetWidth; _e.classList.add('shake'); } }
+    wbSetHp(); wbRenderMeta(); wbRenderRank();
+  }
+  if(WBOSS.bossHp<=0){ WBOSS.killed=true; wbStop(); if(_on) wbOnKill(); }
 }
 function wbFloat(val,side,miss){
   var f=document.getElementById('wb-fight'); if(!f) return;
@@ -8194,13 +8286,34 @@ function wbArrow(cb){
   anim.onfinish=function(){ if(a.parentNode) a.remove(); if(cb) cb(); };
   anim.oncancel=function(){ if(a.parentNode) a.remove(); };
 }
+function wbBossGap(){ var o=WBOSS.boss; return (o&&o.agi)?charAtkSpeed(o.agi):1280; }   /* BOSS攻速：复用统一攻速公式 */
+function wbBossAttack(){
+  var o=WBOSS.boss, s=arenaStat(), _D=bfCharDef(), _on=wbOnPage();
+  if(!o||!WB_SESSION||WB_SESSION.killedByBoss||WBOSS.killed) return;
+  var _l=-1; WBOSS.ai.forEach(function(a){ if(!a.dead&&a.dmg>_l) _l=a.dmg; });
+  if(!(WBOSS.my>0 && WBOSS.my>=_l)) return;   /* BOSS只集火伤害榜第一的活人：玩家非榜一/未参与→不打玩家（转打榜一AI） */
+  var _ig=0,_real=0,_add=0;
+  if(o.traits){ for(var _bi=0;_bi<o.traits.length;_bi++){ var _tv=o.traits[_bi]; if(_tv.fx==='ignore') _ig+=_tv.val; else if(_tv.fx==='true') _real+=_tv.val; } }
+  if(_real<0.15) _real=0.15; if(o.tier==='supreme'&&_real<0.25) _real=0.25; if(_ig<0.2) _ig=0.2;   /* 世界BOSS保底真伤/无视：打穿玩家厚防（否则物理被亿级防御减到1点） */
+  if(Math.random()>hitRate(HIT_M2P,o.atk,charAgi(),(o.level||1),CHARACTER.info.level,null)){ if(_on) wbFloat('MISS','hero',true); return; }   /* 统一规则：怪物打角色闪避用玩家闪避charAgi() */
+  var r=calcHit({atk:o.atk,realAtk:o.atk,ig:_ig,real:_real,add:_add,attackElem:o.atkElem||null,atkElemPct:(o.atkElem?0.3:0)},_D);
+  var d=Math.max(1, Math.round(isFinite(r)?r:0));   /* calcHit返回数字伤害；取整并兜底≥1 */
+  WB_SESSION.myHp=Math.max(0,(WB_SESSION.myHp||0)-d);
+  if(_on){
+    wbFloat(''+fmtDmg(d),'hero',false);
+    var el=document.getElementById('af-hp-wb-p');
+    if(el){ var b=el.querySelector('i'); b.style.width=Math.max(0,Math.round(WB_SESSION.myHp/(s.hp||1)*100))+'%'; }
+    var t=document.getElementById('af-hpt-wb-p'); if(t) t.textContent=fmtHp(Math.round(WB_SESSION.myHp))+' / '+fmtHp(Math.round(s.hp||0));
+    if(WB_SESSION.myHp<=0){ WB_SESSION.killedByBoss=true; wbStop(); toast('被BOSS击败 · 10秒后自动复活'); WBOSS.revive=setTimeout(wbPlayerRevive,10000); }
+  } else if(WB_SESSION.myHp<=0){ WB_SESSION.killedByBoss=true; wbStop(); }
+}   /* BOSS反击：角色血条被打空即被击败，出战结束 */
 function wbTick(){
   if(!WB_SESSION) return;
   WB_SESSION.tP+=250;
   if(WB_SESSION.tP>=charAtkSpeed()){ WB_SESSION.tP=0; wbArrow(function(){ wbPlayerAttack(); }); }
-  WB_SESSION.remain-=0.25;
-  var r=document.getElementById('wb-remain'); if(r) r.textContent=Math.ceil(Math.max(0,WB_SESSION.remain))+'″';
-  if(WB_SESSION.remain<=0) wbEnd();
+  WB_SESSION.oP+=250;
+  if(WB_SESSION.oP>=wbBossGap()){ WB_SESSION.oP=0; wbBossAttack(); }   /* BOSS反击：攻速达标即攻击角色 */
+  if(Date.now()-WB_SESSION.lastSave>5000){ WB_SESSION.lastSave=Date.now(); saveGame(); }   /* 出战中每5秒落盘：刷新后累计伤害/BOSS血条/榜单不丢 */
 }
 function wbGo(){
   if(!WBOSS.boss) return;
@@ -8208,12 +8321,14 @@ function wbGo(){
   if(WBOSS.killed || WBOSS.bossHp<=0){ toast('本时段BOSS已被讨伐，点击领取奖励'); return; }
   stopTreasure(); stopTrialAuto(); stopArenaFight(); stopTowerAuto();
   wbFightView();
-  WB_SESSION={remain:WB_DUR, dmg:0, timer:null, tP:0};
+  var _s=arenaStat();
+  WB_SESSION={remain:0, dmg:0, myHp:_s.hp||1, killedByBoss:false, timer:null, tP:0, oP:0, lastSave:0};   /* 持续出战：不限期，直到BOSS被讨伐或角色被击败 */
   var go=document.getElementById('wb-go'); if(go) go.style.display='none';
   var st=document.getElementById('wb-stop'); if(st) st.style.display='block';
   WB_SESSION.timer=setInterval(wbTick,250);
 }
 function wbStop(){
+  if(WBOSS.revive){ clearTimeout(WBOSS.revive); WBOSS.revive=null; }   /* 停止出战/进入其他战斗/时段切换：取消自动复活 */
   if(WB_SESSION&&WB_SESSION.timer){ clearInterval(WB_SESSION.timer); WB_SESSION.timer=null; }
   WB_SESSION=null;
   var go=document.getElementById('wb-go'); if(go) go.style.display='';
@@ -8228,10 +8343,85 @@ function wbCelebrate(){
   boss.appendChild(c);
   toast('讨伐世界BOSS成功！');
 }
+function wbOnKill(){ try{ wbCelebrate(); }catch(e){} try{ wbGrantLoot(); }catch(e){} }
+function wbCoinSvg(){ return '<svg viewBox="0 0 24 24" width="28" height="28"><circle cx="12" cy="12" r="10" fill="#E8B94C" stroke="#B78A2E" stroke-width="1.5"/><path d="M12 7l1.6 3.6 3.9.4-2.9 2.6.8 3.9-3.4-2-3.4 2 .8-3.9-2.9-2.6 3.9-.4z" fill="#FFF4D6"/></svg>'; }
+function wbBossCoinSvg(){ return '<svg viewBox="0 0 24 24" width="28" height="28"><rect x="4" y="6" width="16" height="12" rx="2" fill="#8A5AF0" stroke="#5A3AC0" stroke-width="1.5"/><path d="M12 9l1.2 2.5 2.8.3-2.1 1.9.6 2.8-2.5-1.5-2.5 1.5.6-2.8-2.1-1.9 2.8-.3z" fill="#E8E0FF"/></svg>'; }
+function wbLegendSvg(){ return '<svg viewBox="0 0 24 24" width="28" height="28"><path d="M12 2l2.4 2.9-.9 4.6L12 11l-1.5-1.5-.9-4.6z" fill="#E0C24B" stroke="#9C7C2B" stroke-width="1.2"/><path d="M6 8h12l-1.2 3.4-3 5.6-3.8 1.2-3-4z" fill="#7BF1C4" stroke="#2A9D73" stroke-width="1"/></svg>'; }
+function wbGrantLoot(){   /* BOSS击杀即时结算：门槛判定→全部战利品立即入账→生成WBOSS.loot→弹框（奖励击杀即发） */
+  if(!WBOSS.boss) return;
+  var all=wbRankList(), rank=1;
+  for(var i=0;i<all.length;i++){ if(all[i].me){ rank=i+1; break; } }
+  var mul=WBOSS.mul||1;
+  var minDmg=Math.max(1,Math.round(WBOSS.bossMax*0.005));
+  var loot=[], gold=0, coins=0, box=0, ok=WBOSS.my>=minDmg;
+  if(ok){
+    if(rank===1){ gold=Math.round(WBOSS.bossMax*0.12); coins=200*mul; }
+    else if(rank<=3){ gold=Math.round(WBOSS.bossMax*0.05); coins=120*mul; }
+    else if(rank<=10){ coins=60*mul; }
+    else { coins=25*mul; }
+    var _pool=[0,36,12,6,3,2,1]; box=(rank<=6)?_pool[rank]:0;
+    if(box>0){ REBIRTH.reliquary=(REBIRTH.reliquary||0)+box; loot.push({n:'太古遗物匣',ic:'<img src="logos/太古匣子.png">',c:box,rare:true}); }
+    if(gold>0){ CURRENCY.gold+=gold; loot.push({n:'金币',ic:wbCoinSvg(),c:gold}); }
+    if(coins>0){ WBOSS.coins+=coins; loot.push({n:'BOSS币',ic:wbBossCoinSvg(),c:coins}); }
+    if(rank===1){ var _lg=wbLegendDrop(); if(_lg) loot.push({n:_lg.name,ic:_lg.ic||wbLegendSvg(),c:1,rare:true}); }
+    if(WBOSS.boss && WBOSS.boss.tier==='supreme'){ REBIRTH.essence+=5; loot.push({n:'本源结晶',ic:'<img src="logos/神力结晶.png">',c:5,rare:true}); }
+    var _gemPool=['earthBlessingGem','fireBlessingGem','waterBlessingGem','windBlessingGem'];
+    if(rank===1){
+      var _g1=mkLoot(ITEM_BLUEPRINTS[_gemPool[Math.floor(Math.random()*4)]]); _g1.count=3; addStackable(_g1); loot.push({n:_g1.name,ic:'<img src="'+_g1.img+'">',c:3,rare:true});
+      var _s1=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); _s1.count=2; addStackable(_s1); loot.push({n:_s1.name,ic:'<img src="'+_s1.img+'">',c:2,rare:true});
+      var _e1=mkEssence(150); addStackable(_e1); loot.push({n:'锻造精华',ic:'<img src="logos/神力碎片.png">',c:150});
+    } else if(rank<=3){
+      var _g2=mkLoot(ITEM_BLUEPRINTS[_gemPool[Math.floor(Math.random()*4)]]); _g2.count=1; addStackable(_g2); loot.push({n:_g2.name,ic:'<img src="'+_g2.img+'">',c:1,rare:true});
+      var _e2=mkEssence(60); addStackable(_e2); loot.push({n:'锻造精华',ic:'<img src="logos/神力碎片.png">',c:60});
+    } else if(rank<=6){
+      var _e3=mkEssence(30); addStackable(_e3); loot.push({n:'锻造精华',ic:'<img src="logos/神力碎片.png">',c:30});
+    } else {
+      var _e4=mkEssence(15); addStackable(_e4); loot.push({n:'锻造精华',ic:'<img src="logos/神力碎片.png">',c:15});
+    }
+    if(rank===1){ wbDrop4('godOrigin',2); wbDrop4('legendBox',1); wbDrop4('enhBless',5); wbDrop4('inheritPill',3); }
+    else if(rank<=3){ wbDrop4('godOrigin',1); if(Math.random()<0.3) wbDrop4('legendBox',1); wbDrop4('enhBless',3); wbDrop4('inheritPill',2); }
+    else if(rank<=6){ if(Math.random()<0.3) wbDrop4('godOrigin',1); if(Math.random()<0.2) wbDrop4('legendBox',1); wbDrop4('enhBless',2); wbDrop4('inheritPill',1); }
+    else { wbDrop4('enhBless',1); if(Math.random()<0.3) wbDrop4('inheritPill',1); }
+    WBOSS.bestDmg=Math.max(WBOSS.bestDmg||0, WBOSS.my||0);
+  }
+  WBOSS.totalKill++; dailyBump('wb');
+  WBOSS.loot={rank:rank,dmg:WBOSS.my||0,boss:WBOSS.boss.n,tier:WBOSS.boss.tier,ok:ok,items:loot,minDmg:minDmg};
+  WBOSS.reward.got=true;
+  try{ saveGame(); renderCurrency(); wbRender(); }catch(e){}
+  wbShowLoot();
+  toast('讨伐成功！战利品已入账 · 详见弹框');
+}
+function wbShowLoot(){   /* 战利品弹框：全服大爆氛围 + 我的收获清单，全局顶层，切页也显示/可重开 */
+  var _old=document.getElementById('wb-loot-mask'); if(_old&&_old.parentNode) _old.parentNode.removeChild(_old);
+  if(!WBOSS.loot) return;
+  var L=WBOSS.loot;
+  var _MG={'太古遗物匣':1,'传说神装':1,'强化祝福卷轴':1,'神格本源':1};
+  var mkRow=function(it){ return '<div class="wb-loot-it'+(it.rare?' rare':'')+'"><span class="wl-ic">'+it.ic+'</span><span class="wl-nm'+(it.rare&&_MG[it.n]?' wl-mg':'')+'">'+it.n+'</span><span class="wl-c">×'+fmtWan(it.c)+'</span></div>'; };
+  var boom='<div class="wb-loot-it rare"><span class="wl-ic"><img src="logos/太古匣子.png"></span><span class="wl-nm wl-mg">太古遗物匣</span><span class="wl-c">全服 ×60 派发</span></div>'
+    +'<div class="wb-loot-it rare"><span class="wl-ic">'+wbLegendSvg()+'</span><span class="wl-nm wl-mg">传说神装</span><span class="wl-c">榜首掉落</span></div>'
+    +(L.tier==='supreme'?'<div class="wb-loot-it rare"><span class="wl-ic"><img src="logos/神力结晶.png"></span><span class="wl-nm">本源结晶</span><span class="wl-c">×5</span></div>':'');
+  var mine;
+  if(!L.ok){ mine='<div class="wb-loot-none">伤害未达标（需 ≥'+fmtWan(L.minDmg)+'）· 本次无奖励</div>'; }
+  else if(!L.items.length){ mine='<div class="wb-loot-none">排名靠后，本时段无独立掉落</div>'; }
+  else { mine=L.items.map(mkRow).join(''); }
+  var mask=document.createElement('div'); mask.id='wb-loot-mask'; mask.className='wb-loot-mask';
+  mask.innerHTML='<div class="wb-loot">'
+    +'<div class="wl-head"><span class="wl-glow"></span><div class="wl-tt"><span class="wl-tt-w">✦</span>讨伐成功<span class="wl-tt-w">✦</span></div><div class="wl-boss">'+L.boss+' · 已覆灭</div><div class="wl-rank">全服排名 <b>#'+L.rank+'</b> · 累计伤害 '+fmtWan(L.dmg)+'</div></div>'
+    +'<div class="wl-body">'
+    +'<div class="wl-sec">全服大爆</div><div class="wl-grid">'+boom+'</div>'
+    +'<div class="wl-sec">我的收获</div><div class="wl-grid">'+mine+'</div>'
+    +'</div>'
+    +'<div class="wl-close-wrap"><button class="wl-close" id="wb-loot-close">收下战利品</button></div>'
+    +'</div>';
+  document.body.appendChild(mask);
+  var cb=document.getElementById('wb-loot-close'); if(cb) cb.addEventListener('click', wbLootClose);
+  var mk2=document.getElementById('wb-loot-mask'); if(mk2) mk2.addEventListener('click', function(e){ if(e.target===this) wbLootClose(); });
+}
+function wbLootClose(){ var el=document.getElementById('wb-loot-mask'); if(el&&el.parentNode) el.parentNode.removeChild(el); }
 function wbRankList(){
-  var all=[]; WBOSS.ai.forEach(function(a){ all.push({n:a.n,dmg:a.dmg,me:false}); });
+  var all=[]; WBOSS.ai.forEach(function(a){ all.push({n:a.n,dmg:a.dmg,me:false,hp:a.hp||0,hp0:a.hp0||1,dead:!!a.dead}); });
   var _nm=CHARACTER.info&&CHARACTER.info.name?CHARACTER.info.name:'谜团';
-  all.push({n:_nm+'（你）',dmg:WBOSS.my,me:true});
+  all.push({n:_nm+'（你）',dmg:WBOSS.my,me:true,hp:(WB_SESSION&&WB_SESSION.myHp)||0,hp0:(WB_SESSION&&WB_SESSION.myHp)||1,dead:false});
   all.sort(function(a,b){ return b.dmg-a.dmg; });
   return all;
 }
@@ -8242,6 +8432,14 @@ function wbRenderMeta(){
   var t=document.getElementById('wb-tdmg'); if(t) t.textContent=fmtWan(WBOSS.totalDmg);
   var b=document.getElementById('wb-bdmg'); if(b) b.textContent=fmtWan(WBOSS.bestDmg);
 }
+function wbNextRefresh(){
+  var _ss=new Date();
+  if(_ss.getHours()<8){ _ss.setHours(8,0,0,0); } else { _ss.setDate(_ss.getDate()+1); _ss.setHours(8,0,0,0); }
+  var ms=Math.max(0,_ss.getTime()-Date.now());
+  var h=Math.floor(ms/3600000),m=Math.floor(ms%3600000/60000),s=Math.floor(ms%60000/1000);
+  var p=function(x){ return (x<10?'0':'')+x; };
+  return '下一次刷新 '+(_ss.getMonth()+1)+'月'+_ss.getDate()+'日 08:00';
+}   /* 讨伐结束后显示下一轮8点刷新倒计时（8点前→今日8点，已过→明日8点） */
 function wbRenderBoss(){
   var el=document.getElementById('wb-boss'); if(!el) return;
   if(!WBOSS.boss){ el.innerHTML='<span class="wb-status st-wait">未开始 · 等待刷新</span><div class="wb-bname">世界BOSS 即将降临…</div>'; return; }
@@ -8251,14 +8449,14 @@ function wbRenderBoss(){
   if(WBOSS.killed||WBOSS.bossHp<=0){
     txt=(WBOSS.reward.got?'<span class="wb-status st-done">已讨伐 · 奖励已领取</span>':'<span class="wb-status st-reward">已讨伐 · 待领取奖励</span>')
       +'<div class="wb-bname" style="color:#7BF1C4;text-shadow:0 0 14px rgba(123,241,196,.8)">世界BOSS · 已讨伐</div>'
-      +'<div class="wb-btier">'+(WBOSS.reward.got?'奖励已领取 · 下时段再战':'已覆灭 · 点击领取奖励')+'</div>';
+      +'<div class="wb-btier">'+(WBOSS.reward.got?'奖励已领取 · 下轮再战':'已覆灭 · 点击领取奖励')+'</div>'+(function(){ try{ return '<div class="wb-next"><span class="wb-next-ic">⟳</span><span class="wb-next-t">'+wbNextRefresh()+'</span></div>'; }catch(e){ return ''; } })();
   } else {
     txt='<span class="wb-status st-fight">讨伐中 · 全服合力</span>'
       +'<div class="wb-bname">'+o.n+'</div><span class="wb-btier">'+BOSS_TIERS[o.tier==='supreme'?6:(o.tier==='god'?5:4)]+'</span>'
       +'<div class="wb-bmeta">战力 <b>'+fmtWan(dispVal(o.pw))+'</b> · 档位 ×'+WBOSS.mul+'</div>'
       +'<div class="wb-bar"><i style="width:'+pct.toFixed(1)+'%"></i></div>'
       +'<div class="wb-bar-t"><span class="cur">残血 '+fmtWan(WBOSS.bossHp)+'</span><span>共享 '+fmtWan(WBOSS.bossMax)+'</span></div>'
-      +'<div class="wb-slot">时段 '+(WBOSS.slot*6)+':00 刷新 · 全服合力 · 越晚越接近讨伐</div>';
+      +'<div class="wb-slot">每日 8:00 刷新 · 全服合力 · 越晚越接近讨伐</div>';
   }
   el.innerHTML=txt;
 }
@@ -8281,7 +8479,7 @@ function wbSetHp(){
     var b=el.querySelector('i'); b.style.width=Math.max(0,Math.round(cur/max*100))+'%';
     var t=document.getElementById('af-hpt-'+w); if(t) t.textContent=fmtHp(Math.round(cur))+' / '+fmtHp(max);
   }
-  set('wb-p',s.hp,s.hp);
+  set('wb-p',(WB_SESSION&&WB_SESSION.myHp)?WB_SESSION.myHp:s.hp,s.hp);   /* 战斗中显示被BOSS反击后的当前血量，非战斗满血 */
   set('wb-o',WBOSS.bossHp,WBOSS.bossMax);
 }
 function wbRenderRank(){
@@ -8289,42 +8487,22 @@ function wbRenderRank(){
   var all=wbRankList(), h='';
   for(var i=0;i<all.length;i++){ var r=all[i];
     var _c=i===0?'r1':(i===1?'r2':(i===2?'r3':''));
-    h+='<div class="wb-rank-row '+_c+(r.me?' me':'')+'"><span class="wb-rk">'+(i+1)+'</span><span class="wb-rn">'+r.n+'</span><span class="wb-rv">'+fmtWan(r.dmg)+'</span></div>';
+    var _bar='';
+    if(r.me){ if(WBOSS.my>0) _bar='<span class="wb-ab wb-ab-me"><i style="width:'+Math.max(0,Math.min(100,r.hp/(r.hp0||1)*100))+'%"></i></span>'; }
+    else { _bar=r.dead?'<span class="wb-adead">已阵亡</span>':'<span class="wb-ab"><i style="width:'+Math.max(0,Math.min(100,r.hp/(r.hp0||1)*100))+'%"></i></span>'; }
+    h+='<div class="wb-rank-row '+_c+(r.me?' me':'')+'"><span class="wb-rk">'+(i+1)+'</span><span class="wb-rn">'+r.n+'</span>'+_bar+'<span class="wb-rv">'+fmtWan(r.dmg)+'</span></div>';
   }
   el.innerHTML=h;
 }
 function wbRenderReward(){
   var el=document.getElementById('wb-reward'); if(!el) return;
   if(!WBOSS.killed && WBOSS.bossHp>0){ el.textContent='未讨伐'; el.disabled=true; el.style.opacity='.5'; }
-  else if(WBOSS.reward.got){ el.textContent='已领取'; el.disabled=true; el.style.opacity='.5'; }
-  else { el.textContent='领取奖励'; el.disabled=false; el.style.opacity=''; }
+  else { el.textContent='查看收获'; el.disabled=false; el.style.opacity=''; }   /* 击杀后奖励已即时入账，按钮=重开战利品弹框 */
 }
-function wbClaim(){
-  if(!WBOSS.killed||WBOSS.reward.got){ toast('暂无奖励可领'); return; }
-  var all=wbRankList(), rank=1;
-  for(var i=0;i<all.length;i++){ if(all[i].me){ rank=i+1; break; } }
-  var mul=WBOSS.mul||1;
-  var minDmg=Math.max(1,Math.round(WBOSS.bossMax*0.005));   /* 参战门槛：本轮累计伤害需达共享血量0.5%才计奖，未达标无奖励 */
-  if(WBOSS.my<minDmg){
-    WBOSS.reward.got=true;
-    toast('本次伤害未达标（需 ≥'+fmtWan(minDmg)+'）· 无奖励');
-    saveGame(); wbRender(); return;
-  }
-  var gold=0, coins=0;
-  if(rank===1){ gold=Math.round(WBOSS.bossMax*0.12); coins=200*mul; }
-  else if(rank<=3){ gold=Math.round(WBOSS.bossMax*0.05); coins=120*mul; }
-  else if(rank<=10){ coins=60*mul; }
-  else { coins=25*mul; }
-  dailyBump('wb'); CURRENCY.gold+=gold; WBOSS.coins+=coins; WBOSS.totalKill++;
-  var _pool=[0,36,12,6,3,2,1]; var bx=(rank<=6)?_pool[rank]:0;   /* 太古遗物匣固定池60个：第1名36(60%)垄断，2~6名按12/6/3/2/1递减，7名后=0不派发（伤害达标点后结束） */
-  if(bx>0){ REBIRTH.reliquary=(REBIRTH.reliquary||0)+bx; }
-  WBOSS.bestDmg=Math.max(WBOSS.bestDmg||0, WBOSS.my||0);
-  WBOSS.reward.got=true;
-  var logTxt='世界BOSS第 '+rank+' 名：+'+fmtWan(gold)+'金币 +'+coins+' BOSS币'+(bx>0?(' · 太古遗物匣 ×'+bx):' · 遗物匣已派发完');
-  if(rank===1){ var _lg=wbLegendDrop(); logTxt+=_lg?' · 掉落 '+_lg.name:''; }
-  if(WBOSS.boss && WBOSS.boss.tier==='supreme'){ REBIRTH.essence+=5; logTxt+=' · 本源结晶+5'; triggerLegendFX(); }   /* 超脱世界BOSS被讨伐：本源结晶（终局材料） */
-  saveGame(); renderCurrency(); wbRender();
-  toast(logTxt);
+function wbClaim(){   /* 击杀后查看战利品弹框（奖励已即时入账，无需再发）：未击杀/无记录时提示 */
+  if(!WBOSS.killed){ toast('BOSS尚未被讨伐'); return; }
+  if(!WBOSS.loot){ toast('暂无战利品记录'); return; }
+  wbShowLoot();
 }
 function wbLegendDrop(){
   var pool=['legendWings','shencaiBlade','legendOgdonChest','yitaiNecklace'].filter(function(k){ return ITEM_BLUEPRINTS[k]; });
@@ -8397,7 +8575,7 @@ function wbServerTick(){   /* 每60秒：世界BOSS时段刷新(开打)时弹全
 }
 function mountWboss(){
   wbEnsure();
-  if(!WB_REFRESH){ WB_REFRESH=setInterval(function(){ try{ wbEnsure(); wbRenderBoss(); wbRenderReward(); }catch(e){} },10000); }   /* 页面停留：10秒推进AI+刷新残血（低频，更省电） */
+  if(!WB_REFRESH){ WB_REFRESH=setInterval(function(){ try{ if(String(location.hash).indexOf('#wboss')>=0){ wbRender(); saveGame(); } else wbEnsure(); }catch(e){} },3000); }   /* 停留世界BOSS页：每3秒推进AI并刷新全部显示(AI血条/伤害排行/残血/奖励)且落盘；切到其他页面仅推进AI磨血(保持现有低频) */
   var bk=document.getElementById('wb-back'); if(bk&&!bk.__b){ bk.__b=true; bk.addEventListener('click',function(){ location.hash='#home'; }); }
   var g=document.getElementById('wb-go'); if(g&&!g.__b){ g.__b=true; g.addEventListener('click',wbGo); }
   var st=document.getElementById('wb-stop'); if(st&&!st.__b){ st.__b=true; st.addEventListener('click',function(){ wbStop(); wbRender(); }); }
@@ -10429,12 +10607,7 @@ function trKillMon(){
     else if(Math.random()<0.001*lotteryInnate()){ CURRENCY.gold+=Math.round(100000000*altarGoldMult());   /* 1亿金币：0.1%×先天运势，运势越高概率越高 */ TR.stats.gold+=100000000; dailyAddGold(TR.dungeon,100000000); renderCurrency(); trDropAnim(null); trLog('掉落 <b class="lg-gold">金币 100,000,000</b>'); got=true; if(TR.isBoss&&_br) _br.gold+=100000000; trRare({name:'金币 1亿'}); if(TR.isBoss) TR.bossLoot.push('金币 100,000,000'); }
     else { var _gm=[10000,20000,30000,40000,50000,60000][TR.dungeon]||10000, _gx=[200000,400000,600000,800000,1000000,1000000][TR.dungeon]||200000; var g=_gm+Math.round((_gx-_gm)*Math.pow(Math.random(),1/lotteryInnate()));   /* 运势越高越落向区间高值 */ if(TR.isElite) g=Math.min(Math.round(g*1.5),_gx); var pct=TR.isElite?100:(80-(g-_gm)/(_gx-_gm)*(80-8)); if(Math.random()*100<pct){ var _gmul=(1+equipSpecials().goldMul)*(Date.now()<GOLD_RUSH_UNTIL?1.5:1); CURRENCY.gold+=Math.round(g*talentGoldMul()*reincGoldMult()*altarGoldMult()*_gmul); TR.stats.gold+=g; dailyAddGold(TR.dungeon,g); renderCurrency(); trDropAnim(null); trLog('掉落 <b class="lg-gold">金币 '+g.toLocaleString()+'</b>'); got=true; if(TR.isBoss&&_br) _br.gold+=g; if(TR.isBoss) TR.bossLoot.push('金币 '+g.toLocaleString()); } }
     var drops=trRollDrop();
-    /* 掉落传说保底：小怪未出传说累积，达阈值必掉一件传说（Boss 不计数，避免过度通胀） */
-    if(!TR.isBoss){
-      var _dp=drops.some(function(x){ return x&&itemQuality(x)==='purple'; });
-      if(_dp){ LUCK.drop=0; }
-      else { LUCK.drop++; if(LUCK.drop>=200){ var _lgD=dropLegendForDungeon(TR.dungeon); if(_lgD){ drops.push(_lgD); LUCK.drop=0; } } }
-    }
+    /* 方案C：取消小怪传说保底，传说完全靠概率（高段Boss / 异变精英 / 各副本Boss专属概率掉落） */
     drops.forEach(function(item){ if(item){ var _as=autoSellIf(item);
       if(_as){ got=true; trLog('自动出售 <b class="lg-gold">'+item.name+(item.count>1?'×'+item.count:'')+'</b>，+'+_as.toLocaleString()+' 金币'); }
       else { got=true; addStackable(item); var rare=isRareDrop(item); var _lg=itemQuality(item)==='purple'; trDropAnim(item.img,itemQuality(item)); trLog('掉落 <b class="lg-item">'+item.name+'</b>'); TR.stats.drop++; TR.stats.per[TR.dungeon].drop++; if(rare){ TR.stats.rare++; TR.stats.recent.unshift({name:item.name,time:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'})}); if(TR.stats.recent.length>5) TR.stats.recent.pop(); } if(_lg){ TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; dailyAddLegend(TR.dungeon); dailyLog({type:'legend',src:'副本·'+(DUNGEONS[TR.dungeon]?DUNGEONS[TR.dungeon].name:'秘境'),desc:item.name}); if(_br) _br.items.push(item.name); } if(TR.isBoss) TR.bossLoot.push(item.name); }
@@ -11237,7 +11410,7 @@ function saveGame(){
       characterLevel:CHARACTER.info.level, trExp:TR.exp, potionUntil:POTION_UNTIL, sunUntil:SUN_UNTIL, megaSunUntil:MEGA_SUN_UNTIL, perm:PERM,
       arena:{ score:ARENA.score, maxScore:ARENA.maxScore, win:ARENA.win, lose:ARENA.lose, streak:ARENA.streak, _rank:ARENA._rank, titleOn:ARENA.titleOn, killBoss:ARENA.killBoss, medalOn:ARENA.medalOn, killGod:ARENA.killGod, godMedalOn:ARENA.godMedalOn, killSupreme:ARENA.killSupreme, supremeMedalOn:ARENA.supremeMedalOn, tlm:{s50:TLM.s50,s100:TLM.s100,s150:TLM.s150}, lastDaily:ARENA.lastDaily },
       ith:ITH_LEFT, jiMie:SJD_LEFT, quick:QUICK, elemSlot:ELEM_SLOT, innate:CHARACTER.innate, origin:CHARACTER.origin,
-      collected:COLLECT, collectDone:COLLECT_DONE, xianji:XIANJI, xianjiDone:XIANJI_DONE, rebirth:REBIRTH, altar:ALTAR, wboss:WBOSS, daily:DAILY, lastActive:Date.now(), offlineHang:TR.auto, luck:LUCK, mutate:MUT, store:store, battle:BATTLE, deep:DEEP
+      collected:COLLECT, collectDone:COLLECT_DONE, xianji:XIANJI, xianjiDone:XIANJI_DONE, rebirth:REBIRTH, altar:ALTAR, wboss:WBOSS, daily:DAILY, lastActive:Date.now(), offlineHang:TR.auto, luck:LUCK, mutate:MUT, store:store, battle:BATTLE, deep:DEEP, enhBless:ENH.bless||0, inheritUsed:INHERIT_USED||0
     }));
   }catch(e){}
 }
@@ -11286,7 +11459,7 @@ function loadGame(){
   if(s.xianji) XIANJI=s.xianji;
   if(s.xianjiDone) XIANJI_DONE=s.xianjiDone;
   if(s.altar){ ALTAR.atk=s.altar.atk||0; ALTAR.def=s.altar.def||0; ALTAR.hp=s.altar.hp||0; ALTAR.gold=s.altar.gold||0; ALTAR.crit=s.altar.crit||0; ALTAR.true=s.altar.true||0; ALTAR.hit=s.altar.hit||0; ALTAR.fdr=s.altar.fdr||0; ALTAR.ls=s.altar.ls||0; ALTAR.drop=s.altar.drop||0; ALTAR.sac=s.altar.sac||0; }
-  if(s.wboss){ WBOSS.coins=s.wboss.coins||0; WBOSS.totalKill=s.wboss.totalKill||0; WBOSS.totalDmg=s.wboss.totalDmg||0; WBOSS.bestDmg=s.wboss.bestDmg||0; }
+  if(s.wboss){ WBOSS.coins=s.wboss.coins||0; WBOSS.totalKill=s.wboss.totalKill||0; WBOSS.totalDmg=s.wboss.totalDmg||0; WBOSS.bestDmg=s.wboss.bestDmg||0; WBOSS.day=s.wboss.day||''; WBOSS.slot=(typeof s.wboss.slot==='number')?s.wboss.slot:-1; WBOSS.boss=s.wboss.boss||null; WBOSS.bossMax=s.wboss.bossMax||1; WBOSS.bossHp=(typeof s.wboss.bossHp==='number')?s.wboss.bossHp:(s.wboss.bossMax||1); WBOSS.my=s.wboss.my||0; WBOSS.ai=(s.wboss.ai||[]).map(function(a){ return {n:a.n,dmg:a.dmg||0,dps:a.dps,hit:a.hit,hp:a.hp||0,hp0:a.hp0||0,dead:!!a.dead,deadAt:a.deadAt||0}; }); if(WBOSS.boss){ for(var _qi=0;_qi<WBOSS.ai.length;_qi++){ if(!WBOSS.ai[_qi].hp0){ WBOSS.ai[_qi].hp=WBOSS.ai[_qi].hp0=Math.round((WBOSS.boss.atk||1)*(50+Math.random()*50)); } } } WBOSS.killed=!!s.wboss.killed; WBOSS.reward=s.wboss.reward||{got:false}; WBOSS.timeBase=s.wboss.timeBase||0; WBOSS.startTime=s.wboss.startTime||0; WBOSS.lastVisit=s.wboss.lastVisit||0; WBOSS.smiteTs=s.wboss.smiteTs||0; WBOSS.loot=s.wboss.loot||null; if(!WBOSS.startTime&&WBOSS.day){ WBOSS.day=''; } }   /* 旧档缺磨血锚点：置空day触发下轮wbEnsure重建，避免AI冻结(伤害不增/血量不减) */
   if(s.mutate){ MUT.crystal=(s.mutate.crystal!=null)?Math.floor(s.mutate.crystal):3; MUT.on=!!s.mutate.on; MUT.tier=s.mutate.tier||0; MUT.aff=(s.mutate.aff||[]).slice(); MUT.up=(s.mutate.up||{1:0,2:0,3:0}); MUT.exP=(s.mutate.exP||0); }
   if(s.daily && s.daily.date){ DAILY=s.daily; }
   if(s.rebirth){ REBIRTH.count=s.rebirth.count||0; REBIRTH.stones=s.rebirth.stones||0; REBIRTH.tp=s.rebirth.tp||0; REBIRTH.ascended=s.rebirth.ascended||0; REBIRTH.essence=s.rebirth.essence||0;
@@ -11294,7 +11467,8 @@ function loadGame(){
     REBIRTH.relic=Object.assign({eye:0,codex:0,amulet:0,realm:0,banner:0,end:0},s.rebirth.relic||{});
     REBIRTH.reliquary=s.rebirth.reliquary||0; REBIRTH.seal=s.rebirth.seal||0; REBIRTH.frag=s.rebirth.frag||0; REBIRTH.core=s.rebirth.core||0; REBIRTH.boxCount=s.rebirth.boxCount||0; }
   if(s.battle){ BATTLE.merit=s.battle.merit||0; BATTLE.crystal=s.battle.crystal||0; }
-  if(s.deep){ DEEP.shen=s.deep.shen||0; DEEP.wang=s.deep.wang||0; DEEP.diyu=s.deep.diyu||0; DEEP.tian=s.deep.tian||0; }
+  if(s.deep){ DEEP.shen=s.deep.shen||0; DEEP.wang=s.deep.wang||0; DEEP.diyu=s.deep.diyu||0; DEEP.tian=s.deep.tian||0; DEEP.total=(s.deep.total||0)||Math.max(DEEP.shen,DEEP.wang,DEEP.diyu,DEEP.tian); }   /* 神格本元单一永久总等级：新档用 total，旧档取历史维度最高级兜底 */
+  ENH.bless=s.enhBless||0; INHERIT_USED=s.inheritUsed||0;
   var _seedCol=function(it){ if(it&&it.name) COLLECT[it.name]=1; };
   bag.forEach(function(pg){ if(pg) pg.forEach(_seedCol); });
   Object.keys(equipState||{}).forEach(function(k){ _seedCol(equipState[k]); });
@@ -11343,7 +11517,7 @@ function doReset(){
   RB_LAST_TALENT=null; RB_LAST_RELIC=null;   /* 初始化重置轮回祭坛：转生次数/魂石/轮回点/天赋/法器全部回到初始 */
   ALTAR.atk=0; ALTAR.def=0; ALTAR.hp=0; ALTAR.gold=0; ALTAR.crit=0; ALTAR.true=0; ALTAR.hit=0; ALTAR.fdr=0; ALTAR.ls=0; ALTAR.drop=0; ALTAR.sac=0;
   ALTAR_LAST_POUR=null;   /* 初始化重置黄金神坛：灌注/献祭全部回到初始 */
-  WBOSS.coins=0; WBOSS.totalKill=0; WBOSS.totalDmg=0; WBOSS.bestDmg=0; WBOSS.day=''; WBOSS.slot=-1; WBOSS.boss=null; WBOSS.bossMax=1; WBOSS.bossHp=1; WBOSS.my=0; WBOSS.ai=[]; WBOSS.killed=false; WBOSS.reward={got:false}; if(WB_SESSION){ wbStop(); }   /* 初始化重置世界BOSS榜 */
+  WBOSS.coins=0; WBOSS.totalKill=0; WBOSS.totalDmg=0; WBOSS.bestDmg=0; WBOSS.day=''; WBOSS.slot=-1; WBOSS.boss=null; WBOSS.bossMax=1; WBOSS.bossHp=1; WBOSS.my=0; WBOSS.ai=[]; WBOSS.killed=false; WBOSS.reward={got:false}; if(WBOSS.revive){ clearTimeout(WBOSS.revive); WBOSS.revive=null; } if(WB_SESSION){ wbStop(); }   /* 初始化重置世界BOSS榜 */
   COLLECT={}; COLLECT_DONE={};   /* 初始化重置成就-图鉴收集点亮数据：全部回到未收集初始状态 */
   XIANJI={}; XIANJI_DONE={};   /* 初始化重置玄鉴神藏图鉴 */
   DAILY=null; dailyEnsure();   /* 初始化重置每日活跃：当日全0、宝箱未领、签到重来 */
@@ -11366,7 +11540,7 @@ function doReset(){
   AUTO_PROC={on:false, decomp:false, evolve:false, smelt:false, q:'gold', protect:[], smeltList:[]}; try{ localStorage.removeItem('shenqi_aproc'); }catch(e){} if(typeof renderAutoProc==='function') renderAutoProc();   /* 初始化重置锻造工坊自动化：关闭自动分解/进化/熔铸，清名单与永不处理白名单 */
   AUTO_SELL_NAMES={}; try{ localStorage.removeItem('shenqi_asn'); }catch(e){}   /* 初始化重置自动出售名单：全部关闭 */
   MUT={crystal:3, on:false, tier:0, aff:[], up:{1:0,2:0,3:0}, exP:0}; if(typeof renderTreasure==='function') renderTreasure();   /* 初始化重置异变秘境：关闭词缀，清异变结晶/词缀/强化等级与结晶兑换次数 */
-  BATTLE={merit:0,crystal:0,opps:[],fight:false}; DEEP={shen:0,wang:0,diyu:0,tian:0}; if(typeof renderBattle==='function') renderBattle();   /* 初始化重置域外战场与神格本元深化 */
+  BATTLE={merit:0,crystal:0,opps:[],fight:false}; DEEP={total:0,shen:0,wang:0,diyu:0,tian:0}; if(typeof renderBattle==='function') renderBattle();   /* 初始化重置域外战场与神格本元深化 */
   if(typeof renderHome==='function') renderHome();   /* 初始化后即时刷新首页角色卡（等级/战力/金币/阶位/称号），无需切页 */
   saveGame();
   toast('已恢复到初始状态');
