@@ -5422,7 +5422,7 @@ for(var k=0;k<5;k++){ var _r=Math.random()*_tot,_acc=0,_td=_layers[0]; for(_li=0
   var _tier=_ti>=6?'超脱 · 轮回主宰':CHAR_TIERS[_ti].n;
   var _enhLv=Math.min(20,Math.max(0,Math.round(_td.enh*20))); var _thStar=Math.round(_td.th*3);
   var _sp=(_in>=1.6)?'<span style="color:#FFD75E">天骄</span>':(_in>=1.3?'<span style="color:#7CF7C8">欧皇</span>':'<span style="color:#9AA5B1">凡命</span>');
-  var _iset=(_td.eq>=1.5)?5:(_td.eq>=0.8)?3:0; var _title=_td.t==='大能'?(Math.random()<0.55?{ig:0.10,tr:0.10}:null):_td.t==='强者'?(Math.random()<0.38?{ig:0.05,tr:0}:null):_td.t==='精英'?(Math.random()<0.18?{ig:0,tr:0}:null):null; var _altarTrue=({大能:0.10,强者:0.08,精英:0.05,普通:0.03,平民:0}[_td.t]||0)*(Math.random()<0.7?1:0); var _medalTr=_td.t==='大能'?(Math.random()<0.35?0.20:0):_td.t==='强者'?(Math.random()<0.15?0.10:0):0; var _wingTr=(_td.wpn>=1&&Math.random()<(_td.t==='大能'?0.70:_td.t==='强者'?0.45:0.25))?Math.min(0.30,0.05+0.0125*_enhLv):0; var _bladeTr=(_td.wpn>=1.5&&Math.random()<0.35)?0.15:0; var _ogAdd=_td.eq>=1.0?(Math.random()<0.6?0.10:0):0; var _atkElem=(_td.eq>=0.8)?(Math.random()<0.5?'火':'风'):null;
+  var _iset=(_td.eq>=1.5)?5:(_td.eq>=0.8)?3:0; var _title=_td.t==='大能'?(Math.random()<0.55?{ig:0.10,tr:0.10}:null):_td.t==='强者'?(Math.random()<0.38?{ig:0.05,tr:0}:null):_td.t==='精英'?(Math.random()<0.18?{ig:0,tr:0}:null):null; var _altarTrue=({大能:0.10,强者:0.08,精英:0.05,普通:0.03,平民:0}[_td.t]||0)*(Math.random()<0.7?1:0); var _medalTr=_td.t==='大能'?(Math.random()<0.35?0.20:0):_td.t==='强者'?(Math.random()<0.15?0.10:0):0; var _wingTr=(_td.wpn>=1&&Math.random()<(_td.t==='大能'?0.70:_td.t==='强者'?0.45:0.25))?Math.min(0.30,0.05+0.0125*_enhLv):0; var _bladeTr=(_td.wpn>=1.5&&Math.random()<0.35)?0.15:0; var _ogAdd=_td.eq>=1.0?(Math.random()<0.6?0.10:0):0; var _atkElem=(_td.eq>=0.8)?(Math.random()<0.5?'fire':'wind'):null;
   out.push({name:nm[Math.floor(Math.random()*nm.length)]+'（'+_tier+'）', type:_td.t, typeC:_td.c, innate:_in, lv:lv, hp:hp, atk:atk, def:def, pw:pw, eq:'', adv:'', sp:_sp, charge:_td.chg>0, tier:_tier, enhLv:_enhLv, thStar:_thStar, agi:agi, tierIdx:_ti, iset:_iset, title:_title, altarTrue:_altarTrue, medalTr:_medalTr, wingTr:_wingTr, bladeTr:_bladeTr, ogAdd:_ogAdd, atkElem:_atkElem}); }
 BATTLE.opps=out; }   /* 模拟真实玩家：同成长模型、先天运势不同(天运之主1.8唯一不生成)、装备/奇遇/BOSS奖励各异 → 属性千差万别 */
 /* ===== 域外战场 · 服务器100名固定AI玩家发育引擎（同一套成长模型·开服时长驱动） ===== */
@@ -5464,8 +5464,11 @@ function aiBuild(p,sec){
   var atk0=10+grow.attr*lv, hp0=grow.hp*lv, def0=grow.pdef*lv, agi=lv*3+10;
   var gearPct=1-Math.exp(-effDay/(18+p.pay*6+p.effort*4));   /* 装备/强化/天神完成度随时间趋1(开服约2~3月满配)，充钱/勤勉更快——前期近乎裸装 */
   var maxMul=1.6+p.effort*2.2+p.pay*1.8+(p.innate-1.0)*5+p.luck*4.5;   /* 满配战力乘区：大能~15·普通~3 */
+  var _invest=0.5+p.effort*0.3+p.pay*0.4+(p.innate-1.0)*0.5+p.luck*0.5;   /* 综合投入度（驱动神坛/试炼/塔/抽奖/锻造/竞技附加） */
+  var _altLv=Math.round(Math.min(120,_invest*Math.max(0,_invest-0.4)*55));   /* 黄金神坛等级（驱动御天减伤）：顶尖满级、中高几十级、普通低位——投入²·幂律稀缺 */
+  var _gearMul=1+Math.min(0.25, _invest*_invest*0.035*(0.5+gearPct*0.5)+gearPct*(0.02+p.effort*0.02+p.pay*0.04+p.luck*0.03));   /* 黄金神坛攻防血(投入²幂律) + 试炼/塔/抽奖/竞技兑换/锻造 累计全属性附加，封顶+25%：普通~5%、中高~17%、顶尖~25% */
   var M=1+(maxMul-1)*gearPct;
-  var pwBase=battlePower(Math.round(atk0*M),Math.round(def0*M),Math.round(hp0*M),agi);
+  var pwBase=battlePower(Math.round(atk0*M*_gearMul),Math.round(def0*M*_gearMul),Math.round(hp0*M*_gearMul),agi);
   var gate=Math.max(3,18-p.effort*6-p.pay*5-p.luck*9);   /* 达大帝战力所需练级天数（高投入更快） */
   var ws=effDay>gate?Math.min(99,Math.floor(Math.sqrt(Math.max(0,effDay-gate)*(0.3+p.pay*2.5+p.effort*0.8)))):0;   /* 轮回世次：氪金/肝帝轮回更快，平方根衰减后期越难（顶尖大帝极少·超脱近乎无人） */
   var pw=Math.round(pwBase*(1+0.30*ws)*(1+0.18*ws));   /* 轮回滚雪球：reinc×(PERM累积近似)，同玩家轮回机制，多世后战力超线性 → 顶尖大帝/超脱 */
@@ -5473,20 +5476,22 @@ function aiBuild(p,sec){
   var asc=(ws>=99||pw>=1e13); var _ti=asc?6:tierIdx;
   var _tier=_ti>=6?'超脱 · 轮回主宰':CHAR_TIERS[_ti].n;
   var type=_ti>=6?'大能':_ti>=5?'强者':_ti>=3?'精英':_ti===1?'普通':'平民';
-  var hp=Math.round(hp0*M)+Math.round(pw*100);   /* 防秒杀：生命=原算+战力×100（与玩家同口径） */
+  var hp=Math.round(hp0*M*_gearMul)+Math.round(pw*100);   /* 防秒杀：生命=原算+战力×100（与玩家同口径） */
   var _g=Math.max(0,Math.min(1,0.35+p.effort*0.25+p.pay*0.18+(p.innate-1.0)*0.35+p.luck*0.25));   /* 强化投入强度：充值/勤勉/先天/奇遇越高越强 */
   var enhLv=Math.min(20,Math.max(0,Math.floor(Math.pow(_g,3)*20*(0.92+Math.random()*0.16)))), thStar=Math.round(gearPct*3);   /* 强化=玩家同款幂律+运气：顶尖(投入极高)~20、中高~16、普通低位，不可能全员满级 */
   var iset= gearPct>=0.85?5:gearPct>=0.5?3:0;
   var sp=p.innate>=1.6?'<span style="color:#FFD75E">天骄</span>':p.innate>=1.3?'<span style="color:#7CF7C8">欧皇</span>':'<span style="color:#9AA5B1">凡命</span>';
   /* 攻击特性=由配置源确定性赋予（阶位/称号/神坛/徽章/图鉴），非随机——与玩家同规则 */
-  var _title=(p.pay>=2||_ti>=6)?{ig:0.10,tr:0.10}:(p.pay===1||_ti>=4)?{ig:0.05,tr:0}:null;
+  var _arenaIdx=_ti>=6?6:_ti>=5?5:_ti>=4?4:_ti>=3?3:_ti>=2?2:1;   /* AI竞技段位≈阶位（战力定段：超脱传说/大帝王者/神王星钻…） */
+  var _title=_ti>=6?{ig:0.10,tr:0.10}:(_ti>=5?{ig:0.05,tr:0}:(_ti>=4?{ig:0,tr:0.05}:null));   /* 竞技称号（同玩家战神/荣耀王者/星钻）：传说无视10%+真伤10%·王者无视5%·星钻真伤5% */
   var _altarTrue=(_ti>=4?0.10:_ti===3?0.05:0)*(p.effort>0.6?1:0.5);
   var _medalTr=_ti>=6?0.20:_ti>=5?0.10:0;   /* 弑神者真伤20%(超脱)/屠神者真伤10%(大帝)——顶尖才获得 */
   var _wingTr=gearPct>=0.5?Math.min(0.30,0.05+0.0125*enhLv):0;
   var _bladeTr=gearPct>=0.75?0.15:0;
   var _ogAdd=gearPct>=0.5?0.10:0;
-  var _atkElem=gearPct>=0.4?(p.id%2===0?'火':'风'):null;
-  return {name:p.name+'（'+_tier+'）',type:type,typeC:{大能:'#FFD75E',强者:'#C79AFF',精英:'#5FB8FF',普通:'#8FA3B8',平民:'#9AA5B1'}[type],innate:p.innate,lv:lv,hp:hp,atk:Math.round(atk0*M),def:Math.round(def0*M),pw:pw,eq:'',adv:'',sp:sp,charge:p.pay>0,tier:_tier,enhLv:enhLv,thStar:thStar,agi:agi,tierIdx:_ti,iset:iset,title:_title,altarTrue:_altarTrue,medalTr:_medalTr,wingTr:_wingTr,bladeTr:_bladeTr,ogAdd:_ogAdd,atkElem:_atkElem,ws:ws,effDay:effDay}; }
+  var _atkElem=gearPct>=0.4?(p.id%2===0?'fire':'wind'):null;
+  var _fdr=Math.min(0.5,_altLv*0.005);   /* 黄金神坛·御天：最终伤害减免 +0.5%/级，封顶50%（同玩家 altarFdrPct，作用于承受方向） */
+  return {name:p.name+'（'+_tier+'）',type:type,typeC:{大能:'#FFD75E',强者:'#C79AFF',精英:'#5FB8FF',普通:'#8FA3B8',平民:'#9AA5B1'}[type],innate:p.innate,lv:lv,hp:hp,atk:Math.round(atk0*M*_gearMul),def:Math.round(def0*M*_gearMul),pw:pw,eq:'',adv:'',sp:sp,charge:p.pay>0,tier:_tier,enhLv:enhLv,thStar:thStar,agi:agi,tierIdx:_ti,iset:iset,title:_title,altarTrue:_altarTrue,medalTr:_medalTr,wingTr:_wingTr,bladeTr:_bladeTr,ogAdd:_ogAdd,atkElem:_atkElem,fdr:_fdr,altLv:_altLv,ws:ws,effDay:effDay}; }
 function mkFieldOpps(){ serverStartInit(); ensureFieldRoster();
   var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
   var sorted=FIELD_ROSTER.slice().sort(function(a,b){ return aiBuild(b,sec).pw-aiBuild(a,sec).pw; });
@@ -5497,13 +5502,13 @@ function mkFieldOpps(){ serverStartInit(); ensureFieldRoster();
 
 var BFF=null;   /* 域外战场 · 讨伐战斗动画状态 */
 function fieldFight(idx){ var o=BATTLE.opps[idx]; if(!o) return; if(BFF){ toast('战斗进行中'); return; } stopTreasure(); stopTrialAuto(); stopTowerAuto(); wbStop(); openFight(o); }
-function openFight(o){ var my=rolePower(), myHp=(CHARACTER&&CHARACTER.finalStat&&CHARACTER.finalStat.hp)||(my*2); var myD=Math.max(1, my-o.def*0.55), oD=Math.max(1, o.atk-my*0.22); BFF={o:o,myHp0:myHp,oHp0:o.hp,myHp:myHp,oHp:o.hp,myGap:charAtkSpeed(),oGap:oppAtkGap(o),myAtkAcc:0,oAtkAcc:0,tick:0,MAX:12,timer:null,win:null};   /* 非回合制：按双方攻速各自累积攻击进度，攻速快打得多、秒杀时对方来不及出手 */   /* 实时战斗：胜负由逐回合命中/伤害浮动结算，非预判 */ var over=document.getElementById('bf-fight-over'); document.getElementById('ff-my-n').textContent='你 · '+charTierName(); document.getElementById('ff-my-pw').textContent='战力 '+fmtWan(dispVal(my)); document.getElementById('ff-opp-n').textContent=o.name.split('（')[0]+' · '+o.tier; document.getElementById('ff-opp-pw').textContent='战力 '+fmtWan(dispVal(o.pw)); document.getElementById('ff-log').innerHTML=''; document.getElementById('ff-result').innerHTML=''; document.getElementById('ff-end').classList.remove('show'); document.getElementById('ff-hp-my').style.width='100%'; document.getElementById('ff-hp-opp').style.width='100%'; setHpNum('my',myHp); setHpNum('opp',o.hp); over.classList.add('on'); BFF.timer=setInterval(function(){ fightStep(); },520); }
+function openFight(o){ var my=rolePower(), _myAtk=(CHARACTER.combat[1]&&parseInt(CHARACTER.combat[1].v,10))||my; var myHp=Math.round(_myAtk*5), oHp=Math.round(o.atk*5); var myD=Math.max(1, my-o.def*0.55), oD=Math.max(1, o.atk-my*0.22); BFF={o:o,myHp0:myHp,oHp0:oHp,myHp:myHp,oHp:oHp,myGap:charAtkSpeed(),oGap:oppAtkGap(o),myAtkAcc:0,oAtkAcc:0,tick:0,MAX:12,timer:null,win:null};   /* PvP战斗血=各自攻击×5（攻防血配比还原现实PK：不用防秒杀×100垫高，几回合分胜负）·非回合制：按双方攻速各自累积攻击进度，攻速快打得多、秒杀时对方来不及出手 */ var over=document.getElementById('bf-fight-over'); document.getElementById('ff-my-n').textContent='你 · '+charTierName(); document.getElementById('ff-my-pw').textContent='战力 '+fmtWan(dispVal(my)); document.getElementById('ff-opp-n').textContent=o.name.split('（')[0]+' · '+o.tier; document.getElementById('ff-opp-pw').textContent='战力 '+fmtWan(dispVal(o.pw)); document.getElementById('ff-log').innerHTML=''; document.getElementById('ff-result').innerHTML=''; document.getElementById('ff-end').classList.remove('show'); document.getElementById('ff-hp-my').style.width='100%'; document.getElementById('ff-hp-opp').style.width='100%'; setHpNum('my',myHp); setHpNum('opp',oHp); over.classList.add('on'); BFF.timer=setInterval(function(){ fightStep(); },520); }
 function setHpNum(side,v){ var el=document.getElementById('ff-hp-'+side+'-num'); if(el) el.textContent=fmtWan(dispVal(Math.max(0,v))); }
 function bfCharAtk(){ var _rt=roleTierAtk(), _ta=titleAtk(), _tm=tMedalAtk(); var _pa=(CHARACTER.combat[1]&&parseInt(CHARACTER.combat[1].v,10))||rolePower(); var _ig=_rt.ig+_ta.ig+_tm.ig+(typeof ISET!=='undefined'&&ISET>=5?0.3:0)+(ARENA.killBoss>=1&&ARENA.medalOn?0.1:0)+((typeof legendWing==='function'&&legendWing())?0.10:0)+((typeof shencaiBlade==='function'&&shencaiBlade())?0.15:0); var _rl=wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk()+supremeMedalAtk()+altarTruePct(); var _add=(typeof OG!=='undefined'&&OG>=5?0.1:0); var _ae=(CHARACTER.combat[4]||{}).v; return {atk:_pa, realAtk:_pa, ig:_ig+(typeof reincIgnore==='function'?reincIgnore():0), real:_rl+(typeof reincTrue==='function'?reincTrue():0), add:_add, attackElem:(typeof elemKey==='function'?elemKey(_ae):null), atkElemPct:(_ae&&_ae!=='无'?0.3:0)}; }   /* 角色攻击参数→统一 calcHit A（仿试炼角色攻怪：无视防御/真伤/增伤/属性攻击） */
 function bfOppTraits(o){ var ig=0,tr=0,add=0; if(o.tierIdx>=5){ig+=0.20;tr+=0.20;} else if(o.tierIdx>=4){ig+=0.08;tr+=0.08;} else if(o.tierIdx>=3){ig+=0.05;} if(o.iset>=5)ig+=0.30; if(o.title){ig+=o.title.ig||0; tr+=o.title.tr||0;} tr+=(o.altarTrue||0)+(o.medalTr||0)+(o.wingTr||0)+(o.bladeTr||0); add+=(o.ogAdd||0); return {ig:ig,real:tr,add:add}; }   /* 对手攻击特性=玩家同口径累加：阶位(真神5%/神王8%+8%/大帝20%+20%/超脱30%+30%)+伊泰安套装30%+称号+黄金神坛真伤+徽章真伤+图鉴传说武器真伤+奥格顿增伤 */
 function bfOppAtk(o){ var t=bfOppTraits(o); return {atk:o.atk, realAtk:o.atk, ig:t.ig, real:t.real, add:t.add, attackElem:o.atkElem||null, atkElemPct:(o.atkElem?0.3:0)}; }   /* 对手攻击参数→统一 calcHit A：特性完全由配置源（阶位/装备/称号/神坛/徽章/图鉴）按玩家同规则累加 */
 function bfCharDef(){ var _fdr=(typeof finalDR==='function'?Math.min(0.9,finalDR()+(typeof reincFdr==='function'?reincFdr():0)+(typeof altarFdrPct==='function'?altarFdrPct():0)):0); var _abs=(typeof TR!=='undefined'&&TR)?(TR.absorb||0):0; return {def:(CHARACTER.combat[5]&&parseInt(CHARACTER.combat[5].v,10))||0, fdr:_fdr, mdef:0, attrDefDR:0, nativeElem:(typeof charDefElem==='function'?charDefElem():null), abs:_abs}; }   /* 角色防御参数→统一 calcHit D（最终减伤/吸收） */
-function bfOppDef(o){ return {def:o.def, fdr:0, mdef:0, attrDefDR:0, nativeElem:null, abs:0}; }   /* 对手防御参数→统一 calcHit D */
+function bfOppDef(o){ return {def:o.def, fdr:Math.min(0.9,o.fdr||0), mdef:0, attrDefDR:0, nativeElem:null, abs:0}; }   /* 对手防御参数→统一 calcHit D：含黄金神坛·御天减伤(封顶90%) */
 function oppAtkGap(o){ var a=o.agi||(o.lv*3+10); return Math.min(1280, Math.max(380, Math.round(305000/Math.pow(Math.max(1,a),0.3228)))); }   /* 对手攻速间隔ms：同角色幂律公式，基于敏捷（玩家模型） */
 function fightStep(){ if(!BFF) return; var B=BFF; B.tick++; var log=document.getElementById('ff-log'); var _aC=bfCharAtk(), _dO=bfOppDef(B.o), _aO=bfOppAtk(B.o), _dC=bfCharDef(); var _lvC=Math.min(80,CHARACTER.info.level||80); var fr=520; B.myAtkAcc=(B.myAtkAcc||0)+fr; B.oAtkAcc=(B.oAtkAcc||0)+fr; while(B.oHp>0&&B.myAtkAcc>=B.myGap){ B.myAtkAcc-=B.myGap; if(Math.random()>hitRate(HIT_P2M,_aC.atk,_aO.atk,_lvC,B.o.lv,null,altarHitBonus(),0)){ log.innerHTML+='<div><span class="dmg-m">你的攻击</span> <i style="color:#8b8272">被闪避</i></div>'; } else { var d1=Math.max(1,calcHit(_aC,_dO)); B.oHp-=d1; log.innerHTML+='<div><span class="dmg-m">你的攻击</span> 造成 <b>'+fmtWan(dispVal(d1))+'</b> 伤害</div>'; } if(B.oHp<=0){ B.win=true; break; } } while(B.myHp>0&&B.oAtkAcc>=B.oGap){ B.oAtkAcc-=B.oGap; if(Math.random()>hitRate(HIT_M2P,_aO.atk,_aC.atk,B.o.lv,_lvC,null,0,0)){ log.innerHTML+='<div><span class="dmg-o">对手反击</span> <i style="color:#8b8272">被你闪避</i></div>'; } else { var d2=Math.max(1,calcHit(_aO,_dC)); B.myHp-=d2; log.innerHTML+='<div><span class="dmg-o">对手反击</span> 造成 <b>'+fmtWan(dispVal(d2))+'</b> 伤害</div>'; } if(B.myHp<=0){ B.win=false; break; } } log.scrollTop=log.scrollHeight; var myPct=Math.max(0,B.myHp/B.myHp0*100), oPct=Math.max(0,B.oHp/B.oHp0*100); document.getElementById('ff-hp-my').style.width=myPct+'%'; document.getElementById('ff-hp-opp').style.width=oPct+'%'; setHpNum('my',B.myHp); setHpNum('opp',B.oHp); if(B.win!=null){ finishFight(); } }
 function finishFight(){ if(!BFF) return; var B=BFF, my=rolePower(); clearInterval(B.timer); var merit=B.win?Math.round(50+(B.o.pw/Math.max(1,my))*300):0; var cr=(B.win&&Math.random()<0.4)?1:0; BATTLE.merit+=merit; BATTLE.crystal+=cr; saveGame(); var res=document.getElementById('ff-result'); var _tu=B.timeUp?'<span style="color:#b7ac9a;font-size:11px">限时结束·</span>':''; if(B.win) res.innerHTML=_tu+'<b style="color:#FFD75E">讨伐成功</b> · 战功 <b style="color:#FFD75E">+'+merit+'</b>'+(cr?' · 神格结晶 <b style="color:#7EE8C2">+'+cr+'</b>':''); else res.innerHTML=_tu+'<b style="color:#FF5A5A">讨伐失利</b> · <span style="color:#FF5A5A">未获得战功</span>'; document.getElementById('ff-end').classList.add('show'); }
@@ -6788,7 +6793,7 @@ function applyDot(secs, perSec, scene, extra){   /* 中毒/流血持续伤害：
 }
 function calcHit(A,D){   /* 统一伤害结算（角色/怪物/Boss 同一套）：命中→有效防御→主伤害→属性倍率→真伤→合计→增伤→终减→吸收 */
   var eDef=Math.max((D.def||0)*(1-(A.ig||0)),0);              /* 有效防御=承受者防御×(1-攻击者无视防御) */
-  var main=(A.atk||0)*(1 - eDef/(eDef+600));                  /* 主伤害=攻击×(1-减伤率)，减伤率=有效防御/(有效防御+600)；这一步只看物理攻防，元素属性不参与 */
+  var main=(A.atk||0)*(1 - eDef/(eDef+Math.max(1,(A.atk||1))));   /* 主伤害=攻击×(1-减伤率)，减伤率=有效防御/(有效防御+攻击)——比例式（分母随攻击，亿级攻防不再饱和），攻防相当时减伤50%、攻远超防时伤害≈攻击 */
   main*=(1-(D.mdef||0));                                      /* 铁壁血盾：承受者主伤害减伤%，只作用主伤害，不影响真伤 */
   main*=(1-(D.attrDefDR||0));                                  /* 属性防御：独立固定30%主伤害减伤(类似铁壁血盾，只作用主伤害，不影响真伤) */
   var real=((A.realAtk||A.atk)||0)*(A.real||0);               /* 真伤=攻击力×真伤%，跳过防御 */
@@ -8039,17 +8044,18 @@ var ARENA_TRAITS=[
 ];
 var ARENA_DIFF=[{n:'普通',c:1},{n:'精英',c:2},{n:'噩梦',c:4},{n:'地狱',c:8}];
 function diffName(c){ for(var i=0;i<ARENA_DIFF.length;i++) if(ARENA_DIFF[i].c===c) return ARENA_DIFF[i].n; return ''; }
-function makeOpp(k,c){
-  var s=arenaStat(), rk=ARENA_RANKS[k];
-  var hp=Math.round(rk.hp*c), atk=Math.round(rk.atk*c), def=Math.round(rk.def*c);
-  var _trk=arenaTierOfRank(k), _tc=genTraitCount(_trk); var trs=(Math.random()<0.9)?genBossTraits(_trk,_tc,_tc):[];   /* 人形对手90%带特性，段位越高(≈阶位)特性越多 */
-  var _ae=assignElem(_trk,0);   /* 按段位阶位随机属性攻防 */
-  if(trs.length){ var ab=applyBossArmor(trs,hp,def,_trk); hp=ab.hp; def=ab.def; }
-  var _tstr=traitStrength(trs.length); if(_tstr>1){ hp=Math.round(hp*_tstr); atk=Math.round(atk*_tstr); def=Math.round(def*_tstr); }   /* 有特性对手强度≥×10，特性越多越强 */
-  var _oAgi=Math.round((1+k*8)*3+10);   /* 对手自身敏捷（等级派生，不随角色属性） */
-  var _opw=battlePower(atk,def,hp,_oAgi);   /* 叠加前对手战力（用对手自身属性，避免被角色敏捷放大导致血量倒挂） */
-  hp += _opw*600;   /* 避免秒杀：生命值=原计算值+对手战力×600 */
-  return { n:ARENA_NAMES[Math.floor(Math.random()*ARENA_NAMES.length)]+'（'+rk.n+'）', diff:diffName(c), traits:trs, traitText:traitText(trs), rank:rk, ri:k, di:c, level:(1+k*8), hp:hp, atk:atk, def:def, atkElem:_ae.atkElem, defElem:_ae.defElem, pw:battlePower(atk,def,hp,s.agi) };
+function aiArenaRank(b){ var t=b.tierIdx; return t>=6?6:t>=5?5:t>=4?4:t>=3?3:t>=2?2:t>=1?1:0; }   /* AI竞技段位=实力段位（随开服演化）：超脱传说/大帝王者/神王钻石/真神白金/半神黄金/锐凡白银/平民青铜——早期AI弱故无高段 */
+function makeOppFrom(pool,ri,c){
+  var it=pool[Math.floor(Math.random()*pool.length)], _b=it.b, _p=it.p, rk=ARENA_RANKS[ri];
+  var atk=Math.round(_b.atk), def=Math.round(_b.def), hp=Math.round(atk*5);   /* PvP战斗血=攻击×5（攻防血配比还原现实PK，几回合分胜负）；对手一律用AI真实强度（与域外战场同口径，不再×难度系数）——难度c仅作标签与奖励档位，不放大攻防血 */
+  return { n:_p.name.split('（')[0]+'（'+rk.n+'）', diff:diffName(c), traits:[], traitText:'', rank:rk, ri:ri, di:c, level:Math.max(1,_b.lv), hp:hp, atk:atk, def:def, atkElem:_b.atkElem||null, defElem:_b.atkElem||null, pw:battlePower(atk,def,hp,_b.agi), fdr:_b.fdr||0 };
+}
+function makeOpp(ri,c){
+  serverStartInit(); ensureFieldRoster();   /* 竞技人形对手=服务器固定100名玩家（与域外战场同一批，不新生成AI角色） */
+  var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
+  var pool=[]; FIELD_ROSTER.forEach(function(p){ var b=aiBuild(p,sec); if(aiArenaRank(b)===ri) pool.push({p:p,b:b}); });   /* 取真实段位==目标段的玩家 */
+  if(!pool.length){ var _all=FIELD_ROSTER.map(function(p){ return {p:p,b:aiBuild(p,sec)}; }); _all.sort(function(a,b){ return aiArenaRank(b.b)-aiArenaRank(a.b); }); pool=_all; }   /* 该段暂无玩家：取服务器最高段兜底 */
+  return makeOppFrom(pool,ri,c);
 }
 function renderOppList(){
   var el=$('#arena-opps'); if(!el) return;
@@ -8064,21 +8070,23 @@ function renderOppList(){
   if(!el.__b){ el.__b=true; el.addEventListener('click',function(e){ var b=e.target.closest('.op-btn'); if(b&&!b.disabled) startFight(parseInt(b.getAttribute('data-i'))); }); }
 }
 function rollOpps(){
-  var r=arenaRank(), L=ARENA_RANKS.length; ARENA.opps=[];
-  ARENA.opps.push(makeOpp(r,1));   /* 同段位：只1个（普通难度） */
+  serverStartInit(); ensureFieldRoster();   /* 竞技对手=固定100名玩家按真实段位（随开服演化，早期无高段） */
+  var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
+  var r=arenaRank(), L=ARENA_RANKS.length;
+  ARENA.opps=[];
+  var byRank={}; FIELD_ROSTER.forEach(function(p){ var b=aiBuild(p,sec); var rr=aiArenaRank(b); (byRank[rr]=byRank[rr]||[]).push({p:p,b:b}); });   /* 按AI真实竞技段位分组 */
+  var maxR=L-1; while(maxR>=0&&!(byRank[maxR]&&byRank[maxR].length)) maxR--;   /* 服务器当前最高有人的段位 */
+  if(byRank[r]&&byRank[r].length) ARENA.opps.push(makeOppFrom(byRank[r],r,1));   /* 同段位：1个（普通难度） */
   var up=1;
-  while(r+up<L){
-    var k=r+up;
-    if(k===L-1){   /* 传说段位：60%刷首领/神级boss（各半），否则普通传说对手 */
-      var _r6=Math.random(), b=_r6<0.20?makeSupremeOpp():(_r6<0.68?(Math.random()<0.5?makeBossOpp():makeLordOpp()):makeOpp(k,8));   /* 传说段位：20%超脱终极/48%首领或神级/32%普通 */
-      ARENA.opps.push(b);
-    } else {
-      ARENA.opps.push(makeOpp(k, up>=3?8:(up===2?4:2)));   /* 高一段位起，每阶位1个，难度逐级递增 */
+  for(var kk=r+1; kk<L; kk++){   /* 更高段位：每段1个，难度逐级递增 */
+    if(byRank[kk]&&byRank[kk].length){ ARENA.opps.push(makeOppFrom(byRank[kk],kk,up>=3?8:(up===2?4:2))); up++; }
+    else if(kk===L-1){   /* 传说段位无AI玩家时：按原规则刷终极Boss挑战（传说终极战） */
+      var _r6=Math.random(), b=_r6<0.20?makeSupremeOpp():(_r6<0.68?(Math.random()<0.5?makeBossOpp():makeLordOpp()):makeSupremeOpp()); ARENA.opps.push(b);
     }
-    up++;
   }
+  if(!(byRank[r]&&byRank[r].length) && maxR>=0) ARENA.opps.push(makeOppFrom(byRank[maxR],maxR,1));   /* 当前段无人（玩家段位超服务器水平）：取最高段玩家兜底 */
   renderOppList();
-  var rr=$('#arena-reroll'); if(rr&&!rr.__b){ rr.__b=true; rr.addEventListener('click',function(){ rollOpps(); toast('已刷新挑战对手'); }); }
+  var rr2=$('#arena-reroll'); if(rr2&&!rr2.__b){ rr2.__b=true; rr2.addEventListener('click',function(){ rollOpps(); toast('已刷新挑战对手'); }); }
 }
 function renderArenaReward(){
   var el=$('#arena-reward'); if(!el) return;
@@ -8102,7 +8110,8 @@ function startFight(idx){
   var o=ARENA.opps[idx]; if(!o) return;
   if(ARENA.fight){ toast('战斗进行中'); return; }
   stopTreasure(); stopTrialAuto(); stopTowerAuto(); wbStop();   /* 竞技挑战：停止其他所有战斗自动（全互斥：副本/试炼/挑战塔/世界BOSS） */
-  var s=arenaStat(); ARENA.fight=true; ARENA.oppIdx=idx;
+  var s=arenaStat(); s.hp=Math.round(s.patk*5);   /* 竞技玩家PvP血=自身攻击×5（与域外战场统一战斗血配比，几回合分胜负） */
+  ARENA.fight=true; ARENA.oppIdx=idx;
   renderOppList();   /* 刷新对手行：该行变色、挑战中、其余禁用 */
   ARENA.hpP=s.hp; ARENA.hpO=o.hp; ARENA.tP=0; ARENA.tO=0;
   var pInt=charAtkSpeed(), oInt=pInt*1.3;   /* 角色攻速与副本统一(charAtkSpeed 已含药水提速)；对手比角色慢30% */
@@ -8134,7 +8143,7 @@ function playerHit(o,s){
   var _ig=_rt.ig+_ta.ig+_tm.ig+(ISET>=5?0.3:0)+(ARENA.killBoss>=1&&ARENA.medalOn?0.1:0)+(legendWing()?0.10:0)+(shencaiBlade()?0.15:0)+_tp2.ig;   /* 角色无视防御：阶位+称号+徽章+伊泰安（只作用主伤害有效防御） */
   var _rl=wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk()+supremeMedalAtk()+altarTruePct();   /* 角色真实伤害% */
   var _add=(OG>=5?0.1:0)+(_tp2.m-1);   /* 增伤乘区：奥格顿5件+阶位压制 */
-  var _mFdr=0,_mmDef=0; if(o.trait&&(o.trait.fx==='pdef'||o.trait.fx==='boss')) _mFdr+=0.3; if(o.traits){ for(var _tk=0;_tk<o.traits.length;_tk++){ var _tv=o.traits[_tk]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(对手)：dmgred→最终伤害减免(上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
+  var _mFdr=0,_mmDef=0; if(o.fdr) _mFdr+=o.fdr; if(o.trait&&(o.trait.fx==='pdef'||o.trait.fx==='boss')) _mFdr+=0.3; if(o.traits){ for(var _tk=0;_tk<o.traits.length;_tk++){ var _tv=o.traits[_tk]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(对手)：神坛御天→终减 + dmgred→最终伤害减免(上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
   var dmg=Math.max(1, Math.round(calcHit({atk:s.patk*lvR*(isCrit?2*altarCritMul()*shencaiCritMul():1), realAtk:s.patk*lvR, ig:_ig+reincIgnore(), real:_rl+reincTrue(), add:_add, attackElem:elemKey((CHARACTER.combat[4]||{}).v), atkElemPct:(((CHARACTER.combat[4]||{}).v!=='无')?0.3:0)}, {def:o.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(o.defElem?0.3:0), defElemResist:(o.defElem?0.3:0), nativeElem:o.defElem||null, abs:0}))); dmg+=ascendSkyDmg(s.hp);   /* 统一结算：主伤害(有效防御+等级压制+暴击)+真伤→增伤→对手终减→吸收 */
   arenaShootArrow(function(){   /* 箭矢从左下角射向对手，命中后才结算掉血/飘字/震动 */
   if(Math.random()>hitRate(HIT_P2M,TR.patk,o.atk,CHARACTER.info.level,(o.level||1),o.boss?'BOSS':null,altarHitBonus())){ floatDmg('MISS','enemy',true); return; }   /* 玩家打对手统一MISS判定 */
