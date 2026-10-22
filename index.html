@@ -1937,6 +1937,15 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .rb-mat{display:flex;flex-direction:column;gap:10px;}
 .rb-mat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 .rb-mat-it{background:linear-gradient(180deg,rgba(52,38,20,.9),rgba(28,20,12,.92));border:1px solid rgba(201,162,75,.28);border-radius:10px;padding:9px 6px;text-align:center;}
+.rb-sb{display:flex;flex-direction:column;gap:9px;}
+.rb-sb-line{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:#e8d5a8;}
+.rb-sb-line b{color:#F2C96B;font-size:16px;letter-spacing:.5px;}
+.rb-sb-hint{font-size:10px;color:#9a8f7c;}
+.rb-sb-row{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.rb-sb-info{font-size:12px;color:#c9b184;line-height:1.6;}
+.rb-sb-info b{color:#F2C96B;}
+.rb-sb-hold{font-size:11px;color:#9a8f7c;}
+.rb-sb-hold b{color:#7CF7C8;}
 .rb-mat-ic{width:34px;height:34px;margin:0 auto 5px;background-size:contain;background-repeat:no-repeat;background-position:center;filter:drop-shadow(0 2px 5px rgba(255,215,94,.3));}
 .rb-mat-n{font-size:17px;font-weight:900;color:#ffd75e;text-shadow:0 0 10px rgba(255,215,94,.4);}
 .rb-mat-l{font-size:10.5px;color:#c9b88a;margin-top:3px;line-height:1.3;}
@@ -2840,6 +2849,15 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
           <button class="rb-btn rb-craft-btn" id="rb-craft-core">合成太初神核 (0/99)</button>
         </div>
         <div class="rb-hint" style="margin:0;font-size:11px;text-align:center;">太古遗物匣 · 世界BOSS讨伐按排名掉落 · 开启随机得轮回秘印或太初神核碎片（开8匣保底1碎片）</div>
+      </div>
+      <div class="rb-sec-t"><span class="rb-sec-ic"></span>秘印炼化 · 富余秘印化战力</div>
+      <div class="rb-card rb-mat rb-sb">
+        <div class="rb-sb-line"><span>永久全属性加成：<b id="rb-seal-boon">+0%</b></span><span class="rb-sb-hint">独立于轮回世次 · 永不重置</span></div>
+        <div class="rb-sb-row">
+          <div class="rb-sb-info">每消耗 <b>20 枚</b>轮回秘印 → 永久全属性 <b>+1%</b><br><span class="rb-sb-hold">当前持有 <b id="rb-seal-n">0</b> 枚 · 可炼化 <b id="rb-seal-n2">0</b> 次</span></div>
+          <button class="rb-btn rb-box-btn" id="rb-seal-boon-btn">炼化 ×20</button>
+        </div>
+        <div class="rb-hint" style="margin:0;font-size:11px;text-align:center;">顶尖玩家富余秘印的稳定战力出口 · 平民 1 枚启动轮回不受影响</div>
       </div>
             <div class="rb-sec-t"><span class="rb-sec-ic"></span>轮回天赋 · 每轮回 +1 点</div>
       <div class="rb-card">
@@ -5410,7 +5428,7 @@ BATTLE.opps=out; }   /* 模拟真实玩家：同成长模型、先天运势不�
 /* ===== 域外战场 · 服务器100名固定AI玩家发育引擎（同一套成长模型·开服时长驱动） ===== */
 var SERVER_START=0;   /* 服务器开服时间戳：点“初始化”起算 */
 var FIELD_ROSTER=null;   /* 100名固定AI玩家（持久化localStorage，一次开服内固定不重排） */
-var FIELD_NAMES=['天谕','墨玄','洛璃','苍冥','无涯','疏影','白夜','曜光','清晏','流火','玄霜','凌虚','鹤鸣','青阳','赤练','云岫','听澜','折戟','昭雪','孤鸿','问剑','不悔','斩月','焚香','踏雪','观澜','凝光','破军','惊雷','藏锋','云逸','洛尘','星野','沧澜','临渊','沐辰','竹喧','如晦','扶摇','晏清','玄策','离殇','未央','长歌','朔风','寒月','烬羽','鎏金','墨殇','青梧','斩星','听雨','照夜','朝歌','暮雪','横波','倾盖','绝影','晓风','残阳'];
+var FIELD_NAMES=['剑荡八荒','御剑听雨','踏雪无痕','一念乾坤','玄天降世','紫霄剑主','沧海一粟','血洗苍穹','刀剑如梦','星辰坠落','孤傲剑魂','斩尽天下','疯魔乱世','笑傲风云','不败神话','万古长青','不朽传说','巅峰王者','冷月葬花','寒江孤影','青衫仗剑','白衣胜雪','赤焰焚天','幽冥主宰','天骄霸主','无双剑圣','风起云涌','龙啸九天','凤舞九霄','一怒屠城','血染江山','逆天改命','堕入凡尘','仙界第一','神话无敌','紫禁之巅','大梦一场','浮生若梦','云淡风轻','素手挽歌','倾国倾城','惊鸿一瞥','落花有意','流水无情','彼岸花开','三生三世','十里桃花','红尘客栈','南柯一梦','西域狂刀','北冥有鱼','沧澜剑仙','烈焰焚城','寒霜之子','雷电法王','狂战八方','圣光降临','暗夜使者','暮光之城','沙漠之狐','雪域苍狼','孤胆英雄','铁血丹心','侠骨柔情','剑气纵横','名动四方','独步天下','唯我独尊','盖世无双','英雄本色','王者归来','天之骄子','红尘剑客','逍遥散仙','镇魔天师','琴瑟和鸣','醉卧沙场','剑气如虹','御风而行','一念成魔','青灯古佛','牧野流星','守望星空','逐鹿中原','血战到底','破晓时分','黎明之剑','黄昏霸主','极昼之影','银河战舰','星际游侠','荒野镖客','绝地求生','天命所归','乾坤未定','龙战于野','其血玄黄','大道至简','洪荒之力','白泽灵主','青鸾仙子','紫微帝君','凌霄剑尊','太虚真人'];
 function serverStartInit(){ if(!SERVER_START){ var r; try{ r=parseInt(localStorage.getItem('shenqi_server_start'),10); }catch(e){} SERVER_START=(r&&r>0)?r:Date.now(); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} } }
 function buildFieldRoster(){ var out=[], used={}, names=FIELD_NAMES.slice();
   function pick(){ for(var g=0;g<30;g++){ var p=names[Math.floor(Math.random()*names.length)]; if(!used[p]){ used[p]=1; return p; } } var q=names[Math.floor(Math.random()*names.length)]; used[q]=1; return q; }
@@ -5419,10 +5437,10 @@ function buildFieldRoster(){ var out=[], used={}, names=FIELD_NAMES.slice();
     var effort=+Math.max(0.25,Math.min(1.0,0.55+(Math.random()+Math.random()+Math.random()-1.5)*0.45)).toFixed(2);   /* 勤勉：正态偏中 */
     var pr=Math.random(), pay=0; if(pr>0.965) pay=3; else if(pr>0.92) pay=2; else if(pr>0.82) pay=1;   /* 充值：绝大多数0，极少数高氪 */
     var luck=+Math.max(0,Math.min(0.6,(Math.random()<0.22?(0.3+Math.random()*0.3):(Math.random()*0.3)))).toFixed(2);   /* 奇遇：右偏 */
-    out.push({id:i,name:pick(),innate:innate,effort:effort,pay:pay,luck:luck});
+    out.push({id:i,_v:2,name:pick(),innate:innate,effort:effort,pay:pay,luck:luck});
   }
   return out; }
-function ensureFieldRoster(){ var raw; try{ raw=localStorage.getItem('shenqi_field_roster'); }catch(e){} if(raw){ try{ var r=JSON.parse(raw); if(r&&r.length===100){ FIELD_ROSTER=r; return; } }catch(e){} } FIELD_ROSTER=buildFieldRoster(); try{ localStorage.setItem('shenqi_field_roster',JSON.stringify(FIELD_ROSTER)); }catch(e){} }
+function ensureFieldRoster(){ var raw; try{ raw=localStorage.getItem('shenqi_field_roster'); }catch(e){} if(raw){ try{ var r=JSON.parse(raw); if(r&&r.length===100&&r[0]&&r[0]._v===2){ FIELD_ROSTER=r; return; } }catch(e){} } FIELD_ROSTER=buildFieldRoster(); try{ localStorage.setItem('shenqi_field_roster',JSON.stringify(FIELD_ROSTER)); }catch(e){} }
 function aiExpPerKill(monLv,d){ /* 每怪经验·纯版（同玩家offExpPerKill，无全局依赖，同等级trExpScale=1，AI不挂肉鸽/轮回=1） */
   var e;
   if(monLv<30){ e=Math.round(5+(monLv-1)/29*95); }
@@ -5456,7 +5474,8 @@ function aiBuild(p,sec){
   var _tier=_ti>=6?'超脱 · 轮回主宰':CHAR_TIERS[_ti].n;
   var type=_ti>=6?'大能':_ti>=5?'强者':_ti>=3?'精英':_ti===1?'普通':'平民';
   var hp=Math.round(hp0*M)+Math.round(pw*100);   /* 防秒杀：生命=原算+战力×100（与玩家同口径） */
-  var enhLv=Math.min(20,Math.round(gearPct*20)), thStar=Math.round(gearPct*3);
+  var _g=Math.max(0,Math.min(1,0.35+p.effort*0.25+p.pay*0.18+(p.innate-1.0)*0.35+p.luck*0.25));   /* 强化投入强度：充值/勤勉/先天/奇遇越高越强 */
+  var enhLv=Math.min(20,Math.max(0,Math.floor(Math.pow(_g,3)*20*(0.92+Math.random()*0.16)))), thStar=Math.round(gearPct*3);   /* 强化=玩家同款幂律+运气：顶尖(投入极高)~20、中高~16、普通低位，不可能全员满级 */
   var iset= gearPct>=0.85?5:gearPct>=0.5?3:0;
   var sp=p.innate>=1.6?'<span style="color:#FFD75E">天骄</span>':p.innate>=1.3?'<span style="color:#7CF7C8">欧皇</span>':'<span style="color:#9AA5B1">凡命</span>';
   /* 攻击特性=由配置源确定性赋予（阶位/称号/神坛/徽章/图鉴），非随机——与玩家同规则 */
@@ -8245,7 +8264,17 @@ function wbMakeBoss(){
 function wbMakeAI(){
   var o=WBOSS.boss||{atk:1}, _hp=Math.round((o.atk||1)*(50+Math.random()*50));   /* 个人血量：BOSS集火榜一时扣血，血空即阵亡退出磨血；血量各异（顶尖更厚） */
   var ai=[];
-  for(var i=0;i<WB_AI_FIXED.length;i++){ ai.push({n:WB_AI_FIXED[i].n, target:0, dmg:0, dps:WB_AI_FIXED[i].dps, hit:WB_AI_FIXED[i].hit, hp:_hp, hp0:_hp, dead:false, deadAt:0}); }   /* 固定12名玩家梯队：顶尖长期霸榜，按各自dps×存活时长磨血累加，跨轮排名稳定、不再换一批 */
+  serverStartInit(); ensureFieldRoster();
+  var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
+  var _top=FIELD_ROSTER.slice().sort(function(a,b){ return aiBuild(b,sec).pw-aiBuild(a,sec).pw; }).slice(0,WB_AI_FIXED.length);   /* 服务器固定玩家中战力前N名参战（与域外战场同一批人） */
+  var _pwSum=0; _top.forEach(function(p){ _pwSum+=aiBuild(p,sec).pw; });
+  var _totalDps=0; for(var k=0;k<WB_AI_FIXED.length;k++) _totalDps+=WB_AI_FIXED[k].dps;
+  for(var i=0;i<_top.length;i++){
+    var p=_top[i], pw=aiBuild(p,sec).pw;
+    var dps=_totalDps*(pw/Math.max(1,_pwSum));   /* 磨血份额按真实战力分配：顶尖霸榜、普通少但参与（总磨血节奏不变） */
+    var hit=WB_AI_FIXED[i].hit;   /* 命中率沿用梯队模板(按战力序) */
+    ai.push({n:p.name, target:0, dmg:0, dps:dps, hit:hit, hp:_hp, hp0:_hp, dead:false, deadAt:0});
+  }
   return ai;
 }
 function wbEnsure(){
@@ -8877,7 +8906,7 @@ function gdTips(){
 }
 function mountGuide(){ var bk=document.getElementById('guide-back'); if(bk&&!bk.__b){ bk.__b=true; bk.addEventListener('click',function(){ location.hash='#home'; }); } renderGuide(); }
 /* ===== 轮回·转生系统 ===== */
-var REBIRTH={count:0,stones:0,tp:0,ascended:0,essence:0,talents:{all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0},relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0},reliquary:0,seal:0,frag:0,core:0,boxCount:0};   /* reliquary太古遗物匣/seal轮回秘印/frag太初神核碎片/core太初神核/boxCount开箱保底计数 */
+var REBIRTH={count:0,stones:0,tp:0,ascended:0,essence:0,talents:{all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0},relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0},reliquary:0,seal:0,frag:0,core:0,boxCount:0,sealBoon:0};   /* reliquary太古遗物匣/seal轮回秘印/frag太初神核碎片/core太初神核/boxCount开箱保底计数/sealBoon秘印炼化次数(每次20枚→+1%永久) */
 var REB_POWER_NEED=1000000000000;   /* 转生战力门槛：1万亿 */
 var RB_TALENTS=[
   {k:'all',n:'鸿蒙',ic:'∞',d:'全属性 +5%/级',c:'#b47aff'},
@@ -8898,7 +8927,7 @@ var RB_RELICS=[
   {k:'end',n:'太初本源',ic:'源',req:99,d:'全属性+2%/级 · 按其他法器总等级+1%',c:'#FFD75E'}
 ];
 function _rb(){ return (typeof REBIRTH!=='undefined'&&REBIRTH)?REBIRTH:{count:0,stones:0,tp:0,ascended:0,essence:0,talents:{all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0},relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0}}; }
-function reincMult(){ var r=_rb(); var other=(r.relic.eye||0)+(r.relic.codex||0)+(r.relic.amulet||0)+(r.relic.realm||0)+(r.relic.banner||0); return 1+r.count*0.30+r.talents.all*0.05+r.relic.eye*0.10+(r.ascended?(10.1):0)+(r.relic.end||0)*0.02+other*0.01; }   /* 超脱大礼包+1000%·称号+10%·太初本源+2%/级·按其他法器总等级+1% */
+function reincMult(){ var r=_rb(); var other=(r.relic.eye||0)+(r.relic.codex||0)+(r.relic.amulet||0)+(r.relic.realm||0)+(r.relic.banner||0); return 1+r.count*0.30+r.talents.all*0.05+r.relic.eye*0.10+(r.ascended?(10.1):0)+(r.relic.end||0)*0.02+other*0.01+(r.sealBoon||0)*0.01; }   /* 超脱大礼包+1000%·称号+10%·太初本源+2%/级·按其他法器总等级+1%·秘印炼化+1%/次(独立永久战力) */
 function reincExpMult(){ var r=_rb(); return 1+r.count*0.50+r.talents.exp*0.25+r.relic.codex*0.20; }
 function reincGoldMult(){ var r=_rb(); return 1+r.talents.gold*0.20+r.relic.banner*0.15; }
 function reincCritRate(){ var r=_rb(); return r.talents.crit*0.02+r.relic.amulet*0.02; }
@@ -9063,6 +9092,10 @@ function renderRebirth(){
   var ee=document.getElementById('rb-end'); if(ee){ ee.style.display=REBIRTH.ascended?'block':'none'; }
   var bx=document.getElementById('rb-box'); if(bx) bx.textContent=REBIRTH.reliquary||0;
   var sl=document.getElementById('rb-seal'); if(sl) sl.textContent=REBIRTH.seal||0;
+  var sbv=document.getElementById('rb-seal-boon'); if(sbv) sbv.textContent='+'+((REBIRTH.sealBoon||0)*1)+'%';
+  var sn=document.getElementById('rb-seal-n'); if(sn) sn.textContent=REBIRTH.seal||0;
+  var sn2=document.getElementById('rb-seal-n2'); if(sn2) sn2.textContent=Math.floor((REBIRTH.seal||0)/20);
+  var sbBtn=document.getElementById('rb-seal-boon-btn'); if(sbBtn) sbBtn.classList.toggle('dis', (REBIRTH.seal||0)<20);
   var fr=document.getElementById('rb-frag'); if(fr) fr.textContent=REBIRTH.frag||0;
   var co=document.getElementById('rb-core'); if(co) co.textContent=REBIRTH.core||0;
   var ob=document.getElementById('rb-box-open'); if(ob) ob.classList.toggle('dis', (REBIRTH.reliquary||0)<=0);
@@ -9102,6 +9135,16 @@ function craftCore(){   /* 99 碎片合成 1 太初神核 */
   if(typeof triggerLegendFX==='function') triggerLegendFX();
   toast('合成成功：太初神核 ×1');
 }
+function sealBoonClick(){
+  var need=20;
+  if((REBIRTH.seal||0)<need){ toast('轮回秘印不足（炼化需 20 枚）'); return; }
+  confirmDialog('秘印炼化 · 永久全属性 +1%？<br><span style="color:#F2C96B">消耗轮回秘印 ×20（当前 '+(REBIRTH.seal||0)+' 枚）</span><br><span style="color:#7CF7C8">独立于轮回世次 · 永不重置</span>', function(ok){
+    if(!ok) return;
+    REBIRTH.seal-=need; REBIRTH.sealBoon=(REBIRTH.sealBoon||0)+1;
+    recalcCharacter(); renderRebirth(); saveGame();
+    toast('<b style="color:#F2C96B">秘印炼化成功 · 永久全属性 +1%</b>（累计 +'+Math.round((reincMult()-1)*100)+'%）');
+  });
+}
 function mountRebirth(){
   var go=document.getElementById('rb-go'); if(go&&!go.__b){ go.__b=true; go.addEventListener('click',rbGoClick); }
   var bk=document.getElementById('rb-wash'); if(bk&&!bk.__b){ bk.__b=true; bk.addEventListener('click',rbWash); }
@@ -9111,6 +9154,7 @@ function mountRebirth(){
   var ee=document.getElementById('rb-end'); if(ee&&!ee.__b){ ee.__b=true; ee.addEventListener('click',function(){ toast('轮回尽头·本源试炼 即将开启'); }); }
   var ob=document.getElementById('rb-box-open'); if(ob&&!ob.__b){ ob.__b=true; ob.addEventListener('click',openReliquary); }
   var cc=document.getElementById('rb-craft-core'); if(cc&&!cc.__b){ cc.__b=true; cc.addEventListener('click',craftCore); }
+  var sb=document.getElementById('rb-seal-boon-btn'); if(sb&&!sb.__b){ sb.__b=true; sb.addEventListener('click',sealBoonClick); }
   renderRebirth();
 }
 
@@ -11538,7 +11582,7 @@ function loadGame(){
   if(s.rebirth){ REBIRTH.count=s.rebirth.count||0; REBIRTH.stones=s.rebirth.stones||0; REBIRTH.tp=s.rebirth.tp||0; REBIRTH.ascended=s.rebirth.ascended||0; REBIRTH.essence=s.rebirth.essence||0;
     REBIRTH.talents=Object.assign({all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0},s.rebirth.talents||{});
     REBIRTH.relic=Object.assign({eye:0,codex:0,amulet:0,realm:0,banner:0,end:0},s.rebirth.relic||{});
-    REBIRTH.reliquary=s.rebirth.reliquary||0; REBIRTH.seal=s.rebirth.seal||0; REBIRTH.frag=s.rebirth.frag||0; REBIRTH.core=s.rebirth.core||0; REBIRTH.boxCount=s.rebirth.boxCount||0; }
+    REBIRTH.reliquary=s.rebirth.reliquary||0; REBIRTH.seal=s.rebirth.seal||0; REBIRTH.frag=s.rebirth.frag||0; REBIRTH.core=s.rebirth.core||0; REBIRTH.boxCount=s.rebirth.boxCount||0; REBIRTH.sealBoon=s.rebirth.sealBoon||0; }
   if(s.battle){ BATTLE.merit=s.battle.merit||0; BATTLE.crystal=s.battle.crystal||0; }
   if(s.deep){ DEEP.shen=s.deep.shen||0; DEEP.wang=s.deep.wang||0; DEEP.diyu=s.deep.diyu||0; DEEP.tian=s.deep.tian||0; DEEP.total=(s.deep.total||0)||Math.max(DEEP.shen,DEEP.wang,DEEP.diyu,DEEP.tian); }   /* 神格本元单一永久总等级：新档用 total，旧档取历史维度最高级兜底 */
   ENH.bless=s.enhBless||0; INHERIT_USED=s.inheritUsed||0;
@@ -11584,7 +11628,7 @@ function doReset(){
   CHARACTER.innateRollCount=0;   /* 生成次数从初始化开始重新累加 */
   CHARACTER.innate=randomRollOrigin();   /* 初始化：先随机先天运势，再按运势分档生成角色属性（与“重新随机”按钮逻辑一致） */
   itemIdCounter = 1;
-  REBIRTH.count=0; REBIRTH.stones=0; REBIRTH.tp=0; REBIRTH.ascended=0; REBIRTH.essence=0; REBIRTH.reliquary=0; REBIRTH.seal=0; REBIRTH.frag=0; REBIRTH.core=0; REBIRTH.boxCount=0;
+  REBIRTH.count=0; REBIRTH.stones=0; REBIRTH.tp=0; REBIRTH.ascended=0; REBIRTH.essence=0; REBIRTH.reliquary=0; REBIRTH.seal=0; REBIRTH.frag=0; REBIRTH.core=0; REBIRTH.boxCount=0; REBIRTH.sealBoon=0;
   REBIRTH.talents={all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0};
   REBIRTH.relic={eye:0,codex:0,amulet:0,realm:0,banner:0,end:0};
   RB_LAST_TALENT=null; RB_LAST_RELIC=null;   /* 初始化重置轮回祭坛：转生次数/魂石/轮回点/天赋/法器全部回到初始 */
