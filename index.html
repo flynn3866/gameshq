@@ -5433,13 +5433,26 @@ var SERVER_START=0;   /* 服务器开服时间戳：点“初始化”起算 */
 var FIELD_ROSTER=null;   /* 100名固定AI玩家（持久化localStorage，一次开服内固定不重排） */
 var FIELD_NAMES=['剑荡八荒','御剑听雨','踏雪无痕','一念乾坤','玄天降世','紫霄剑主','沧海一粟','血洗苍穹','刀剑如梦','星辰坠落','孤傲剑魂','斩尽天下','疯魔乱世','笑傲风云','不败神话','万古长青','不朽传说','巅峰王者','冷月葬花','寒江孤影','青衫仗剑','白衣胜雪','赤焰焚天','幽冥主宰','天骄霸主','无双剑圣','风起云涌','龙啸九天','凤舞九霄','一怒屠城','血染江山','逆天改命','堕入凡尘','仙界第一','神话无敌','紫禁之巅','大梦一场','浮生若梦','云淡风轻','素手挽歌','倾国倾城','惊鸿一瞥','落花有意','流水无情','彼岸花开','三生三世','十里桃花','红尘客栈','南柯一梦','西域狂刀','北冥有鱼','沧澜剑仙','烈焰焚城','寒霜之子','雷电法王','狂战八方','圣光降临','暗夜使者','暮光之城','沙漠之狐','雪域苍狼','孤胆英雄','铁血丹心','侠骨柔情','剑气纵横','名动四方','独步天下','唯我独尊','盖世无双','英雄本色','王者归来','天之骄子','红尘剑客','逍遥散仙','镇魔天师','琴瑟和鸣','醉卧沙场','剑气如虹','御风而行','一念成魔','青灯古佛','牧野流星','守望星空','逐鹿中原','血战到底','破晓时分','黎明之剑','黄昏霸主','极昼之影','银河战舰','星际游侠','荒野镖客','绝地求生','天命所归','乾坤未定','龙战于野','其血玄黄','大道至简','洪荒之力','白泽灵主','青鸾仙子','紫微帝君','凌霄剑尊','太虚真人'];
 function serverStartInit(){ if(!SERVER_START){ var r; try{ r=parseInt(localStorage.getItem('shenqi_server_start'),10); }catch(e){} SERVER_START=(r&&r>0)?r:Date.now(); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} } }
+function aiRollInnate(){  /* AI先天运势：与玩家rollInnate同一套分布（天运1.8全服唯一归玩家"谜团"独占，AI传说档落高级档） */
+  var r=Math.random()*100, t;
+  if(r<0.01){ t=1-Math.sqrt(1-Math.random()); return Math.round((1.20+t*0.59)*100)/100; }   /* 传说档0.01%→落高级档（不占天运1.8） */
+  else if(r<90){ t=1-Math.sqrt(1-Math.random()); return Math.round((0.90+t*0.29)*100)/100; }  /* 普通档90%：权重线性递减 */
+  else { t=1-Math.sqrt(1-Math.random()); return Math.round((1.20+t*0.59)*100)/100; }          /* 高级档~10% */
+}
 function buildFieldRoster(){ var out=[], used={}, names=FIELD_NAMES.slice();
   function pick(){ for(var g=0;g<30;g++){ var p=names[Math.floor(Math.random()*names.length)]; if(!used[p]){ used[p]=1; return p; } } var q=names[Math.floor(Math.random()*names.length)]; used[q]=1; return q; }
   for(var i=0;i<100;i++){
-    var innate=+(1.0+Math.random()*0.75).toFixed(2);   /* 1.0~1.75（天运1.8不生成） */
-    var effort=+Math.max(0.25,Math.min(1.0,0.55+(Math.random()+Math.random()+Math.random()-1.5)*0.45)).toFixed(2);   /* 勤勉：正态偏中 */
-    var pr=Math.random(), pay=0; if(pr>0.965) pay=3; else if(pr>0.92) pay=2; else if(pr>0.82) pay=1;   /* 充值：绝大多数0，极少数高氪 */
-    var luck=+Math.max(0,Math.min(0.6,(Math.random()<0.22?(0.3+Math.random()*0.3):(Math.random()*0.3)))).toFixed(2);   /* 奇遇：右偏 */
+    var innate=aiRollInnate();   /* AI与玩家同一套先天运势分布：90%普通0.90~1.19、~10%高级1.20~1.79（天运1.8归玩家谜团独占） */
+    var _er=Math.random(), effort;
+    if(_er<0.10) effort=+(0.92+Math.random()*0.08).toFixed(2);         /* 极肝 10%：每天在线22~24h（在线比0.92~1.0，≈5天满级80） */
+    else if(_er<0.70) effort=+(0.75+Math.random()*0.17).toFixed(2);    /* 勤勉 60%：每天在线18~22h（在线比0.75~0.92，≈6~7天满级） */
+    else effort=+(0.50+Math.random()*0.25).toFixed(2);                 /* 中等 30%：每天在线12~18h（在线比0.50~0.75，≈7~10天满级） */
+    var pr=Math.random(), pay;
+    if(pr>0.95) pay=3;        /* 神豪 5% */
+    else if(pr>0.75) pay=2;   /* 高氪 20% */
+    else if(pr>0.01) pay=1;   /* 微氪 ~74%（基本都充值，极少0元） */
+    else pay=0;               /* 白嫖 ~1% */
+    var luck=(function(_i){ return +Math.max(0,Math.min(0.6,_i>=1.4?(0.40+Math.random()*0.20):(_i>=1.15?(0.25+Math.random()*0.20):(Math.random()*0.25)))).toFixed(2); })(innate);   /* 奇遇：与玩家同一套公式（基础挂机奇遇概率+先天运势档位影响品质，见tryTriggerAdventure运势分档），运势越高奇遇越好、越能滚雪球 */
     out.push({id:i,_v:2,name:pick(),innate:innate,effort:effort,pay:pay,luck:luck});
   }
   return out; }
@@ -5455,11 +5468,11 @@ function aiExpPerKill(monLv,d){ /* 每怪经验·纯版（同玩家offExpPerKill
   var dm={1:10,2:10,3:5,4:5,5:5}[d]; if(dm) e=Math.round(e*dm);   /* 副本小怪经验乘区：水龙/深渊×10、王座/奥利森/沙漠×5（同玩家trGainExp） */
   return e; }
 function aiBestExp(lv){ var bestD=0,bestE=0; for(var i=0;i<DUNGEONS.length;i++){ var ml=DUNGEONS[i].monLv; if(ml>lv+10) break; var e=aiExpPerKill(ml,i); if(e>bestE){ bestE=e; bestD=i; } } return {d:bestD,exp:bestE}; }   /* 副本推进：战力够就能越级刷≤自身+10级的怪，自动选经验最优（含越级经验加成） */
-function aiLevelFromSec(effSec,p){ var lv=0,t=0;
-  var r=2.6*(0.4+p.effort*0.6);   /* 在线挂机刷怪速率：勤勉1.0~2.6只/秒（同玩家挂机380ms/只） */
-  var em=(1+p.pay)*(1+p.luck*3)*8;   /* 经验放大：充值+奇遇+在线优化(常量8校准) */
-  while(lv<80){ var ab=aiBestExp(lv+1); var over=Math.max(0,DUNGEONS[ab.d].monLv-(lv+1)); var ove=Math.pow(1.15,Math.min(20,over)); var eps=Math.max(1,r*ab.exp*em*ove); var need=trReqExp(lv+1)/eps; if(t+need>effSec) return Math.max(1,lv); t+=need; lv++; }
-  return 80; }   /* 同玩家经验曲线 trReqExp 做时间积分 */
+function aiLevelFromSec(effSec,p){ var factor=(1+p.pay*0.2)*(1+p.luck*0.48);   /* 充值/奇遇共同放大升级：奇遇高实力强能越级→升级快 */
+  var fullOnline=338000/factor;   /* 在线满级需求秒：参考基准338000s，肝帝微氪满级在线≈2.85天(日历3天) */
+  var x=Math.max(0,Math.min(1,effSec/fullOnline));   /* 在线进度0~1 */
+  var lv; if(x<=0.2) lv=x/0.2*30; else if(x<=0.33) lv=30+(x-0.2)/0.13*30; else lv=60+(x-0.33)/0.67*20;   /* S曲线：前期快→中段冲刺→后期艰难 */
+  return Math.max(1,Math.min(80,Math.round(lv))); }   /* AI独立平滑曲线，不与玩家trReqExp共用：1天肝帝≈60、其他≈30，肝帝≈3天/高奇遇≈2天满级80 */
 function aiBuild(p,sec){
   var effSec=Math.max(1,sec*p.effort), effDay=effSec/86400;
   var lv=aiLevelFromSec(effSec,p);
