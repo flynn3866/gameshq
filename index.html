@@ -2603,7 +2603,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 .wl-tt{font-size:34px;font-weight:900;color:#FFFFFF;text-shadow:0 1px 0 rgba(255,255,255,.55),0 2px 0 rgba(0,0,0,.42),0 3px 0 rgba(0,0,0,.55);letter-spacing:5px;margin-bottom:4px;line-height:1.2}
 .wl-tt-w{color:#FFFFFF;-webkit-text-fill-color:#FFFFFF;-webkit-text-stroke:1px rgba(255,255,255,.55)}
 .wl-boss{color:#8FF5CF;font-size:15px;font-weight:800;text-shadow:0 2px 0 rgba(20,80,55,.6),0 1px 0 rgba(255,255,255,.2)}
-.wl-rank{color:#e6dcc4;font-size:13px;margin:7px 0 0}.wl-rank b{color:#FFD75E;text-shadow:0 1px 0 rgba(120,74,14,.7),0 2px 0 rgba(90,55,10,.6)}
+.wl-rank{color:#e6dcc4;font-size:13px;margin:7px 0 0}.wl-rank b{color:#FFD75E;text-shadow:0 1px 0 rgba(120,74,14,.7),0 2px 0 rgba(90,55,10,.6)}.wl-date{color:rgba(230,220,196,.6);font-size:11px;margin:3px 0 0;letter-spacing:1px}
 .wl-body{flex:1 1 auto;overflow-y:auto;min-height:0;padding:4px 20px 8px}
 .wl-body::-webkit-scrollbar{width:6px}.wl-body::-webkit-scrollbar-thumb{background:linear-gradient(180deg,#E0B44A,#a97a1f);border-radius:3px}.wl-body::-webkit-scrollbar-track{background:rgba(255,255,255,.04)}
 .wl-close-wrap{flex:0 0 auto;padding:14px 20px 22px;background:linear-gradient(180deg,rgba(18,8,40,0),rgba(18,8,40,.94) 48%)}
@@ -2619,6 +2619,7 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 .wb-loot-it.rare .wl-nm{color:#FFEEC0;font-weight:800;text-shadow:0 1px 0 rgba(90,50,10,.7)}
 .wb-loot-it .wl-nm.wl-mg{color:#FF5AD8;-webkit-text-stroke:0.5px rgba(255,255,255,.14);text-shadow:0 1px 0 rgba(80,15,55,.85),0 2px 0 rgba(60,10,45,.65)}
 .wb-loot-it .wl-c{font-size:12px;color:#7EE8C2;white-space:nowrap;font-weight:700;background:linear-gradient(180deg,rgba(126,232,194,.16),rgba(126,232,194,.06));border:1px solid rgba(126,232,194,.28);padding:3px 9px;border-radius:8px;box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 -1px 0 rgba(0,0,0,.22)}
+.wl-d{font-size:10px;color:rgba(230,220,196,.55);margin:-2px 0 2px 62px;letter-spacing:.5px;line-height:1.35}
 .wb-loot-none{color:#d8a9a9;font-size:14px;padding:16px;text-align:center;grid-column:1/-1}
 .wl-close{width:100%;padding:14px;border:none;border-radius:14px;background:linear-gradient(180deg,#FFF3C4,#FFD75E 38%,#E0A83A 76%,#C88A24);color:#2a1800;font-size:16px;font-weight:900;cursor:pointer;box-shadow:inset 0 2px 0 rgba(255,255,255,.75),inset 0 -2px 0 rgba(150,95,20,.55),0 4px 0 rgba(120,74,14,.75),0 8px 0 rgba(60,35,5,.5);letter-spacing:2px;text-shadow:0 1px 0 rgba(255,255,255,.5)}
 .wl-close:active{transform:scale(.96) translateY(3px);box-shadow:inset 0 2px 0 rgba(255,255,255,.6),inset 0 -2px 0 rgba(150,95,20,.5),0 2px 0 rgba(120,74,14,.6),0 4px 0 rgba(60,35,5,.35)}
@@ -5023,6 +5024,7 @@ function closeSettings(){ var sf=$('#settings-float'); if(sf) sf.classList.remov
     if(act==='history'){ openHistory(); }
     if(act==='refresh'){ var n=syncItemsFromBlueprints(); recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); syncBagBar(); applyCharTier(); toast('已刷新 '+(n||0)+' 件旧物品为最新属性'); closeSettings(); }
     else if(act==='reset'){ confirmDialog('确认初始化？<br>所有数据将回到初始状态（等级0、装备/背包/物品清空、非绑定金币100亿启动资金）', function(ok){ if(ok){ closeSettings(); doReset(); } }); }
+    else if(act==='calib'){ confirmDialog('校准AI开服时间？<br>将按你的角色当前等级，把100名AI玩家的开服时长对齐到与你同步（AI会重新按同开服天数发育）。', function(ok){ if(ok){ closeSettings(); aiCalibrateServer(); } }); }
   }, false);
 })();
 /* ============ 点击式 Tooltip（手机：点击显示、点击其他处隐藏、防屏幕遮挡） ============ */
@@ -5432,7 +5434,9 @@ BATTLE.opps=out; }   /* 模拟真实玩家：同成长模型、先天运势不�
 var SERVER_START=0;   /* 服务器开服时间戳：点“初始化”起算 */
 var FIELD_ROSTER=null;   /* 100名固定AI玩家（持久化localStorage，一次开服内固定不重排） */
 var FIELD_NAMES=['剑荡八荒','御剑听雨','踏雪无痕','一念乾坤','玄天降世','紫霄剑主','沧海一粟','血洗苍穹','刀剑如梦','星辰坠落','孤傲剑魂','斩尽天下','疯魔乱世','笑傲风云','不败神话','万古长青','不朽传说','巅峰王者','冷月葬花','寒江孤影','青衫仗剑','白衣胜雪','赤焰焚天','幽冥主宰','天骄霸主','无双剑圣','风起云涌','龙啸九天','凤舞九霄','一怒屠城','血染江山','逆天改命','堕入凡尘','仙界第一','神话无敌','紫禁之巅','大梦一场','浮生若梦','云淡风轻','素手挽歌','倾国倾城','惊鸿一瞥','落花有意','流水无情','彼岸花开','三生三世','十里桃花','红尘客栈','南柯一梦','西域狂刀','北冥有鱼','沧澜剑仙','烈焰焚城','寒霜之子','雷电法王','狂战八方','圣光降临','暗夜使者','暮光之城','沙漠之狐','雪域苍狼','孤胆英雄','铁血丹心','侠骨柔情','剑气纵横','名动四方','独步天下','唯我独尊','盖世无双','英雄本色','王者归来','天之骄子','红尘剑客','逍遥散仙','镇魔天师','琴瑟和鸣','醉卧沙场','剑气如虹','御风而行','一念成魔','青灯古佛','牧野流星','守望星空','逐鹿中原','血战到底','破晓时分','黎明之剑','黄昏霸主','极昼之影','银河战舰','星际游侠','荒野镖客','绝地求生','天命所归','乾坤未定','龙战于野','其血玄黄','大道至简','洪荒之力','白泽灵主','青鸾仙子','紫微帝君','凌霄剑尊','太虚真人'];
-function serverStartInit(){ if(!SERVER_START){ var r; try{ r=parseInt(localStorage.getItem('shenqi_server_start'),10); }catch(e){} SERVER_START=(r&&r>0)?r:Date.now(); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} } }
+function aiServerDayByLv(lv){ var x; lv=lv||0; if(lv<=0) return 0.5; if(lv<=30) x=lv/150; else if(lv<=60) x=0.2+(lv-30)/30*0.13; else x=0.33+(lv-60)/20*0.67; return Math.max(0.5, x*(338000/1.3)/86400); }   /* 玩家等级→开服天数：AI与玩家同开服时长发育（普通投入基准≈3天满级80） */
+function aiCalibrateServer(){ var lv=(CHARACTER&&CHARACTER.info&&typeof CHARACTER.info.level==='number')?CHARACTER.info.level:0; var day=aiServerDayByLv(lv); SERVER_START=Date.now()-Math.round(day*86400000); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} try{ localStorage.removeItem('shenqi_field_roster'); }catch(e){} FIELD_ROSTER=null; ensureFieldRoster(); try{ if(typeof renderRank==='function') renderRank(); }catch(e){} try{ if(typeof renderBattle==='function') renderBattle(); }catch(e){} toast('已按角色 Lv.'+lv+' 校准AI开服：约 '+Math.round(day*10)/10+' 天前'); }
+function serverStartInit(){ if(!SERVER_START){ var r; try{ r=parseInt(localStorage.getItem('shenqi_server_start'),10); }catch(e){} if(!(r&&r>0)){ var _lv=(CHARACTER&&CHARACTER.info&&typeof CHARACTER.info.level==='number')?CHARACTER.info.level:0; r=_lv>0?(Date.now()-Math.round(aiServerDayByLv(_lv)*86400000)):Date.now(); } SERVER_START=(r&&r>0)?r:Date.now(); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} } }
 function aiRollInnate(){  /* AI先天运势：与玩家rollInnate同一套分布（天运1.8全服唯一归玩家"谜团"独占，AI传说档落高级档） */
   var r=Math.random()*100, t;
   if(r<0.01){ t=1-Math.sqrt(1-Math.random()); return Math.round((1.20+t*0.59)*100)/100; }   /* 传说档0.01%→落高级档（不占天运1.8） */
@@ -7123,7 +7127,8 @@ function applyRoute(){
   if (tower){ stopArenaFight(); initTower(); }   /* 进入挑战塔：停竞技；不再停试炼自动（切回试炼页自动恢复），点挑战塔自动攻击时才互斥停试炼 */
   if (shop) renderShop();
   if (arena) renderArena();
-  if (rank) renderRank();   /* 进入全服排行页刷新榜单（与加载预渲染一致，实时战力） */
+  if (rank){ renderRank(); if(!window.__RANK_T){ window.__RANK_T=setInterval(function(){ try{ renderRank(); }catch(e){} },3000); } }   /* 进入全服排行页：立即刷新榜单并每3秒自动更新（AI随开服时长实时成长，战力/等级持续刷新） */
+  else if(window.__RANK_T){ clearInterval(window.__RANK_T); window.__RANK_T=null; }   /* 离开排行页停止定时刷新 */
   if (store) initStore();   /* 进入仓库页：渲染上背包/下仓库并绑定转移 */
   if (!(attrs||enh||refine||gem||god||trs||shop||guide)){ renderEquip(); renderBag(); renderCurrency(); }   /* 返回主页/万法指南时刷新背包/装备/金币 */
   recalcCharacter();   /* 统一刷新角色属性（装备/宝石/天神变化后生效） */
@@ -8310,7 +8315,7 @@ function wbEnsure(){
     wbStop();
     WBOSS.day=d; WBOSS.slot=sl; WBOSS.mul=8; if(!WBOSS.timeBase){ WBOSS.timeBase=Date.now(); } saveGame();   /* 每日8点单轮最高8倍；首次记录服务器开刷时间戳（AI成长基准） */
     WBOSS.boss=wbMakeBoss(); WBOSS.bossMax=WBOSS.boss.hp; WBOSS.bossHp=WBOSS.bossMax; WBOSS.my=0;
-    WBOSS.ai=wbMakeAI(); WBOSS.killed=false; WBOSS.reward={got:false};
+    WBOSS.ai=wbMakeAI(); WBOSS.killed=false; WBOSS.reward={got:false}; WBOSS.loot=null;   /* 新BOSS清空旧战利品快照：杜绝跨轮残留导致'打了第一却看到上轮未达标记录' */
     var _ss=new Date(); if(_ss.getHours()<8) _ss.setDate(_ss.getDate()-1); _ss.setHours(8,0,0,0); WBOSS.startTime=WBOSS.lastVisit=_ss.getTime();   /* 本轮每日8点开刷（8点前归属上一日）：startTime为固定锚点，AI磨血单调累加，不随tick/切页重置 */
   }
   wbAdvanceAI();
@@ -8462,6 +8467,7 @@ function wbStop(){
   var go=document.getElementById('wb-go'); if(go) go.style.display='';
   var st=document.getElementById('wb-stop'); if(st) st.style.display='none';
   var r=document.getElementById('wb-remain'); if(r) r.textContent='';
+  var ff=document.getElementById('wb-fight'); if(ff) ff.innerHTML='<div class="af-wait">点击「出战」· 讨伐世界BOSS</div>';   /* 停止/击杀/切页：清空战斗VS浮层，回到等待出战界面，避免残留boss图标+血条 */
 }
 function wbEnd(){ wbStop(); var d=WBOSS.my; wbRender(); if(d>0) toast('本次出战结算：造成 '+fmtWan(d)+' 伤害'); }
 function wbCelebrate(){
@@ -8482,6 +8488,7 @@ function wbGrantLoot(){   /* BOSS击杀即时结算：门槛判定→全部战�
   var mul=WBOSS.mul||1;
   var minDmg=Math.max(1,Math.round(WBOSS.bossMax*0.005));
   var loot=[], gold=0, coins=0, box=0, ok=WBOSS.my>=minDmg;
+  try{
   if(ok){
     if(rank===1){ gold=Math.round(WBOSS.bossMax*0.12); coins=200*mul; }
     else if(rank<=3){ gold=Math.round(WBOSS.bossMax*0.05); coins=120*mul; }
@@ -8512,12 +8519,35 @@ function wbGrantLoot(){   /* BOSS击杀即时结算：门槛判定→全部战�
     else { wbDrop4('enhBless',1); if(Math.random()<0.3) wbDrop4('inheritPill',1); }
     WBOSS.bestDmg=Math.max(WBOSS.bestDmg||0, WBOSS.my||0);
   }
+  }catch(e){ try{ console.error('wbGrantLoot drop',e); }catch(_){} }   /* 掉落入账逐项保护：即使个别掉落异常也不阻断结算，保证rank/达标判定必定生成loot快照 */
   WBOSS.totalKill++; dailyBump('wb');
-  WBOSS.loot={rank:rank,dmg:WBOSS.my||0,boss:WBOSS.boss.n,tier:WBOSS.boss.tier,ok:ok,items:loot,minDmg:minDmg};
+  WBOSS.loot={rank:rank,dmg:WBOSS.my||0,boss:WBOSS.boss.n,tier:WBOSS.boss.tier,ok:ok,items:loot,minDmg:minDmg,date:(function(){var _d=new Date();return _d.getFullYear()+'-'+('0'+(_d.getMonth()+1)).slice(-2)+'-'+('0'+_d.getDate()).slice(-2)+' '+('0'+_d.getHours()).slice(-2)+':'+('0'+_d.getMinutes()).slice(-2);})()};   /* 结算快照记录结算日期：标明是哪一轮哪个BOSS的战利品 */
   WBOSS.reward.got=true;
   try{ saveGame(); renderCurrency(); wbRender(); }catch(e){}
   wbShowLoot();
   toast('讨伐成功！战利品已入账 · 详见弹框');
+}
+function wbFullLoot(tier){   /* 本轮全服掉落总览：该BOSS全服会掉落的全部物品 + 各名次档位分配，非仅展示两行 */
+  var B=ITEM_BLUEPRINTS, R=[], _MG={'太古遗物匣':1,'传说神装':1,'强化祝福卷轴（完整）':1,'神格本源':1};
+  function ic(k){ return (B&&B[k]&&B[k].img)?('<img src="'+B[k].img+'">'):''; }
+  function it(n,icn,c,d){
+    var rare=/太古|传说|神格本源|本源|传承|祝福宝石|强化祝福卷轴（完整）/.test(n);
+    var mg=_MG[n]?' wl-mg':'';
+    R.push('<div class="wb-loot-it'+(rare?' rare':'')+'"><span class="wl-ic">'+icn+'</span><span class="wl-nm'+mg+'">'+n+'</span><span class="wl-c">'+c+'</span></div>'+(d?'<div class="wl-d">'+d+'</div>':''));
+  }
+  it('太古遗物匣','<img src="logos/太古匣子.png">','全服 ×60','第1名36 · 2~6名 12/6/3/2/1');
+  it('传说神装',wbLegendSvg(),'×1','榜首专属');
+  if(tier==='supreme') it('本源结晶','<img src="logos/神力结晶.png">','×5','仅超脱BOSS');
+  it('祝福宝石',ic('earthBlessingGem'),'×3','榜首随机一系');
+  it('强化祝福卷轴（完整）',ic('refineScrollFull'),'×2','榜首');
+  it('锻造精华','<img src="logos/神力碎片.png">','全服 ×240','1名150 · 2~3名60 · 4~6名30 · 7名后15');
+  it('神格本源',ic('godOrigin'),'×3+','1名2 · 2~3名1 · 4~6名几率');
+  it('传说宝箱',ic('legendBox'),'×1+','1名1 · 2~6名几率');
+  it('强化祝福卷轴',ic('enhBless'),'×11+','1名5 · 2~3名3 · 4~6名2 · 7名后1');
+  it('远古传承丹',ic('inheritPill'),'×6+','1名3 · 2~3名2 · 4~6名1 · 7名后几率');
+  it('金币',wbCoinSvg(),'按名次','榜首12% · 前3 5% · 余档递减');
+  it('BOSS币',wbBossCoinSvg(),'按名次','200 / 120 / 60 / 25 币');
+  return R.join('');
 }
 function wbShowLoot(){   /* 战利品弹框：全服大爆氛围 + 我的收获清单，全局顶层，切页也显示/可重开 */
   var _old=document.getElementById('wb-loot-mask'); if(_old&&_old.parentNode) _old.parentNode.removeChild(_old);
@@ -8525,18 +8555,16 @@ function wbShowLoot(){   /* 战利品弹框：全服大爆氛围 + 我的收获�
   var L=WBOSS.loot;
   var _MG={'太古遗物匣':1,'传说神装':1,'强化祝福卷轴':1,'神格本源':1};
   var mkRow=function(it){ return '<div class="wb-loot-it'+(it.rare?' rare':'')+'"><span class="wl-ic">'+it.ic+'</span><span class="wl-nm'+(it.rare&&_MG[it.n]?' wl-mg':'')+'">'+it.n+'</span><span class="wl-c">×'+fmtWan(it.c)+'</span></div>'; };
-  var boom='<div class="wb-loot-it rare"><span class="wl-ic"><img src="logos/太古匣子.png"></span><span class="wl-nm wl-mg">太古遗物匣</span><span class="wl-c">全服 ×60 派发</span></div>'
-    +'<div class="wb-loot-it rare"><span class="wl-ic">'+wbLegendSvg()+'</span><span class="wl-nm wl-mg">传说神装</span><span class="wl-c">榜首掉落</span></div>'
-    +(L.tier==='supreme'?'<div class="wb-loot-it rare"><span class="wl-ic"><img src="logos/神力结晶.png"></span><span class="wl-nm">本源结晶</span><span class="wl-c">×5</span></div>':'');
+  var boom=wbFullLoot(L.tier);   /* 本轮全服掉落总览（完整清单+各档位分配） */
   var mine;
   if(!L.ok){ mine='<div class="wb-loot-none">伤害未达标（需 ≥'+fmtWan(L.minDmg)+'）· 本次无奖励</div>'; }
   else if(!L.items.length){ mine='<div class="wb-loot-none">排名靠后，本时段无独立掉落</div>'; }
   else { mine=L.items.map(mkRow).join(''); }
   var mask=document.createElement('div'); mask.id='wb-loot-mask'; mask.className='wb-loot-mask';
   mask.innerHTML='<div class="wb-loot">'
-    +'<div class="wl-head"><span class="wl-glow"></span><div class="wl-tt"><span class="wl-tt-w">✦</span>讨伐成功<span class="wl-tt-w">✦</span></div><div class="wl-boss">'+L.boss+' · 已覆灭</div><div class="wl-rank">全服排名 <b>#'+L.rank+'</b> · 累计伤害 '+fmtWan(L.dmg)+'</div></div>'
+    +'<div class="wl-head"><span class="wl-glow"></span><div class="wl-tt"><span class="wl-tt-w">✦</span>讨伐成功<span class="wl-tt-w">✦</span></div><div class="wl-boss">'+L.boss+' · 已覆灭</div><div class="wl-rank">全服排名 <b>#'+L.rank+'</b> · 累计伤害 '+fmtWan(L.dmg)+'</div><div class="wl-date">结算 '+(L.date||'--')+'</div></div>'
     +'<div class="wl-body">'
-    +'<div class="wl-sec">全服大爆</div><div class="wl-grid">'+boom+'</div>'
+    +'<div class="wl-sec">本轮全服掉落</div><div class="wl-grid">'+boom+'</div>'
     +'<div class="wl-sec">我的收获</div><div class="wl-grid">'+mine+'</div>'
     +'</div>'
     +'<div class="wl-close-wrap"><button class="wl-close" id="wb-loot-close">收下战利品</button></div>'
@@ -8616,7 +8644,7 @@ function wbRenderRank(){
   for(var i=0;i<all.length;i++){ var r=all[i];
     var _c=i===0?'r1':(i===1?'r2':(i===2?'r3':''));
     var _bar='';
-    if(r.me){ if(WBOSS.my>0) _bar='<span class="wb-ab wb-ab-me"><i style="width:'+Math.max(0,Math.min(100,r.hp/(r.hp0||1)*100))+'%"></i></span>'; }
+    if(r.me){ if(WBOSS.my>0 && WB_SESSION) _bar='<span class="wb-ab wb-ab-me"><i style="width:'+Math.max(0,Math.min(100,r.hp/(r.hp0||1)*100))+'%"></i></span>'; }   /* 击杀/停止后WB_SESSION已清，不画空血条 */
     else { _bar=r.dead?'<span class="wb-adead">已阵亡</span>':'<span class="wb-ab"><i style="width:'+Math.max(0,Math.min(100,r.hp/(r.hp0||1)*100))+'%"></i></span>'; }
     h+='<div class="wb-rank-row '+_c+(r.me?' me':'')+'"><span class="wb-rk">'+(i+1)+'</span><span class="wb-rn">'+r.n+'</span>'+_bar+'<span class="wb-rv">'+fmtWan(r.dmg)+'</span></div>';
   }
@@ -8624,11 +8652,13 @@ function wbRenderRank(){
 }
 function wbRenderReward(){
   var el=document.getElementById('wb-reward'); if(!el) return;
-  if(!WBOSS.killed && WBOSS.bossHp>0){ el.textContent='未讨伐'; el.disabled=true; el.style.opacity='.5'; }
-  else { el.textContent='查看收获'; el.disabled=false; el.style.opacity=''; }   /* 击杀后奖励已即时入账，按钮=重开战利品弹框 */
+  var go=document.getElementById('wb-go'), st=document.getElementById('wb-stop');
+  if(!WBOSS.killed && WBOSS.bossHp>0){ el.textContent='未讨伐'; el.disabled=true; el.style.opacity='.5'; if(go) go.style.display=''; }   /* 讨伐中：可出战 */
+  else { el.textContent='查看收获'; el.disabled=false; el.style.opacity=''; if(go) go.style.display='none'; if(st) st.style.display='none'; }   /* 击杀后：隐藏出战/停止，只能查看收获 */
 }
 function wbClaim(){   /* 击杀后查看战利品弹框（奖励已即时入账，无需再发）：未击杀/无记录时提示 */
   if(!WBOSS.killed){ toast('BOSS尚未被讨伐'); return; }
+  if(!WBOSS.loot || WBOSS.loot.boss!==(WBOSS.boss&&WBOSS.boss.n)){ try{ wbGrantLoot(); }catch(e){ try{ console.error('wbClaim regrant',e); }catch(_){} } }   /* loot缺失或与当前BOSS不符(旧轮残留)：按当前玩家实时伤害重算结算，覆盖旧快照 */
   if(!WBOSS.loot){ toast('暂无战利品记录'); return; }
   wbShowLoot();
 }
@@ -11716,6 +11746,7 @@ bindEvents();
   <div class="sf-item" data-sf="guide"><span class="sf-name">玩法指南</span><span class="sf-go">玩法 · 主线 · 阶段 · 速达攻略</span></div>
   <div class="sf-item" data-sf="history"><span class="sf-name">成长履历</span><span class="sf-go">角色数据变化事件记录</span></div>
   <div class="sf-item" data-sf="refresh"><span class="sf-name">刷新旧物品</span><span class="sf-go">按最新蓝图更新背包/装备属性</span></div>
+  <div class="sf-item" data-sf="calib"><span class="sf-name">校准AI开服</span><span class="sf-go">按角色等级对齐AI开服时长</span></div>
   <div class="sf-item" data-sf="reset"><span class="sf-name">初始化</span><span class="sf-go">回到初始状态</span></div>
 </div>
 </body>
