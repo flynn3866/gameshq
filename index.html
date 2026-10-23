@@ -525,8 +525,8 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
   border:1px solid rgba(255,211,77,.9);border-radius:14px;padding:11px 14px;
   box-shadow:0 0 0 1px rgba(0,0,0,.42),0 12px 34px rgba(0,0,0,.72),0 0 30px rgba(255,200,80,.68),inset 0 1px 0 rgba(255,255,255,.26);
   cursor:pointer;pointer-events:auto;
-  animation:noticePop .38s cubic-bezier(.2,1.4,.4,1), lgPulse 1.5s ease-in-out 2 .18s;   /* 弹入 + 闪动吸引目光 */
-  transition:opacity .5s, transform .5s;
+  animation:noticePop .5s cubic-bezier(.22,1.2,.36,1);   /* 丝滑淡入：仅一次弹入，无脉冲闪烁 */
+  transition:opacity .55s ease, transform .55s ease;   /* 丝滑淡出 */
 }
 .nb-item.hide{opacity:0;transform:translateY(-8px) scale(.94);pointer-events:none;}
 @keyframes noticePop{0%{opacity:0;transform:translateY(20px) scale(.7);}100%{opacity:1;transform:translateY(0) scale(1);}}
@@ -5482,7 +5482,7 @@ function aiExpPerKill(monLv,d){ /* 每怪经验·纯版（同玩家offExpPerKill
   if(d!==0) e*=10;
   var dm={1:10,2:10,3:5,4:5,5:5}[d]; if(dm) e=Math.round(e*dm);   /* 副本小怪经验乘区：水龙/深渊×10、王座/奥利森/沙漠×5（同玩家trGainExp） */
   return e; }
-function aiBestExp(lv){ var bestD=0,bestE=0; for(var i=0;i<DUNGEONS.length;i++){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)>10)continue; if(isPhantomDungeon(i)&&lv<75)continue; var e=aiExpPerKill(ml,i); if(e>bestE){ bestE=e; bestD=i; } } return {d:bestD,exp:bestE}; }   /* 副本推进：战力够就能刷≤自身±10级怪(等级差>10无收益)，自动选经验最优 */
+function aiBestExp(lv){ var bestD=0,bestE=0; for(var i=0;i<DUNGEONS.length;i++){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)>20)continue; if(isPhantomDungeon(i)&&lv<75)continue; var e=aiExpPerKill(ml,i); if(e>bestE){ bestE=e; bestD=i; } } return {d:bestD,exp:bestE}; }   /* 副本推进：战力够就能刷≤自身±20级怪(等级差>20无收益)，自动选经验最优 */
 function aiLevelFromSec(effSec,p){ var factor=(1+p.pay*0.2)*(1+p.luck*0.48);   /* 充值/奇遇共同放大升级：奇遇高实力强能越级→升级快 */
   var fullOnline=450000/factor;   /* 在线满级需求秒：肝帝(高在线+奇遇)≈3~4天、神豪≈2.7天、勤勉≈5天满级80 */
   var x=Math.max(0,Math.min(1,effSec/fullOnline));   /* 在线进度0~1 */
@@ -5525,6 +5525,8 @@ function aiBossHp(d,bt){   /* 该副本Boss血量（玩家 trMonStats 同口径�
   var def=Math.max(10,Math.round(bb*0.12*diff)), agi=Math.round(bb*0.5);
   var _pow=battlePower(Math.max(20,atk),def,mhp,agi);
   if(DUNGEONS[d].mode==='level') mhp+=_pow*(bt>=6?2000:(bt>=5?120:(bt>=4?500:200)));   /* 神之幻境不加自举血量（基础×3已够）；升级本(狄奥)才加 */
+  /* 2026-10-24 全副本难度统一提升（与玩家同效，共用同一副本）：Boss血量×5、防御×2，AI击杀效率同步变慢 */
+  mhp=Math.round(mhp*5); def=Math.round(def*2); _pow=battlePower(Math.max(20,atk),def,mhp,agi);
   return {hp:mhp, atk:Math.max(20,atk), pw:_pow};
 }
 function aiMutExpect(inv,d,ratio,effDay){   /* 异变=碾压度×副本品阶，再按副本封顶（与玩家 mutRewardCap/mutateDungeonMult 同口径）：低阶≤1000万、中阶≤1亿、神之幻境≤10亿 */
@@ -5540,7 +5542,7 @@ function aiMutExpect(inv,d,ratio,effDay){   /* 异变=碾压度×副本品阶，
 function aiPermPerBoss(seg,innate,st,p,d,ratio){ var lv=st.lv||1,t=Math.max(0,Math.min(1,(lv-1)/79)); return Math.round(seg[0]+(seg[1]-seg[0])*t)*innate + aiMutExpect(aiInvest(p),d,ratio,st.effSec/86400); }
 function aiFarmAttr(st,p,onlineSec){   /* 刷副本永久全属性：遍历能打的副本，选「每秒收益」最高的。等级差>10(双向)无收益；神之幻境需≥75级；开异变→boss按奖励翻倍变硬，打得动才拿异变奖励，打不动只能刷普通boss(保底) */
   var B=aiBuildState(st,p), best=null, bg=0, lv=st.lv||1;
-  for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)>10)continue;   /* 等级差>10(无论怪高或低于角色)无收益，杜绝刷低副本涨属性 */
+  for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)>20)continue;   /* 等级差>20(无论怪高或低于角色)无收益，杜绝刷低副本涨属性 */
     if(DUNGEONS[i].mode==='level')continue;
     if(isPhantomDungeon(i)&&lv<75)continue;   /* 神之幻境：需等级≥75才能进 */
     var bt=aiBossTierOf(i); if(bt>=6)continue;
@@ -5560,7 +5562,7 @@ function aiFarmAttr(st,p,onlineSec){   /* 刷副本永久全属性：遍历能�
   var bosses=onlineSec/best.cycle;
   return Math.max(0,Math.round(bosses*best.perBoss));
 }
-function aiBestDungeonFor(st,p){ var lv=st.lv||1; for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)<=10&&DUNGEONS[i].mode!=='level'&&!(isPhantomDungeon(i)&&lv<75))return i; } return 0; }   /* 副本推进：只刷等级差≤10(双向)，神之幻境需≥75级 */
+function aiBestDungeonFor(st,p){ var lv=st.lv||1; for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)<=20&&DUNGEONS[i].mode!=='level'&&!(isPhantomDungeon(i)&&lv<75))return i; } return 0; }   /* 副本推进：只刷等级差≤10(双向)，神之幻境需≥75级 */
 function aiFarmGold(st,p,onlineSec){   /* 刷副本金币：随副本档位×在线（神豪/高奇遇收益更高） */
   var d=aiBestDungeonFor(st,p), base=(DUNGEONS[d]&&DUNGEONS[d].monLv)||1;
   return Math.round(onlineSec*base*0.12*(1+p.pay*1.2+p.luck*0.5));
@@ -5614,6 +5616,11 @@ function aiEnsureAdvance(p){   /* 惰性核算：lastUpdate→now 一次性补�
 }
 function aiAdvance(p,secDelta){ var st=p.st, remain=secDelta; while(remain>0){ var ds=Math.min(AI_STEP,remain); aiAdvanceStep(st,p,ds); remain-=ds; } }
 function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→神坛+奇遇+真实轮回 → 重算战力/阶位（一切按当前真实数据推进，无硬编码天数/世次） */
+  /* 2026-10-24 世界boss参战AI暂停挂机：去打了世界boss的AI不再刷副本/发育（玩家去boss页同样不挂机），大家同规则；boss被讨伐后恢复发育 */
+  if(!WBOSS.killed && WBOSS.ai && WBOSS.ai.length){
+    var _wbNames={}; for(var _wi=0;_wi<WBOSS.ai.length;_wi++) _wbNames[WBOSS.ai[_wi].n]=1;
+    if(_wbNames[p.name]) return;   /* 参战世界boss中：本轮暂停后台发育，专注讨伐 */
+  }
   _aiRptEnsure(st);
   var onlineSec=ds*p.effort*0.9;
   st.effSec+=onlineSec; st.lv=aiLevelFromSec(st.effSec,p);   /* 等级随在线重修(真实) */
@@ -8883,7 +8890,7 @@ function wbStatus(){
   if(WBOSS.reward.got) return {text:'已讨伐', sub:'本时段奖励已领取'};
   if(WBOSS.killed||WBOSS.bossHp<=0) return {text:'已讨伐', sub:'速去领取奖励！'};
   var _p=WBOSS.bossMax?Math.max(0,Math.round(WBOSS.bossHp/WBOSS.bossMax*100)):0;
-  return {text:'激战中', sub:WBOSS.boss.n+' 残血 '+_p+'% · 全服合力'};
+  return {text:'世界BOSS已经刷新，快去讨伐吧', sub:WBOSS.boss.n+' 残血 '+_p+'% · 全服合力'};
 }
 var _noticeLast=0;   /* 连续公告最低间隔0.5秒 */
 function showServerNotice(txt){   /* 服务器公告：屏幕中央多条纵向堆叠、每条一行、纯信息无跳转、持续5秒淡出；连续公告间隔≥0.5秒 */
@@ -10298,6 +10305,9 @@ function trMonStats(){
     var _mMul=TR.isBoss?(TR.bossTier>=6?2000:(TR.bossTier>=5?1000:(TR.bossTier>=4?500:200))):(TR.dungeon===0?1:5);   /* 超脱×2000、神级×1000 */   /* 防秒杀倍率：雕俱小怪×1、其余小怪×5，首领以下×200、首领×500、神级×1000 */
     mhp += _mPow*_mMul;   /* 避免秒杀：生命值=原计算值+怪物战力×倍率 */
   }
+  /* 2026-10-24 全副本难度统一提升（玩家与AI同效，共用同一副本）：怪物防御×2；血量：小怪×10、Boss×5。攻击不变 */
+  if(TR.isBoss){ def=Math.round(def*2); mhp=Math.round(mhp*5); }
+  else { def=Math.round(def*2); mhp=Math.round(mhp*10); }
   return {atk:atk, hp:mhp, def:def, agi:agi};
 }
 /* 角色受击伤害：先被物理防御抵挡 → 属性防御再减30% → 防具伤害吸收累加抵消 */
@@ -10314,11 +10324,11 @@ function roleHitDamage(monAtk){   /* 副本怪物攻击角色：统一结算（�
   return {d:dmg, raw:raw, bm:_ma.bm};
 }
 function trReqExp(lv){ if(lv<=0) return 1000000; var e=Math.floor((lv*lv*190 + lv*120)*800); return (lv>50? e*100 : e)*5; }   /* 每级所需经验：floor((L²×190 + L×120)×800)×5；50级以上经验×100；0级升1级需求100万 */
-function trExpScale(monLv){   /* 等级差经验系数：同等级×1；越级每高1级+15%(封顶20级)；刷低级怪每低1级×0.7，低10级起为0（仅经验） */
+function trExpScale(monLv){   /* 等级差经验系数：同等级×1；越级每高1级+15%(封顶20级)；刷低级怪每低1级×0.7，低20级起为0（仅经验） */
   var d=monLv-TR.level;
   if(d>0) return Math.pow(1.15,Math.min(d,20));
   if(d===0) return 1;
-  var low=-d; if(low>=10) return 0;
+  var low=-d; if(low>=20) return 0;
   return Math.pow(0.7,low);
 }
 
@@ -10946,11 +10956,13 @@ function bossPermReward(){   /* 击杀BOSS保底：永久全属性，先地位�
   return Math.max(1, Math.round(_rp*lotteryInnate()));   /* 先天运势系数影响：奖励×运势（运势越高Boss永久属性奖励越高），保底至少1 */
 }
 function trKillMon(){
-  tryTriggerAdventure();   /* 击杀触发随机奇遇 */
   var d=DUNGEONS[TR.dungeon];
   var lv=TR.level, got=false;
-  var _lvOk=Math.abs((TR.monLv||(d?d.monLv:1))-lv)<=10;   /* 等级差>10(无论怪高于还是低于角色)无任何收益，含全属性奖励 → 杜绝刷低副本/越级刷，只能磨等级差10内 */
+  /* 等级差收益门控：一律按副本固定等级(而非角色近似的bossLevel/残留TR.monLv)，差>20(双向)无任何收益——80级打20级副本的boss等级差仍按60算 */
+  var _lvOk=Math.abs((d?d.monLv:1)-lv)<=20;
   TR.stats.kill++; TR.stats.per[TR.dungeon].kill++;
+  if(!_lvOk){ try{ trMonDie(); }catch(e){} try{ renderTrStats(); }catch(e){} return; }   /* 等级差>20：仅击杀计数，一切掉落/金币/经验/全属性/奇遇/异变均无收益（含异变秘境） */
+  tryTriggerAdventure();   /* 击杀触发随机奇遇（仅等级差≤20才触发） */
   TR.bossLoot=[];   /* 本次击杀清空，Boss 死亡时才结算其当场战利品 */
   var _br=null;
   if(TR.isBoss){ var _now=new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'}); _br={t:_now,name:d.bossName||'',attr:0,gold:0,items:[]}; TR.stats.bossKill++; TR.stats.per[TR.dungeon].bossKill++; TR.stats.per[TR.dungeon].bossRewards.push(_br); }
@@ -11108,9 +11120,9 @@ function renderRank(){
   var rows='<div class="lb-row lb-head"><span class="lb-rank">#</span><span class="lb-n">名号</span><span class="lb-v">战力</span></div>';
   for(var i=0;i<top.length;i++){
     var o=top[i], medal=(i<3)?['lb-1','lb-2','lb-3'][i]:'';
-    rows+='<div class="lb-row'+(o.me?' me':'')+'"><span class="lb-rank '+(medal||'')+'">'+(i+1)+'</span><span class="lb-n">'+o.n+'<i style="color:'+(_ac[Math.min(o.rr,6)]||'#aaa')+';font-style:normal">（'+o.tier+'）</i><em style="color:#8a8375;font-style:normal"> Lv.'+o.lv+'</em></span><span class="lb-v">'+fmtWan(o.pw)+'</span></div>';
+    rows+='<div class="lb-row'+(o.me?' me':'')+'"><span class="lb-rank '+(medal||'')+'">'+(i+1)+'</span><span class="lb-n">'+o.n+'<i style="color:'+(_ac[Math.min(o.rr,6)]||'#aaa')+';font-style:normal">（'+o.tier+'）</i><em style="color:#8a8375;font-style:normal"> Lv.'+o.lv+'</em></span><span class="lb-v">'+fmtWan(dispVal(o.pw))+'</span></div>';
   }
-  if(meIdx>=20){ var m=arr[meIdx]; rows+='<div class="lb-row me"><span class="lb-rank">'+(meIdx+1)+'</span><span class="lb-n">'+m.n+'<i style="color:'+(_ac[Math.min(m.rr,6)]||'#aaa')+';font-style:normal">（'+m.tier+'）</i><em style="color:#8a8375;font-style:normal"> Lv.'+m.lv+'</em></span><span class="lb-v">'+fmtWan(m.pw)+'</span></div>'; }
+  if(meIdx>=20){ var m=arr[meIdx]; rows+='<div class="lb-row me"><span class="lb-rank">'+(meIdx+1)+'</span><span class="lb-n">'+m.n+'<i style="color:'+(_ac[Math.min(m.rr,6)]||'#aaa')+';font-style:normal">（'+m.tier+'）</i><em style="color:#8a8375;font-style:normal"> Lv.'+m.lv+'</em></span><span class="lb-v">'+fmtWan(dispVal(m.pw))+'</span></div>'; }
   list.innerHTML=rows;
 }
 try{ renderRank(); }catch(e){}   /* 页面加载预渲染榜单（隐藏页亦即时计算，进入排行页即时显示） */
