@@ -5489,7 +5489,8 @@ var AI_STEP=1800;   /* 单步核算秒（30分钟）：段首战力算段内增�
 var AI_BOSS_SEG=[[5,30],[30,60],[60,100],[100,500],[300,800],[600,1000],[1000,2000]];   /* 副本Boss→永久全属性区间(玩家 bossPermReward 真实量级：低阶几千、中阶百万、神之幻境基础数亿，异变另叠加最高90亿/只) */
 function aiInvest(p){ return 0.5+p.effort*0.3+p.pay*0.4+(p.innate-1.0)*0.5+p.luck*0.5; }   /* 综合投入度（驱动异变/神坛/金币效率） */
 function aiWsFromDay(effDay,p){ return 0; }   /* 已废弃：轮回世次改由真实状态机累加（aiAdvanceStep 达到大帝→轮回），不再按天数推导；保留函数占位避免旧引用报错 */
-function aiReincMult(st,p){ return 1+(st.ws||0)*0.30+((st.ws||0)>=99?10.1:0); }   /* 玩家 reincMult 同式：每世永久全属性+30%，99世超脱额外+1000%；AI 只对齐核心乘区（天赋/法器/秘印炼化为玩家手动成长系统，AI 后台模拟不操作） */
+function aiReincMult(st,p){ var tl=st.talents||{},rl=st.relic||{}; var other=(rl.eye||0)+(rl.codex||0)+(rl.amulet||0)+(rl.realm||0)+(rl.banner||0); return 1+(st.ws||0)*0.30+tl.all*0.05+rl.eye*0.10+((st.ws||0)>=99?10.1:0)+(rl.end||0)*0.02+other*0.01; }   /* 玩家 reincMult 同式：每世永久+30%·天赋全属性+5%/级·本源+10%/级·超脱+1000%·太初本源+2%/级·其余法器+1%/级。AI 与玩家完全同规则（AI 后台自动点天赋/法器，模拟真人） */
+function aiReincCritMul(st){ var tl=st.talents||{}; return 1+tl.crit*0.30; }   /* 玩家 reincCritMul 同式：天赋·会心暴伤+30%/级 */
 function aiAltarMult(lv){ return 1+(lv||0)*0.01; }   /* 神坛灌注：攻/守/生 统一每级+1%（同玩家 altarAtkMult） */
 function aiEquipBonus(st,p){   /* 装备档位→六维/攻防（确定性，玩家同口径）：强化攻击+天神星+伊泰安套装 */
   var b={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0,patk:0,pdef:0,mdef:0,og:0};
@@ -5570,7 +5571,29 @@ function initAiState(p,sec){   /* 首次：静态发育初始化（perm从0，�
     altar:{lv:Math.round(Math.min(120,Math.max(0,_inv-0.5)*30*Math.min(1,effDay*(0.3+p.pay*0.3)*p.effort))),investGold:0},
     enh:{lv:Math.min(20,Math.max(0,Math.floor(Math.pow(gearPct,2)*20))),stars:Math.round(gearPct*2),
          iset:gearPct>=0.9?5:(gearPct>=0.7?3:0), og:gearPct>=0.85?5:(gearPct>=0.65?3:(gearPct>=0.5?2:0))},
-    gold:0, tierIdx:0, lastUpdate:SERVER_START};
+    gold:0, tierIdx:0, lastUpdate:SERVER_START,
+    talents:{all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0}, relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0}, tp:0, stones:0};   /* 天赋/法器/轮回点(tp)/魂石(stones)：与玩家轮回祭坛同规则，轮回获得、后台自动点升 */
+}
+function _aiRptEnsure(st){ st.talents=st.talents||{all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0}; st.relic=st.relic||{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0}; st.tp=st.tp||0; st.stones=st.stones||0; }   /* 旧存档兜底：补天赋/法器字段 */
+function aiSpendRpt(st){   /* 后台自动点天赋/炼化法器（模拟真人）：规则与玩家 rbAddTalent/rbUpRelic 完全一致——天赋仅真伤/破甲/铁壁有上限(其余无上限，受轮回点tp每世+1天然限制)；法器需轮回世次解锁(眼1/法典2/战旗3/护符4/结界5/本源99)、无Lv上限(成本递增自然限制)、成本=(Lv+1)×100魂石 */
+  _aiRptEnsure(st); var tl=st.talents, rl=st.relic, ws=st.ws||0;
+  var tcap={true:25,ignore:10,fdr:10};   /* 同玩家 rbAddTalent tcap */
+  while((st.tp||0)>0){ var s=false;
+    if(tl.all<(1e9)){ tl.all++; st.tp--; s=true; }   /* 鸿蒙：无上限(全属性优先，战力最大) */
+    else if((tl.true||0)<tcap.true){ tl.true++; st.tp--; s=true; }
+    else if((tl.ignore||0)<tcap.ignore){ tl.ignore++; st.tp--; s=true; }
+    else if((tl.fdr||0)<tcap.fdr){ tl.fdr++; st.tp--; s=true; }
+    else if(tl.crit<(1e9)){ tl.crit++; st.tp--; s=true; }
+    else if(tl.gold<(1e9)){ tl.gold++; st.tp--; s=true; }
+    else if(tl.lifesteal<(1e9)){ tl.lifesteal++; st.tp--; s=true; }
+    else if(tl.exp<(1e9)){ tl.exp++; st.tp--; s=true; }
+    else break; }
+  var _req={eye:1,codex:2,banner:3,amulet:4,realm:5,end:99};   /* 同玩家 RB_RELICS.req 解锁世次 */
+  var _order=['eye','realm','codex','banner','amulet','end'];   /* 优先全属性·本源(战力最大) */
+  while((st.stones||0)>0){ var s=false;
+    for(var i=0;i<_order.length&&!s;i++){ var k=_order[i];
+      if(ws>=_req[k]){ var n=(rl[k]||0)+1; if((st.stones||0)>=n*100){ st.stones-=n*100; rl[k]=n; s=true; } } }   /* 成本=(Lv+1)×100魂石递增(同玩家 rbUpRelic)，无Lv上限 */
+    if(!s) break; }
 }
 function aiEnsureAdvance(p){   /* 惰性核算：lastUpdate→now 一次性补齐（离线同样正确） */
   serverStartInit();
@@ -5583,6 +5606,7 @@ function aiEnsureAdvance(p){   /* 惰性核算：lastUpdate→now 一次性补�
 }
 function aiAdvance(p,secDelta){ var st=p.st, remain=secDelta; while(remain>0){ var ds=Math.min(AI_STEP,remain); aiAdvanceStep(st,p,ds); remain-=ds; } }
 function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→神坛+奇遇+真实轮回 → 重算战力/阶位（一切按当前真实数据推进，无硬编码天数/世次） */
+  _aiRptEnsure(st);
   var onlineSec=ds*p.effort*0.9;
   st.effSec+=onlineSec; st.lv=aiLevelFromSec(st.effSec,p);   /* 等级随在线重修(真实) */
   var _ed=st.effSec/86400, _gp=1-Math.exp(-_ed*Math.pow(p.pay,1.7)*0.05*p.effort);   /* 装备练度随当前在线时长动态更新（玩家轮回重置装备后重修：在线累积越久装备越好，近似玩家重打/强化时长） */
@@ -5601,10 +5625,12 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→神坛+奇遇+
     if(st.seal<1 && (st.gold||0)>=aiSealPrice(st,p)){ st.gold-=aiSealPrice(st,p); st.seal+=1; }
     if(st.seal>=1){
       st.ws=(st.ws||0)+1; st.seal-=1;   /* 消耗轮回秘印×1；99世封顶(超脱) */
-      /* 重置等级/装备/背包/副本进度；保留永久加成(perm)/神坛(altar)/成长档(grow)——玩家轮回同规则 */
+      st.tp=(st.tp||0)+1; st.stones=(st.stones||0)+50+(st.ws||0)*30;   /* 同玩家轮回奖励：轮回点+1、魂石+50+世次×30（用于点天赋/炼化法器） */
+      /* 重置等级/装备/背包/副本进度；保留永久加成(perm)/神坛(altar)/成长档(grow)/天赋( talents)/法器(relic)——玩家轮回同规则 */
       st.effSec=0; st.lv=1; st.gold=0; st.deepTotal=0; st.enh={lv:0,stars:0,iset:0,og:0};
     }
   }
+  aiSpendRpt(st);   /* 后台自动点天赋/炼化法器（模拟真人，用轮回获得的轮回点/魂石） */
   if((st.ws||0)>=99 && (st.core||0)<1 && (st.gold||0)>=aiSealPrice(st,p)){ st.gold-=aiSealPrice(st,p); st.core=(st.core||0)+1; }   /* 非前十/抢不到boss的AI：99世后用金币从持有者处购买太初神核超脱（贵→慢），杜绝凭空生成 */
 }
 function altarLvFromGold(gold){ var lv=0,cost=5000; while(lv<120&&gold>=cost){ gold-=cost; cost=Math.round(cost*1.6); lv++; } return lv; }   /* AI神坛成本：5千×1.6^lv（玩家 altarPourCost 同型） */
@@ -5625,12 +5651,13 @@ function aiBuildState(st,p){   /* 玩家同口径：六维(含perm)→攻防血�
   var agi=Math.max(10, Math.round(A.敏捷)), pw=battlePower(Math.round(patk),Math.round(pdef),Math.round(hp),agi);   /* 敏捷=六维敏捷(同玩家battlePower/攻速口径)：避免固定250导致AI攻速51秒/次、战力低估 */
   var hp2=hp+Math.round(pw*100);   /* 防秒杀（玩家同款：生命=原算+战力×100） */
   var asc=(st.ws>=99 && (st.core||0)>=1); var tierIdx=asc?6:ti;   /* 超脱·轮回主宰=99世圆满+太初神核×1(与世界boss遗物匣碎片合成，玩家同规则)。AI神核来自世界boss前十开匣或金币购买，杜绝凭空生成 */
-  var fdr=Math.min(0.5,(st.altar.lv||0)*0.005);   /* 神坛·御天：fdr +0.5%/级封顶50%（同玩家 altarFdrPct） */
+  var fdr=Math.min(0.5,(st.altar.lv||0)*0.005+Math.min(0.3,((st.talents||{}).fdr||0)*0.03));   /* 神坛·御天(fdr+0.5%/级封顶50%)+轮回天赋·御守(3%/级封顶30%)：同玩家 reincFdr */
   var ig=0,tr=0,add=0;
   if(tierIdx>=5){ ig+=0.20;tr+=0.20; } else if(tierIdx>=4){ ig+=0.08;tr+=0.08; } else if(tierIdx>=3){ ig+=0.05; }
   if(en.iset>=5)ig+=0.30;
   tr+=Math.min(0.2,tierIdx>=4?Math.min(0.2,st.altar.lv*0.002):0);
   add+=(en.og>=5?0.10:0);
+  var _tl=st.talents||{}; ig+=Math.min(0.3,_tl.ignore*0.03); tr+=Math.min(0.5,_tl.true*0.02);   /* 轮回天赋·无视防御(3%/级封顶30%)·真伤(2%/级封顶50%)：同玩家 reincIgnore/reincTrue */
   return {pw:pw,atk:Math.round(patk),def:Math.round(pdef),hp:Math.round(hp2),agi:agi,tierIdx:tierIdx,asc:asc,fdr:fdr,tr:tr,ig:ig,add:add,atkElem:(en.iset>=3&&p.id%2===0)?'fire':(en.iset>=3?'wind':null),A:A};
 }
 function aiSaveField(){ try{ localStorage.setItem('shenqi_field_roster',JSON.stringify(FIELD_ROSTER)); }catch(e){} }
@@ -6978,7 +7005,8 @@ function roleTraits(){
   if(TLM.s100.got&&TLM.s100.on) il.push('名震八方徽章+10%');
   if(TLM.s150.got&&TLM.s150.on) il.push('执掌乾坤徽章+20%');
   if(ISET>=5) il.push('伊泰安首饰5件+30%');
-  var ig=Math.min(0.9,_ta.ig+_tm.ig+(ARENA.medalOn&&ARENA.killBoss>=1?0.10:0)+(ISET>=5?0.30:0));   /* 本命特性(阶位固有)已在「本命特性」栏，此处只列附加来源 */
+  if(reincIgnore()>0) il.push('轮回天赋·无视防御+'+pct(reincIgnore()));
+  var ig=Math.min(0.9,_ta.ig+_tm.ig+(ARENA.medalOn&&ARENA.killBoss>=1?0.10:0)+(ISET>=5?0.30:0)+reincIgnore());   /* 本命特性(阶位固有)已在「本命特性」栏，此处只列附加来源 */
   if(ig>0) out.push({n:'无视防御',d:'攻击无视目标一定比例的防御('+pct(ig)+')。提供：'+jn(il),p:pct(ig)});
   /* 真实伤害 */
   var tl=[];
@@ -7000,11 +7028,11 @@ function roleTraits(){
   if(equipState['weapon']&&equipState['weapon'].gemAttributes&&equipState['weapon'].gemAttributes.additionalAttribute) atr=true;
   if(equipState['armor']&&equipState['armor'].gemAttributes&&equipState['armor'].gemAttributes.additionalAttribute) dattr=true;
   if(ISET>=5){ cdTotal+=0.30; cdSrc.push('伊泰安首饰5件+30%'); }
-  var fd=Math.min(0.9,(ISET>=5?0.30:0)+(OG>=5?0.10:0)+enhN*0.03+altarFdrPct());
-  if(fd>0){ var fl=[]; if(ISET>=5) fl.push('伊泰安首饰5件+30%'); if(OG>=5) fl.push('传说奥格顿5件+10%'); if(enhN>0) fl.push('强化+20防具'+enhN+'件+'+pct(enhN*0.03)); if(altarFdrPct()>0) fl.push('黄金神坛·御天+'+pct(altarFdrPct())); out.push({n:'最终伤害减免',d:'受到的最终伤害降低'+pct(fd)+'。提供：'+jn(fl),p:pct(fd)}); }
+  var fd=Math.min(0.9,(ISET>=5?0.30:0)+(OG>=5?0.10:0)+enhN*0.03+altarFdrPct()+reincFdr());
+  if(fd>0){ var fl=[]; if(ISET>=5) fl.push('伊泰安首饰5件+30%'); if(OG>=5) fl.push('传说奥格顿5件+10%'); if(enhN>0) fl.push('强化+20防具'+enhN+'件+'+pct(enhN*0.03)); if(altarFdrPct()>0) fl.push('黄金神坛·御天+'+pct(altarFdrPct())); if(reincFdr()>0) fl.push('轮回天赋·御守+'+pct(reincFdr())); out.push({n:'最终伤害减免',d:'受到的最终伤害降低'+pct(fd)+'。提供：'+jn(fl),p:pct(fd)}); }
   if(OG>=5) out.push({n:'最终伤害加成',d:'造成的最终伤害提高10%。提供：传说奥格顿5件',p:'10%'});
   if(tt&&titleAtk().ls>0){ var _lz=titleAtk().ls; lsTotal+=_lz; lsSrc.push(tt.n+'称号+'+pct(_lz)); }   /* 称号吸血：璀璨星钻10%（戴上生效） */
-  if(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0){ lsTotal+=0.10; lsSrc.push('伊泰安项链+10%'); out.push({n:'秒杀小怪',d:'1%概率秒杀任何小怪(无视等级)，对80级以下Boss同样有效。提供：伊泰安项链',p:'1%'}); } if(altarLsPct()>0){ lsTotal+=altarLsPct(); lsSrc.push('黄金神坛·噬血+'+pct(altarLsPct())); }
+  if(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0){ lsTotal+=0.10; lsSrc.push('伊泰安项链+10%'); out.push({n:'秒杀小怪',d:'1%概率秒杀任何小怪(无视等级)，对80级以下Boss同样有效。提供：伊泰安项链',p:'1%'}); } if(altarLsPct()>0){ lsTotal+=altarLsPct(); lsSrc.push('黄金神坛·噬血+'+pct(altarLsPct())); } var _rlv=(REBIRTH.talents.lifesteal*0.02+REBIRTH.relic.realm*0.01); if(_rlv>0){ lsTotal+=_rlv; lsSrc.push('轮回天赋·噬魂/法器·回响+'+pct(_rlv)); }   /* 轮回天赋·吸血(2%/级)+法器·回响(1%/级)：攻击吸血合并显示 */
   if(OG>=5) out.push({n:'免疫负面',d:'50%概率免疫流血/中毒/眩晕/减速。提供：传说奥格顿5件',p:'50%'});
   if(atr) out.push({n:'属性攻击',d:'物理攻击等效+30%。提供：武器镶嵌攻击宝石',p:'30%'});
   if(dattr) out.push({n:'属性防御',d:'受到的伤害降低30%。提供：胸甲镶嵌防御宝石',p:'30%'});
@@ -7016,7 +7044,7 @@ function roleTraits(){
   if(lsTotal>0) out.push({n:'攻击吸血',d:'攻击恢复造成伤害'+pct(lsTotal)+'的生命。提供：'+jn(lsSrc),p:pct(lsTotal)});
   if(cdTotal>0) out.push({n:'暴击伤害减免',d:'受暴击时暴击伤害降低'+pct(cdTotal)+'。提供：'+jn(cdSrc),p:pct(cdTotal)});
   /* 天运之主特性已移至神格本元栏（角色固有根基，非附加来源） */
-  if(altarCritMul()>1) out.push({n:'暴击伤害',d:'暴击时暴击伤害提高'+pct(altarCritMul()-1)+'。提供：黄金神坛·会心',p:pct(altarCritMul()-1)});
+  var _am=altarCritMul(), _rm=reincCritMul(); if(_am*_rm>1){ var _cs=[]; if(_am>1)_cs.push('黄金神坛·会心+'+pct(_am-1)); if(_rm>1)_cs.push('轮回天赋·会心+'+pct(_rm-1)); out.push({n:'暴击伤害',d:'暴击时暴击伤害提高'+pct(_am*_rm-1)+'。提供：'+jn(_cs),p:pct(_am*_rm-1)}); }   /* 会心(神坛)×轮回天赋·会心(暴伤30%/级)连乘：合并显示总提升 */
   if(altarHitBonus()>0) out.push({n:'命中率',d:'攻击命中率提升'+pct(altarHitBonus())+'。提供：黄金神坛·命定',p:pct(altarHitBonus())});
   if(altarDropBonus()>0) out.push({n:'传说掉宝',d:'传说级物品掉落权重提升'+pct(altarDropBonus())+'。提供：黄金神坛·福泽',p:pct(altarDropBonus())});
   var _rk={天运之主:100,无视防御:95,真实伤害:90,最终伤害加成:88,最终伤害减免:85,暴击伤害:84,命中率:78,传说掉宝:74,攻击吸血:70,秒杀小怪:68,免疫负面:66,属性攻击:60,属性防御:58,暴击伤害减免:50,抗暴率:45,伤害吸收:40};   /* 特性优先级：数值越大越靠前（最厉害的特性置顶） */
