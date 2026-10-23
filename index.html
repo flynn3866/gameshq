@@ -2610,8 +2610,10 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 .wl-close-wrap::before{content:'';display:block;height:1px;background:linear-gradient(90deg,rgba(255,215,94,0),rgba(255,215,94,.5),rgba(255,215,94,0));margin-bottom:14px}
 .wl-sec{margin:16px 0 10px;text-align:left;font-size:14px;color:#FFE9B0;font-weight:900;letter-spacing:2px;text-shadow:0 1px 0 rgba(120,74,14,.7),0 2px 0 rgba(90,55,10,.5);padding-left:10px;position:relative}
 .wl-sec::before{content:'';position:absolute;left:0;top:1px;bottom:1px;width:4px;border-radius:2px;background:linear-gradient(180deg,#FFD75E,#B8860B);box-shadow:inset 0 1px 0 rgba(255,255,255,.4)}
-.wl-grid{display:grid;grid-template-columns:1fr;gap:10px}
-.wb-loot-it{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,rgba(255,255,255,.06),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 12px;text-align:left;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -1px 0 rgba(0,0,0,.3),0 2px 0 rgba(0,0,0,.28),0 5px 0 rgba(0,0,0,.12)}
+.wl-grid{display:grid;grid-template-columns:1fr;gap:8px;background:linear-gradient(180deg,rgba(10,5,22,.72),rgba(6,3,14,.84));border:1px solid rgba(200,154,60,.3);border-radius:14px;padding:10px;box-shadow:inset 0 2px 0 rgba(255,255,255,.05),inset 0 -3px 8px rgba(0,0,0,.55),0 1px 0 rgba(0,0,0,.5)}   /* 掉落列表区：独立深色面板（区别于舞台紫底），内嵌层次 */
+.wb-loot-it{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#332817cc,#201812cc 60%,#1a130ecc);border:1px solid rgba(214,173,90,.34);border-left:3px solid rgba(214,173,90,.72);border-radius:10px;padding:9px 11px;text-align:left;box-shadow:inset 0 1px 0 rgba(255,235,180,.18),inset 0 -2px 4px rgba(0,0,0,.4),0 2px 0 rgba(0,0,0,.35),0 5px 0 rgba(0,0,0,.15)}   /* 金棕深色卡片（暖金棕 vs 舞台紫蓝），浮起层次 */
+.wb-loot-it.rare{background:linear-gradient(180deg,#4a3416cf,#2b1c0acf 60%,#1f1406cf);border-color:rgba(255,215,94,.55);border-left-color:rgba(255,215,94,.9);box-shadow:inset 0 1px 0 rgba(255,235,160,.25),inset 0 -2px 4px rgba(0,0,0,.42),0 2px 0 rgba(60,40,10,.4),0 5px 0 rgba(30,20,4,.2),0 0 14px rgba(255,215,94,.12)}   /* 稀有：鎏金调 */
+.wb-loot-it.mg{background:linear-gradient(180deg,#45162bcf,#2a0d1bcf 60%,#1c0813cf);border-color:rgba(255,90,216,.5);border-left-color:rgba(255,90,216,.9);box-shadow:inset 0 1px 0 rgba(255,150,230,.22),inset 0 -2px 4px rgba(0,0,0,.42),0 2px 0 rgba(90,20,55,.4),0 5px 0 rgba(40,8,25,.2),0 0 14px rgba(255,90,216,.12)}   /* 品红物（遗物匣/传说神装/祝福卷轴/神格本源）：品红调，与名字描边呼应 */
 .wb-loot-it.rare{border-color:#C89A3C;background:linear-gradient(90deg,rgba(255,215,94,.18),rgba(180,70,160,.10));box-shadow:inset 0 0 0 1px rgba(255,235,180,.35),inset 0 1px 0 rgba(255,235,180,.25),inset 0 -1px 0 rgba(90,50,10,.5),0 2px 0 rgba(0,0,0,.28),0 5px 0 rgba(0,0,0,.14)}
 .wb-loot-it .wl-ic{width:40px;height:40px;flex:0 0 40px;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.02));border-radius:10px;box-shadow:inset 0 2px 0 rgba(255,255,255,.18),inset 0 -2px 3px rgba(0,0,0,.35),0 1px 0 rgba(0,0,0,.3),0 3px 0 rgba(0,0,0,.12)}
 .wb-loot-it .wl-ic img,.wb-loot-it .wl-ic svg{width:31px;height:31px;object-fit:contain;filter:drop-shadow(0 1px 0 rgba(0,0,0,.4))}
@@ -5472,26 +5474,22 @@ function aiExpPerKill(monLv,d){ /* 每怪经验·纯版（同玩家offExpPerKill
   if(d!==0) e*=10;
   var dm={1:10,2:10,3:5,4:5,5:5}[d]; if(dm) e=Math.round(e*dm);   /* 副本小怪经验乘区：水龙/深渊×10、王座/奥利森/沙漠×5（同玩家trGainExp） */
   return e; }
-function aiBestExp(lv){ var bestD=0,bestE=0; for(var i=0;i<DUNGEONS.length;i++){ var ml=DUNGEONS[i].monLv; if(ml>lv+10) break; var e=aiExpPerKill(ml,i); if(e>bestE){ bestE=e; bestD=i; } } return {d:bestD,exp:bestE}; }   /* 副本推进：战力够就能越级刷≤自身+10级的怪，自动选经验最优（含越级经验加成） */
+function aiBestExp(lv){ var bestD=0,bestE=0; for(var i=0;i<DUNGEONS.length;i++){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)>10)continue; if(isPhantomDungeon(i)&&lv<75)continue; var e=aiExpPerKill(ml,i); if(e>bestE){ bestE=e; bestD=i; } } return {d:bestD,exp:bestE}; }   /* 副本推进：战力够就能刷≤自身±10级怪(等级差>10无收益)，自动选经验最优 */
 function aiLevelFromSec(effSec,p){ var factor=(1+p.pay*0.2)*(1+p.luck*0.48);   /* 充值/奇遇共同放大升级：奇遇高实力强能越级→升级快 */
-  var fullOnline=338000/factor;   /* 在线满级需求秒：参考基准338000s，肝帝微氪满级在线≈2.85天(日历3天) */
+  var fullOnline=450000/factor;   /* 在线满级需求秒：肝帝(高在线+奇遇)≈3~4天、神豪≈2.7天、勤勉≈5天满级80 */
   var x=Math.max(0,Math.min(1,effSec/fullOnline));   /* 在线进度0~1 */
   var lv; if(x<=0.2) lv=x/0.2*30; else if(x<=0.33) lv=30+(x-0.2)/0.13*30; else lv=60+(x-0.33)/0.67*20;   /* S曲线：前期快→中段冲刺→后期艰难 */
-  return Math.max(1,Math.min(80,Math.round(lv))); }   /* AI独立平滑曲线，不与玩家trReqExp共用：1天肝帝≈60、其他≈30，肝帝≈3天/高奇遇≈2天满级80 */
+  return Math.max(1,Math.min(80,Math.round(lv))); }   /* AI独立平滑曲线：1天肝帝≈60、其他≈30，肝帝≈3~4天/高奇遇≈2.7天满级80 */
 /* ============ AI 完整角色存档 + 惰性成长模拟（与玩家同口径） ============ */
 /* 每个AI玩家 p.st 存完整角色状态：perm(永久全属性)/ws(轮回世次)/altar(黄金神坛·金币驱动)/
    enh(强化/天神/套装)/effSec(在线累计秒)/deepTotal(神格本元)/lastUpdate(核算锚点)。
    成长由 aiEnsureAdvance 惰性核算：读取/刷新时按 lastUpdate→现在 一次性补齐（离线同样正确），
    刷副本boss永久全属性+异变秘境+金币→神坛+奇遇 滚雪球；战力由 st 确定性派生，不再每次随机重算。 */
 var AI_STEP=1800;   /* 单步核算秒（30分钟）：段首战力算段内增长，逐步滚雪球 */
-var AI_BOSS_SEG=[[5,30],[30,60],[60,100],[100,500],[300,800],[600,1000],[1000,2000]];   /* 副本Boss阶位→永久全属性区间（同玩家 bossPermReward） */
+var AI_BOSS_SEG=[[5,30],[30,60],[60,100],[100,500],[300,800],[600,1000],[1000,2000]];   /* 副本Boss→永久全属性区间(玩家 bossPermReward 真实量级：低阶几千、中阶百万、神之幻境基础数亿，异变另叠加最高90亿/只) */
 function aiInvest(p){ return 0.5+p.effort*0.3+p.pay*0.4+(p.innate-1.0)*0.5+p.luck*0.5; }   /* 综合投入度（驱动异变/神坛/金币效率） */
-function aiWsFromDay(effDay,p){   /* 轮回世次·重修加速幂律（与玩家"大帝后轮回·重修越来越快"一致）：前期保留~12世/23天乘区，后期凸加速→99世顶尖约120天，不再平方根3.5年 */
-  var A=0.13+p.pay*0.035+p.effort*0.05+p.luck*0.04;   /* 加速系数：神豪≈0.31、勤勉≈0.23、普通≈0.19 */
-  var ws=Math.floor(A*Math.pow(Math.max(0.5,effDay),1.25));
-  return Math.min(99,Math.max(0,ws));
-}
-function aiReincMult(st,p){ return 1+(st.ws||0)*0.30; }   /* AI轮回乘区：世次×30%（玩家 reincMult 核心项，超脱等不额外放大） */
+function aiWsFromDay(effDay,p){ return 0; }   /* 已废弃：轮回世次改由真实状态机累加（aiAdvanceStep 达到大帝→轮回），不再按天数推导；保留函数占位避免旧引用报错 */
+function aiReincMult(st,p){ return 1+(st.ws||0)*0.30+((st.ws||0)>=99?10.1:0); }   /* 玩家 reincMult 同式：每世永久全属性+30%，99世超脱额外+1000%；AI 只对齐核心乘区（天赋/法器/秘印炼化为玩家手动成长系统，AI 后台模拟不操作） */
 function aiAltarMult(lv){ return 1+(lv||0)*0.01; }   /* 神坛灌注：攻/守/生 统一每级+1%（同玩家 altarAtkMult） */
 function aiEquipBonus(st,p){   /* 装备档位→六维/攻防（确定性，玩家同口径）：强化攻击+天神星+伊泰安套装 */
   var b={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0,patk:0,pdef:0,mdef:0,og:0};
@@ -5510,39 +5508,50 @@ function aiBossHp(d,bt){   /* 该副本Boss血量（玩家 trMonStats 同口径�
   var _trs=[[1000,20000],[20000,200000],[200000,2000000],[2000000,30000000],[30000000,1000000000],[1000000000,10000000000]];
   var _r=_trs[bt]||[400,1000]; var bb=_r[0]+(_r[1]-_r[0])*0.5;
   var atk,mhp;
-  if(isPhantomDungeon(d)){ atk=Math.round(ba*8*diff); mhp=Math.round(bl*2400*diff); }
+  if(isPhantomDungeon(d)){ atk=Math.round(ba*8*diff); mhp=Math.round(bl*2400*diff*3); }   /* 神之幻境血量=基础×3(≈数百亿)：顶尖满装(pw≈数百亿~兆)能碾压磨血→开异变90亿→快大帝；普通弱装(pw≈百亿)打不动→刷低阶慢=平民。去掉 _pow 自举(否则自举虚高到兆级人人刷不动) */
   else if(DUNGEONS[d].mode==='level'){ atk=Math.round(ba*8.64*diff); mhp=Math.round(bl*3600*diff); }
   else if(bt>0){ atk=Math.round(bb*0.3*diff); mhp=Math.round(bb*6*diff); }
   else { atk=Math.round(ba*(bt>1?2:1)*diff); mhp=Math.max(40,Math.round(bl*5*diff)); }
   if(bt===0){ mhp=Math.max(mhp,Math.round(bl*5*diff*([50000,70000,100000,140000,200000,300000][d]||50000))); }
   var def=Math.max(10,Math.round(bb*0.12*diff)), agi=Math.round(bb*0.5);
   var _pow=battlePower(Math.max(20,atk),def,mhp,agi);
-  if(isPhantomDungeon(d)||DUNGEONS[d].mode==='level') mhp+=_pow*(bt>=6?2000:(bt>=5?1000:(bt>=4?500:200)));
+  if(DUNGEONS[d].mode==='level') mhp+=_pow*(bt>=6?2000:(bt>=5?120:(bt>=4?500:200)));   /* 神之幻境不加自举血量（基础×3已够）；升级本(狄奥)才加 */
   return {hp:mhp, atk:Math.max(20,atk), pw:_pow};
 }
-function aiMutExpect(inv,d,ratio,effDay){   /* 异变=碾压度×练度：前期练度低开不起异变→普通刷本慢；中后期解锁→滚雪球爆发（结晶/练度约束同玩家） */
+function aiMutExpect(inv,d,ratio,effDay){   /* 异变=碾压度×副本品阶，再按副本封顶（与玩家 mutRewardCap/mutateDungeonMult 同口径）：低阶≤1000万、中阶≤1亿、神之幻境≤10亿 */
   if(inv<0.5) return 0;
-  var mlv=DUNGEONS[d]&&DUNGEONS[d].monLv||0, mult=mlv>=79?6:(mlv>=46?3:1);
+  var mlv=DUNGEONS[d]&&DUNGEONS[d].monLv||0;
+  var mult=mlv>=79?6:(mlv>=46?3:1);   /* 初阶×1/中阶×3/高阶×6 */
+  var cap=mlv>=79?1e9:(mlv>=46?1e8:1e7);   /* 神幻10亿/中阶1亿/低阶1000万 */
   var tier=inv>=0.82?2:(inv>=0.62?1:0);
-  var perm=[0,1e8,5e8,15e8][tier+1]*mult;   /* 单boss异变满额（神之幻境异变III=90亿/只） */
-  var mutRatio=Math.min(1,Math.max(0,(ratio-0.7)/1.5));   /* 碾压度：战力碾压副本才开得起异变 */
-  var unlock=Math.min(1,Math.max(0,(effDay-5)/10));   /* 练度：第5天解锁异变，第15天后满（前期攒结晶） */
-  return Math.round(perm*mutRatio*unlock);
+  var perm=Math.min(cap, [0,1e8,5e8,15e8][tier+1]*mult);   /* 单boss异变满额(封顶) */
+  var mutRatio=Math.min(1,Math.max(0,(ratio-0.5)/0.5));   /* 能打(碾压度>0.5)即开，战力满碾压即满额 */
+  return Math.round(perm*mutRatio);
 }
 function aiPermPerBoss(seg,innate,st,p,d,ratio){ var lv=st.lv||1,t=Math.max(0,Math.min(1,(lv-1)/79)); return Math.round(seg[0]+(seg[1]-seg[0])*t)*innate + aiMutExpect(aiInvest(p),d,ratio,st.effSec/86400); }
-function aiFarmAttr(st,p,onlineSec){   /* 刷副本永久全属性：选战力能打的最强副本，按战力比→秒杀效率 滚雪球 */
-  var B=aiBuildState(st,p);
-  var best=null;
-  for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(ml>st.lv+10)continue; if(DUNGEONS[i].mode==='level')continue; var bt=aiBossTierOf(i); if(bt>=6)continue; var bh=aiBossHp(i,bt); if(B.pw>=bh.hp*0.5){ best={d:i,bt:bt,hp:bh.hp,seg:AI_BOSS_SEG[bt]||[5,30]}; break; } }
+function aiFarmAttr(st,p,onlineSec){   /* 刷副本永久全属性：遍历能打的副本，选「每秒收益」最高的。等级差>10(双向)无收益；神之幻境需≥75级；开异变→boss按奖励翻倍变硬，打得动才拿异变奖励，打不动只能刷普通boss(保底) */
+  var B=aiBuildState(st,p), best=null, bg=0, lv=st.lv||1;
+  for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)>10)continue;   /* 等级差>10(无论怪高或低于角色)无收益，杜绝刷低副本涨属性 */
+    if(DUNGEONS[i].mode==='level')continue;
+    if(isPhantomDungeon(i)&&lv<75)continue;   /* 神之幻境：需等级≥75才能进 */
+    var bt=aiBossTierOf(i); if(bt>=6)continue;
+    var bh=aiBossHp(i,bt); if(B.pw<bh.hp*0.5)continue;   /* 连普通boss都打不动→跳过 */
+    var t=Math.max(0,Math.min(1,(lv-1)/79)), _s=AI_BOSS_SEG[bt]||[5,30];
+    var base=Math.round((_s[0]+(_s[1]-_s[0])*t)*p.innate);   /* 保底(无异变) */
+    var r0=B.pw/Math.max(1,bh.hp);
+    var mut=aiMutExpect(aiInvest(p),i,r0,st.effSec/86400);   /* 异变(封顶后) */
+    var perBoss=base, hp=bh.hp;
+    if(mut>base){ var _bd=Math.max(1,Math.min(10,1+Math.log10(mut/Math.max(1,base)))); var mHp=bh.hp*_bd; if(B.pw>=mHp*0.5){ perBoss=base+mut; hp=mHp; } }   /* 异变boss按奖励翻倍变硬，打得动才开异变拿奖励 */
+    var ratio=B.pw/Math.max(1,hp); var eff=Math.pow(ratio,0.6);
+    var minC=isPhantomDungeon(i)?2000:(bt>=4?600:150);   /* 神之幻境≈33min/只、中阶≈10min/只、低阶≈2.5min/只（战力越高刷得越快；封顶10亿→顶尖碾压刷神幻≈436亿/天→~23天大帝，中阶1亿→普通中后期≈69天大帝） */ var cycle=Math.round(Math.max(minC,7200/Math.max(0.05,eff)));
+    var gain=perBoss/cycle;
+    if(gain>bg){ bg=gain; best={d:i,bt:bt,hp:hp,cycle:cycle,perBoss:perBoss,ratio:ratio}; }
+  }
   if(!best) return 0;
-  var ratio=B.pw/Math.max(1,best.hp);
-  var eff=Math.pow(ratio,0.6);   /* 战力比→效率：碾压>1，动态滚雪球（战力越高刷boss越快） */
-  var cycle=Math.round(Math.max(150,7200/Math.max(0.05,eff)));   /* boss周期秒：战力刚够打≈7200s，碾压≈150s下限（正循环） */
-  var bosses=onlineSec/cycle;
-  var perBoss=aiPermPerBoss(best.seg,p.innate,st,p,best.d,ratio);
-  return Math.max(0,Math.round(bosses*perBoss));
+  var bosses=onlineSec/best.cycle;
+  return Math.max(0,Math.round(bosses*best.perBoss));
 }
-function aiBestDungeonFor(st,p){ for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(ml<=st.lv+10&&DUNGEONS[i].mode!=='level')return i; } return 0; }
+function aiBestDungeonFor(st,p){ var lv=st.lv||1; for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)<=10&&DUNGEONS[i].mode!=='level'&&!(isPhantomDungeon(i)&&lv<75))return i; } return 0; }   /* 副本推进：只刷等级差≤10(双向)，神之幻境需≥75级 */
 function aiFarmGold(st,p,onlineSec){   /* 刷副本金币：随副本档位×在线（神豪/高奇遇收益更高） */
   var d=aiBestDungeonFor(st,p), base=(DUNGEONS[d]&&DUNGEONS[d].monLv)||1;
   return Math.round(onlineSec*base*0.12*(1+p.pay*1.2+p.luck*0.5));
@@ -5555,14 +5564,12 @@ function aiAdventure(st,p,onlineSec){   /* 奇遇：0.3%×运势每击杀，金�
 function initAiState(p,sec){   /* 首次：静态发育初始化（perm从0，由 aiAdvance 从开服起滚雪球补齐） */
   var effSec=Math.max(1,sec*p.effort), effDay=effSec/86400;
   var _inv=aiInvest(p);
-  var ws=aiWsFromDay(effDay,p);
-  var _g=Math.max(0,Math.min(1,0.35+p.effort*0.25+p.pay*0.18+(p.innate-1.0)*0.35+p.luck*0.25));
-  var gearPct=1-Math.exp(-effDay/(18+p.pay*6+p.effort*4));
+  var gearPct=1-Math.exp(-effDay*Math.pow(p.pay,1.7)*0.05*p.effort);   /* 装备练度按充值强分化：神豪(pay3)~15天满装→pw兆碾压神之幻境→~28天大帝；高氪~42天；微氪(pay1)~60天；白嫖(pay0)无装备→pw低→刷低阶慢=平民。真实"钱=装备=战力" */
   p.st={effSec:0, lv:aiLevelFromSec(effSec,p), grow:calcGrowth(p.innate),
-    perm:{力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0}, deepTotal:0, ws:ws,
-    altar:{lv:Math.round(Math.min(120,_inv*Math.max(0,_inv-0.4)*55)),investGold:0},
-    enh:{lv:Math.min(20,Math.max(0,Math.floor(Math.pow(_g,3)*20))),stars:Math.round(gearPct*3),
-         iset:gearPct>=0.85?5:(gearPct>=0.5?3:0), og:gearPct>=0.75?5:(gearPct>=0.55?3:(gearPct>=0.4?2:0))},
+    perm:{力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0}, deepTotal:0, ws:0, seal:0, frag:0, core:0,   /* seal轮回秘印/frag太初神核碎片/core太初神核：均只世界boss掉落(前十)或金币购买，杜绝凭空生成 */
+    altar:{lv:Math.round(Math.min(120,Math.max(0,_inv-0.5)*30*Math.min(1,effDay*(0.3+p.pay*0.3)*p.effort))),investGold:0},
+    enh:{lv:Math.min(20,Math.max(0,Math.floor(Math.pow(gearPct,2)*20))),stars:Math.round(gearPct*2),
+         iset:gearPct>=0.9?5:(gearPct>=0.7?3:0), og:gearPct>=0.85?5:(gearPct>=0.65?3:(gearPct>=0.5?2:0))},
     gold:0, tierIdx:0, lastUpdate:SERVER_START};
 }
 function aiEnsureAdvance(p){   /* 惰性核算：lastUpdate→now 一次性补齐（离线同样正确） */
@@ -5575,16 +5582,30 @@ function aiEnsureAdvance(p){   /* 惰性核算：lastUpdate→now 一次性补�
   aiSaveField();   /* 持久化 st+lastUpdate：刷新/多入口增量补算，不重复全量 */
 }
 function aiAdvance(p,secDelta){ var st=p.st, remain=secDelta; while(remain>0){ var ds=Math.min(AI_STEP,remain); aiAdvanceStep(st,p,ds); remain-=ds; } }
-function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→神坛+奇遇+轮回 → 重算战力/阶位 */
+function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→神坛+奇遇+真实轮回 → 重算战力/阶位（一切按当前真实数据推进，无硬编码天数/世次） */
   var onlineSec=ds*p.effort*0.9;
-  st.effSec+=onlineSec; st.lv=aiLevelFromSec(st.effSec,p); st.ws=aiWsFromDay(st.effSec/86400,p);   /* 轮回按在线天数推进 */
+  st.effSec+=onlineSec; st.lv=aiLevelFromSec(st.effSec,p);   /* 等级随在线重修(真实) */
+  var _ed=st.effSec/86400, _gp=1-Math.exp(-_ed*Math.pow(p.pay,1.7)*0.05*p.effort);   /* 装备练度随当前在线时长动态更新（玩家轮回重置装备后重修：在线累积越久装备越好，近似玩家重打/强化时长） */
+  st.enh={lv:Math.min(20,Math.max(0,Math.floor(Math.pow(_gp,2)*20))),stars:Math.round(_gp*2), iset:_gp>=0.9?5:(_gp>=0.7?3:0), og:_gp>=0.85?5:(_gp>=0.65?3:(_gp>=0.5?2:0))};
   var farm=aiFarmAttr(st,p,onlineSec), pm=st.perm;
   pm.力量+=farm; pm.敏捷+=farm; pm.体质+=farm; pm.精神+=farm; pm.智力+=farm; pm.幸运+=farm; pm.hp+=Math.round(farm*0.1);
   var gold=aiFarmGold(st,p,onlineSec); st.gold+=gold;
   st.altar.investGold+=Math.round(gold*(0.5+aiInvest(p)*0.5));   /* 金币投入神坛 */
   st.altar.lv=Math.min(120,Math.max(st.altar.lv,altarLvFromGold(st.altar.investGold)));
   var attr=aiAdventure(st,p,onlineSec); pm.力量+=attr; pm.敏捷+=attr; pm.体质+=attr; pm.精神+=attr; pm.智力+=attr; pm.幸运+=attr;
-  aiBuildState(st,p);   /* 重算战力/阶位 */
+  var _B=aiBuildState(st,p);   /* 重算战力/阶位（真实） */
+  /* 真实轮回（玩家同款）：达大帝阶位+重修回80级(满级)+持有轮回秘印→自动轮回（后台模拟真人点轮回转生）。重修下限防"ws高→reincMult撑大帝→秒轮回"指数爆；ws越高reincMult越强→重修刷本越快→越修越快但每世至少重修时间(不硬编码世次) */
+  st.seal=st.seal||0;
+  if((st.ws||0)<99 && _B.tierIdx>=5 && (st.lv||1)>=80){
+    /* 秘印来源：世界boss掉落(前十名)或从持有者处用金币购买（非前十）；杜绝凭空生成。印不足→先攒金币购买1枚，买不起则本世不轮回（普通玩家轮回慢，顶尖抢boss快） */
+    if(st.seal<1 && (st.gold||0)>=aiSealPrice(st,p)){ st.gold-=aiSealPrice(st,p); st.seal+=1; }
+    if(st.seal>=1){
+      st.ws=(st.ws||0)+1; st.seal-=1;   /* 消耗轮回秘印×1；99世封顶(超脱) */
+      /* 重置等级/装备/背包/副本进度；保留永久加成(perm)/神坛(altar)/成长档(grow)——玩家轮回同规则 */
+      st.effSec=0; st.lv=1; st.gold=0; st.deepTotal=0; st.enh={lv:0,stars:0,iset:0,og:0};
+    }
+  }
+  if((st.ws||0)>=99 && (st.core||0)<1 && (st.gold||0)>=aiSealPrice(st,p)){ st.gold-=aiSealPrice(st,p); st.core=(st.core||0)+1; }   /* 非前十/抢不到boss的AI：99世后用金币从持有者处购买太初神核超脱（贵→慢），杜绝凭空生成 */
 }
 function altarLvFromGold(gold){ var lv=0,cost=5000; while(lv<120&&gold>=cost){ gold-=cost; cost=Math.round(cost*1.6); lv++; } return lv; }   /* AI神坛成本：5千×1.6^lv（玩家 altarPourCost 同型） */
 function aiBuildState(st,p){   /* 玩家同口径：六维(含perm)→攻防血→乘区→阶位→战力→特性，全部确定性 */
@@ -5596,13 +5617,14 @@ function aiBuildState(st,p){   /* 玩家同口径：六维(含perm)→攻防血�
   var hp=baseHp+eb.hp+A.敏捷*0.3+A.体质*5, patk=basePatk+eb.patk+A.力量*1.3+A.敏捷*0.2, pdef=basePdef+eb.pdef+A.体质, mdef=15+A.精神+eb.mdef;
   var og=eb.og||0;
   if(og>=3){ var _ac=og>=4?1.5:1.1; A.力量=Math.floor(A.力量*_ac); A.敏捷=Math.floor(A.敏捷*_ac); A.体质=Math.floor(A.体质*_ac); A.精神=Math.floor(A.精神*_ac); A.智力=Math.floor(A.智力*_ac); A.幸运=Math.floor(A.幸运*_ac); var _dc=og>=4?1.5:1.2; hp=Math.floor(hp*_dc); pdef=Math.floor(pdef*_dc); mdef=Math.floor(mdef*_dc); }
-  var rhm=aiReincMult(st,p); if(rhm>1){ A.力量=Math.floor(A.力量*rhm); A.敏捷=Math.floor(A.敏捷*rhm); A.体质=Math.floor(A.体质*rhm); A.精神=Math.floor(A.精神*rhm); A.智力=Math.floor(A.智力*rhm); A.幸运=Math.floor(A.幸运*rhm); hp=Math.floor(hp*rhm); patk=Math.floor(patk*rhm); pdef=Math.floor(pdef*rhm); mdef=Math.floor(mdef*rhm); }
+  /* 轮回永久加成（玩家 reincMult 同口径）：每世永久全属性+30%，99世超脱额外+1000% */
+  var rm=aiReincMult(st,p); if(rm>1){ A.力量*=rm; A.敏捷*=rm; A.体质*=rm; A.精神*=rm; A.智力*=rm; A.幸运*=rm; hp*=rm; patk*=rm; pdef*=rm; mdef*=rm; }
   var aM=aiAltarMult(st.altar.lv||0); if(aM>1){ patk=Math.floor(patk*aM); pdef=Math.floor(pdef*aM); hp=Math.floor(hp*aM); mdef=Math.floor(mdef*aM); }
   var mx=Math.max(A.力量,A.敏捷,A.体质,A.精神,A.智力,A.幸运);
   var ti=0; for(var i=CHAR_TIERS.length-1;i>=0;i--) if(mx>=CHAR_TIERS[i].m){ ti=i; break; }
   var agi=Math.max(10, Math.round(A.敏捷)), pw=battlePower(Math.round(patk),Math.round(pdef),Math.round(hp),agi);   /* 敏捷=六维敏捷(同玩家battlePower/攻速口径)：避免固定250导致AI攻速51秒/次、战力低估 */
   var hp2=hp+Math.round(pw*100);   /* 防秒杀（玩家同款：生命=原算+战力×100） */
-  var asc=(st.ws>=99); var tierIdx=asc?6:ti;   /* 超脱·轮回主宰=99世圆满(与玩家一致：99世+太初神核觉醒)，去掉战力1e13的OR判定——AI打世界BOSS已攒够太初神核 */
+  var asc=(st.ws>=99 && (st.core||0)>=1); var tierIdx=asc?6:ti;   /* 超脱·轮回主宰=99世圆满+太初神核×1(与世界boss遗物匣碎片合成，玩家同规则)。AI神核来自世界boss前十开匣或金币购买，杜绝凭空生成 */
   var fdr=Math.min(0.5,(st.altar.lv||0)*0.005);   /* 神坛·御天：fdr +0.5%/级封顶50%（同玩家 altarFdrPct） */
   var ig=0,tr=0,add=0;
   if(tierIdx>=5){ ig+=0.20;tr+=0.20; } else if(tierIdx>=4){ ig+=0.08;tr+=0.08; } else if(tierIdx>=3){ ig+=0.05; }
@@ -8597,7 +8619,17 @@ function wbCelebrate(){
   boss.appendChild(c);
   toast('讨伐世界BOSS成功！');
 }
-function wbOnKill(){ try{ wbCelebrate(); }catch(e){} try{ wbGrantLoot(); }catch(e){} }
+function wbGrantAIseal(){   /* BOSS击杀结算：只给参战前十名发放轮回秘印（按boss掉落分配规则：顶尖排名高匣多秘印多、第十名少）；非前十不直接获得，只能从持有者处用金币购买（见 aiAdvanceStep 轮回购买），杜绝凭空生成。抢到boss→轮回快；抢不到→攒金币等能购买→慢 */
+  try{
+    serverStartInit(); ensureFieldRoster();
+    var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
+    var sorted=FIELD_ROSTER.slice().sort(function(a,b){ return aiBuild(b,sec).pw-aiBuild(a,sec).pw; });
+    for(var i=0;i<sorted.length && i<10;i++){ var n=i<3?60:(i<6?40:25); var _s=sorted[i].st; _s.seal=(_s.seal||0)+n; _s.frag=(_s.frag||0)+(i<3?3:(i<6?2:1)); if((_s.frag||0)>=99){ _s.frag-=99; _s.core=(_s.core||0)+1; } }   /* 前十名：抢boss掉遗物匣→开启保底得太初神核碎片(前3=3片/前六=2/前十=1)，99片合成1颗超脱神核——轮回材料只世界boss掉落(玩家同口径) */
+    aiSaveField();
+  }catch(e){}
+}
+function aiSealPrice(st,p){ return 2e9; }   /* 轮回秘印市场价≈20亿金币/枚：由刷副本金币支付，体现稀缺（普通玩家攒金币购买→轮回慢；前十名抢boss免费得印→轮回快） */
+function wbOnKill(){ try{ wbCelebrate(); }catch(e){} try{ wbGrantLoot(); }catch(e){} try{ wbGrantAIseal(); }catch(e){} }
 function wbCoinSvg(){ return '<svg viewBox="0 0 24 24" width="28" height="28"><circle cx="12" cy="12" r="10" fill="#E8B94C" stroke="#B78A2E" stroke-width="1.5"/><path d="M12 7l1.6 3.6 3.9.4-2.9 2.6.8 3.9-3.4-2-3.4 2 .8-3.9-2.9-2.6 3.9-.4z" fill="#FFF4D6"/></svg>'; }
 function wbBossCoinSvg(){ return '<svg viewBox="0 0 24 24" width="28" height="28"><rect x="4" y="6" width="16" height="12" rx="2" fill="#8A5AF0" stroke="#5A3AC0" stroke-width="1.5"/><path d="M12 9l1.2 2.5 2.8.3-2.1 1.9.6 2.8-2.5-1.5-2.5 1.5.6-2.8-2.1-1.9 2.8-.3z" fill="#E8E0FF"/></svg>'; }
 function wbLegendSvg(){ return '<svg viewBox="0 0 24 24" width="28" height="28"><path d="M12 2l2.4 2.9-.9 4.6L12 11l-1.5-1.5-.9-4.6z" fill="#E0C24B" stroke="#9C7C2B" stroke-width="1.2"/><path d="M6 8h12l-1.2 3.4-3 5.6-3.8 1.2-3-4z" fill="#7BF1C4" stroke="#2A9D73" stroke-width="1"/></svg>'; }
@@ -8674,7 +8706,7 @@ function wbShowLoot(){   /* 战利品弹框：全服大爆氛围 + 我的收获�
   if(!WBOSS.loot) return;
   var L=WBOSS.loot;
   var _MG={'太古遗物匣':1,'传说神装':1,'强化祝福卷轴（完整）':1,'神格本源':1};
-  var mkRow=function(it){ return '<div class="wb-loot-it'+(it.rare?' rare':'')+'"><span class="wl-ic">'+it.ic+'</span><span class="wl-nm'+(it.rare&&_MG[it.n]?' wl-mg':'')+'">'+it.n+'</span><span class="wl-c">×'+fmtWan(it.c)+'</span></div>'; };
+  var mkRow=function(it){ var _mg=it.rare&&_MG[it.n]; return '<div class="wb-loot-it'+(it.rare?' rare':'')+(_mg?' mg':'')+'"><span class="wl-ic">'+it.ic+'</span><span class="wl-nm'+(it.rare&&_MG[it.n]?' wl-mg':'')+'">'+it.n+'</span><span class="wl-c">×'+fmtWan(it.c)+'</span></div>'; };
   var boom=wbFullLoot(L.tier);   /* 本轮全服掉落总览（完整清单+各档位分配） */
   var mine;
   if(!L.ok){ mine='<div class="wb-loot-none">伤害未达标（需 ≥'+fmtWan(L.minDmg)+'）· 本次无奖励</div>'; }
@@ -9194,6 +9226,7 @@ function doReincarnate(){
   if(REBIRTH.ascended){ toast('已超脱轮回，无需再转生'); return; }
   if(REBIRTH.count>=99){ ascend(); return; }
   if(!rebirthReady()){ toast('需达到大帝阶位且战力破万亿'); return; }
+  if((CHARACTER&&CHARACTER.info&&CHARACTER.info.level||0)<80){ toast('需 Lv.80 满级才能轮回（每世修满再转生）'); return; }
   if((REBIRTH.seal||0)<1){ toast('需轮回秘印 ×1（世界BOSS遗物匣开启获得）'); return; }
   confirmDialog('即将轮回转生<br><span style="color:#7CF7C8;font-weight:700">消耗材料：轮回秘印 ×1（当前持有 '+(REBIRTH.seal||0)+' 枚）</span><br>重置：等级/背包/装备/副本进度<br>保留：永久加成·图鉴·魂石·天赋·法器<br>永久全属性 <b style="color:#F2C96B">+30%</b>，魂石 +'+(50+REBIRTH.count*30), function(ok){
     if(!ok) return;
@@ -9206,7 +9239,7 @@ function doReincarnate(){
     CURRENCY.gold=Math.round(CURRENCY.gold*0.2);   /* 保留20%金币 */
     stopTrialAuto(); T.started=false; T.layer=1; T.best=0;
     CHARACTER.info.level=0; TR.level=0; TR.exp=0; TR.reqExp=1000000;
-    ARENA.score=0; ARENA.win=0; ARENA.lose=0; ARENA.streak=0; ARENA._rank=0; ARENA.killBoss=0; ARENA.killGod=0; ARENA.killSupreme=0; TLM.s50={got:0,on:true}; TLM.s100={got:0,on:true}; TLM.s150={got:0,on:true}; ITH_LEFT={yitaiNecklace:1,yitaiRing:2,yitaiBracelet:2}; ARENA.lastDaily='';
+    ARENA.score=0; ARENA.maxScore=0; ARENA.win=0; ARENA.lose=0; ARENA.streak=0; ARENA._rank=0; ARENA.killBoss=0; ARENA.killGod=0; ARENA.killSupreme=0; TLM.s50={got:0,on:true}; TLM.s100={got:0,on:true}; TLM.s150={got:0,on:true}; ITH_LEFT={yitaiNecklace:1,yitaiRing:2,yitaiBracelet:2}; ARENA.lastDaily='';   /* 轮回后竞技段位一并还原（清历史最高积分maxScore；段位按max(score,maxScore)锚定，不清则积分清零段位仍留在原档） */
     POTION_UNTIL=0; SUN_UNTIL=0; MEGA_SUN_UNTIL=0;
     ELEM_SLOT={atk:[null,null,null,null],def:[null,null,null,null]};
     QUICK=[null,null,null,null];
@@ -10652,6 +10685,7 @@ function trSpawnMon(){
   TR.monAtkCoef=triAtkCoef();   /* 本只怪攻击系数（0.05~0.18，0.1概率最大） */
   TR.monLv = TR.isBoss ? (TR.bossLevel||60) : (DUNGEONS[TR.dungeon].monLv||1);   /* 每次刷怪更新怪物等级，修复残留等级导致等级压制误判（雕俱1级怪曾被打出百万伤害） */
   var s=trMonStats(); if(MUT.on&&MUT.aff.length){ var _k0=MUT_TIERS[MUT.tier-1]?MUT_TIERS[MUT.tier-1].k:1; var _mk=_k0+(MUT.up&&MUT.up[_k0]?MUT.up[_k0]:0)*0.2; for(var _mi=0;_mi<MUT.aff.length;_mi++){ var _af=MUT.aff[_mi]; if(_af==='atk') s.atk=Math.round(s.atk*(1+0.5*_mk)); else if(_af==='def') s.def=Math.round(s.def*(1+0.6*_mk)); else if(_af==='hp') s.hp=Math.round(s.hp*(1+0.8*_mk)); else if(_af==='pierce') s.atk=Math.round(s.atk*(1+0.2*_mk)); else if(_af==='drain') s.atk=Math.round(s.atk*(1+0.12*_mk)); else if(_af==='haste') s.agi=Math.round(s.agi*(1+0.25*_mk)); } }
+  if(MUT.on&&TR.isBoss){ var _mt0=MUT_TIERS[MUT.tier-1]; if(_mt0){ var _rb=bossPermReward(); var _mv=Math.min(mutRewardCap(TR.dungeon),(_mt0.perm||0)*mutateDungeonMult(TR.dungeon)); if(_mv>_rb){ var _bd=mutBossDiff(_mv,_rb); s.hp=Math.round(s.hp*_bd); s.atk=Math.round(s.atk*_bd); s.def=Math.round(s.def*_bd); } } }   /* 异变Boss实力按「奖励翻倍」翻倍：奖励越高越硬，实力不足刷不动异变→只能刷普通Boss慢慢发育 */
   if(TR.isBoss&&TR.traits){ var __ab=applyBossArmor(TR.traits,s.hp,s.def,bossTierOfDungeon(TR.dungeon)); s.hp=__ab.hp; s.def=__ab.def; } TR.monMax=s.hp; TR.monHp=s.hp; TR.monPower=battlePower(s.atk,s.def,s.hp,s.agi);   /* 记录怪物战力用于Boss阶位行显示 */
   renderMon(); renderChar();
   if(TR.isBoss) trBossEnter();
@@ -10869,6 +10903,7 @@ function trKillMon(){
   tryTriggerAdventure();   /* 击杀触发随机奇遇 */
   var d=DUNGEONS[TR.dungeon];
   var lv=TR.level, got=false;
+  var _lvOk=Math.abs((TR.monLv||(d?d.monLv:1))-lv)<=10;   /* 等级差>10(无论怪高于还是低于角色)无任何收益，含全属性奖励 → 杜绝刷低副本/越级刷，只能磨等级差10内 */
   TR.stats.kill++; TR.stats.per[TR.dungeon].kill++;
   TR.bossLoot=[];   /* 本次击杀清空，Boss 死亡时才结算其当场战利品 */
   var _br=null;
@@ -10915,13 +10950,13 @@ function trKillMon(){
       if(_gAS){ got=true; trLog('自动出售 <b class="lg-gold">'+gg.name+(gg.count>1?'×'+gg.count:'')+'</b>，+'+_gAS.toLocaleString()+' 金币'); }
       else { addStackable(gg); got=true; trDropAnim(gg.img,itemQuality(gg)); trLog('Boss 保底 <b class="'+(itemQuality(gg)==='purple'?'lg-legend':'lg-item')+'">'+gg.name+(gg.count>1?'×'+gg.count:'')+'</b>');   /* 传说保底物品名用品红紫 */ if(itemQuality(gg)==='purple'){ TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; dailyAddLegend(TR.dungeon); dailyLog({type:'legend',src:'副本·'+(DUNGEONS[TR.dungeon]?DUNGEONS[TR.dungeon].name:'秘境')+' · Boss保底',desc:gg.name+(gg.count>1?'×'+gg.count:'')}); if(_br) _br.items.push(gg.name+(gg.count>1?'×'+gg.count:'')); } TR.bossLoot.push(gg.name+(gg.count>1?'×'+gg.count:'')); }
     } } got=true; }   /* Boss 必掉金币+保底（神级2件） */
-  if(TR.isBoss){ var _pr=bossPermReward(); if(_pr>0){ addPerm(_pr,0,'副本·击败BOSS'); trLog('<b style="color:#c86bff">击败 BOSS：全属性 +'+_pr+'（永久）</b>'); toast('全属性+'+_pr+' 永久'); if(_pr>=100000000) triggerLegendFX(); } if(_br) _br.attr=_pr; dailyAddAttr(TR.dungeon,_pr); }   /* 击杀BOSS保底：永久全属性（按阶位与等级） */
+  if(_lvOk && TR.isBoss){ var _pr=bossPermReward(); if(_pr>0){ addPerm(_pr,0,'副本·击败BOSS'); trLog('<b style="color:#c86bff">击败 BOSS：全属性 +'+_pr+'（永久）</b>'); toast('全属性+'+_pr+' 永久'); if(_pr>=100000000) triggerLegendFX(); } if(_br) _br.attr=_pr; dailyAddAttr(TR.dungeon,_pr); }   /* 击杀BOSS保底：永久全属性（按阶位与等级），等级差>10无收益 */
   /* 寂灭之息药剂：神之幻境小怪 0.00001%、BOSS 0.1%，打怪/挂机均可掉落（不再要求在线可见），无全服限量 */
   if(isPhantomDungeon(TR.dungeon) && Math.random()<(TR.isBoss?0.001:0.0000001)){ var jmm=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); jmm.count=1; addStackable(jmm); got=true; trDropAnim(jmm.img,'purple'); trLog('掉落 <b class="lg-legend">'+jmm.name+'</b>');   /* 寂灭之息（传说）物品名用品红紫 */ TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; dailyAddLegend(TR.dungeon); dailyLog({type:'legend',src:(TR.isBoss?'BOSS掉落':'小怪掉落'),desc:jmm.name}); dailyAddRec(TR.dungeon,{t:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'}),src:(TR.isBoss?'BOSS掉落':'小怪掉落'),items:[jmm.name]});   /* 非BOSS传说掉落：记录获得方式 */ triggerLegendFX(); }   /* 寂灭之息药剂：神之幻境小怪0.00001%、BOSS0.1%，打怪/挂机均触发 */
   if(!TR.isBoss && Math.random()<0.005){ trHiddenEvent(); }   /* 0.5%隐藏事件：神秘宝箱门 / 隐藏BOSS */
   if(!got) trLog('没有收获');
   trGainExp((DUNGEONS[TR.dungeon].monLv||1), TR.isBoss?d.bossAtk:d.atk, TR.isBoss);   /* 经验按怪物固定等级 */
-  if(MUT.on){ var _mt=MUT_TIERS[MUT.tier-1]; if(_mt){ var _mut=mutateDungeonMult(TR.dungeon); var _upB=(MUT.up&&MUT.up[MUT.tier]?MUT.up[MUT.tier]:0)*0.05; var _cn=Math.floor(_mt.cry[TR.isBoss?1:0]*_mut*(1+_upB)); if(_cn>0){ MUT.crystal+=_cn; var _mst=document.getElementById('tr-mut-st'); if(_mst){ _mst.innerHTML = MUT.on ? (MUT_TIERS[MUT.tier-1]?MUT_TIERS[MUT.tier-1].n:'异变')+' · 结晶 '+MUT.crystal : '结晶 '+MUT.crystal; } trLog('异变结晶 <b class="lg-legend">+'+_cn+'</b>'); trDropAnim(null,'purple'); } if(TR.isBoss){ var _pm=_mt.perm*_mut; addPerm(_pm,0,'副本·'+_mt.n); trLog('<b class="lg-boss">'+_mt.n+' BOSS：全属性+'+fmtWan(_pm)+' 永久</b>'); if(_pm>=100000000) triggerLegendFX(); } } }   /* 异变秘境奖励：按词缀档位×秘境品阶（初阶1/中阶3/高阶6），结晶与永久属性随难度递增 */
+  if(_lvOk && MUT.on){ var _mt=MUT_TIERS[MUT.tier-1]; if(_mt){ var _mut=mutateDungeonMult(TR.dungeon); var _upB=(MUT.up&&MUT.up[MUT.tier]?MUT.up[MUT.tier]:0)*0.05; var _cn=Math.floor(_mt.cry[TR.isBoss?1:0]*_mut*(1+_upB)); if(_cn>0){ MUT.crystal+=_cn; var _mst=document.getElementById('tr-mut-st'); if(_mst){ _mst.innerHTML = MUT.on ? (MUT_TIERS[MUT.tier-1]?MUT_TIERS[MUT.tier-1].n:'异变')+' · 结晶 '+MUT.crystal : '结晶 '+MUT.crystal; } trLog('异变结晶 <b class="lg-legend">+'+_cn+'</b>'); trDropAnim(null,'purple'); } if(TR.isBoss){ var _pm=Math.min(mutRewardCap(TR.dungeon),_mt.perm*_mut); addPerm(_pm,0,'副本·'+_mt.n); trLog('<b class="lg-boss">'+_mt.n+' BOSS：全属性+'+fmtWan(_pm)+' 永久</b>'); if(_pm>=100000000) triggerLegendFX(); } } }   /* 异变秘境奖励：按词缀档位×秘境品阶（初阶1/中阶3/高阶6），再按副本封顶（低阶1000万/中阶1亿/神幻10亿） */
   trMonDie();
   if(TR.isBoss) trBossLoot();
   if(TR.isBoss&&_br) dailyAddRec(TR.dungeon,{t:_br.t,name:_br.name||'',attr:_br.attr||0,gold:_br.gold||0,items:(_br.items||[]).slice()});
@@ -11193,7 +11228,7 @@ function renderChar(){
 }
 function renderTreasure(){
   ROGUE.on=false;   /* 进副本秘境：肉鸽停用（副本不吃buff），保留存档，回试炼自动恢复 */
-  var d=document.getElementById('tr-dungeons'); if(d){ d.innerHTML=DUNGEONS.map(function(x,i){ return '<div class="tr-dun'+(i===TR.dungeon?' on':'')+'" data-i="'+i+'"><div class="tr-dun-name">'+x.name+'</div><div class="tr-dun-lv">战力 '+fmtWan(dispVal(monPower(i)))+'</div><span class="tr-dun-tag">'+x.tag+'</span></div>'; }).join(''); }
+  var d=document.getElementById('tr-dungeons'); if(d){ d.innerHTML=DUNGEONS.map(function(x,i){ var _lock=isPhantomDungeon(i)&&TR.level<75; var _lv=isPhantomDungeon(i)?(_lock?'需 Lv.75':'战力 '+fmtWan(dispVal(monPower(i)))):('战力 '+fmtWan(dispVal(monPower(i)))); return '<div class="tr-dun'+(i===TR.dungeon?' on':'')+(_lock?' lock':'')+'" data-i="'+i+'"><div class="tr-dun-name">'+x.name+'</div><div class="tr-dun-lv">'+_lv+'</div><span class="tr-dun-tag">'+x.tag+'</span></div>'; }).join(''); }
   if(!TR.maxHp) trSyncChar();
   if(TR.monMax<=0) trSpawnMon();
   var _mst=document.getElementById('tr-mut-st'); if(_mst){ _mst.innerHTML = MUT.on ? (MUT_TIERS[MUT.tier-1]?MUT_TIERS[MUT.tier-1].n:'异变')+' · 结晶 '+MUT.crystal : '结晶 '+MUT.crystal; }
@@ -11225,6 +11260,8 @@ var MUT_TIERS=[
 ];
 var MUT={crystal:3, on:false, tier:0, aff:[], up:{1:0,2:0,3:0}, exP:0};   /* up:词缀强化等级(按档位)；exP:结晶兑换永久属性次数(递增成本) */
 function mutateDungeonMult(d){ var mlv=(DUNGEONS[d]&&DUNGEONS[d].monLv)||0; return mlv>=79?6:(mlv>=46?3:1); }   /* 异变秘境按品阶加权：初阶(小怪<=45级)×1 / 中阶(46-70)×3 / 高阶(>=79)×6 */
+function mutRewardCap(d){ var mlv=(DUNGEONS[d]&&DUNGEONS[d].monLv)||0; return mlv>=79?1e9:(mlv>=46?1e8:1e7); }   /* 击杀Boss永久全属性封顶：神之幻境≤10亿、中阶副本≤1亿、低阶副本≤1000万（防异变收益失控，奖励越高副本越难→需实力） */
+function mutBossDiff(mutReward,baseReward){ if(!(mutReward>baseReward)) return 1; var d=1+Math.log10(mutReward/Math.max(1,baseReward)); return Math.max(1,Math.min(10,d)); }   /* 异变Boss实力按「奖励翻倍数」翻倍(对数压缩防指数爆炸)：奖励越高boss越硬，实力不足刷不动异变→只能刷普通 */
 var MUT_SHOP=[
  {n:'全属性 +1亿',ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#E8CB74" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-2.9-5.4 2.9 1.2-6L3.4 8.8l6-.7z"/></svg>',sub:'永久全属性提升（逐次涨价）',c:function(){ return Math.round(10000*Math.pow(1.2,(MUT.exP||0))); },do:function(){ addPerm(100000000,0,'异变兑换'); MUT.exP=(MUT.exP||0)+1; }},
  {n:'神印神力碎片 ×500',ic:'<img src="logos/神印神力碎片.png" style="width:100%;height:100%;object-fit:contain">',sub:'天神·神印破重材料',c:2000,do:function(){ var m=mkLoot(ITEM_BLUEPRINTS.sealFragment); m.count=500; addStackable(m); }},
@@ -11310,7 +11347,7 @@ function initTreasureUI(){
     'BOSS：金币1亿100%（神级10亿）、传说奥格顿套装1%、寂灭之息药剂（小怪0.00001%、BOSS 0.1%，打怪/挂机均可）'
   ];
   var ds=document.getElementById('tr-dungeons');
-  if(ds) ds.addEventListener('click',function(e){ var t=e.target.closest('.tr-dun'); if(!t) return; TR.dungeon=+t.getAttribute('data-i'); TR.kill=0; TR.isBoss=false; TR.hp=TR.maxHp; ithStart(); trPhantomTimer(); trSpawnMon(); renderTreasure(); trLog('进入 <b>'+DUNGEONS[TR.dungeon].name+'</b>，<b style="color:#52C6DA">可掉落：'+trDropsInfo[TR.dungeon]+'</b>');   /* 可掉落提示用锐凡青蓝 */ });
+  if(ds) ds.addEventListener('click',function(e){ var t=e.target.closest('.tr-dun'); if(!t) return; var _nd=+t.getAttribute('data-i'); if(isPhantomDungeon(_nd)&&TR.level<75){ toast('需角色等级 Lv.75 才能进入神之幻境'); return; } TR.dungeon=_nd; TR.kill=0; TR.isBoss=false; TR.hp=TR.maxHp; ithStart(); trPhantomTimer(); trSpawnMon(); renderTreasure(); trLog('进入 <b>'+DUNGEONS[TR.dungeon].name+'</b>，<b style="color:#52C6DA">可掉落：'+trDropsInfo[TR.dungeon]+'</b>');   /* 可掉落提示用锐凡青蓝 */ });
   if(ds) ds.addEventListener('wheel',function(e){
     if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ e.preventDefault(); ds.scrollLeft+=e.deltaY; }
   },{passive:false});
