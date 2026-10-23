@@ -512,29 +512,36 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 }
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 .notice-bar{
-  position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 8px);transform:translateX(-50%) translateY(-24px);
-  z-index:2147483600;max-width:min(94vw,470px);width:94vw;
-  display:flex;align-items:center;gap:12px;
-  background:radial-gradient(130% 180% at 50% -40%,rgba(255,211,77,.34),rgba(255,211,77,0) 58%),
-             linear-gradient(180deg,#4c3516,#221708);
-  border:1px solid rgba(255,211,77,.78);
-  border-radius:14px;padding:12px 14px;
-  box-shadow:0 0 0 1px rgba(0,0,0,.42),0 10px 30px rgba(0,0,0,.68),0 0 26px rgba(255,200,80,.5),inset 0 1px 0 rgba(255,255,255,.24);
-  opacity:0;pointer-events:none;cursor:pointer;
-  transition:opacity .3s, transform .3s;
+  position:fixed;left:50%;top:42%;transform:translateX(-50%);
+  z-index:2147483600;width:min(92vw,560px);max-width:min(92vw,560px);
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  pointer-events:none;   /* 容器不拦截点击，各公告条目独立响应；新公告堆叠在下方 */
 }
-.notice-bar::before{content:'';position:absolute;left:12px;right:12px;top:0;height:1px;
+.nb-item{
+  position:relative;width:100%;
+  display:flex;align-items:center;gap:12px;
+  background:radial-gradient(130% 180% at 50% -40%,rgba(255,211,77,.42),rgba(255,211,77,0) 58%),
+             linear-gradient(180deg,#4c3516,#221708);
+  border:1px solid rgba(255,211,77,.9);border-radius:14px;padding:11px 14px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.42),0 12px 34px rgba(0,0,0,.72),0 0 30px rgba(255,200,80,.68),inset 0 1px 0 rgba(255,255,255,.26);
+  cursor:pointer;pointer-events:auto;
+  animation:noticePop .38s cubic-bezier(.2,1.4,.4,1), lgPulse 1.5s ease-in-out 2 .18s;   /* 弹入 + 闪动吸引目光 */
+  transition:opacity .5s, transform .5s;
+}
+.nb-item.hide{opacity:0;transform:translateY(-8px) scale(.94);pointer-events:none;}
+@keyframes noticePop{0%{opacity:0;transform:translateY(20px) scale(.7);}100%{opacity:1;transform:translateY(0) scale(1);}}
+.nb-item::before{content:'';position:absolute;left:12px;right:12px;top:0;height:1px;
   background:linear-gradient(90deg,transparent,rgba(255,238,170,.95),transparent);}
-.notice-bar.on{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:auto;}
-.nb-badge{flex:none;width:40px;height:40px;border-radius:50%;
+.nb-badge{flex:none;width:38px;height:38px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   background:radial-gradient(circle at 35% 28%,#ffe9a8,#ffc04d 48%,#b57a1a);
-  color:#2b1a04;font-size:21px;font-weight:900;
+  color:#2b1a04;font-size:20px;font-weight:900;
   box-shadow:0 0 14px rgba(255,205,90,.95),inset 0 -2px 4px rgba(0,0,0,.4);
   animation:lgPulse 1.2s ease-in-out infinite;}
-.nb-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
-.nb-title{color:#FFE9A8;font-size:11px;font-weight:800;letter-spacing:3px;text-shadow:0 0 8px rgba(255,211,77,.65);}
-.nb-tx{color:#FFFFFF;font-size:13.5px;font-weight:700;letter-spacing:.5px;line-height:1.32;
+.nb-body{flex:1;min-width:0;display:flex;flex-direction:row;align-items:center;gap:6px;}   /* 单条一行：标题+正文横排，正文超长省略 */
+.nb-title{flex:none;color:#FFE9A8;font-size:11px;font-weight:800;letter-spacing:2px;text-shadow:0 0 8px rgba(255,211,77,.65);white-space:nowrap;}
+.nb-tx{flex:1;min-width:0;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  color:#FFFFFF;font-size:13.5px;font-weight:700;letter-spacing:.5px;line-height:1.32;
   text-shadow:0 1px 0 rgba(0,0,0,.55),0 0 10px rgba(255,220,120,.35);}
 .nb-go{flex:none;display:inline-flex;align-items:center;gap:2px;padding:6px 13px;border-radius:20px;
   background:linear-gradient(180deg,#ffd98a,#c98a24);color:#2b1a04;font-size:12px;font-weight:900;letter-spacing:.5px;
@@ -5252,6 +5259,7 @@ function applyCharTier(){ var t=charTierName(), _ti=charTierIdx(), _asc=isAscend
 function setTierEl(el){ if(!el) return; var i=charTierIdx(), _asc=isAscended(); el.textContent=_asc?'超脱 · 轮回主宰':((i>=0)?CHAR_TIERS[i].n:''); for(var k=0;k<=5;k++) el.classList.remove('ti-'+k); el.classList.add('tier-fx'); el.classList.toggle('tier-ascended',_asc); if(!_asc&&i>=0) el.classList.add('ti-'+i); }   /* 战斗场景阶位：档位配色+光效徽记 */
 function tierAscendShow(ti){
   if(ti<0||ti>5) return;
+  if(ti===5){ if(typeof triggerLegendFX==='function') triggerLegendFX(); showServerNotice('晋升大帝 · 万古无双'); }   /* 传说弹幕+服务器公告：仅阶位突破到大帝时（超脱走 ascend()，天运之主走 randomRollOrigin） */
   var marks=['✦','☽','✧','✶','♛','♚'], colors=['#52C6DA','#3D6BFF','#6E9BFF','#A56BFF','#F2A93B','#FF5AD8'];
   var c=colors[ti], ov=document.createElement('div'); ov.className='tier-ascend';
   ov.style.setProperty('--ta-glow', ti===5?'#FF5AD8':'#F2A93B');
@@ -5285,7 +5293,7 @@ function rollInnate(){  /* 先天运势随机：普通档0.9~1.19约90%（越靠
 function randomRollOrigin(){  /* 只随机先天运势（0级生成）：六维/生命/攻击/防御均不随机，0级=基础值（六维10），升级时按成长附加 */
   unclaimInnate180();   /* 释放占用：本次重新随机由新结果决定是否再占住（刷掉1.8即可再次出现） */
   var innate=rollInnate();
-  if(innate>=1.8) claimInnate180();   /* 天运之主全服唯一：产生即占有 */
+  if(innate>=1.8){ claimInnate180(); if(typeof triggerLegendFX==='function') triggerLegendFX(); }   /* 天运之主全服唯一：产生即占有 + 传说弹幕（先天运势=1.8） */
   CHARACTER.origin={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0,patk:0,pdef:0};   /* 0级不随机属性：origin 归零，属性随升级按成长附加 */
   CHARACTER.growth=calcGrowth(innate);
   return innate;
@@ -6025,7 +6033,7 @@ function doRefine(){
   var maxAll = full && Math.random()<0.06;   /* 完整卷轴 6% 概率洗出全部属性区间最高值 */
   REFINE.equip.washAttrs=rollRefine(n, full, maxAll);
   playSoundEffect('embedSuccess'); enhFx('success','refine-equip');   /* 洗炼成功：凹槽散发效果与镶嵌成功一致（音效已同上） */
-  if(maxAll){ toast('神迹降临！所有属性洗出区间最高值！'); triggerLegendFX(); }
+  if(maxAll){ toast('神迹降临！所有属性洗出区间最高值！'); }
   else toast('洗炼成功：附加 <b style="color:#52C6DA">'+n+'</b> 条属性');
   renderBag(); renderRefine(); recalcCharacter();
 }
@@ -6132,7 +6140,7 @@ function doEnhanceCore(){
 function enhRateBoost(rate){ if(ENH.bless>0){ ENH.bless--; saveGame(); return Math.min(0.5, rate*10+0.02); } return rate; }   /* 强化祝福卷轴：消耗1次，本次强化成功率大幅提升（含冲击满级20） */
 function useGodOrigin(p,i){ var it=bag[p][i]; if(!it) return; var k=deepKeyOf(); if(!k){ toast('尚未觉醒神格本元 · 需真神阶'); return; } var nm=deepTraitName(), nk=(DEEP.total||0)+1; confirmDialog('使用 神格本源 ×1？<br>「'+nm+'」Lv.'+(DEEP.total||0)+' → Lv.'+nk+'<br><span style="color:#7EE8C2">免消耗 战功 / 神格结晶</span>', function(ok){ if(!ok) return; bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; DEEP.total=nk; saveGame(); recalcCharacter(); if(typeof renderBattle==='function') renderBattle(); if(typeof renderAttrs==='function') renderAttrs(); if(typeof renderRebirth==='function') renderRebirth(); applyGodSigil(); renderBag(); toast('<b style="color:#7BF1C4">'+nm+' 深化 · 升至 Lv.'+nk+'</b>'); }); }
 function showLegendBoxPick(cb){ var ov=document.createElement('div'); ov.className='lb-over'; ov.id='lb-pick-over'; ov.innerHTML='<div class="lb-pick"><div class="lb-pick-t">传说宝箱 · 自选部位</div><div class="lb-pick-row"><button class="lb-pk" data-k="legendWings">传说 魔翼</button><button class="lb-pk" data-k="shencaiBlade">神裁之刃</button></div><div class="lb-pick-row"><button class="lb-pk" data-k="legendOgdonChest">奥格顿胸甲</button><button class="lb-pk" data-k="yitaiNecklace">伊泰安项链</button></div></div>'; document.body.appendChild(ov); ov.addEventListener('click', function(e){ var b=e.target.closest('.lb-pk'); if(b){ ov.remove(); cb(b.getAttribute('data-k')); } else if(e.target===ov){ ov.remove(); } }); }
-function useLegendBox(p,i){ var it=bag[p][i]; if(!it) return; showLegendBoxPick(function(k){ var bp=ITEM_BLUEPRINTS[k]; if(!bp){ toast('部位不可用'); return; } var m=mkLoot(bp); var f=addStackable(m); if(!f){ toast('背包已满'); return; } bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; if(m.name.indexOf('伊泰安')>=0) triggerLegendFX(); saveGame(); renderBag(); toast('获得 <b style="color:#B06CFF">'+m.name+'</b>'); }); }
+function useLegendBox(p,i){ var it=bag[p][i]; if(!it) return; showLegendBoxPick(function(k){ var bp=ITEM_BLUEPRINTS[k]; if(!bp){ toast('部位不可用'); return; } var m=mkLoot(bp); var f=addStackable(m); if(!f){ toast('背包已满'); return; } bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; if(m.name.indexOf('伊泰安')>=0) saveGame(); renderBag(); toast('获得 <b style="color:#B06CFF">'+m.name+'</b>'); }); }
 function useInheritPill(p,i){ var it=bag[p][i]; if(!it) return; var used=INHERIT_USED||0; if(used>=100){ toast('远古传承丹已达使用上限（100颗）'); return; } confirmDialog('使用 远古传承丹 ×1？<br>永久全属性 +5000万<br><span style="color:#7EE8C2">已使用 '+used+' / 100 颗</span>', function(ok){ if(!ok) return; bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; INHERIT_USED=used+1; addPerm(50000000,0,'远古传承丹'); saveGame(); renderBag(); toast('<b style="color:#FFD75E">永久全属性 +5000万</b>'); }); }
 function useEnhBless(p,i){ var it=bag[p][i]; if(!it) return; confirmDialog('使用 '+it.name+' ×1？<br>获得 1 次强化祝福（下次强化成功率大幅提升）<br><span style="color:#7EE8C2">当前祝福 '+ENH.bless+' 次</span>', function(ok){ if(!ok) return; bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; ENH.bless=(ENH.bless||0)+1; saveGame(); renderBag(); toast('强化祝福 +1 · 当前 '+ENH.bless+' 次'); }); }
 function wbDrop4(k,n,arr){ var _bp=ITEM_BLUEPRINTS[k]; if(!_bp) return; var _m=mkLoot(_bp); _m.count=n; addStackable(_m); if(arr) arr.push({n:_m.name,ic:'<img src="'+_m.img+'">',c:n,rare:true}); }   /* 重宝入账：addStackable入背包 + 记入战利品列表（arr=wbGrantLoot的loot） */
@@ -7552,7 +7560,7 @@ function tlGift(){
   }
   if(item&&itemQuality(item)==='purple'){ if(location.hash.indexOf('#trial')<0||document.visibilityState!=='visible'){ item=mkLoot(ITEM_BLUEPRINTS.godCrystal); item.count=1; } }   /* 离线/切页时传说大奖不给，改保底神力结晶 */
   if(item){ var full=addStackable(item); if(full){ if(itemQuality(item)==='purple') dailyLog({type:'legend',src:'无尽试炼·第'+L+'层',desc:item.name}); tlLog('<b style="color:#f0d285">第'+L+'层大奖：'+item.name+(item.count>1?'×'+item.count:'')+'</b>'); toast('第'+L+'层大奖：'+item.name); } else { tlLog('<b>第'+L+'层大奖：'+item.name+'（背包已满）</b>'); } }
-  addPerm(L*100000000,0,'无尽试炼·第'+L+'层BOSS'); if(L*100000000>=100000000) triggerLegendFX();   /* 每10层BOSS统一永久全属性：+层数×1亿（第10层+10亿、第50层+50亿、第N层+N亿） */
+  addPerm(L*100000000,0,'无尽试炼·第'+L+'层BOSS');   /* 每10层BOSS统一永久全属性：+层数×1亿（第10层+10亿、第50层+50亿、第N层+N亿） */
   if(L>=150){ REBIRTH.essence+=5; tlLog('<b style="color:#F2C96B">超脱BOSS掉落：本源结晶 +5</b>'); }   /* 150层后超脱Boss专属：本源结晶（终局材料，由下方 saveGame 持久化） */
   tlLog('<b style="color:#c86bff">第'+L+'层大奖：全属性 +'+L+'亿（永久）</b>'); toast('第'+L+'层大奖：全属性 +'+L+'亿 永久');
   saveGame(); tlSaveBest();
@@ -8401,8 +8409,8 @@ function endFight(res,o){
       ARENA.score+=sc; ARENA.maxScore=Math.max(ARENA.maxScore||0, ARENA.score); CURRENCY.gold+=gold; updateLotteryGold();
       if(f){ f.setAttribute('data-end','1'); f.innerHTML='<div class="af-wait" style="color:#D84AA0;font-size:19px;letter-spacing:2px;text-shadow:0 0 12px rgba(216,74,160,.8);">万军取首级！</div><div class="af-wait" style="font-size:12px;color:#D6B56A;">击杀敌方首领 · 战力×'+ratio.toFixed(1)+'<br>+'+sc+'积分 · +'+fmtWan(gold)+'金币</div>'; }
       arenaLog('击杀敌方首领 <span class="t">'+o.n+'</span>！<span class="c">+'+sc+'积分 +'+fmtWan(gold)+'金币</span>');
-  if(o.tier==='god'){ if(arenaRank()<6 && ARENA.killGod<1){ unlockGodMedal(); arenaLog('<b class="lg-boss">越级击杀神级Boss，获得徽章·屠神者！真实伤害+10%</b>'); } triggerLegendFX(); }   /* 屠神者：低段位越级击杀神级Boss */
-  if(o.tier==='supreme'){ REBIRTH.essence+=5; saveGame(); if(!isAscended() && ARENA.killSupreme<1){ unlockSupremeMedal(); arenaLog('<b class="lg-boss">未超脱越级击杀超脱终极Boss，获得徽章·弑神者！真实伤害+20%</b>'); } else { arenaLog('<b class="lg-item">超脱终极Boss掉落：本源结晶 +5</b>'); toast('超脱终极Boss掉落：本源结晶 +5！'); } triggerLegendFX(); }   /* 竞技击杀超脱终极Boss：本源结晶；未超脱越级击杀解锁弑神者徽章 */
+  if(o.tier==='god'){ if(arenaRank()<6 && ARENA.killGod<1){ unlockGodMedal(); arenaLog('<b class="lg-boss">越级击杀神级Boss，获得徽章·屠神者！真实伤害+10%</b>'); } }   /* 屠神者：低段位越级击杀神级Boss */
+  if(o.tier==='supreme'){ REBIRTH.essence+=5; saveGame(); if(!isAscended() && ARENA.killSupreme<1){ unlockSupremeMedal(); arenaLog('<b class="lg-boss">未超脱越级击杀超脱终极Boss，获得徽章·弑神者！真实伤害+20%</b>'); } else { arenaLog('<b class="lg-item">超脱终极Boss掉落：本源结晶 +5</b>'); toast('超脱终极Boss掉落：本源结晶 +5！'); } }   /* 竞技击杀超脱终极Boss：本源结晶；未超脱越级击杀解锁弑神者徽章 */
   if(o.tier==='supreme' && luckRoll(0.025)){ var _lw2=mkLoot(Math.random()<0.5?ITEM_BLUEPRINTS.legendWings:ITEM_BLUEPRINTS.shencaiBlade); var _lf2=addStackable(_lw2); if(_lf2){ dailyLog({type:'legend',src:'竞技·超脱终极Boss',desc:_lw2.name}); arenaLog('<b class="lg-item">超脱终极Boss掉落：'+_lw2.name+'</b>'); toast('超脱终极Boss掉落：'+_lw2.name+'！'); saveGame(); } else { arenaLog('超脱终极Boss掉落：'+_lw2.name+'（背包已满）'); } }   /* 竞技击杀超脱终极Boss：2.5%概率掉落传说魔翼/神裁（更高档，概率高于神级1%） */
   if(o.tier==='god'){ var _yipool=['yitaiNecklace','yitaiRing','yitaiBracelet'].filter(function(k){ return ITH_LEFT[k]>0; }); if(_yipool.length && luckRoll(0.05)){ var _yik=_yipool[Math.floor(Math.random()*_yipool.length)]; ITH_LEFT[_yik]--; var _yi=mkLoot(ITEM_BLUEPRINTS[_yik]); var _yf=addStackable(_yi); if(_yf){ dailyLog({type:'legend',src:'竞技·神级Boss',desc:_yi.name}); arenaLog('<b class="lg-item">神级Boss掉落：'+_yi.name+'</b>'); toast('神级Boss掉落：'+_yi.name+'！'); saveGame(); } else { arenaLog('神级Boss掉落：'+_yi.name+'（背包已满）'); } } }   /* 竞技击杀神级Boss：5%概率掉落伊泰安首饰（唯一性，掉完绝版） */
   if(o.tier==='god' && luckRoll(0.01)){ var _lw=mkLoot(Math.random()<0.5?ITEM_BLUEPRINTS.legendWings:ITEM_BLUEPRINTS.shencaiBlade); var _lf=addStackable(_lw); if(_lf){ dailyLog({type:'legend',src:'竞技·神级Boss',desc:_lw.name}); arenaLog('<b class="lg-item">神级Boss掉落：'+_lw.name+'</b>'); toast('神级Boss掉落：'+_lw.name+'！'); saveGame(); } else { arenaLog('神级Boss掉落：'+_lw.name+'（背包已满）'); } }   /* 竞技击杀神级Boss：1%概率掉落传说魔翼 */
@@ -8849,7 +8857,7 @@ function wbLegendDrop(){
   var it=mkLoot(ITEM_BLUEPRINTS[k]);
   var f=addStackable(it);
   if(f) return null;
-  dailyLog({type:'legend',src:'世界BOSS·传说掉落',desc:it.name}); if(it.name.indexOf('伊泰安')>=0) triggerLegendFX(); return it;
+  dailyLog({type:'legend',src:'世界BOSS·传说掉落',desc:it.name}); return it;
 }
 function wbBuy(i){
   var it=WB_SHOP[i]; if(!it) return;
@@ -8877,14 +8885,24 @@ function wbStatus(){
   var _p=WBOSS.bossMax?Math.max(0,Math.round(WBOSS.bossHp/WBOSS.bossMax*100)):0;
   return {text:'激战中', sub:WBOSS.boss.n+' 残血 '+_p+'% · 全服合力'};
 }
-function showServerNotice(txt, hash){   /* 服务器公告横幅：点击跳转 + 3秒自动收起（调用方控制去重） */
+var _noticeLast=0;   /* 连续公告最低间隔0.5秒 */
+function showServerNotice(txt){   /* 服务器公告：屏幕中央多条纵向堆叠、每条一行、纯信息无跳转、持续5秒淡出；连续公告间隔≥0.5秒 */
   var bar=document.getElementById('notice-bar'); if(!bar) return;
-  bar.innerHTML='<span class="nb-badge">✦</span><div class="nb-body"><b class="nb-title">✦ 全服公告 ✦</b><span class="nb-tx">'+txt+'</span></div><span class="nb-go">前往 ›</span>';
-  bar.classList.add('on');
-  if(bar.__h){ bar.removeEventListener('click',bar.__h); }
-  bar.__h=function(){ bar.classList.remove('on'); if(hash) location.hash=hash; };
-  bar.addEventListener('click',bar.__h);
-  clearTimeout(bar.__t); bar.__t=setTimeout(function(){ bar.classList.remove('on'); },3000);
+  var it=document.createElement('div'); it.className='nb-item';
+  it.innerHTML='<span class="nb-badge">✦</span><div class="nb-body"><b class="nb-title">✦ 全服公告 ✦</b><span class="nb-tx">'+txt+'</span></div>';   /* 纯信息公告：不显示跳转链接/按钮，仅告知 */
+  function place(){ bar.appendChild(it); while(bar.children.length>4) bar.removeChild(bar.firstChild); setTimeout(function(){ hideServerNotice(it); },5000); _noticeLast=Date.now(); }
+  var wait=_noticeLast+500-Date.now();   /* 距上一条不足0.5秒则顺延，保证最小间隔 */
+  if(wait>0) setTimeout(place,wait); else place();
+}
+function hideServerNotice(it){
+  if(!it||it.__gone) return; it.__gone=true;
+  it.classList.add('hide');
+  setTimeout(function(){ if(it.parentNode) it.parentNode.removeChild(it); },560);
+}
+var _lv80Notified=false;
+function noticeLv80(){   /* 满级80公告：每世升到80触发一次；轮回/重置后等级<80自动重置标志，再升到80仍会再弹 */
+  if((TR.level||0)===80 && !_lv80Notified){ _lv80Notified=true; showServerNotice('达成 Lv.80 满级，可轮回转生'); }
+  if((TR.level||0)<80) _lv80Notified=false;
 }
 function wbServerNotice(){   /* 打开系统：公告世界BOSS当前状态（会话内一次；该时段开打提醒置满，避免重复） */
   try{ if(typeof wbEnsure==='function') wbEnsure(); }catch(e){}
@@ -8895,7 +8913,7 @@ function wbServerNotice(){   /* 打开系统：公告世界BOSS当前状态（�
     sessionStorage.setItem('_wb_notice_n','3');
   }catch(e){}
   var st=wbStatus(); if(!st) return;
-  showServerNotice(st.text+' · '+st.sub, '#wboss');
+  showServerNotice(st.text);   /* 简短公告：仅状态标题 */
 }
 function wbServerTick(){   /* 每60秒：世界BOSS时段刷新(开打)时弹全服公告，每个时段最多弹3次 */
   try{ if(typeof wbEnsure==='function') wbEnsure(); }catch(e){}
@@ -8907,7 +8925,7 @@ function wbServerTick(){   /* 每60秒：世界BOSS时段刷新(开打)时弹全
   }catch(e){}
   if(cur!==sl){ n=0; try{ sessionStorage.setItem('_wb_notice_slot', sl); }catch(e){} }
   if(!WBOSS.killed && WBOSS.bossHp>0 && !WBOSS.reward.got && n<3){
-    showServerNotice('世界BOSS已刷新开打！'+WBOSS.boss.n+' 残血 100% · 全服合力讨伐','#wboss');
+    showServerNotice('世界BOSS '+WBOSS.boss.n+' 已开打！全服合力讨伐');
     n+=1; try{ sessionStorage.setItem('_wb_notice_n',''+n); }catch(e){}
   }
 }
@@ -9239,6 +9257,7 @@ function ascend(){
     recalcCharacter(); renderRebirth(); renderCurrency(); saveGame();
     ascendFx();
     if(typeof triggerLegendFX==='function') triggerLegendFX();
+    showServerNotice('超脱 · 轮回主宰降临');   /* 服务器公告：突破超脱 */
     toast('超脱！轮回主宰降临 · 全属性 +1000%');
   });
 }
@@ -9274,7 +9293,6 @@ function doReincarnate(){
     if(typeof renderEquip==='function')renderEquip(); if(typeof renderBag==='function')renderBag(); if(typeof renderAttrs==='function')renderAttrs();
     recalcCharacter(); if(typeof renderTrStats==='function')renderTrStats(); renderRebirth(); renderCurrency();
     saveGame();
-    triggerLegendFX();
     gLog('轮回','完成第 '+REBIRTH.count+' 世转生 · 永久全属性 +'+Math.round((reincMult()-1)*100)+'%');
     toast('轮回成功！第 '+REBIRTH.count+' 世 · 永久全属性 +'+Math.round((reincMult()-1)*100)+'%');
   });
@@ -9369,7 +9387,6 @@ function craftCore(){   /* 99 碎片合成 1 太初神核 */
   if((REBIRTH.frag||0)<99){ toast('太初神核碎片不足（需99）'); return; }
   REBIRTH.frag-=99; REBIRTH.core=(REBIRTH.core||0)+1;
   saveGame(); renderRebirth();
-  if(typeof triggerLegendFX==='function') triggerLegendFX();
   toast('合成成功：太初神核 ×1');
 }
 function sealBoonClick(){
@@ -9533,11 +9550,11 @@ function runAdventure(ev){
     var _gpool=[ITEM_BLUEPRINTS.yitaiNecklace,ITEM_BLUEPRINTS.yitaiRing,ITEM_BLUEPRINTS.yitaiBracelet,ITEM_BLUEPRINTS.chaosStone,_seals[Math.floor(Math.random()*_seals.length)]];
     var bp2=_gpool[Math.floor(Math.random()*_gpool.length)]||ITEM_BLUEPRINTS.warGodsFavor;
     var gname=bp2?(bp2.name||'逆天装备'):'逆天装备';
-    try{ var it2=mkLoot(bp2); if(it2.count===undefined) it2.count=1; addStackable(it2); renderBag(); if(it2.name.indexOf('伊泰安')>=0){ try{ triggerLegendFX(); }catch(e){} } }catch(e){}   /* 修复：addItem为局部函数不可用，改用addStackable正常入包并刷新背包 */
+    try{ var it2=mkLoot(bp2); if(it2.count===undefined) it2.count=1; addStackable(it2); renderBag(); }catch(e){}   /* 修复：addItem为局部函数不可用，改用addStackable正常入包并刷新背包 */
     advItem=gname; dailyLog({type:'legend',src:'奇遇·'+ev.n,desc:gname});
     msg='已放入背包，快去装备体验！';
   } else if(ev.fx==='potion'){
-    var _pm=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); _pm.count=1; addStackable(_pm); renderBag(); try{ triggerLegendFX(); }catch(e){}
+    var _pm=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); _pm.count=1; addStackable(_pm); renderBag();
     advItem=_pm.name; dailyLog({type:'legend',src:'奇遇·'+ev.n,desc:_pm.name});
     msg='已放入背包，BOSS 即死神效！';
   } else if(ev.fx==='god'){
@@ -9918,7 +9935,7 @@ function lotteryReveal(cell, win){   /* 点开光团：显示具体奖品图标/
   var img=lotteryImg(win.label);
   cell.innerHTML = img ? '<div class="lf-reveal"><div class="lf-ico"><img src="'+img+'"></div></div>' : '<div class="lf-reveal"><span class="lf-text">'+text+'</span></div>';
   cell.classList.add('revealed');
-  if(win._lg && /寂灭之息|全属性\+1亿|传说武器/.test(win.label)) triggerLegendFX(); if(win.prob===undefined || win.prob<=0.01) celebrateConfetti();   /* 稀有池最珍稀/次珍稀两档 + 轮盘传说武器：传说级特效（带弹幕） */
+  if(win.prob===undefined || win.prob<=0.01) celebrateConfetti();   /* 稀有池最珍稀/次珍稀两档 + 轮盘传说武器：礼花（弹幕特效仅大帝/超脱/天运之主） */
   else if(win.prob===undefined || win.prob<=0.01) celebrateConfetti();
   else if((win.label||'')!=='谢谢参与') goldFlashFx(text);
 }
@@ -10363,6 +10380,7 @@ function showOffline(sec, exp, gold, bound, lvUp){
     var _old=TR.level, _exp=p.exp||0;
     if(_exp>0){ TR.level=Math.max(0, CHARACTER.info.level||0); TR.reqExp=trReqExp(TR.level); TR.exp+=_exp; while(TR.level<80 && TR.exp>=TR.reqExp){ TR.exp-=TR.reqExp; TR.level++; TR.reqExp=trReqExp(TR.level); dailyBump('lv'); CHARACTER.info.level=TR.level; } }   /* 收下前先以存档真实等级为基准再升级，杜绝时序偏差 */
     var _up=TR.level-_old;
+    noticeLv80();   /* 满级80公告 */
     recalcCharacter(); trSyncChar(); renderChar(); renderCurrency(); saveGame();
     if(_up>0){ TR.hp=TR.maxHp; gLog('升级','离线结算升至 Lv.'+TR.level); }
     OFFLINE.pending=null;
@@ -10395,6 +10413,7 @@ function trGainExp(monLv, af, isBoss){
     toast('升级！当前 Lv.'+TR.level);
   }
   if(TR.level>oldLv) trLevelUp(TR.level);   /* 升级全屏金光+大字 */
+  noticeLv80();   /* 满级80公告 */
   recalcCharacter();   /* 升级后基础属性+1，刷新战斗属性 */
   trSyncChar();   /* 升级后强制同步血/攻/防，刷新血条 */
   if(TR.level>oldLv) TR.hp=TR.maxHp;   /* 升级后血量回满 */
@@ -10510,7 +10529,6 @@ function ithDropNeck(src){
   toast('掉落传说级物品：'+yin.name);   /* 全局提示，切页/挂机掉落也可见 */
   if(TR.isBoss) TR.bossLoot.push(yin.name);
   dailyAddRec(TR.dungeon,{t:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'}),src:src||'特殊触发',items:['伊泰安项链']});   /* 非BOSS传说掉落：记录获得方式 */
-  triggerLegendFX();
 }
 function ithActive(){
   return TR.dungeon===0 && ITH_LEFT.yitaiNecklace>0;   /* 伊泰安掉落：只要在雕俱星座(挂机/切页/死亡/最小化均可)且有剩余即触发 */
@@ -10978,13 +10996,13 @@ function trKillMon(){
       if(_gAS){ got=true; trLog('自动出售 <b class="lg-gold">'+gg.name+(gg.count>1?'×'+gg.count:'')+'</b>，+'+_gAS.toLocaleString()+' 金币'); }
       else { addStackable(gg); got=true; trDropAnim(gg.img,itemQuality(gg)); trLog('Boss 保底 <b class="'+(itemQuality(gg)==='purple'?'lg-legend':'lg-item')+'">'+gg.name+(gg.count>1?'×'+gg.count:'')+'</b>');   /* 传说保底物品名用品红紫 */ if(itemQuality(gg)==='purple'){ TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; dailyAddLegend(TR.dungeon); dailyLog({type:'legend',src:'副本·'+(DUNGEONS[TR.dungeon]?DUNGEONS[TR.dungeon].name:'秘境')+' · Boss保底',desc:gg.name+(gg.count>1?'×'+gg.count:'')}); if(_br) _br.items.push(gg.name+(gg.count>1?'×'+gg.count:'')); } TR.bossLoot.push(gg.name+(gg.count>1?'×'+gg.count:'')); }
     } } got=true; }   /* Boss 必掉金币+保底（神级2件） */
-  if(_lvOk && TR.isBoss){ var _pr=bossPermReward(); if(_pr>0){ addPerm(_pr,0,'副本·击败BOSS'); trLog('<b style="color:#c86bff">击败 BOSS：全属性 +'+_pr+'（永久）</b>'); toast('全属性+'+_pr+' 永久'); if(_pr>=100000000) triggerLegendFX(); } if(_br) _br.attr=_pr; dailyAddAttr(TR.dungeon,_pr); }   /* 击杀BOSS保底：永久全属性（按阶位与等级），等级差>10无收益 */
+  if(_lvOk && TR.isBoss){ var _pr=bossPermReward(); if(_pr>0){ addPerm(_pr,0,'副本·击败BOSS'); trLog('<b style="color:#c86bff">击败 BOSS：全属性 +'+_pr+'（永久）</b>'); toast('全属性+'+_pr+' 永久'); } if(_br) _br.attr=_pr; dailyAddAttr(TR.dungeon,_pr); }   /* 击杀BOSS保底：永久全属性（按阶位与等级），等级差>10无收益 */
   /* 寂灭之息药剂：神之幻境小怪 0.00001%、BOSS 0.1%，打怪/挂机均可掉落（不再要求在线可见），无全服限量 */
-  if(isPhantomDungeon(TR.dungeon) && Math.random()<(TR.isBoss?0.001:0.0000001)){ var jmm=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); jmm.count=1; addStackable(jmm); got=true; trDropAnim(jmm.img,'purple'); trLog('掉落 <b class="lg-legend">'+jmm.name+'</b>');   /* 寂灭之息（传说）物品名用品红紫 */ TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; dailyAddLegend(TR.dungeon); dailyLog({type:'legend',src:(TR.isBoss?'BOSS掉落':'小怪掉落'),desc:jmm.name}); dailyAddRec(TR.dungeon,{t:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'}),src:(TR.isBoss?'BOSS掉落':'小怪掉落'),items:[jmm.name]});   /* 非BOSS传说掉落：记录获得方式 */ triggerLegendFX(); }   /* 寂灭之息药剂：神之幻境小怪0.00001%、BOSS0.1%，打怪/挂机均触发 */
+  if(isPhantomDungeon(TR.dungeon) && Math.random()<(TR.isBoss?0.001:0.0000001)){ var jmm=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); jmm.count=1; addStackable(jmm); got=true; trDropAnim(jmm.img,'purple'); trLog('掉落 <b class="lg-legend">'+jmm.name+'</b>');   /* 寂灭之息（传说）物品名用品红紫 */ TR.stats.legend++; TR.stats.per[TR.dungeon].legend++; dailyAddLegend(TR.dungeon); dailyLog({type:'legend',src:(TR.isBoss?'BOSS掉落':'小怪掉落'),desc:jmm.name}); dailyAddRec(TR.dungeon,{t:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'}),src:(TR.isBoss?'BOSS掉落':'小怪掉落'),items:[jmm.name]});   /* 非BOSS传说掉落：记录获得方式 */ }   /* 寂灭之息药剂：神之幻境小怪0.00001%、BOSS0.1%，打怪/挂机均触发 */
   if(!TR.isBoss && Math.random()<0.005){ trHiddenEvent(); }   /* 0.5%隐藏事件：神秘宝箱门 / 隐藏BOSS */
   if(!got) trLog('没有收获');
   trGainExp((DUNGEONS[TR.dungeon].monLv||1), TR.isBoss?d.bossAtk:d.atk, TR.isBoss);   /* 经验按怪物固定等级 */
-  if(_lvOk && MUT.on){ var _mt=MUT_TIERS[MUT.tier-1]; if(_mt){ var _mut=mutateDungeonMult(TR.dungeon); var _upB=(MUT.up&&MUT.up[MUT.tier]?MUT.up[MUT.tier]:0)*0.05; var _cn=Math.floor(_mt.cry[TR.isBoss?1:0]*_mut*(1+_upB)); if(_cn>0){ MUT.crystal+=_cn; var _mst=document.getElementById('tr-mut-st'); if(_mst){ _mst.innerHTML = MUT.on ? (MUT_TIERS[MUT.tier-1]?MUT_TIERS[MUT.tier-1].n:'异变')+' · 结晶 '+MUT.crystal : '结晶 '+MUT.crystal; } trLog('异变结晶 <b class="lg-legend">+'+_cn+'</b>'); trDropAnim(null,'purple'); } if(TR.isBoss){ var _pm=Math.min(mutRewardCap(TR.dungeon),_mt.perm*_mut); addPerm(_pm,0,'副本·'+_mt.n); trLog('<b class="lg-boss">'+_mt.n+' BOSS：全属性+'+fmtWan(_pm)+' 永久</b>'); if(_pm>=100000000) triggerLegendFX(); } } }   /* 异变秘境奖励：按词缀档位×秘境品阶（初阶1/中阶3/高阶6），再按副本封顶（低阶1000万/中阶1亿/神幻10亿） */
+  if(_lvOk && MUT.on){ var _mt=MUT_TIERS[MUT.tier-1]; if(_mt){ var _mut=mutateDungeonMult(TR.dungeon); var _upB=(MUT.up&&MUT.up[MUT.tier]?MUT.up[MUT.tier]:0)*0.05; var _cn=Math.floor(_mt.cry[TR.isBoss?1:0]*_mut*(1+_upB)); if(_cn>0){ MUT.crystal+=_cn; var _mst=document.getElementById('tr-mut-st'); if(_mst){ _mst.innerHTML = MUT.on ? (MUT_TIERS[MUT.tier-1]?MUT_TIERS[MUT.tier-1].n:'异变')+' · 结晶 '+MUT.crystal : '结晶 '+MUT.crystal; } trLog('异变结晶 <b class="lg-legend">+'+_cn+'</b>'); trDropAnim(null,'purple'); } if(TR.isBoss){ var _pm=Math.min(mutRewardCap(TR.dungeon),_mt.perm*_mut); addPerm(_pm,0,'副本·'+_mt.n); trLog('<b class="lg-boss">'+_mt.n+' BOSS：全属性+'+fmtWan(_pm)+' 永久</b>'); } } }   /* 异变秘境奖励：按词缀档位×秘境品阶（初阶1/中阶3/高阶6），再按副本封顶（低阶1000万/中阶1亿/神幻10亿） */
   trMonDie();
   if(TR.isBoss) trBossLoot();
   if(TR.isBoss&&_br) dailyAddRec(TR.dungeon,{t:_br.t,name:_br.name||'',attr:_br.attr||0,gold:_br.gold||0,items:(_br.items||[]).slice()});
@@ -11459,6 +11477,7 @@ function applyOffline(){
     TR.exp+=eGain;
     while(TR.level<80 && TR.exp>=TR.reqExp){ TR.exp-=TR.reqExp; TR.level++; TR.reqExp=trReqExp(TR.level); CHARACTER.info.level=TR.level; dailyBump('lv'); }
     recalcCharacter(); renderAttrs(); trSyncChar(); renderChar();
+    noticeLv80();   /* 满级80公告 */
     if(TR.level>lv0) TR.hp=TR.maxHp;
     TR.suppressLog=false;
   }
