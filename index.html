@@ -2702,25 +2702,42 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
   border:1px solid rgba(233,201,122,.5);box-shadow:0 12px 40px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.10);}
 .rank-detail-box::-webkit-scrollbar{width:0;}
 .rd-close{position:absolute;top:9px;right:9px;z-index:3;width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#EFE8D8;background:rgba(0,0,0,.4);border:1px solid rgba(214,178,110,.4);font-size:13px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.08);}
-.rd-head{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 8px 12px;border-bottom:1px solid rgba(214,178,110,.25);margin-bottom:6px;position:relative;overflow:hidden;border-radius:12px;background:radial-gradient(120% 140% at 50% 0%,rgba(255,215,94,.14),rgba(255,90,216,.05) 70%,transparent),linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.30));box-shadow:inset 0 1px 0 rgba(255,255,255,.09);}
+.rd-head{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:9px 11px 12px;border-bottom:1px solid rgba(214,178,110,.25);margin-bottom:6px;position:sticky;top:0;z-index:5;border-radius:12px;background-color:rgba(24,16,7,.95);background-image:radial-gradient(120% 140% at 50% 0%,rgba(255,215,94,.14),rgba(255,90,216,.05) 70%,transparent),linear-gradient(180deg,rgba(0,0,0,.10),rgba(0,0,0,.30));box-shadow:inset 0 1px 0 rgba(255,255,255,.09);}   /* sticky固顶：滚动时名字卡吸附在浮层顶部，底下内容(属性卡/装备/天神)滚动 */
 .rd-head::before{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,94,.7),transparent);}
-.rd-name{font-size:20px;font-weight:900;letter-spacing:2px;line-height:1.15;text-align:center;
-  background:linear-gradient(180deg,#FFF8D8 0%,#FFE9A8 40%,#F2C25E 68%,#D9A83B 100%);
+.rd-toprow{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;}
+.rd-botrow{display:flex;align-items:stretch;justify-content:space-between;gap:12px;margin-top:7px;border-top:1px solid rgba(214,178,110,.14);padding-top:7px;}
+.rd-leftcol{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;}
+.rd-name{font-size:20px;font-weight:900;letter-spacing:2px;line-height:1.15;text-align:left;color:#FFFFFF;
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.4)) drop-shadow(0 2px 6px rgba(0,0,0,.6)) drop-shadow(0 0 12px rgba(255,255,255,.42));}
+.rd-name::after{content:'';display:block;width:52px;height:3px;margin:5px 0 0;border-radius:2px;background:linear-gradient(90deg,transparent,#F2C25E,transparent);box-shadow:0 0 10px rgba(242,194,94,.8);}
+.rd-tag{display:flex;align-items:center;gap:8px;}
+.rd-power{position:relative;overflow:hidden;flex:none;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:radial-gradient(130% 120% at 50% -20%,rgba(255,215,120,.20),rgba(0,0,0,0) 62%),linear-gradient(180deg,#3a2c12,#241b08);border:1px solid #C9A24B;border-radius:10px;padding:9px 14px;box-shadow:0 0 18px rgba(201,162,75,.34),inset 0 1px 0 rgba(255,255,255,.16);}   /* 右侧主属性卡：顶部细金线+卡内顶部微光晕，成为头部视觉焦点 */
+.rd-power::before{content:'';position:absolute;left:8%;right:8%;top:0;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,#F2C25E,transparent);box-shadow:0 0 8px rgba(242,194,94,.8);}
+.rd-power::after{content:'';position:absolute;left:12%;right:12%;top:-45%;height:130%;background:radial-gradient(50% 38% at 50% 0%,rgba(255,218,130,.24),transparent 72%);pointer-events:none;}
+.rd-power b{position:relative;z-index:1;display:block;font-size:9px;color:#E8C77A;letter-spacing:3px;font-weight:600;margin-bottom:4px;text-shadow:0 0 8px rgba(230,190,110,.45);}
+.rd-power span{position:relative;z-index:1;font-size:20px;font-weight:900;letter-spacing:1px;font-variant-numeric:tabular-nums;
+  background:linear-gradient(180deg,#FFE9A8 0%,#FFD75E 48%,#E6A93B 100%);
   -webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 1px 0 rgba(255,255,255,.3)) drop-shadow(0 2px 6px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(255,215,94,.55));}
-.rd-name::after{content:'';display:block;width:56px;height:3px;margin:6px auto 0;border-radius:2px;background:linear-gradient(90deg,transparent,#F2C25E,transparent);box-shadow:0 0 10px rgba(242,194,94,.8);}
-.rd-tag{display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap;justify-content:center;}
-.rd-tier,.rd-rank-b{font-size:10.5px;font-weight:800;padding:3px 10px;border-radius:99px;letter-spacing:1px;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 2px 6px rgba(0,0,0,.45);}
+  filter:drop-shadow(0 1px 0 rgba(255,255,255,.35)) drop-shadow(0 0 10px rgba(255,205,95,.55));}
+.rd-tier,.rd-rank-b{font-size:9px;font-weight:700;padding:2px 8px;border-radius:99px;letter-spacing:.5px;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.22),0 2px 5px rgba(0,0,0,.45);}   /* 阶位/段位胶囊：缩小字号(9px)+收窄内距，与名字20px形成主次层次 */
 .rd-tier{color:#EDDFFF;background:linear-gradient(180deg,rgba(181,140,255,.36),rgba(126,84,214,.30));border:1px solid rgba(193,160,255,.55);text-shadow:0 0 6px rgba(181,140,255,.8);}
 .rd-rank-b{color:#FFF0C4;background:linear-gradient(180deg,rgba(255,215,94,.36),rgba(214,166,54,.28));border:1px solid rgba(255,215,94,.6);text-shadow:0 0 6px rgba(255,215,94,.8);}
-.rd-meta{display:flex;gap:8px;margin-top:9px;flex-wrap:wrap;justify-content:center;}
-.rd-m{display:flex;align-items:center;gap:4px;font-size:10px;color:#C9BE9C;padding:3px 9px;border-radius:8px;background:rgba(0,0,0,.28);border:1px solid rgba(214,178,110,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);}
-.rd-m b{color:#FFE9A8;font-variant-numeric:tabular-nums;font-weight:800;}
+.rd-meta{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;width:100%;justify-content:flex-start;}
+.rd-m{display:flex;align-items:center;gap:4px;font-size:10px;color:#E8DCC0;padding:4px 10px;border-radius:8px;background:linear-gradient(180deg,rgba(0,0,0,.20),rgba(0,0,0,.34));border:1px solid rgba(214,178,110,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 1px 3px rgba(0,0,0,.3);}
+.rd-m b{color:#FFE9A8;font-variant-numeric:tabular-nums;font-weight:800;text-shadow:0 0 6px rgba(255,230,150,.4);}
 .rd-mi{width:7px;height:7px;border-radius:50%;flex:none;box-shadow:0 0 5px currentColor;}
 .rd-mi-lv{background:#7BE6C6;color:#7BE6C6;}
 .rd-mi-pw{background:#FFD75E;color:#FFD75E;}
 .rd-mi-sc{background:#C3A6FF;color:#C3A6FF;}
 .rd-sec-t{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:800;color:#EFE8D8;letter-spacing:1px;margin:10px 0 6px;}
+.rd-attr{margin-bottom:8px;border-radius:12px;padding:9px 11px 10px;background:linear-gradient(180deg,rgba(0,0,0,.16),rgba(0,0,0,.30));border:1px solid rgba(214,178,110,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 2px 6px rgba(0,0,0,.25);}   /* 基础属性卡（6项属性+物攻+生命） */
+.rd-attr .rd-sec-t{margin:0 0 8px;}
+.rd-attr-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;}
+.rd-attr-i{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:6px 9px;border-radius:8px;background:rgba(0,0,0,.22);border:1px solid rgba(214,178,110,.14);box-shadow:inset 0 1px 0 rgba(255,255,255,.05);}
+.rd-attr-i b{font-size:10px;color:#B7AC9A;font-weight:600;letter-spacing:1px;white-space:nowrap;}
+.rd-attr-i span{font-size:12px;font-weight:800;color:#FFD75E;font-variant-numeric:tabular-nums;text-shadow:0 0 6px rgba(255,215,94,.35);}
+.rd-attr-i.atk span{color:#FF9A6A;text-shadow:0 0 6px rgba(255,154,106,.4);}   /* 物理攻击：暖橙 */
+.rd-attr-i.hp span{color:#7CF7C8;text-shadow:0 0 6px rgba(124,247,200,.4);}   /* 生命值：翠绿 */
 .rd-sec-t::before{content:'';width:3px;height:12px;border-radius:2px;background:linear-gradient(180deg,#FFE9A8,#E6B45A);box-shadow:0 0 6px rgba(242,201,107,.6);}
 .rd-slot{display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:9px;background:rgba(0,0,0,.25);border:1px solid rgba(214,178,110,.16);margin-bottom:5px;}
 .rd-ic{width:32px;height:32px;border-radius:8px;overflow:hidden;flex:none;background:#f6efdd;border:1px solid rgba(233,201,122,.5);box-shadow:inset 0 1px 0 #fff;}
@@ -2730,15 +2747,24 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .rd-sd{font-size:9px;color:#8a8375;margin-top:1px;}
 .rd-sv{font-size:11px;font-weight:800;color:#FFD75E;white-space:nowrap;text-shadow:0 0 6px rgba(255,215,94,.4);}
 .rd-empty{color:#6a6150;font-weight:500;}
-.rd-god{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:11px;margin-bottom:6px;background:linear-gradient(180deg,rgba(82,198,218,.12),rgba(0,0,0,.18));border:1px solid rgba(82,198,218,.28);}
+.rd-god{display:flex;align-items:center;gap:8px;padding:5px 7px;border-radius:9px;margin-bottom:5px;background:linear-gradient(180deg,rgba(82,198,218,.12),rgba(0,0,0,.18));border:1px solid rgba(82,198,218,.28);}   /* 与装备行 .rd-slot 尺寸一致 */
 .rd-god.seal{border-color:rgba(181,140,255,.4);background:linear-gradient(180deg,rgba(181,140,255,.14),rgba(0,0,0,.18));}
-.rd-gic{width:36px;height:36px;border-radius:9px;overflow:hidden;flex:none;background:#f6efdd;border:1px solid rgba(233,201,122,.5);}
+.rd-gic{width:32px;height:32px;border-radius:8px;overflow:hidden;flex:none;background:#f6efdd;border:1px solid rgba(233,201,122,.5);box-shadow:inset 0 1px 0 #fff;}   /* 与装备行图标 .rd-ic 统一 32×32/radius8 */
 .rd-gic img{width:100%;height:100%;object-fit:cover;display:block;}
 .rd-gi{flex:1;min-width:0;}
-.rd-gn{font-size:11.5px;font-weight:800;color:#7BE6C6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rd-gn{font-size:11px;font-weight:800;color:#7BE6C6;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .rd-god.seal .rd-gn{color:#C3A6FF;}
-.rd-gd{font-size:9.5px;color:#8a8375;margin-top:1px;}
+.rd-gd{font-size:9px;color:#8a8375;margin-top:1px;}
 .rd-gv{font-size:12px;font-weight:900;color:#FFD75E;white-space:nowrap;text-shadow:0 0 8px rgba(255,215,94,.5);}
+.rd-innate{align-self:flex-start;position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:7px;margin-top:6px;padding:3px 12px;border-radius:99px;background:radial-gradient(130% 120% at 50% -40%,rgba(200,140,255,.34),rgba(0,0,0,0) 55%),radial-gradient(60% 60% at 85% 130%,rgba(255,210,120,.18),transparent 70%),linear-gradient(180deg,#3a2b4e,#241735);border:1px solid rgba(200,140,255,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),inset 0 -6px 10px rgba(0,0,0,.45),0 0 16px rgba(160,100,255,.38);}   /* 紫金光晕：紫主光+底部金辉，独立一行在名字下 */
+.rd-in-ty{font-size:8px;font-weight:700;color:#E8C77A;letter-spacing:1px;padding-right:8px;border-right:1px solid rgba(232,199,122,.4);text-shadow:0 0 6px rgba(230,190,110,.5);}   /* 细"天运"竖标 */
+.rd-in-t{font-size:10px;font-weight:700;color:#C9A6FF;letter-spacing:2px;text-shadow:0 0 6px rgba(180,120,255,.5);}
+.rd-in-v{font-size:18px;font-weight:900;letter-spacing:1px;font-variant-numeric:tabular-nums;background:linear-gradient(180deg,#FFE9A8 0%,#FFD75E 48%,#E6A93B 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 0 rgba(255,255,255,.3)) drop-shadow(0 0 9px rgba(255,205,95,.5));}   /* 数值金渐变放大，与战力卡呼应 */
+.rd-in-tag{font-size:9px;font-weight:800;color:#FFE08A;border:1px solid rgba(255,200,90,.5);border-radius:4px;padding:1px 6px;background:rgba(255,200,90,.14);letter-spacing:1px;text-shadow:0 0 6px rgba(255,200,90,.5);}
+.rd-innate.top{border-color:rgba(255,90,216,.72);box-shadow:inset 0 1px 0 rgba(255,255,255,.2),0 0 24px rgba(255,90,216,.5);}   /* 天运之主：品红紫芒（全服唯一稀有身份） */
+.rd-innate.top .rd-in-t{color:#FFA8EC;}
+.rd-innate.top .rd-in-v{background:linear-gradient(90deg,#ff5ad8,#ffb3f0,#ff5ad8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 14px rgba(255,90,216,.7);}   /* 数值品红渐变 */
+.rd-innate.top .rd-in-tag{color:#fff;background:linear-gradient(180deg,#ff5ad8,#c4289c);border-color:rgba(255,140,225,.85);box-shadow:0 0 10px rgba(255,90,216,.6);}   /* 天运之主标签：品红紫 */
 .rd-main-tag{display:inline-block;font-size:8.5px;color:#0E1B16;background:linear-gradient(180deg,#FFE9A8,#E0B84E);border-radius:4px;padding:1px 4px;font-weight:900;margin-left:4px;vertical-align:1px;}
 .lb-head{background:transparent;color:#6a6458;font-size:9px;letter-spacing:1px;padding:3px 9px;}
 .lb-rank{width:24px;text-align:center;color:#b7ae9c;font-weight:700;}
@@ -5859,7 +5885,7 @@ function aiEquipBonus(st,p){   /* 真实穿戴装备→六维/攻防（与玩家
   if(setN>=5){ b.力量+=200; b.敏捷+=200; b.体质+=200; b.精神+=200; b.智力+=200; b.幸运+=200; b.hp+=2000; } else if(setN>=4){ b.力量+=60; b.敏捷+=60; b.体质+=60; b.幸运+=60; } else if(setN>=3){ b.力量+=30; b.敏捷+=30; b.体质+=30; b.幸运+=30; }   /* 史诗奥格顿套装：穿齐件数给最高档加成（同玩家5590-5594） */
   var ogN=0; ['helm','armor','glove','leg','boot'].forEach(function(tk){ var e=eq[tk]; if(e&&String(e.name).indexOf('传说 奥格顿')>=0) ogN++; });
   b.og=ogN||0;   /* 传说奥格顿件数 */
-  if(((st.ith&&(st.ith.neck||0)+(st.ith.ring||0)+(st.ith.bracelet||0))||0)>=3){ var _g0=st.grow||calcGrowth(p.innate), _lv0=st.lv||1, _pm0=st.perm||{}, _t3=0.3; b.力量+=Math.floor((10+_lv0*_g0.attr+(_pm0.力量||0))*_t3); b.敏捷+=Math.floor((10+_lv0*_g0.attr+(_pm0.敏捷||0))*_t3); b.体质+=Math.floor((10+_lv0*_g0.attr+(_pm0.体质||0))*_t3); b.精神+=Math.floor((10+_lv0*_g0.attr+(_pm0.精神||0))*_t3); b.智力+=Math.floor((10+_lv0*_g0.attr+(_pm0.智力||0))*_t3); b.幸运+=Math.floor((10+_lv0*_g0.attr+(_pm0.幸运||0))*_t3); b.hp+=Math.floor((153+_lv0*_g0.hp+(_pm0.hp||0))*_t3); }   /* 伊泰安首饰3件(实际持有st.ith)：全属性+30%/生命+30%（基于基础，同玩家；获得才有，杜绝凭空） */
+  if(aiWornIth(st)>=3){ var _g0=st.grow||calcGrowth(p.innate), _lv0=st.lv||1, _pm0=st.perm||{}, _t3=0.3; b.力量+=Math.floor((10+_lv0*_g0.attr+(_pm0.力量||0))*_t3); b.敏捷+=Math.floor((10+_lv0*_g0.attr+(_pm0.敏捷||0))*_t3); b.体质+=Math.floor((10+_lv0*_g0.attr+(_pm0.体质||0))*_t3); b.精神+=Math.floor((10+_lv0*_g0.attr+(_pm0.精神||0))*_t3); b.智力+=Math.floor((10+_lv0*_g0.attr+(_pm0.智力||0))*_t3); b.幸运+=Math.floor((10+_lv0*_g0.attr+(_pm0.幸运||0))*_t3); b.hp+=Math.floor((153+_lv0*_g0.hp+(_pm0.hp||0))*_t3); }   /* 伊泰安首饰3件(真实穿戴)：全属性+30%/生命+30%（基于基础，同玩家；获得才有，杜绝凭空） */
   return b;
 }
 function aiBossTierOf(d){ return d>=7?5:(d>=6?6:(d>=5?5:(d>=4?4:(d>=3?3:(d>=2?2:(d>=1?1:0)))))); }   /* 副本→Boss阶位（狄奥多无Boss返回6占位，跳过） */
@@ -5938,8 +5964,9 @@ function aiAdventure(st,p,onlineSec){   /* 奇遇：与玩家完全同一套系�
     else if(ev.fx==='gold'){ st.gold=(st.gold||0)+Math.max(500000000,Math.round((st.gold||0)*(0.5+Math.random()*1.5))); }   /* 一夜暴富：金币越多给越多(玩家同款) */
     else if(ev.fx==='elite'){ st.gold=(st.gold||0)+Math.max(500000000,Math.round((st.gold||0)*0.5)); }
     else if(ev.fx==='god'){ pm.力量=(pm.力量||0)+100000000; pm.敏捷=(pm.敏捷||0)+100000000; pm.体质=(pm.体质||0)+100000000; pm.精神=(pm.精神||0)+100000000; pm.智力=(pm.智力||0)+100000000; pm.幸运=(pm.幸运||0)+100000000; pm.hp=(pm.hp||0)+100000000; }
-    else if(ev.fx==='merchant'){ st.godPower=(st.godPower||0)+1+Math.floor(Math.random()*3); }
-    else if(ev.fx==='gear'||ev.fx==='potion'){ st.godPower=(st.godPower||0)+2; }
+    else if(ev.fx==='merchant'){ var _mk=['godCrystal','godPowerFragment','runeFragment','sealFragment','chaosStone','warGodsFavor'][Math.floor(Math.random()*6)]; if(_mk==='warGodsFavor'){ aiGodGiveSeal(st,p); } else { st.godPower=(st.godPower||0)+1+Math.floor(Math.random()*3); } }   /* 神秘商人：同玩家随机六选一(含神印牌)；非神印材料→godPower计数 */
+    else if(ev.fx==='gear'){ if(Math.random()<0.5){ aiGodGiveSeal(st,p); } else { st.godPower=(st.godPower||0)+2; } }   /* 逆天装备：混沌神石/神印牌 二选一(玩家同源) */
+    else if(ev.fx==='potion'){ st.godPower=(st.godPower||0)+2; }
     /* boost/coins/ticket：玩家专属临时/塔币/抽奖券，AI忽略 */
     }
   }
@@ -6041,7 +6068,7 @@ function aiGodUpgrade(st,p,godBudget){   /* 后台自动升级主天神（复刻
     }
   }
 }
-function aiGodAcquire(st,p,onlineSec){   /* AI真实获得天神牌子（与玩家同源：克里普特/神秘宝箱掉神符牌子，世界boss/挑战塔/无尽掉神印牌子）——获得才拥有、只有拥有才上阵，杜绝后台凭空生成 */
+function aiGodAcquire(st,p,onlineSec){   /* AI真实获得天神牌子（与玩家同源）——获得才拥有、只有拥有才上阵，杜绝后台凭空生成；神印牌改由 aiGodSealContent(挑战塔70/无尽70/克里普特BOSS同概率)+aiAdventure(奇遇)同链路获得，不再独立概率模型 */
   if(!st.gods) st.gods={main:null,sub1:null};
   var dayFrac=Math.max(1e-9,onlineSec/86400), lv=st.lv||1, lu=1+p.luck+(p.pay||0)*0.5;
   /* 神符牌子(金色品质·低属性)：克里普特/神秘宝箱同源——AI刷高阶副本获得（普通玩家多在中期才拥有金天神） */
@@ -6050,16 +6077,27 @@ function aiGodAcquire(st,p,onlineSec){   /* AI真实获得天神牌子（与玩�
     st.gods.main={ id:'ai_'+p.id+'_god_rune_'+_rbp.name, name:_rbp.name, type:_rbp.type, img:_rbp.img, grade:0, star:1, currentExp:0, requiredExp:100, fullAttributes:_rbp.fullAttributes };
     return;
   }
-  /* 神印牌子(紫色品质·亿级属性)：世界boss/挑战塔70/无尽70同源——更稀有，神豪/欧皇/高等级略高 */
-  if(Math.random()<0.008*lu*(1+lv/500)*dayFrac){
-    var _sbp=aiGodBlueprint('god_seal');
-    var _seal={ id:'ai_'+p.id+'_god_seal_'+_sbp.name, name:_sbp.name, type:_sbp.type, img:_sbp.img, grade:0, star:1, currentExp:0, requiredExp:100, fullAttributes:_sbp.fullAttributes };
-    if(!st.gods.main){ st.gods.main=_seal; }
-    else if(st.gods.main.type!=='god_seal'){ st.gods.sub1=st.gods.main; st.gods.main=_seal; }   /* 紫最强做主，已有金降副 */
-    else if(!st.gods.sub1){ st.gods.sub1=_seal; }
+}
+function aiGodGiveSeal(st,p){   /* 给AI一块神印牌(玩家同套蓝本，拥有才上阵)：紫神印做主，已有金则金降副、主升紫（同玩家"获得才有、最强为主"） */
+  if(!st.gods) st.gods={main:null,sub1:null};
+  var _bp=aiGodBlueprint('god_seal');
+  var _seal={ id:'ai_'+p.id+'_god_seal_'+_bp.name, name:_bp.name, type:_bp.type, img:_bp.img, grade:0, star:1, currentExp:0, requiredExp:100, fullAttributes:_bp.fullAttributes };
+  if(!st.gods.main){ st.gods.main=_seal; }
+  else if(st.gods.main.type!=='god_seal'){ st.gods.sub1=st.gods.main; st.gods.main=_seal; }   /* 紫最强做主，已有金降副 */
+  else if(!st.gods.sub1){ st.gods.sub1=_seal; }
+}
+function aiGodSealContent(st,p,onlineSec){   /* AI神印牌获得(与玩家真正同链路)：挑战塔70/无尽70一次通关必得、克里普特BOSS 5%(同玩家概率)，不再独立概率模型 */
+  var lv=st.lv||1;
+  /* 挑战塔70 / 无尽70：玩家一次性层奖励——AI一生各一次，达70层门槛通关必得 */
+  if(!st.god70t && lv>=70){ st.god70t=1; aiGodGiveSeal(st,p); }
+  if(!st.god70n && lv>=70){ st.god70n=1; aiGodGiveSeal(st,p); }
+  /* 克里普特BOSS 5%：等级达克里普特解锁60后，AI刷克里普特每回合BOSS击杀按玩家同概率5% */
+  if(lv>=60){
+    var bossKills=Math.max(1,Math.floor(onlineSec/1200));   /* 每20分钟一次克里普特BOSS击杀 */
+    for(var _k=0;_k<bossKills;_k++){ if(Math.random()<0.05) aiGodGiveSeal(st,p); }   /* 同玩家克里普特BOSS 神印牌 5% */
   }
 }
-function aiGodStep(st,p,onlineSec,godBudget){ aiGodAcquire(st,p,onlineSec); _aiGodEnsure(st,p); aiGodTaskDrop(st,p); aiGodDrops(st,p,onlineSec); aiGodUpgrade(st,p,godBudget); }
+function aiGodStep(st,p,onlineSec,godBudget){ aiGodAcquire(st,p,onlineSec); aiGodSealContent(st,p,onlineSec); _aiGodEnsure(st,p); aiGodTaskDrop(st,p); aiGodDrops(st,p,onlineSec); aiGodUpgrade(st,p,godBudget); }
 function aiGodBonus(st){   /* 上阵天神加成：主100%/副50%（同玩家 GOD.formation 编队累加） */
   var tot={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0,vitality:0,patk:0,pdef:0,mdef:0};
   var gs=st.gods; if(!gs) return tot;
@@ -6100,19 +6138,34 @@ function aiPriority(st,p){   /* 状态感知决策层：结合每个AI自身情�
            seal: sealWorth?1:0,                   /* 攒秘印轮回优先级 */
            god: (godMat>150&&canBoss)?0.1:0 };    /* 材料富余+战力够→天神适度升(提升滚雪球)；否则攒材料超脱后升(轮回清空不浪费) */
 }
-function aiIthDrop(st,p,onlineSec){   /* AI真实获得伊泰安（全服唯一）：与玩家同源(世界boss传说宝箱/雕俱)，消耗总量ITH_LEFT，AI存档st.ith持有件数，发全服公告。极稀缺：单个AI每天期望约0.01~0.06件(神豪/欧皇/高等级略高)，全服AI合计~1~3件/天，玩家同样竞争，每部位总量10硬限制 */
-  if(!st.ith) st.ith={neck:0,ring:0,bracelet:0};
-  var keys=['yitaiNecklace','yitaiRing','yitaiBracelet'].filter(function(k){ return (ITH_LEFT[k]||0)>0; });
-  if(!keys.length) return;   /* 该部位已全部掉完：不再获得 */
-  var dayFrac=Math.max(1e-9,onlineSec/86400);
-  var rate=0.012*(1+(p.pay||0)*0.6+(p.luck||0)*0.8+(st.lv||1)/300);   /* 单个AI每天期望件数：基础0.012，神豪/欧皇/高等级微增；全服~1.2件/天 */
-  if(Math.random()>rate*dayFrac) return;
-  var k=keys[Math.floor(Math.random()*keys.length)];
-  var sk=k==='yitaiNecklace'?'neck':(k==='yitaiRing'?'ring':'bracelet');
-  ITH_LEFT[k]--; st.ith[sk]=(st.ith[sk]||0)+1;
-  var who=p.name||'神秘玩家';
-  ithAnnounce((ITEM_BLUEPRINTS[k]&&ITEM_BLUEPRINTS[k].name)||'伊泰安饰品', who, ITH_LEFT[k]||0);
-  try{ aiSaveField(); }catch(e){}
+function aiIthDrop(st,p,onlineSec){   /* AI雕俱星座挂机掉伊泰安项链：与玩家同来源(雕俱星座)、同前提(总量ITH_LEFT>0 且未拥有)、同消耗总量/发全服公告；仅掉落间隔与概率按用户指定下调(玩家每20秒0.5% → AI每60秒0.005%)，其余规则完全一致。掉落后生成真实伊泰安项链物品入背包，由aiAutoEquip穿戴到首饰槽（与玩家获得同链路，杜绝凭空） */
+  if(!st.bag) st.bag=[];
+  if(ITH_LEFT.yitaiNecklace<=0) return;   /* 项链总量已掉完：不再掉落 */
+  var _hasIth=function(bag,eq){ for(var i=0;i<bag.length;i++) if(bag[i]&&String(bag[i].name).indexOf('伊泰安项链')>=0) return true; for(var k in (eq||{})){ var e=eq[k]; if(e&&String(e.name).indexOf('伊泰安项链')>=0) return true; } return false; };
+  if(_hasIth(st.bag,st.equip)) return;   /* 已拥有则不再掉（玩家 hasYitaiNeck 同规则，杜绝重复） */
+  var rolls=onlineSec/60;   /* 雕俱星座挂机：每60秒结算一次 */
+  if(Math.random()<Math.min(1,rolls*0.00005)){   /* 每60秒 0.005% 概率掉项链（玩家为每20秒0.5%，AI按用户指定下调） */
+    ITH_LEFT.yitaiNecklace--;
+    var m=mkLoot(ITEM_BLUEPRINTS.yitaiNecklace); m.count=1; st.bag.push(m);   /* 真实伊泰安项链物品入包（后续 aiAutoEquip 穿到 neck 槽） */
+    ithAnnounce((ITEM_BLUEPRINTS.yitaiNecklace&&ITEM_BLUEPRINTS.yitaiNecklace.name)||'伊泰安项链', p.name||'神秘玩家', ITH_LEFT.yitaiNecklace||0);   /* 全服公告：谁获得、剩余多少 */
+    try{ aiSaveField(); }catch(e){}
+  }
+}
+function aiOpenLegendBox(st,p){   /* AI世界boss击杀后按名次领的传说宝箱开箱：与玩家useLegendBox同规则——1%伊泰安随机部位(按各部位总量ITH_LEFT，总量0则该部位不参与/概率归0落回传说)，99%传说魔翼/神裁之刃/传说奥格顿任意部位随机一件入真实背包(st.bag)；命中伊泰安生成真实物品入包(后续aiAutoEquip穿到5首饰槽)并扣总量发全服公告 */
+  if(!st.bag) st.bag=[];
+  if(Math.random()<0.01){
+    var _yp=['yitaiNecklace','yitaiRing','yitaiBracelet'].filter(function(k){ return (ITH_LEFT[k]||0)>0; });
+    if(_yp.length){
+      var _yk=_yp[Math.floor(Math.random()*_yp.length)];
+      ITH_LEFT[_yk]--;
+      var m=mkLoot(ITEM_BLUEPRINTS[_yk]); m.count=1; st.bag.push(m);   /* 真实伊泰安物品入包（项链→neck、戒指→ring1/ring2、手镯→bangle1/bangle2） */
+      ithAnnounce((ITEM_BLUEPRINTS[_yk]&&ITEM_BLUEPRINTS[_yk].name)||'伊泰安饰品', p.name||'神秘玩家', ITH_LEFT[_yk]||0);   /* 全服公告：谁获得、剩余多少 */
+      return;
+    }
+  }
+  var _lp=[ITEM_BLUEPRINTS.legendWings,ITEM_BLUEPRINTS.shencaiBlade,ITEM_BLUEPRINTS.legendOgdenHelmet,ITEM_BLUEPRINTS.legendOgdenChest,ITEM_BLUEPRINTS.legendOgdenGloves,ITEM_BLUEPRINTS.legendOgdenLeggings,ITEM_BLUEPRINTS.legendOgdenBoots];
+  var m=mkLoot(_lp[Math.floor(Math.random()*_lp.length)]);
+  st.bag.push(m);   /* 99%：传说魔翼/神裁之刃/传说奥格顿任意部位随机一件，真实入背包 */
 }
 function ithAnnounce(name, who, left){   /* 伊泰安限量掉落全服公告：谁获得、剩余多少、催促竞争；掉完绝版提示 */
   var total=10, txt;
@@ -6186,34 +6239,54 @@ function aiTryBuyGold(st,p){   /* 用氪金向其他AI购买金币：100氪金=1
     st.kf-=kfCost; st.gold+=amt; q.st.gold-=amt; q.st.kf=(q.st.kf||0)+kfCost;
   }
 }
-function aiEnhance(st,p,enhTarget){   /* AI逐级点强化真实穿戴武器：与玩家 weaponEnhCfg 同款花费+概率；扣金币→概率成功 enhanceLevel+1，失败→有安全护符消耗1个不掉级继续/无则掉落1级(至0)并停止（与玩家统一规则），金币不足→氪金购买，买不到即停。无武器则跳过。目标由状态感知决策层定(战力不足→+6~8够刷本；能刷本→+5够用省金币投神坛/攒秘印；超脱→20)。神豪氪金烧完也可能不到目标，看概率，与玩家一致 */
+function aiEnhance(st,p,enhTarget){   /* AI逐级点强化真实穿戴武器+5件防具（与玩家 weaponEnhCfg/armorEnhCfg 同款花费+概率；扣金币→成功+1，失败→有安全护符消耗1个不掉级继续/无则掉落1级至0并继续，金币不足→氪金购买买不到即停；先武器后防具，防具目标=武器目标×0.6(2~20)，目标由状态感知决策层定；神豪氪金烧完也可能不到目标，看概率，与玩家一致 */
   st.enh=st.enh||{lv:0,stars:0,iset:0,og:0};
-  var w=st.equip&&st.equip.weapon; if(!w){ st.enh.lv=0; st._enhSaving=0; return; }   /* 无穿戴武器：无法强化（需先刷本掉落武器并穿上） */
-  var lv=w.enhanceLevel||0, maxLv=enhTarget||5; if(maxLv>20) maxLv=20;
-  for(var g=0;g<60&&lv<maxLv;g++){
+  var maxLv=Math.min(20,enhTarget||5);
+  var _guard=function(bag){ var gi=-1; for(var h=0;h<(bag||[]).length;h++) if(bag[h]&&bag[h].type==='enh_guard'){ gi=h; break; } return gi; };
+  var _buy=function(){ var b=st.gold; aiTryBuyGold(st,p); return st.gold===b; };   /* 金币不足→氪金买；买不到才停 */
+  /* --- 武器（主目标，最高优先） --- */
+  var w=st.equip&&st.equip.weapon, lv=w?(w.enhanceLevel||0):0;
+  for(var g=0;w&&g<60&&lv<maxLv;g++){
     var cfg=weaponEnhCfg(lv);
     if(st.gold>=cfg.cost){ st.gold-=cfg.cost;
       if(Math.random()<cfg.rate){ lv++; }   /* 成功：不消耗安全护符 */
-      else {
-        /* 失败：有安全护符→消耗1个不掉级；无→掉落1级(至0)。只要金币够就继续强化，掉到0也不锁死（与玩家统一规则） */
-        var gi=-1; for(var h=0;h<(st.bag||[]).length;h++) if(st.bag[h]&&st.bag[h].type==='enh_guard'){ gi=h; break; }
-        if(gi>=0){ st.bag[gi].count=(st.bag[gi].count||1)-1; if(st.bag[gi].count<=0) st.bag.splice(gi,1); }
-        else { lv=Math.max(0,lv-1); }
-      }
+      else { var gi=_guard(st.bag); if(gi>=0){ st.bag[gi].count=(st.bag[gi].count||1)-1; if(st.bag[gi].count<=0) st.bag.splice(gi,1); } else { lv=Math.max(0,lv-1); } }   /* 失败：有护符消耗1不掉级/无则掉1级(至0)，金币够就继续 */
     }
-    else { var b=st.gold; aiTryBuyGold(st,p); if(st.gold===b) break; }   /* 仅金币不足才停强化 */
+    else if(_buy()) break;
   }
-  w.enhanceLevel=lv; st.enh.lv=lv;   /* 强化等级落在真实穿戴武器上（与玩家同对象），战力按 weaponEnhAtk 折算 */
-  st._enhSaving = (lv<maxLv && (st.gold||0) < weaponEnhCfg(lv).cost) ? 1 : 0;   /* 强化是否仍缺金币：是→本步天神升级让路，金币全留强化（强化绝对优先） */
+  if(w){ w.enhanceLevel=lv; st.enh.lv=lv; } else st.enh.lv=0;   /* 武器强化等级落在真实穿戴武器上（与玩家同对象），战力按 weaponEnhAtk 折算 */
+  /* --- 防具：5件逐级（同玩家 armorEnhCfg 花费+概率+安全护符；防具为次要提升，用剩余金币） --- */
+  var armorTarget=Math.min(20,Math.max(2,Math.round(maxLv*0.6)));
+  var _armorMissing=0;
+  ['helm','armor','glove','leg','boot'].forEach(function(tk){
+    var e=st.equip&&st.equip[tk]; if(!e) return;
+    var alv=e.enhanceLevel||0;
+    for(var q=0;q<60&&alv<armorTarget;q++){
+      var ac=armorEnhCfg(alv);
+      if(st.gold>=ac.cost){ st.gold-=ac.cost;
+        if(Math.random()<ac.rate){ alv++; }
+        else { var g2=_guard(st.bag); if(g2>=0){ st.bag[g2].count=(st.bag[g2].count||1)-1; if(st.bag[g2].count<=0) st.bag.splice(g2,1); } else { alv=Math.max(0,alv-1); } }
+      }
+      else if(_buy()) break;
+    }
+    e.enhanceLevel=alv;   /* 每件防具独立强化等级（与玩家同对象），防具榜取5件最高 */
+    if(alv<armorTarget && (st.gold||0)<armorEnhCfg(alv).cost) _armorMissing=1;
+  });
+  st._enhSaving = ((w&&(st.enh.lv||0)<maxLv && (st.gold||0)<weaponEnhCfg(st.enh.lv).cost)||_armorMissing) ? 1 : 0;   /* 武器或任一防具仍缺金币→本步天神升级让路，金币全留强化（强化绝对优先） */
 }
+function aiMaxArmorEnh(st){ var mx=0; ['helm','armor','glove','leg','boot'].forEach(function(tk){ var e=st.equip&&st.equip[tk]; if(e&&(e.enhanceLevel||0)>mx) mx=e.enhanceLevel||0; }); return mx; }   /* AI防具强化：5件中取最高（与玩家 maxArmorEnh 同口径，防具榜用） */
+function aiArmorAbs(st){ var ab=0; ['helm','armor','glove','leg','boot'].forEach(function(tk){ var e=st.equip&&st.equip[tk]; if(e) ab+=armorEnhAbs(e.enhanceLevel||0)+(e.damageAbsorption||0); }); return ab; }   /* AI防具强化伤害吸收：每件 armorEnhAbs+装备固定吸收合计（同玩家） */
 /* ===== AI 真实物品体系：掉落入背包 → 自动穿戴 → 自动镶嵌（与玩家完全同链路，杜绝凭空） ===== */
 function aiItemScore(it){ if(!it) return -1; return (it.strength||0)+(it.agility||0)+(it.constitution||0)+(it.spirit||0)+(it.intelligence||0)+(it.luck||0)+(it.maxHp||0)/5+(it.physicalAttack||0)*3+(it.defense||0)*2; }   /* 装备战力评分（仿玩家穿装判断） */
-function aiRollEquip(st,p,pw){   /* 按AI战力/等级滚一件真实可穿戴装备（武器25%/防具75%），品质档随战力提升（普通→稀有→史诗→传说，近似玩家副本掉落梯度）；从真实蓝本 ITEM_BLUEPRINTS 取，mkLoot 生成（真实物品，不凭空） */
+function aiRollEquip(st,p,pw){   /* 按AI战力/等级滚一件真实可穿戴装备（武器25%/防具60%/首饰15%），品质档随战力提升（普通→稀有→史诗→传说，近似玩家副本掉落梯度）；从真实蓝本 ITEM_BLUEPRINTS 取，mkLoot 生成（真实物品，不凭空） */
   var lv=st.lv||1;
   var qual = pw>=1e11?'legend':(pw>=5e8?'epic':(pw>=5e6?'rare':'normal'));   /* 战力→品质档：初期普通/稀有，中后期史诗，顶尖传说 */
   var bp=null;
-  if(Math.random()<0.25){   /* 武器：魔翼系列（传说档才传说魔翼/神裁之刃，其余史诗魔翼） */
+  var _r=Math.random();
+  if(_r<0.25){   /* 武器：魔翼系列（传说档才传说魔翼/神裁之刃，其余史诗魔翼） */
     bp = qual==='legend' ? ITEM_BLUEPRINTS[Math.random()<0.5?'legendWings':'shencaiBlade'] : ITEM_BLUEPRINTS.epicWings;
+  } else if(_r<0.40){   /* 首饰：普通项链/戒指/手镯（domination 魔灵统御系列，equipLevel 10，同玩家普通首饰） */
+    bp=ITEM_BLUEPRINTS[['dominationNecklace','dominationRing','dominationBracelet'][Math.floor(Math.random()*3)]];
   } else {   /* 防具：奥格顿 普通/稀有/史诗/传说 品质梯度 */
     var pool = qual==='legend'?['legendOgdenHelmet','legendOgdenChest','legendOgdenGloves','legendOgdenLeggings','legendOgdenBoots']
              : qual==='epic'?['epicOgdenHelmet','epicOgdenChest','epicOgdenGloves','epicOgdenLeggings','epicOgdenBoots']
@@ -6244,13 +6317,18 @@ function aiFarmDrop(st,p,onlineSec){   /* 刷本真实掉落装备/宝石/材料
     else if(roll<0.52){ var mt=aiRollMaterial(lv); if(mt) st.bag.push(mt); }   /* 材料：神力碎片等（真实） */
   }
 }
-function aiAutoEquip(st,p){   /* 自动穿戴背包里最利于战力的武器/防具（仿玩家autoEquip：同槽位按aiItemScore比较，穿更好的；换下的旧装回背包）。真实穿戴到st.equip，不凭空——从已真实掉落的背包物品穿戴 */
+function aiAutoEquip(st,p){   /* 自动穿戴背包里最利于战力的武器/防具/首饰（仿玩家autoEquip：同槽位按aiItemScore比较，穿更好的；换下的旧装回背包）。首饰5槽：项链neck/戒指ring1,ring2/手镯bangle1,bangle2（同玩家EQ_ACCEPT）。真实穿戴到st.equip，不凭空——从已真实掉落的背包物品穿戴。遵守穿戴等级要求：角色等级(st.lv)需≥装备equipLevel，超等级的旧装脱回背包（与玩家4832同规则） */
   if(!st.bag||!st.equip) return;
-  var types=[['weapon','weapon'],['helmet','helm'],['chest','armor'],['gloves','glove'],['leggings','leg'],['boots','boot']];
+  var lv=st.lv||1;
+  var types=[['weapon','weapon'],['helmet','helm'],['chest','armor'],['gloves','glove'],['leggings','leg'],['boots','boot'],
+             ['necklace','neck'],['ring','ring1'],['ring','ring2'],['bracelet','bangle1'],['bracelet','bangle2']];
   for(var ti=0;ti<types.length;ti++){
-    var t=types[ti][0], slot=types[ti][1], cur=st.equip[slot]||null, best=cur, bestIdx=-1;
+    var t=types[ti][0], slot=types[ti][1], cur=st.equip[slot]||null;
+    if(cur && (cur.equipLevel||0)>lv){ st.bag.push(cur); st.equip[slot]=null; cur=null; }   /* 超等级旧装：脱回背包（等级不足不可穿戴） */
+    var best=cur, bestIdx=-1;
     for(var i=0;i<st.bag.length;i++){
       var it=st.bag[i]; if(!it||it.type!==t) continue;
+      if((it.equipLevel||0)>lv) continue;   /* 仅可穿戴（equipLevel≤角色等级）者参与评分 */
       if(!best||aiItemScore(it)>aiItemScore(best)){ best=it; bestIdx=i; }
     }
     if(bestIdx>=0){ var old=st.equip[slot]||null; st.equip[slot]=st.bag[bestIdx]; st.bag.splice(bestIdx,1); if(old) st.bag.push(old); }
@@ -6327,7 +6405,7 @@ function aiBuildState(st,p){   /* 玩家同口径：六维(含perm)→攻防血�
   var asc=(st.ws>=99 && (st.core||0)>=1); var tierIdx=asc?6:ti;   /* 超脱·轮回主宰=99世圆满+太初神核×1(与世界boss遗物匣碎片合成，玩家同规则)。AI神核来自世界boss前十开匣或金币购买，杜绝凭空生成 */
   var fdr=Math.min(0.5,(st.altar.lv||0)*0.005+Math.min(0.3,((st.talents||{}).fdr||0)*0.03));   /* 神坛·御天(fdr+0.5%/级封顶50%)+轮回天赋·御守(3%/级封顶30%)：同玩家 reincFdr */
   var ig=0,tr=0,add=0;
-  var ithN=(st.ith&&(st.ith.neck||0)+(st.ith.ring||0)+(st.ith.bracelet||0))||0;   /* AI实际持有伊泰安件数（全服唯一，获得才有，杜绝凭空） */
+  var ithN=aiWornIth(st);   /* AI穿戴中的伊泰安件数（真实穿在5首饰槽+武器防具，同玩家ISET数equipState口径，获得才有，杜绝凭空） */
   if(tierIdx>=5){ ig+=0.20;tr+=0.20; } else if(tierIdx>=4){ ig+=0.08;tr+=0.08; } else if(tierIdx>=3){ ig+=0.05; }
   if(ithN>=5)ig+=0.30;   /* 伊泰安5件：无视防御30%（实际持有才触发，同玩家） */
   tr+=Math.min(0.2,tierIdx>=4?Math.min(0.2,st.altar.lv*0.002):0);
@@ -6338,7 +6416,7 @@ function aiBuildState(st,p){   /* 玩家同口径：六维(含perm)→攻防血�
     var _aiN=(p&&p.name)||'无名者';
     try{ if(typeof showServerNotice==='function') showServerNotice(tierIdx===6?('恭贺 「'+_aiN+'」 突破【超脱 · 轮回主宰】！九转轮回终成正果 · 超脱三界 · 主宰万古 · 一念之间，君临天下！'):('恭贺 「'+_aiN+'」 晋升【大帝 · 万古无双】阶位！威震寰宇 · 君临诸天 · 神魔皆俯首，自此问鼎巅峰！')); }catch(e){}
   }
-  return {pw:pw,atk:Math.round(patk),def:Math.round(pdef),hp:Math.round(hp2),agi:agi,tierIdx:tierIdx,asc:asc,fdr:fdr,tr:tr,ig:ig,add:add,atkElem:(ithN>=3&&p.id%2===0)?'fire':(ithN>=3?'wind':null),A:A};   /* atkElem属性攻击也按实际伊泰安持有件数（≥3出属性攻击，同玩家） */
+  return {pw:pw,atk:Math.round(patk),def:Math.round(pdef),hp:Math.round(hp2),agi:agi,tierIdx:tierIdx,asc:asc,fdr:fdr,tr:tr,ig:ig,add:add,atkElem:(ithN>=3&&p.id%2===0)?'fire':(ithN>=3?'wind':null),A:A,armorAbs:aiArmorAbs(st)};   /* atkElem属性攻击也按实际伊泰安持有件数（≥3出属性攻击，同玩家）；armorAbs=防具强化伤害吸收（与玩家同口径） */
 }
 function aiSaveField(){ try{ localStorage.setItem('shenqi_field_roster',JSON.stringify(FIELD_ROSTER)); }catch(e){} }
 function aiHeartbeat(){ ensureFieldRoster(); for(var i=0;i<FIELD_ROSTER.length;i++){ var _p=FIELD_ROSTER[i]; aiEnsureAdvance(_p); if(typeof aiAuction==='function' && AUCTION && AUCTION.list){ try{ aiAuction(_p.st,_p,Date.now()); }catch(e){} } } aiSaveField(); try{ if(location.hash.indexOf('#home')>=0 && typeof renderLimitHome==='function') renderLimitHome(); }catch(e){} }   /* 低频心跳：挂机页面持续发育（配合打开时惰性补算）；停在主页时同步刷新限量神装剩余（AI掉落伊泰安后主页实时更新）；AI 参与拍卖（真实资源上架/购买） */
@@ -6354,7 +6432,7 @@ function aiBuild(p,sec){
   var _wingTr=st.enh.stars>=1?Math.min(0.30,0.05+0.0125*st.enh.lv):0;
   var _bladeTr=st.enh.stars>=2?0.15:0;
   var _ogAdd=st.enh.iset>=3?0.10:0;
-  return {name:p.name+'（'+_tier+'）',type:type,typeC:{大能:'#FFD75E',强者:'#C79AFF',精英:'#5FB8FF',普通:'#8FA3B8',平民:'#9AA5B1'}[type],innate:p.innate,lv:st.lv,hp:B.hp,atk:B.atk,def:B.def,pw:B.pw,eq:'',adv:'',sp:sp,charge:p.pay>0,tier:_tier,enhLv:st.enh.lv,thStar:st.enh.stars,agi:B.agi,tierIdx:ti,iset:st.enh.iset,title:_title,altarTrue:(ti>=4?0.10:(ti===3?0.05:0))*(p.effort>0.6?1:0.5),medalTr:_medalTr,wingTr:_wingTr,bladeTr:_bladeTr,ogAdd:_ogAdd,atkElem:B.atkElem,fdr:B.fdr,altLv:st.altar.lv,ws:st.ws,effDay:st.effSec/86400}; }
+  return {name:p.name+'（'+_tier+'）',type:type,typeC:{大能:'#FFD75E',强者:'#C79AFF',精英:'#5FB8FF',普通:'#8FA3B8',平民:'#9AA5B1'}[type],innate:p.innate,lv:st.lv,hp:B.hp,atk:B.atk,def:B.def,pw:B.pw,eq:'',adv:'',sp:sp,charge:p.pay>0,tier:_tier,enhLv:st.enh.lv,thStar:st.enh.stars,agi:B.agi,tierIdx:ti,iset:st.enh.iset,title:_title,altarTrue:(ti>=4?0.10:(ti===3?0.05:0))*(p.effort>0.6?1:0.5),medalTr:_medalTr,wingTr:_wingTr,bladeTr:_bladeTr,ogAdd:_ogAdd,atkElem:B.atkElem,fdr:B.fdr,altLv:st.altar.lv,ws:st.ws,effDay:st.effSec/86400,armorAbs:B.armorAbs,armorEnh:aiMaxArmorEnh(st)}; }
 function mkFieldOpps(){ serverStartInit(); ensureFieldRoster();
   var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
   var sorted=FIELD_ROSTER.slice().sort(function(a,b){ return aiBuild(b,sec).pw-aiBuild(a,sec).pw; });
@@ -6371,7 +6449,7 @@ function bfCharAtk(){ var _rt=roleTierAtk(), _ta=titleAtk(), _tm=tMedalAtk(); va
 function bfOppTraits(o){ var ig=0,tr=0,add=0; if(o.tierIdx>=5){ig+=0.20;tr+=0.20;} else if(o.tierIdx>=4){ig+=0.08;tr+=0.08;} else if(o.tierIdx>=3){ig+=0.05;} if(o.iset>=5)ig+=0.30; if(o.title){ig+=o.title.ig||0; tr+=o.title.tr||0;} tr+=(o.altarTrue||0)+(o.medalTr||0)+(o.wingTr||0)+(o.bladeTr||0); add+=(o.ogAdd||0); return {ig:ig,real:tr,add:add}; }   /* 对手攻击特性=玩家同口径累加：阶位(真神5%/神王8%+8%/大帝20%+20%/超脱30%+30%)+伊泰安套装30%+称号+黄金神坛真伤+徽章真伤+图鉴传说武器真伤+奥格顿增伤 */
 function bfOppAtk(o){ var t=bfOppTraits(o); return {atk:o.atk, realAtk:o.atk, ig:t.ig, real:t.real, add:t.add, attackElem:o.atkElem||null, atkElemPct:(o.atkElem?0.3:0)}; }   /* 对手攻击参数→统一 calcHit A：特性完全由配置源（阶位/装备/称号/神坛/徽章/图鉴）按玩家同规则累加 */
 function bfCharDef(){ var _fdr=(typeof finalDR==='function'?Math.min(0.9,finalDR()+(typeof reincFdr==='function'?reincFdr():0)+(typeof altarFdrPct==='function'?altarFdrPct():0)):0); var _abs=(typeof TR!=='undefined'&&TR)?(TR.absorb||0):0; return {def:(CHARACTER.combat[5]&&parseInt(CHARACTER.combat[5].v,10))||0, fdr:_fdr, mdef:0, attrDefDR:0, nativeElem:(typeof charDefElem==='function'?charDefElem():null), abs:_abs}; }   /* 角色防御参数→统一 calcHit D（最终减伤/吸收） */
-function bfOppDef(o){ return {def:o.def, fdr:Math.min(0.9,o.fdr||0), mdef:0, attrDefDR:0, nativeElem:null, abs:0}; }   /* 对手防御参数→统一 calcHit D：含黄金神坛·御天减伤(封顶90%) */
+function bfOppDef(o){ return {def:o.def, fdr:Math.min(0.9,o.fdr||0), mdef:0, attrDefDR:0, nativeElem:null, abs:o.armorAbs||0}; }   /* 对手防御参数→统一 calcHit D：含黄金神坛·御天减伤(封顶90%)+防具强化伤害吸收(同玩家) */
 function oppAtkGap(o){ var a=o.agi||(o.lv*3+10); return Math.min(1280, Math.max(380, Math.round(305000/Math.pow(Math.max(1,a),0.3228)))); }   /* 对手攻速间隔ms：同角色幂律公式，基于敏捷（玩家模型） */
 function fightStep(){ if(!BFF) return; var B=BFF; B.tick++; var log=document.getElementById('ff-log'); var _aC=bfCharAtk(), _dO=bfOppDef(B.o), _aO=bfOppAtk(B.o), _dC=bfCharDef(); var _lvC=Math.min(80,CHARACTER.info.level||80); var fr=520; B.myAtkAcc=(B.myAtkAcc||0)+fr; B.oAtkAcc=(B.oAtkAcc||0)+fr; while(B.oHp>0&&B.myAtkAcc>=B.myGap){ B.myAtkAcc-=B.myGap; if(Math.random()>hitRate(HIT_P2M,_aC.atk,_aO.atk,_lvC,B.o.lv,null,altarHitBonus(),0)){ log.innerHTML+='<div><span class="dmg-m">你的攻击</span> <i style="color:#8b8272">被闪避</i></div>'; } else { var d1=Math.max(1,calcHit(_aC,_dO)); B.oHp-=d1; log.innerHTML+='<div><span class="dmg-m">你的攻击</span> 造成 <b>'+fmtWan(dispVal(d1))+'</b> 伤害</div>'; } if(B.oHp<=0){ B.win=true; break; } } while(B.myHp>0&&B.oAtkAcc>=B.oGap){ B.oAtkAcc-=B.oGap; if(Math.random()>hitRate(HIT_M2P,_aO.atk,_aC.atk,B.o.lv,_lvC,null,0,0)){ log.innerHTML+='<div><span class="dmg-o">对手反击</span> <i style="color:#8b8272">被你闪避</i></div>'; } else { var d2=Math.max(1,calcHit(_aO,_dC)); B.myHp-=d2; log.innerHTML+='<div><span class="dmg-o">对手反击</span> 造成 <b>'+fmtWan(dispVal(d2))+'</b> 伤害</div>'; } if(B.myHp<=0){ B.win=false; break; } } log.scrollTop=log.scrollHeight; var myPct=Math.max(0,B.myHp/B.myHp0*100), oPct=Math.max(0,B.oHp/B.oHp0*100); document.getElementById('ff-hp-my').style.width=myPct+'%'; document.getElementById('ff-hp-opp').style.width=oPct+'%'; setHpNum('my',B.myHp); setHpNum('opp',B.oHp); if(B.win!=null){ finishFight(); } }
 function finishFight(){ if(!BFF) return; var B=BFF, my=rolePower(); clearInterval(B.timer); var merit=B.win?Math.round(50+(B.o.pw/Math.max(1,my))*300):0; var cr=(B.win&&Math.random()<0.4)?1:0; BATTLE.merit+=merit; BATTLE.crystal+=cr; saveGame(); var res=document.getElementById('ff-result'); var _tu=B.timeUp?'<span style="color:#b7ac9a;font-size:11px">限时结束·</span>':''; if(B.win) res.innerHTML=_tu+'<b style="color:#FFD75E">讨伐成功</b> · 战功 <b style="color:#FFD75E">+'+merit+'</b>'+(cr?' · 神格结晶 <b style="color:#7EE8C2">+'+cr+'</b>':''); else res.innerHTML=_tu+'<b style="color:#FF5A5A">讨伐失利</b> · <span style="color:#FF5A5A">未获得战功</span>'; document.getElementById('ff-end').classList.add('show'); }
@@ -9456,7 +9534,12 @@ function wbGrantAIseal(){   /* BOSS击杀结算：只给参战前十名发放轮
     var sorted=FIELD_ROSTER.slice().sort(function(a,b){ return aiBuild(b,sec).pw-aiBuild(a,sec).pw; });
     var _blv=(WBOSS.boss&&WBOSS.boss.level)||1;
     for(var i=0;i<sorted.length && i<10;i++){ var _alv=sorted[i].st.lv||1; if(Math.abs(_blv-_alv)>20) continue;   /* 世界boss等级差>20无收益：低等级AI(如1级打85级boss差84)不参与秘印/神核碎片分配，仅占榜——同副本等级差门控 */
-      var n=i<3?60:(i<6?40:25); var _s=sorted[i].st; _s.seal=(_s.seal||0)+n; _s.frag=(_s.frag||0)+(i<3?3:(i<6?2:1)); if((_s.frag||0)>=99){ _s.frag-=99; _s.core=(_s.core||0)+1; } }   /* 前十名：抢boss掉遗物匣→开启保底得太初神核碎片(前3=3片/前六=2/前十=1)，99片合成1颗超脱神核——轮回材料只世界boss掉落(玩家同口径) */
+      var n=i<3?60:(i<6?40:25); var _s=sorted[i].st; _s.seal=(_s.seal||0)+n; _s.frag=(_s.frag||0)+(i<3?3:(i<6?2:1)); if((_s.frag||0)>=99){ _s.frag-=99; _s.core=(_s.core||0)+1; }   /* 前十名：抢boss掉遗物匣→开启保底得太初神核碎片(前3=3片/前六=2/前十=1)，99片合成1颗超脱神核——轮回材料只世界boss掉落(玩家同口径) */
+      /* 世界boss击杀后按名次领传说宝箱并开箱(与玩家同规则：第1名必得、2-3名30%、4-6名20%；开箱1%伊泰安随机部位/99%传说装备，命中扣总量ITH_LEFT并发全服公告) */
+      if(i===0){ aiOpenLegendBox(_s,sorted[i]); }
+      else if(i<3 && Math.random()<0.3){ aiOpenLegendBox(_s,sorted[i]); }
+      else if(i<6 && Math.random()<0.2){ aiOpenLegendBox(_s,sorted[i]); }
+    }
     aiSaveField();
   }catch(e){}
 }
@@ -10613,7 +10696,8 @@ function aiItemValue(it){   /* 属性点估值：把物品加成的属性总量�
 }
 function aiPaySense(p){ return p.pay>=3?2.2:(p.pay>=2?1.6:(p.pay>=1?1.15:0.85)); }   /* 买家敏感度：神豪愿出2.2×估值，微氪只肯0.85×（砍价）；每个AI不同 */
 function aiSellAsk(p){ return p.pay>=3?1.3:(p.pay>=2?1.1:0.95); }   /* 卖家报价：神豪挂高价(不愁卖)，缺钱普通AI挂低价求快变现 */
-function aiIthTotal(st){ return ((st.ith&&(st.ith.neck||0)+(st.ith.ring||0)+(st.ith.bracelet||0))||0); }
+function aiWornIth(st){ var n=0; var eq=st.equip||{}; for(var k in eq){ var e=eq[k]; if(e&&String(e.name).indexOf('伊泰安')>=0) n++; } return n; }   /* AI穿戴中的伊泰安件数（遍历5首饰槽+武器防具，同玩家ISET数equipState口径） */
+function aiIthTotal(st){ var n=aiWornIth(st); var bag=st.bag||[]; for(var i=0;i<bag.length;i++){ var b=bag[i]; if(b&&String(b.name).indexOf('伊泰安')>=0) n+=Math.max(1,b.count||1); } return n; }   /* AI伊泰安持有总数（穿戴+背包真实物品，同玩家限量榜口径，杜绝凭空） */
 function aiAuction(st,p,now){
   try{
     if(!st||!p||((st.ws||0)>=99&&(st.core||0)>=1)) return;   /* 超脱·终局后不再频繁交易 */
@@ -12164,7 +12248,7 @@ function renderRank(){
   serverStartInit(); ensureFieldRoster();
   var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
   var arr=[];
-  FIELD_ROSTER.forEach(function(p){ var b=aiBuild(p,sec); arr.push({n:p.name.split('（')[0], pw:b.pw, tier:b.tier, lv:b.lv, rr:aiArenaRank(b), ws:(p.st.ws||0), wEnh:(p.st.enh&&p.st.enh.lv)||0, aEnh:(p.st.enh&&p.st.enh.lv)||0, gold:(p.st.gold||0), limit:aiIthTotal(p.st), p:p}); });
+  FIELD_ROSTER.forEach(function(p){ var b=aiBuild(p,sec); arr.push({n:p.name.split('（')[0], pw:b.pw, tier:b.tier, lv:b.lv, rr:aiArenaRank(b), ws:(p.st.ws||0), wEnh:(p.st.enh&&p.st.enh.lv)||0, aEnh:aiMaxArmorEnh(p.st), gold:(p.st.gold||0), limit:aiIthTotal(p.st), p:p}); });
   arr.push({n:'你', pw:rolePower(), tier:charTierName(), lv:CHARACTER.info.level, rr:arenaRank(), ws:REBIRTH.count, wEnh:(equipState['weapon']?equipState['weapon'].enhanceLevel||0:0), aEnh:maxArmorEnh(), gold:(CURRENCY&&CURRENCY.gold)||0, limit:ithHeldCount('yitaiNecklace')+ithHeldCount('yitaiRing')+ithHeldCount('yitaiBracelet'), me:true});
   var tabs=document.getElementById('rank-tabs');
   if(tabs&&!tabs.__b){ tabs.__b=true; tabs.addEventListener('click',function(e){ var tb=e.target.closest('.rank-tab'); if(tb){ RANK_TAB=tb.getAttribute('data-t'); renderRank(); } }); }
@@ -12191,18 +12275,20 @@ function renderRank(){
   }
   if(meIdx>=20){ var m=arr[meIdx]; rows+='<div class="lb-row me" data-i="'+meIdx+'"><span class="lb-rank">'+(meIdx+1)+'</span><span class="lb-n">'+m.n+'<i style="color:'+(_ac[Math.min(m.rr,6)]||'#aaa')+';font-style:normal">（'+m.tier+'）</i><em style="color:#8a8375;font-style:normal"> Lv.'+m.lv+'</em></span><span class="lb-v">'+valfn(m)+'</span></div>'; }
   list.innerHTML=rows;
-  if(!list.__b){ list.__b=true; list.addEventListener('click',function(e){ var r=e.target.closest('.lb-row'); if(!r) return; var idx=parseInt(r.getAttribute('data-i'),10); var o=arr[idx]; if(!o) return; if(o.me){ showRankDetailMe(); } else if(o.p){ showRankDetailAI(o.p); } }); }   /* 点击榜单行 → 玩家详情浮层 */
+  list.__arr=arr;   /* 每次渲染记录最新数据快照：点击浮层用当前行数据(与排行行一致)，避免旧闭包arr导致"点了A却显示B"（含初始化后旧数据残留） */
+  if(!list.__b){ list.__b=true; list.addEventListener('click',function(e){ var r=e.target.closest('.lb-row'); if(!r) return; var idx=parseInt(r.getAttribute('data-i'),10); var o=(list.__arr||[])[idx]; if(!o) return; if(o.me){ showRankDetailMe(); } else if(o.p){ showRankDetailAI(o); } }); }   /* 点击榜单行 → 玩家详情浮层 */
   var hint=document.getElementById('rank-hint'); if(hint) hint.textContent='全服 '+head+'榜 · 100 名固定玩家 + 你 · 实时 · 随服务器发育演化';
 }
 try{ renderRank(); }catch(e){}   /* 页面加载预渲染榜单（隐藏页亦即时计算，进入排行页即时显示） */
-function showRankDetailAI(p){   /* 排行榜点击 AI 玩家 → 详情浮层：穿戴/强化/天神/阶位/段位/竞技积分 */
-  var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
-  var b=aiBuild(p,sec); var st=p.st||{}; var eq=st.equip||{}; var rr=aiArenaRank(b);
+function rdAttrHtml(items){ return '<div class="rd-attr"><div class="rd-sec-t">基础属性</div><div class="rd-attr-grid">'+items.map(function(it){ return '<div class="rd-attr-i'+(it.c||'')+'"><b>'+it.n+'</b><span>'+fmtWan(it.v||0)+'</span></div>'; }).join('')+'</div></div>'; }   /* 浮层属性卡：6项基础属性+物理攻击+生命值（fmtWan统一单位） */
+function showRankDetailAI(o){   /* 排行榜点击 AI 玩家 → 详情浮层：数据用该行渲染快照 pw/tier/lv/rr(与排行行完全一致) + AI存档st装备/天神 */
+  var p=o.p, st=p.st||{}, eq=st.equip||{}, rr=Math.min(o.rr||0,6);
+  var inn=+(+p.innate||1).toFixed(2); var innTg=inn>=1.8?'天运之主':(inn>=1.4?'鸿运当头':(inn>=1.2?'欧皇附体':(inn>=1.05?'运势亨通':'非酋 · 蓄势待发')));   /* 先天运势：与玩家同一套档位标签 */
   function slot(k,label){ var it=eq[k]; if(!it) return '<div class="rd-slot"><div class="rd-si"><div class="rd-sn rd-empty">'+label+' · 未穿戴</div></div></div>';
     var q=itemQuality(it); var qc=q==='purple'?'#FF5AD8':(q==='gold'?'#FFD700':(q==='rare'?'#52C6DA':(q==='epic'?'#B58CFF':'#C9BE9C')));
     return '<div class="rd-slot"><div class="rd-ic"><img src="'+it.img+'" alt=""></div><div class="rd-si"><div class="rd-sn" style="color:'+qc+'">'+it.name+'</div><div class="rd-sd">'+label+'</div></div><div class="rd-sv">强化 +'+(it.enhanceLevel||0)+'</div></div>'; }
   var ithN=aiIthTotal(st);
-  var jw = ithN>0 ? '<div class="rd-slot"><div class="rd-si"><div class="rd-sn" style="color:#FF5AD8">伊泰安首饰 ×'+ithN+'</div><div class="rd-sd">全服唯一 · 三件套 全属性+30%</div></div></div>' : '<div class="rd-slot"><div class="rd-si"><div class="rd-sn rd-empty">首饰 · 未拥有</div></div></div>';
+  var jw = ithN>0 ? '<div class="rd-slot"><div class="rd-si"><div class="rd-sn" style="color:#FF5AD8">伊泰安首饰 ×'+ithN+'</div><div class="rd-sd">全服唯一 · 穿5槽 三件套 全属性+30%</div></div></div>' : '';   /* 伊泰安持有总数（穿戴+背包真实物品）汇总；无则不占行，5首饰槽已显示普通首饰穿戴 */
   var gh=''; var any=false; var gk=[['main','主神'],['sub1','副神']];
   for(var i=0;i<gk.length;i++){ var g=st.gods&&st.gods[gk[i][0]]; if(!g) continue; any=true;
     gh+='<div class="rd-god'+(g.type==='god_seal'?' seal':'')+'"><div class="rd-gic"><img src="'+g.img+'" alt=""></div><div class="rd-gi"><div class="rd-gn">'+g.name+(gk[i][0]==='main'?'<span class="rd-main-tag">主</span>':'')+'</div><div class="rd-gd">'+gk[i][1]+' · '+(g.type==='god_seal'?'紫':'金')+'色天神</div></div><div class="rd-gv">'+(g.grade||0)+'重'+(g.star||1)+'星</div></div>'; }
@@ -12210,10 +12296,14 @@ function showRankDetailAI(p){   /* 排行榜点击 AI 玩家 → 详情浮层：
   var m='<div id="rank-detail-mask" class="rank-detail-mask"><div class="rank-detail-box">'
     +'<button class="rd-close">✕</button>'
     +'<div class="rd-head"><div class="rd-name">'+p.name.split('（')[0]+'</div>'
-    +'<div class="rd-tag"><span class="rd-tier">'+b.tier+'</span><span class="rd-rank-b">'+ARENA_RANKS[rr].n+'</span></div>'
-    +'<div class="rd-meta"><span class="rd-m"><i class="rd-mi rd-mi-lv"></i>Lv.<b>'+b.lv+'</b></span><span class="rd-m"><i class="rd-mi rd-mi-pw"></i>战力<b>'+fmtWan(dispVal(b.pw))+'</b></span><span class="rd-m"><i class="rd-mi rd-mi-sc"></i>积分<b>'+fmtWan(ARENA_RANKS[rr].min||0)+'</b></span></div></div>'
+    +'<div class="rd-innate'+(inn>=1.8?' top':'')+'"><span class="rd-in-ty">天运</span><span class="rd-in-t">先天</span><span class="rd-in-v">'+inn.toFixed(2)+'</span><span class="rd-in-tag">'+innTg+'</span></div>'
+    +'<div class="rd-botrow"><div class="rd-leftcol"><div class="rd-tag"><span class="rd-tier">'+o.tier+'</span><span class="rd-rank-b">'+ARENA_RANKS[rr].n+'</span></div>'
+    +'<div class="rd-meta"><span class="rd-m"><i class="rd-mi rd-mi-lv"></i>Lv.<b>'+o.lv+'</b></span><span class="rd-m"><i class="rd-mi rd-mi-sc"></i>积分<b>'+fmtWan(ARENA_RANKS[rr].min||0)+'</b></span></div></div>'
+    +'<div class="rd-power"><b>战 力</b><span>'+fmtWan(dispVal(o.pw))+'</span></div></div></div>'
+    +(function(){ try{ var _B=aiBuildState(st,p), _A=_B&&_B.A||{}; return rdAttrHtml([{n:'力量',v:_A.力量||0},{n:'敏捷',v:_A.敏捷||0},{n:'体质',v:_A.体质||0},{n:'精神',v:_A.精神||0},{n:'智力',v:_A.智力||0},{n:'幸运',v:_A.幸运||0},{n:'物理攻击',v:_B?(_B.atk||0):0,c:' atk'},{n:'生命值',v:_B?(_B.hp||0):0,c:' hp'}]); }catch(e){ return ''; }})()   /* AI基础属性卡：六维+物攻+生命（同aiBuildState真实数值） */
     +'<div class="rd-sec"><div class="rd-sec-t">装备 · 强化</div>'
-    +slot('weapon','武器')+slot('helm','头盔')+slot('armor','胸甲')+slot('glove','护手')+slot('leg','腿甲')+slot('boot','靴子')+jw+'</div>'
+    +slot('weapon','武器')+slot('neck','项链')+slot('ring1','戒指Ⅰ')+slot('ring2','戒指Ⅱ')+slot('bangle1','手镯Ⅰ')+slot('bangle2','手镯Ⅱ')
+    +slot('helm','头盔')+slot('armor','胸甲')+slot('glove','护手')+slot('leg','腿甲')+slot('boot','靴子')+jw+'</div>'
     +'<div class="rd-sec"><div class="rd-sec-t">上阵天神</div>'+gh+'</div>'
     +'</div></div>';
   document.body.insertAdjacentHTML('beforeend',m);
@@ -12222,6 +12312,7 @@ function showRankDetailAI(p){   /* 排行榜点击 AI 玩家 → 详情浮层：
 }
 function showRankDetailMe(){   /* 点击"你"行 → 玩家详情（同浮层，数据取玩家自身） */
   var rr=arenaRank();
+  var inn=+(+CHARACTER.innate||1).toFixed(2); var innTg=inn>=1.8?'天运之主':(inn>=1.4?'鸿运当头':(inn>=1.2?'欧皇附体':(inn>=1.05?'运势亨通':'非酋 · 蓄势待发')));   /* 先天运势：玩家自身 */
   function slot(k,label){ var it=equipState[k]; if(!it) return '<div class="rd-slot"><div class="rd-si"><div class="rd-sn rd-empty">'+label+' · 未穿戴</div></div></div>';
     var q=itemQuality(it); var qc=q==='purple'?'#FF5AD8':(q==='gold'?'#FFD700':(q==='rare'?'#52C6DA':(q==='epic'?'#B58CFF':'#C9BE9C')));
     return '<div class="rd-slot"><div class="rd-ic"><img src="'+it.img+'" alt=""></div><div class="rd-si"><div class="rd-sn" style="color:'+qc+'">'+it.name+'</div><div class="rd-sd">'+label+'</div></div><div class="rd-sv">强化 +'+(it.enhanceLevel||0)+'</div></div>'; }
@@ -12233,10 +12324,13 @@ function showRankDetailMe(){   /* 点击"你"行 → 玩家详情（同浮层，
   var m='<div id="rank-detail-mask" class="rank-detail-mask"><div class="rank-detail-box">'
     +'<button class="rd-close">✕</button>'
     +'<div class="rd-head"><div class="rd-name">'+nm+'</div>'
-    +'<div class="rd-tag"><span class="rd-tier">'+charTierName()+'</span><span class="rd-rank-b">'+ARENA_RANKS[rr].n+'</span></div>'
-    +'<div class="rd-meta"><span class="rd-m"><i class="rd-mi rd-mi-lv"></i>Lv.<b>'+(CHARACTER.info.level||0)+'</b></span><span class="rd-m"><i class="rd-mi rd-mi-pw"></i>战力<b>'+fmtWan(dispVal(rolePower()))+'</b></span><span class="rd-m"><i class="rd-mi rd-mi-sc"></i>积分<b>'+fmtWan((ARENA.score||0))+'</b></span></div></div>'
+    +'<div class="rd-innate'+(inn>=1.8?' top':'')+'"><span class="rd-in-ty">天运</span><span class="rd-in-t">先天</span><span class="rd-in-v">'+inn.toFixed(2)+'</span><span class="rd-in-tag">'+innTg+'</span></div>'
+    +'<div class="rd-botrow"><div class="rd-leftcol"><div class="rd-tag"><span class="rd-tier">'+charTierName()+'</span><span class="rd-rank-b">'+ARENA_RANKS[rr].n+'</span></div>'
+    +'<div class="rd-meta"><span class="rd-m"><i class="rd-mi rd-mi-lv"></i>Lv.<b>'+(CHARACTER.info.level||0)+'</b></span><span class="rd-m"><i class="rd-mi rd-mi-sc"></i>积分<b>'+fmtWan((ARENA.score||0))+'</b></span></div></div>'
+    +'<div class="rd-power"><b>战 力</b><span>'+fmtWan(dispVal(rolePower()))+'</span></div></div></div>'
+    +(function(){ try{ var _F=CHARACTER.finalStat||{}, _H=parseInt((CHARACTER.combat&&CHARACTER.combat[0]&&CHARACTER.combat[0].v)||0,10)||(_F.hp||0); return rdAttrHtml([{n:'力量',v:_F.力量||0},{n:'敏捷',v:_F.敏捷||0},{n:'体质',v:_F.体质||0},{n:'精神',v:_F.精神||0},{n:'智力',v:_F.智力||0},{n:'幸运',v:_F.幸运||0},{n:'物理攻击',v:_F.patk||0,c:' atk'},{n:'生命值',v:_H,c:' hp'}]); }catch(e){ return ''; }})()   /* 玩家基础属性卡：六维+物攻+生命（finalStat真实数值，生命含防秒杀） */
     +'<div class="rd-sec"><div class="rd-sec-t">装备 · 强化</div>'
-    +slot('weapon','武器')+slot('neck','项链')+slot('ring','戒指')+slot('bracelet','手镯')
+    +slot('weapon','武器')+slot('neck','项链')+slot('ring1','戒指Ⅰ')+slot('ring2','戒指Ⅱ')+slot('bangle1','手镯Ⅰ')+slot('bangle2','手镯Ⅱ')
     +slot('helm','头盔')+slot('armor','胸甲')+slot('glove','护手')+slot('leg','腿甲')+slot('boot','靴子')+'</div>'
     +'<div class="rd-sec"><div class="rd-sec-t">上阵天神</div>'+gh+'</div>'
     +'</div></div>';
