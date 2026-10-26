@@ -6292,8 +6292,13 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
   /* 真实轮回（玩家同款）：达大帝阶位+重修回80级(满级)+持有轮回秘印→自动轮回（后台模拟真人点轮回转生）。重修下限防"ws高→reincMult撑大帝→秒轮回"指数爆；ws越高reincMult越强→重修刷本越快→越修越快但每世至少重修时间(不硬编码世次) */
   st.seal=st.seal||0;
   if((st.ws||0)<99 && _B.tierIdx>=5 && (st.lv||1)>=80){
-    /* 秘印来源：世界boss掉落(前十名)或从持有者处用金币购买（非前十）；杜绝凭空生成。印不足→先攒金币购买1枚，买不起则本世不轮回（普通玩家轮回慢，顶尖抢boss快） */
-    if(st.seal<1 && (st.gold||0)>=aiSealPrice(st,p)){ st.gold-=aiSealPrice(st,p); st.seal+=1; }
+    /* 秘印来源：世界boss掉落(前十名)或从持有者处用金币购买（非前十）。印不足→先从持有者处买1枚（秘印从持有者=世界boss掉落持有者转移，金币买家→卖家，杜绝凭空生成），买不起则本世不轮回（普通玩家轮回慢，顶尖抢boss快） */
+    if(st.seal<1 && (st.gold||0)>=aiSealPrice(st,p)){
+      var _slr=null,_slrB=null;
+      for(var _si=0;_si<FIELD_ROSTER.length;_si++){ var _ps=FIELD_ROSTER[_si]; if(!_ps||_ps===p) continue; var _ss=_ps.st.seal||0; if(_ss>=2){ _slr=_ps; break; } if(_ss>=1&&!_slrB){ _slrB=_ps; } }   /* 优先找持有≥2的持有者(留1枚自用)；无则找持有≥1 */
+      var _sel=_slr||_slrB;
+      if(_sel){ st.gold-=aiSealPrice(st,p); _sel.st.seal-=1; st.seal+=1; _sel.st.gold+=aiSealPrice(st,p); }   /* 真实交易：秘印从持有者(其秘印仅由世界boss wbGrantAIseal 掉落产生)转移给买家，金币买家→卖家；秘印总量守恒，不凭空 */
+    }
     if(st.seal>=1){
       st.ws=(st.ws||0)+1; st.seal-=1;   /* 消耗轮回秘印×1；99世封顶(超脱) */
       st.tp=(st.tp||0)+1; st.stones=(st.stones||0)+50+(st.ws||0)*30;   /* 同玩家轮回奖励：轮回点+1、魂石+50+世次×30（用于点天赋/炼化法器） */
@@ -9629,14 +9634,46 @@ function wbGrantAIseal(){   /* BOSS击杀结算：只给参战前十名发放轮
   try{
     serverStartInit(); ensureFieldRoster();
     var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
-    var sorted=FIELD_ROSTER.slice().sort(function(a,b){ return aiBuild(b,sec).pw-aiBuild(a,sec).pw; });
+    var all=wbRankList();   /* 与玩家同一伤害榜(玩家+AI混合,按真实磨血伤害dmg排序)——AI名次同玩家榜 */
     var _blv=(WBOSS.boss&&WBOSS.boss.level)||1;
-    for(var i=0;i<sorted.length && i<10;i++){ var _alv=sorted[i].st.lv||1; if(Math.abs(_blv-_alv)>20) continue;   /* 世界boss等级差>20无收益：低等级AI(如1级打85级boss差84)不参与秘印/神核碎片分配，仅占榜——同副本等级差门控 */
-      var n=i<3?60:(i<6?40:25); var _s=sorted[i].st; _s.seal=(_s.seal||0)+n; _s.frag=(_s.frag||0)+(i<3?3:(i<6?2:1)); if((_s.frag||0)>=99){ _s.frag-=99; _s.core=(_s.core||0)+1; }   /* 前十名：抢boss掉遗物匣→开启保底得太初神核碎片(前3=3片/前六=2/前十=1)，99片合成1颗超脱神核——轮回材料只世界boss掉落(玩家同口径) */
-      /* 世界boss击杀后按名次领传说宝箱并开箱(与玩家同规则：第1名必得、2-3名30%、4-6名20%；开箱1%伊泰安随机部位/99%传说装备，命中扣总量ITH_LEFT并发全服公告) */
-      if(i===0){ aiOpenLegendBox(_s,sorted[i]); }
-      else if(i<3 && Math.random()<0.3){ aiOpenLegendBox(_s,sorted[i]); }
-      else if(i<6 && Math.random()<0.2){ aiOpenLegendBox(_s,sorted[i]); }
+    var _minDmg=Math.max(1,Math.round(WBOSS.bossMax*0.005));   /* 伤害≥0.5%血线(同玩家ok门槛) */
+    var _pool=[0,36,12,6,3,2,1];   /* 遗物匣数量：第1=36/2=12/3=6/4=3/5=2/6=1 —— 与玩家wbGrantLoot同口径 */
+    var _gemPool=['earthBlessingGem','fireBlessingGem','waterBlessingGem','windBlessingGem'];
+    for(var i=0;i<all.length && i<10;i++){
+      var _e=all[i]; if(_e.me||!_e.n) continue;   /* 跳过玩家(玩家走wbGrantLoot) */
+      var _ai=null; for(var x=0;x<FIELD_ROSTER.length;x++) if(FIELD_ROSTER[x].name===_e.n){ _ai=FIELD_ROSTER[x]; break; }
+      if(!_ai||!_ai.st) continue; var _st=_ai.st, rank=i+1;
+      if(_e.dmg<_minDmg) continue;   /* 伤害未达标不参与奖励(同玩家ok) */
+      if(Math.abs(_blv-(_st.lv||1))>20) continue;   /* 世界boss等级差>20无收益(同玩家lvOk)：低等级AI不参与奖励结算 */
+      if(!_st.bag) _st.bag=[];
+      /* 金币(同玩家)：第1名 bossMax×12% / 2-3名 ×5% */
+      var _gold=0; if(rank===1) _gold=Math.round(WBOSS.bossMax*0.12); else if(rank<=3) _gold=Math.round(WBOSS.bossMax*0.05);
+      if(_gold>0) _st.gold=(_st.gold||0)+_gold;
+      /* 遗物匣(rank<=6同玩家数量)→自动开箱(玩家openReliquary同概率：85%秘印/15%碎片/8匣保底；99碎片合1神核)——秘印量完全同玩家口径 */
+      var _bx=(rank<=6)?_pool[rank]:0;
+      for(var _b=0;_b<_bx;_b++){ _st.boxCount=(_st.boxCount||0)+1;
+        if((_st.boxCount||0)>=8 || Math.random()<0.15){ _st.frag=(_st.frag||0)+1; _st.boxCount=0; }
+        else _st.seal=(_st.seal||0)+1;
+        if((_st.frag||0)>=99){ _st.frag-=99; _st.core=(_st.core||0)+1; }
+      }
+      /* 本源结晶(仅超脱BOSS,同玩家rank1) */
+      if(rank===1 && WBOSS.boss && WBOSS.boss.tier==='supreme') _st.essence=(_st.essence||0)+5;
+      /* 锻造精华(同玩家：1=150/2-3=60/4-6=30/7-10=15) */
+      var _ess=rank===1?150:(rank<=3?60:(rank<=6?30:15)); _st.bag.push(mkEssence(_ess));
+      /* 祝福宝石(同玩家：1=3/2-3=1) */
+      if(rank<=3){ var _g=mkLoot(ITEM_BLUEPRINTS[_gemPool[Math.floor(Math.random()*4)]]); _g.count=(rank===1)?3:1; _st.bag.push(_g); }
+      /* 强化祝福卷轴(完整)(同玩家：1=5/2-3=3/4-6=2/7-10=1) */
+      var _vz=rank===1?5:(rank<=3?3:(rank<=6?2:1)); var _v=mkLoot(ITEM_BLUEPRINTS.enhBlessFull); _v.count=_vz; _st.bag.push(_v);
+      /* 远古传承丹(同玩家：1=3/2-3=2/4-6=1/7-10=30%×1) */
+      var _cy=rank===1?3:(rank<=3?2:(rank<=6?1:(Math.random()<0.3?1:0)));
+      if(_cy>0){ var _c=mkLoot(ITEM_BLUEPRINTS.inheritPill); _c.count=_cy; _st.bag.push(_c); }
+      /* 神格本源(同玩家：1=2/2-3=1/4-6=30%×1) */
+      var _go=rank===1?2:(rank<=3?1:((rank<=6&&Math.random()<0.3)?1:0));
+      if(_go>0){ var _g2=mkLoot(ITEM_BLUEPRINTS.godOrigin); _g2.count=_go; _st.bag.push(_g2); }
+      /* 传说宝箱(同玩家：第1名必得、2-3名30%、4-6名20%；开箱1%伊泰安随机部位/99%传说装备，命中扣总量ITH_LEFT并发全服公告) */
+      if(i===0){ aiOpenLegendBox(_st,_ai); }
+      else if(i<3 && Math.random()<0.3){ aiOpenLegendBox(_st,_ai); }
+      else if(i<6 && Math.random()<0.2){ aiOpenLegendBox(_st,_ai); }
     }
     aiSaveField();
   }catch(e){}
