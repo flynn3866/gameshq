@@ -998,7 +998,7 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 .au-cat.on{color:#fff;border-color:rgba(255,90,216,.85);
   background:linear-gradient(180deg,rgba(90,10,72,.92),rgba(40,6,32,.96));
   box-shadow:0 0 12px rgba(231,2,231,.4),inset 0 1px 0 rgba(255,255,255,.15);}
-.au-list{display:flex;flex-direction:column;gap:8px;padding:2px 8px 8px;min-height:540px;box-sizing:border-box;}
+.au-list{display:flex;flex-direction:column;gap:8px;padding:2px 8px 8px;min-height:540px;box-sizing:border-box;overflow:hidden;}   /* overflow:hidden 兜底：任何记录都不会把舞台横撑开（竞拍结束5列在手机宽度下已实测不溢出） */
 .au-th{display:flex;align-items:center;gap:8px;padding:2px 10px 4px;font-size:11px;color:rgba(255,255,255,.30);letter-spacing:1px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:2px;}
 .au-th .au-th-ic{width:42px;flex:none;}
 .au-th .au-th-mid{flex:1;min-width:0;}
