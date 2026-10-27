@@ -1015,7 +1015,7 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 .au-fin-left .au-row-info{flex:1;min-width:0;}
 .au-row .au-fin-qty{flex:none;width:48px;text-align:right;color:#ffffff;font-size:12px;}   /* 数量列：普通×N / 金币挂单金额总值(如100亿)，间隔由容器gap统一 */
 .au-row-fin .au-fin-date{flex:none;width:64px;text-align:right;color:#ffffff;font-size:12px;}
-.au-row-fin .au-fin-total{flex:none;min-width:76px;display:flex;align-items:center;gap:4px;justify-content:flex-end;color:#ffd98a;font-size:12px;box-sizing:border-box;white-space:nowrap;}
+.au-row-fin .au-fin-total{flex:none;width:90px;display:flex;align-items:center;gap:4px;justify-content:flex-end;color:#ffd98a;font-size:12px;box-sizing:border-box;white-space:nowrap;overflow:hidden;}   /* 总价列固定90px(用户锁定口径)，overflow hidden 防止超大数值nowrap撑破舞台 */
 .au-row-fin .au-fin-total svg{width:12px;height:12px;flex:none;}   /* 货币图标固定12px，防止SVG无限撑大 */
 .au-row-fin .au-fin-type{flex:none;width:38px;text-align:center;padding:2px 0;border-radius:99px;font-size:11px;line-height:1.5;letter-spacing:1px;box-sizing:border-box;}
 .au-row-fin .au-fin-type.sold{color:#4ade80;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.28);}   /* 售出-亮绿（收益到账） */
@@ -1045,7 +1045,7 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 .au-row-r{flex:none;display:flex;align-items:center;gap:8px;margin-left:2px;}
 .au-price{display:flex;align-items:center;gap:4px;font-size:12px;color:#FFD75E;font-weight:800;text-shadow:0 0 10px rgba(255,215,94,.65);filter:drop-shadow(0 1px 1px rgba(0,0,0,.4));white-space:nowrap;min-width:0;}
 .au-price svg{width:13px;height:13px;flex:none;}
-.au-buy{flex:none;padding:0 3px;height:27px;font-size:11px;letter-spacing:1px;color:#FFFFFF;   /* 青色系，边角/高度对齐行囊-背包按钮；左右内边距3px（同我的竞拍下架按钮） */
+.au-buy{flex:none;padding:0 5px;height:27px;font-size:11px;letter-spacing:1px;color:#FFFFFF;   /* 青色系，边角/高度对齐行囊-背包按钮；左右内边距5px（原3px+2px） */
   background:linear-gradient(180deg,#7fd0d0,#3c9c9c 60%,#2b7c7c);
   border:1px solid rgba(120,230,210,.5);border-radius:6px;cursor:pointer;
   box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);
@@ -1056,7 +1056,7 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 .au-row-mine .au-row-info{flex:none;margin-right:auto;}
 .au-mine-price{flex:none;min-width:76px;display:flex;align-items:center;gap:3px;justify-content:flex-end;color:#FFD75E;font-weight:800;font-size:12px;white-space:nowrap;}
 .au-mine-price svg{width:12px;height:12px;flex:none;}
-.au-unlist{flex:none;padding:0 3px;height:27px;font-size:11px;letter-spacing:1px;color:#FFFFFF;   /* 青色系下架按钮，边角/高度对齐行囊-背包按钮；左右内边距3px */
+.au-unlist{flex:none;width:49px;padding:0 3px;height:27px;font-size:11px;letter-spacing:1px;color:#FFFFFF;   /* 青色系下架按钮，宽度=一口价按钮(49px)，边角/高度对齐行囊-背包按钮 */
   background:linear-gradient(180deg,#7fd0d0,#3c9c9c 60%,#2b7c7c);
   border:1px solid rgba(120,230,210,.5);border-radius:6px;cursor:pointer;
   box-shadow:0 2px 8px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.16);
@@ -10927,7 +10927,7 @@ function openAucSell(){   /* 上架弹窗：物品/金币双模式。物品=选�
     '<div class="au-box-body" id="au-body-gold" style="display:none"><div class="au-gold-hero">'+aucCurIcon('gold')+'<div class="au-gold-hero-t">上架金币 · 买家付氪金购买</div></div><div class="au-fields">'+
     '<div class="au-field"><label>金币数量(亿)</label><input id="au-gold-n" type="number" min="1" value="10"></div>'+
     '<div class="au-field"><label>氪金总价</label><input id="au-gold-price" type="number" min="1" value="10"></div>'+
-    '<div class="au-field-hint">标价氪金，卖出后你获得等量氪金 · 手续费1%从氪金扣</div>'+
+    '<div class="au-field-hint">标价氪金，卖出后你获得等量氪金 · 手续费2%（交易金币总额）从金币扣</div>'+
     '<div class="au-total au-total-gold" id="au-gold-total"><div class="au-gt-a" id="au-gold-amt">出售金币总额：10亿 金币</div><div class="au-gt-t" id="au-gold-tot">当前商品总价：10 氪金</div></div>'+
     '</div></div>'+
     '<div class="au-actions"><button class="au-cancel" data-x="1">取消</button><button class="au-do" id="au-do">上架</button></div></div></div>';
@@ -10955,10 +10955,11 @@ function openAucSell(){   /* 上架弹窗：物品/金币双模式。物品=选�
       var _gn=parseInt(document.getElementById('au-gold-n').value,10)||0, _gp=parseInt(document.getElementById('au-gold-price').value,10)||0;
       if(_gn<=0||_gp<=0){ toast('金币数量与氪金总价需大于0'); return; }
       var _sell=_gn*100000000; if((CURRENCY.gold||0)<_sell){ toast('金币不足'); return; }
-      var _fee=aucFee(_gp); if((CURRENCY.kf||0)<_fee){ toast('氪金不足付手续费：需 '+fmtWan(_fee)+' 氪金'); return; }
-      CURRENCY.gold=(CURRENCY.gold||0)-_sell; CURRENCY.kf=(CURRENCY.kf||0)-_fee;
+      var _gfee=Math.max(1,Math.ceil(_sell*0.02));   /* 上架金币手续费：交易金币总额的2%，从金币扣（统一规则，非凭空） */
+      if((CURRENCY.gold||0)<_sell+_gfee){ toast('金币不足付上架费：需出售 '+fmtWan(_sell)+' + 手续费 '+fmtWan(_gfee)); return; }
+      CURRENCY.gold=(CURRENCY.gold||0)-_sell-_gfee;
       AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:'谜团',ai:false,kind:'gold',item:{name:'金币',type:'currency'},price:_gp,cur:'kf',n:_gn,time:Date.now()});
-      auctionSave(); saveGame(); renderAuction(); renderCurrency(); over.remove(); toast('已上架金币 '+fmtWan(_sell)+'，标价 '+fmtWan(_gp)+' 氪金，手续费 '+fmtWan(_fee)+' 氪金');
+      auctionSave(); saveGame(); renderAuction(); renderCurrency(); over.remove(); toast('已上架金币 '+fmtWan(_sell)+'，标价 '+fmtWan(_gp)+' 氪金，手续费 '+fmtWan(_gfee)+' 金币');
       return;
     }
     var it=AU_SEL.slot&&AU_SEL.slot.s; if(!it){ toast('请先选择要上架的物品'); return; }
@@ -11207,9 +11208,12 @@ function aiAuction(st,p,now){
         var _per=_base*aiSellAsk(p)*_rush;   /* 每亿氪金单价(个体系数×急售波动) */
         var _n=Math.min(_spare,20);   /* 单笔最多20亿，分多次上架 */
         var _total=Math.max(1,Math.round(_per*_n));   /* 总价氪金 */
-        st.gold-=_n*100000000;   /* 从金币账户真实扣 _n 亿(留minGold)，总量守恒 */
-        AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,kind:'gold',item:{name:'金币',type:'currency'},price:_total,cur:'kf',n:_n,time:Date.now()});
-        auctionSave();
+        var _gfee=Math.max(1,Math.ceil(_n*100000000*0.02));   /* 上架金币手续费：交易金币总额的2%，从金币扣（同玩家上架金币规则，消耗非凭空） */
+        if((st.gold||0)>=_n*100000000+_gfee){   /* 检查金币足够(出售+手续费)才上架，规则与玩家100%一致 */
+          st.gold-=_n*100000000+_gfee;   /* 从金币账户真实扣 _n 亿(留minGold)+2%手续费，总量守恒 */
+          AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,kind:'gold',item:{name:'金币',type:'currency'},price:_total,cur:'kf',n:_n,time:Date.now()});
+          auctionSave();
+        }
       }
     }
     /* ---------- 按需上架：缺金币且有多余伊泰安 → 卖掉换钱；已凑齐套偶尔清一只（真实物品流转：仅从背包真实伊泰安物品取，穿戴中的不动；不凭空生成——同玩家铁律） ---------- */
