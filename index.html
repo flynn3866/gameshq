@@ -38,7 +38,7 @@ input,textarea,select{-webkit-user-select:text;-moz-user-select:text;-ms-user-se
 }
 .btn:hover{border-color:#C77A2E;box-shadow:0 0 6px rgba(199,122,46,.22);}   /* 暖橙 hover 反馈 */
 .forge-tab:active,.god-li:active,.pick:active,.arena-opp:active{transform:scale(.96);}   /* 按压反馈统一：补齐 tab/列表行/下拉项 */
-html,body{height:100%;}
+html,body{height:100%;overflow-x:hidden;}
 body{
   position:relative;left:auto;top:auto;width:100%;min-height:100vh;
   overflow-x:hidden;                 /* 正常文档流：超高内容页面滚动到底，配合底部导航留白 */
@@ -938,6 +938,45 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 /* ===== 拍卖场：玩家/AI 自由买卖非绑定物品 · 一口价 ===== */
 #view-auction .sys-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 236px);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(env(safe-area-inset-bottom,0px) + 72px);box-sizing:border-box;}
 .au-body{padding:0 0 8px;}   /* 顶部零间距：sys-body 顶部紧贴标题栏，滚动不露缝 */
+/* ===== 世界聊天 / 私聊 ===== */
+#view-chat{width:100%;max-width:min(100%,760px);margin:0 auto;overflow-x:hidden;box-sizing:border-box;}
+#view-chat .sys-body{max-height:calc(100vh - env(safe-area-inset-top,0px) - 236px);min-height:calc(100vh - env(safe-area-inset-top,0px) - 236px);display:flex;flex-direction:column;overflow:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:10px 12px calc(env(safe-area-inset-bottom,0px) + 72px);box-sizing:border-box;}
+#chat-world,#chat-priv{flex:1;min-height:0;width:100%;box-sizing:border-box;display:flex;flex-direction:column;overflow:hidden;}
+.chat-tabs{display:flex;gap:8px;padding:0 0 8px;flex:none;}
+.chat-tab{flex:1;height:30px;border-radius:8px;border:1px solid rgba(124,216,255,.25);color:#cfe3ff;background:linear-gradient(180deg,rgba(80,170,240,.08),rgba(40,90,140,.06));font-size:13px;letter-spacing:2px;cursor:pointer;}
+.chat-tab.on{color:#08141f;background:linear-gradient(180deg,#8fe0ff,#4db3e6 60%,#2b8fcf);border-color:rgba(200,240,255,.7);box-shadow:0 0 10px rgba(100,200,255,.35),inset 0 1px 0 rgba(255,255,255,.4);font-weight:800;}
+.chat-list{display:flex;flex-direction:column;gap:7px;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+.chat-msg{display:flex;gap:8px;align-items:flex-start;min-width:0;width:100%;max-width:100%;box-sizing:border-box;padding:8px 10px;border-radius:8px;background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.015));border:1px solid rgba(124,216,255,.10);}
+.chat-msg.ai{border-color:rgba(124,216,255,.16);background:linear-gradient(180deg,rgba(80,170,240,.06),rgba(40,90,140,.03));}
+.chat-msg.me{background:linear-gradient(180deg,rgba(255,200,90,.06),rgba(200,140,40,.03));border-color:rgba(255,200,90,.16);}
+.chat-nm{flex:none;width:72px;color:#8fe0ff;font-size:11px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-top:1px;}
+.chat-msg.me .chat-nm{color:#ffd98a;}
+.chat-tx{flex:1;min-width:0;color:#e8eef4;font-size:12.5px;line-height:1.5;overflow-wrap:anywhere;word-break:break-all;}
+.chat-tm{flex:none;color:rgba(255,255,255,.25);font-size:9.5px;padding-top:2px;}
+.chat-b{display:flex;flex-direction:column;align-items:flex-start;margin:0 0 8px;max-width:100%;}
+.chat-b.mine{align-items:flex-end;}
+.chat-bnm{font-size:10.5px;color:#8fe0ff;margin:0 2px 3px;line-height:1;}
+.chat-bub{max-width:78%;padding:7px 11px;border-radius:10px;font-size:12.5px;line-height:1.55;color:#eef4f8;background:linear-gradient(180deg,rgba(70,130,180,.28),rgba(40,80,110,.22));border:1px solid rgba(124,216,255,.16);overflow-wrap:anywhere;word-break:break-word;}
+.chat-b.mine .chat-bub{background:linear-gradient(180deg,rgba(80,190,220,.4),rgba(40,140,180,.32));border-color:rgba(140,225,255,.45);}
+.chat-btm{font-size:9px;color:rgba(255,255,255,.3);margin-top:2px;padding:0 2px;}
+
+.chat-deal{flex:none;margin-left:6px;}
+.chat-deal .cd-btn{height:24px;padding:0 9px;border-radius:6px;border:1px solid rgba(255,200,90,.35);color:#ffd98a;background:linear-gradient(180deg,rgba(255,200,90,.15),rgba(160,110,30,.12));font-size:11px;cursor:pointer;}
+.chat-deal .cd-btn:hover{border-color:rgba(255,200,90,.6);box-shadow:0 0 8px rgba(255,200,90,.3);}
+.chat-input{display:flex;gap:8px;padding:10px 0 4px;flex:none;}
+.chat-input input{flex:1;min-width:0;height:34px;border-radius:8px;border:1px solid rgba(124,216,255,.22);background:rgba(20,40,60,.5);color:#fff;font-size:13px;padding:0 10px;outline:none;}
+.chat-input input:focus{border-color:rgba(124,216,255,.5);box-shadow:0 0 8px rgba(100,200,255,.2);}
+.chat-input input::placeholder{color:rgba(255,255,255,.3);}
+.chat-input button{flex:none;height:34px;padding:0 16px;border-radius:8px;border:1px solid rgba(124,216,255,.35);color:#fff;background:linear-gradient(180deg,#8fe0ff,#4db3e6 60%,#2b8fcf);font-size:13px;letter-spacing:2px;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.4);}
+.chat-cons{display:flex;flex-direction:column;gap:7px;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+.chat-con{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:8px;border:1px solid rgba(124,216,255,.12);background:linear-gradient(180deg,rgba(255,255,255,.03),rgba(255,255,255,.01));cursor:pointer;}
+.chat-con:hover{border-color:rgba(124,216,255,.3);}
+.chat-con .cc-nm{flex:none;width:80px;color:#8fe0ff;font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.chat-con .cc-tx{flex:1;color:rgba(255,255,255,.55);font-size:11.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.chat-con .cc-tm{flex:none;color:rgba(255,255,255,.25);font-size:9.5px;}
+.chat-dlg{display:flex;flex-direction:column;gap:7px;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;}
+.chat-dlg-empty{color:rgba(255,255,255,.3);font-size:12px;text-align:center;padding:30px 10px;}
+.chat-dlg .chat-input{padding-top:4px;}
 #view-auction .page-head{margin-bottom:0;}   /* 拍卖行顶部标题栏与内容标题卡片零空隙，滚动不透出 */
 .au-hero{position:relative;margin:2px 2px 2px;padding:6px 8px 6px;text-align:center;overflow:hidden;
   background:radial-gradient(120% 260% at 50% -90%,rgba(255,215,110,.20),rgba(255,215,110,0) 60%),linear-gradient(180deg,#181106,#0d0906);}   /* 标题卡：顶部金色辉光+细腻深底，牌匾质感，滚动不透出 */
@@ -1005,15 +1044,15 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 .au-th .au-th-r{flex:none;text-align:right;}
 .au-th.th4 .au-th-left{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}   /* 物品列弹性占满中间，其余列右对齐块 */
 .au-th.th4 .au-th-mid{flex:none;}
-.au-th.th4 .au-th-q{flex:none;width:48px;text-align:right;}
+.au-th.th4 .au-th-q{flex:none;width:38px;text-align:right;}
 .au-th.th4 .au-th-d{flex:none;width:64px;text-align:right;}
 .au-th.th4 .au-th-r{flex:none;width:90px;text-align:right;box-sizing:border-box;}   /* 竞拍结束「总价」列表头固定90px，与行总价列(.au-fin-total width:90)对齐，避免表头/行错位 */
 .au-th.th4 .au-th-r.mine{min-width:76px;}
 .au-th.th4 .au-th-t{flex:none;width:38px;text-align:right;box-sizing:border-box;}
 .au-th.th4 .au-th-op{flex:none;width:49px;text-align:right;box-sizing:border-box;}   /* 搜索/我的竞拍「操作」列表头，对齐右侧一口价/下架按钮宽度(49px) */
-.au-fin-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;}   /* 物品列弹性占满中间，其余列右对齐块 */
-.au-fin-left .au-row-info{flex:1;min-width:0;}
-.au-row .au-fin-qty{flex:none;width:48px;text-align:right;color:#ffffff;font-size:12px;}   /* 数量列：普通×N / 金币挂单金额总值(如100亿)，间隔由容器gap统一 */
+.au-fin-left{display:flex;align-items:center;gap:8px;flex:1;min-width:0;overflow:hidden;}   /* 物品列弹性占满中间，其余列右对齐块；overflow hidden 绝对防撑（长物品名/图标不会把行撑破舞台） */
+.au-fin-left .au-row-info{flex:1;min-width:0;overflow:hidden;}
+.au-row .au-fin-qty{flex:none;width:38px;text-align:right;color:#ffffff;font-size:12px;}   /* 数量列：普通×N / 金币挂单金额总值(如100亿)，间隔由容器gap统一 */
 .au-row-fin .au-fin-date{flex:none;width:64px;text-align:right;color:#ffffff;font-size:12px;}
 .au-row-fin .au-fin-total{flex:none;width:90px;display:flex;align-items:center;gap:4px;justify-content:flex-end;color:#ffd98a;font-size:12px;box-sizing:border-box;white-space:nowrap;overflow:hidden;}   /* 总价列固定90px(用户锁定口径)，overflow hidden 防止超大数值nowrap撑破舞台 */
 .au-row-fin .au-fin-total svg{width:12px;height:12px;flex:none;}   /* 货币图标固定12px，防止SVG无限撑大 */
@@ -4028,6 +4067,25 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
   </div>
 </div>
 <!-- ===== 二级页面：拍卖场（玩家/AI 自由买卖非绑定物品 · 一口价） ===== -->
+<div class="window sys" id="view-chat" data-theme="cyan">
+    <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="chat-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>世界聊天</h1></header>
+    <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c5 0 9 3.6 9 8s-4 8-9 8c-.9 0-1.8-.1-2.6-.3L4 21l1.6-3.5C4 16 3 13.9 3 11.8 3 6.8 7 3 12 3z"/><path d="M8.5 12h7M8.5 9h4"/></svg><span class="ph-t">世界聊天</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
+    <div class="sys-body chat-body">
+      <div class="chat-tabs" id="chat-tabs">
+        <button class="chat-tab on" data-t="world">世界</button>
+        <button class="chat-tab" data-t="priv">私聊</button>
+      </div>
+      <div id="chat-world">
+        <div class="chat-list" id="chat-list"></div>
+        <div class="chat-input"><input id="chat-in" maxlength="60" placeholder="在世界频道说点什么…"><button id="chat-send">发送</button></div>
+      </div>
+      <div id="chat-priv" style="display:none">
+        <div class="chat-cons" id="chat-cons"></div>
+        <div class="chat-dlg" id="chat-dlg"></div>
+        <div class="chat-input"><input id="chat-in-priv" maxlength="80" placeholder="选择会话后发送私聊"><button id="chat-psend">发送</button></div>
+      </div>
+    </div>
+  </div>
 <div class="window sys" id="view-auction" data-theme="cyan">
   <header class="topbar"><span class="title-glow"></span><button class="back-arrow" id="auction-back" aria-label="返回"><svg viewBox="0 0 24 24"><polyline points="15 5 8 12 15 19"/></svg></button><h1>拍卖场</h1></header>
   <div class="page-head ph-gold"><svg class="ph-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h11a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H9"/><path d="M13 8V5a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v3"/><path d="M6 8l-3 12M12 8l2 12M17 8l4 12M8 11h3M10 14h3"/></svg><span class="ph-t">拍卖场</span><div class="g-bag-bar"><button class="g-bag-btn g-attr-open">角色属性</button><button class="g-bag-btn g-bar-open">背包 (<span class="g-bar-count">0</span>)</button><button class="g-bag-btn adv-open">奇遇</button></div></div>
@@ -6618,7 +6676,7 @@ function aiSaveField(force){   /* 落盘去重+原子：批量核算(心跳/rend
     else{ if(__aiSaveTimer) return; __aiSaveTimer=setTimeout(function(){ __aiSaveTimer=null; __aiSavePending=0; try{ localStorage.setItem('shenqi_field_roster',JSON.stringify(FIELD_ROSTER)); }catch(e){} },2000); }
   }catch(e){}
 }
-function aiHeartbeat(){ ensureFieldRoster(); for(var i=0;i<FIELD_ROSTER.length;i++){ var _p=FIELD_ROSTER[i]; aiEnsureAdvance(_p); if(typeof aiAuction==='function' && AUCTION && AUCTION.list){ try{ aiAuction(_p.st,_p,Date.now()); }catch(e){} } } aiSaveField(true); try{ if(location.hash.indexOf('#home')>=0 && typeof renderLimitHome==='function') renderLimitHome(); }catch(e){} }   /* 低频心跳：挂机页面持续发育（配合打开时惰性补算）；停在主页时同步刷新限量神装剩余（AI掉落伊泰安后主页实时更新）；AI 参与拍卖（真实资源上架/购买） */
+function aiHeartbeat(){ ensureFieldRoster(); for(var i=0;i<FIELD_ROSTER.length;i++){ var _p=FIELD_ROSTER[i]; aiEnsureAdvance(_p); if(typeof aiAuction==='function' && AUCTION && AUCTION.list){ try{ aiAuction(_p.st,_p,Date.now()); }catch(e){} } } aiSaveField(true); try{ if(location.hash.indexOf('#home')>=0 && typeof renderLimitHome==='function') renderLimitHome(); }catch(e){} try{ if(typeof aiChatTick==='function') aiChatTick(); }catch(e){} }   /* 低频心跳：挂机页面持续发育（配合打开时惰性补算）；停在主页时同步刷新限量神装剩余（AI掉落伊泰安后主页实时更新）；AI 参与拍卖（真实资源上架/购买）；AI 世界发言+私聊议价 */
 function aiBuild(p,sec){
   serverStartInit(); aiEnsureAdvance(p);   /* 惰性补算到当前，再读存档确定性构建 */
   var st=p.st, B=aiBuildState(st,p);
@@ -8254,8 +8312,8 @@ function applyRoute(){
   var h = location.hash;
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
       refine = h.indexOf('#refine')>=0,
-      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0, lot = h.indexOf('#lottery')>=0, tl = h.indexOf('#trial')>=0, tower = h.indexOf('#tower')>=0, arena = h.indexOf('#arena')>=0, home = h.indexOf('#home')>=0, forge = h.indexOf('#forge')>=0, wanshou = h.indexOf('#wanshou')>=0, main = h.indexOf('#main')>=0, ach = h.indexOf('#achievement')>=0, rebirth = h.indexOf('#rebirth')>=0, altar = h.indexOf('#altar')>=0, guide = h.indexOf('#guide')>=0, craft = h.indexOf('#craft')>=0, wb = h.indexOf('#wboss')>=0, season = h.indexOf('#season')>=0, daily = h.indexOf('#daily')>=0, store = h.indexOf('#store')>=0, battle = h.indexOf('#battle')>=0, rank = h.indexOf('#rank')>=0, task = h.indexOf('#task')>=0, auction = h.indexOf('#auction')>=0;
-  var homeShow = home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||tower||arena||forge||wanshou||main||ach||rebirth||altar||guide||craft||wb||season||daily||store||battle||rank||task);   /* 挑战塔/万法指南/世界BOSS/赛季征途/任务系统排除首页布局 */
+      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0, lot = h.indexOf('#lottery')>=0, tl = h.indexOf('#trial')>=0, tower = h.indexOf('#tower')>=0, arena = h.indexOf('#arena')>=0, home = h.indexOf('#home')>=0, forge = h.indexOf('#forge')>=0, wanshou = h.indexOf('#wanshou')>=0, main = h.indexOf('#main')>=0, ach = h.indexOf('#achievement')>=0, rebirth = h.indexOf('#rebirth')>=0, altar = h.indexOf('#altar')>=0, guide = h.indexOf('#guide')>=0, craft = h.indexOf('#craft')>=0, wb = h.indexOf('#wboss')>=0, season = h.indexOf('#season')>=0, daily = h.indexOf('#daily')>=0, store = h.indexOf('#store')>=0, battle = h.indexOf('#battle')>=0, rank = h.indexOf('#rank')>=0, task = h.indexOf('#task')>=0, auction = h.indexOf('#auction')>=0, chat = h.indexOf('#chat')>=0;
+  var homeShow = home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||tower||arena||forge||wanshou||main||ach||rebirth||altar||guide||craft||wb||season||daily||store||battle||rank||task||chat);   /* 挑战塔/万法指南/世界BOSS/赛季征途/任务系统排除首页布局 */
   document.body.classList.remove('show-home');   /* 基地页与其它导航页统一使用 --bg-body 背景 */
   document.body.classList.toggle('hb-compact', homeShow);   /* 基地页顶部紧凑：缩小顶栏上方到屏幕顶部的间隔 */
   document.documentElement.classList.toggle('hb-compact', homeShow);   /* 同步给 html 加类：禁 html 层外层滚动，杜绝双层滚动条 */
@@ -8274,7 +8332,7 @@ function applyRoute(){
   document.body.classList.toggle('show-forge', forge);   /* 神兵锻冶垂直居中 */
   document.body.classList.toggle('show-wanshou', wanshou);   /* 万法归宗垂直居中 */
   var map = {
-    '#view-home':    home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||tower||arena||forge||wanshou||main||ach||rebirth||altar||guide||craft||wb||season||daily||store||battle||rank||task||auction),   /* 挑战塔/玩法指南/锻造工坊/世界BOSS/赛季/仓库/任务系统/拍卖场也排除首页 */
+    '#view-home':    home || !(attrs||enh||refine||gem||god||trs||shop||lot||tl||tower||arena||forge||wanshou||main||ach||rebirth||altar||guide||craft||wb||season||daily||store||battle||rank||task||auction||chat),   /* 挑战塔/玩法指南/锻造工坊/世界BOSS/赛季/仓库/任务系统/拍卖场也排除首页 */
     '#view-craft':  craft,   /* 锻造工坊（分解/重铸） */
     '#view-store':  store,   /* 仓库（背包↔仓库物品转移） */
     '#view-main':    main,
@@ -8299,6 +8357,7 @@ function applyRoute(){
     '#view-wboss': wb,
     '#view-rank': rank,
     '#view-battle': battle,
+    '#view-chat': chat,
     '#view-auction': auction
   };
   for (var id in map) document.getElementById(id.slice(1)).style.display = map[id] ? 'block' : 'none';
@@ -8922,9 +8981,10 @@ var SUB_TABS=[
   {name:'人物',hash:'#attrs',views:['attrs','achievement','task'],items:[['#attrs','角色属性'],['#achievement','成就系统'],['#task','任务系统']]},
   {name:'秘境',hash:'#treasure',views:['treasure','trial','tower'],items:[['#treasure','副本秘境'],['#trial','无尽试炼'],['#tower','挑战塔']]},   /* 挑战塔也纳入秘境组，顶部副页签条才能出现、底部秘境按钮才能高亮 */
   {name:'论道',hash:'#arena',views:['arena','wboss','rank'],items:[['#arena','竞技系统'],['#wboss','世界BOSS榜'],['#rank','全服排行']]},
-  {name:'玄鉴',hash:'#lottery',views:['lottery','shop'],items:[['#lottery','玄鉴抽奖'],['#shop','万宝商阁']]}
+  {name:'玄鉴',hash:'#lottery',views:['lottery','shop'],items:[['#lottery','玄鉴抽奖'],['#shop','万宝商阁']]},
+  {name:'聊天',hash:'#chat',views:['chat'],items:[]}
 ];
-var SUB_ICONS={基地:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>',行囊:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><path d="M4 13h16"/></svg>',人物:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></svg>',秘境:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 12 4l9 16z"/><path d="M7 20l5-9 5 9"/><path d="M3 16h18"/></svg>',论道:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v3.2c0 .8-.7 1.3-1.5 1.1L6 5.4v9l6.5-1.9c.8-.2 1.5.3 1.5 1.1V18c0 1.7 3 2.5 3 2.5V4.5S16 3 14 3z"/></svg>',玄鉴:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-5h16l1 5"/><path d="M4 9h16v11H4z"/><path d="M8 9c0 2 2 3 4 3s4-1 4-3"/></svg>'};
+var SUB_ICONS={基地:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/></svg>',行囊:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16v13H4z"/><path d="M9 7V5a3 3 0 0 1 6 0v2"/><path d="M4 13h16"/></svg>',人物:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7.5" r="3.5"/><path d="M5 20c0-3.9 3.1-6.5 7-6.5s7 2.6 7 6.5"/></svg>',秘境:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20 12 4l9 16z"/><path d="M7 20l5-9 5 9"/><path d="M3 16h18"/></svg>',论道:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3v3.2c0 .8-.7 1.3-1.5 1.1L6 5.4v9l6.5-1.9c.8-.2 1.5.3 1.5 1.1V18c0 1.7 3 2.5 3 2.5V4.5S16 3 14 3z"/></svg>',玄鉴:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l1-5h16l1 5"/><path d="M4 9h16v11H4z"/><path d="M8 9c0 2 2 3 4 3s4-1 4-3"/></svg>',聊天:'<svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c5 0 9 3.6 9 8s-4 8-9 8c-.9 0-1.8-.1-2.6-.3L4 21l1.6-3.5C4 16 3 13.9 3 11.8 3 6.8 7 3 12 3z"/><path d="M8.5 12h7M8.5 9h4"/></svg>'};
 function initBottomNav(){
   var nav=document.createElement('div'); nav.className='bottom-nav'; nav.id='bottom-nav';
   SUB_TABS.forEach(function(g){
@@ -8969,17 +9029,17 @@ function route(){
   if (h.indexOf('#arena')<0) stopArenaFight(); /* 离开竞技页即停止战斗 */
   if (typeof WBOSS!=='undefined' && h.indexOf('#wboss')<0){ if(WB_REFRESH){ clearInterval(WB_REFRESH); WB_REFRESH=null; } } /* 离开世界BOSS页：仅停血条刷新，出战战斗后台持续（进入副本/试炼/塔/竞技/域外讨伐才停） */
   /* 统一绑定所有二级页返回按钮（不依赖 renderHome，刷新/直开页面也有效） */
-  ['arena','forge','wanshou','gem','enhance','refine','shop','treasure','trial','lottery','achievement','task','attrs','main','rebirth','altar','guide','season','battle','rank','auction'].forEach(function(k){
+  ['arena','forge','wanshou','gem','enhance','refine','shop','treasure','trial','lottery','achievement','task','attrs','main','rebirth','altar','guide','season','battle','rank','auction','chat'].forEach(function(k){
     var b=document.getElementById(k+'-back'); if(b&&!b.__b){ b.__b=true; b.addEventListener('click',function(){ location.hash='#home'; }); }
   });
   applyNavTitle();   /* 快捷导航标题：角色属性 → 名字+阶位 */
   /* 挂机不因切换页面而停止：只有点「停止挂机」才停 */
   var attrs = h.indexOf('#attrs')>=0, enh = h.indexOf('#enhance')>=0,
       refine = h.indexOf('#refine')>=0,
-      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0, lot = h.indexOf('#lottery')>=0, tl = h.indexOf('#trial')>=0, tower = h.indexOf('#tower')>=0, arena = h.indexOf('#arena')>=0, home = h.indexOf('#home')>=0, forge = h.indexOf('#forge')>=0, wanshou = h.indexOf('#wanshou')>=0, main = h.indexOf('#main')>=0, ach = h.indexOf('#achievement')>=0, rebirth = h.indexOf('#rebirth')>=0, altar = h.indexOf('#altar')>=0, guide = h.indexOf('#guide')>=0, craft = h.indexOf('#craft')>=0, wb = h.indexOf('#wboss')>=0, season = h.indexOf('#season')>=0, daily = h.indexOf('#daily')>=0, store = h.indexOf('#store')>=0, battle = h.indexOf('#battle')>=0, rank = h.indexOf('#rank')>=0, task = h.indexOf('#task')>=0, auction = h.indexOf('#auction')>=0;
+      gem = h.indexOf('#gem')>=0, god = h.indexOf('#god')>=0, trs = h.indexOf('#treasure')>=0, shop = h.indexOf('#shop')>=0, lot = h.indexOf('#lottery')>=0, tl = h.indexOf('#trial')>=0, tower = h.indexOf('#tower')>=0, arena = h.indexOf('#arena')>=0, home = h.indexOf('#home')>=0, forge = h.indexOf('#forge')>=0, wanshou = h.indexOf('#wanshou')>=0, main = h.indexOf('#main')>=0, ach = h.indexOf('#achievement')>=0, rebirth = h.indexOf('#rebirth')>=0, altar = h.indexOf('#altar')>=0, guide = h.indexOf('#guide')>=0, craft = h.indexOf('#craft')>=0, wb = h.indexOf('#wboss')>=0, season = h.indexOf('#season')>=0, daily = h.indexOf('#daily')>=0, store = h.indexOf('#store')>=0, battle = h.indexOf('#battle')>=0, rank = h.indexOf('#rank')>=0, task = h.indexOf('#task')>=0, auction = h.indexOf('#auction')>=0, chat = h.indexOf('#chat')>=0;
   if (enh) FORGE_TAB='enhance'; else if (refine) FORGE_TAB='refine'; else if (typeof enhAutoTimer!=='undefined'&&enhAutoTimer) FORGE_TAB='enhance'; else FORGE_TAB='gem';   /* 自动强化中切回保留强化页 */
   if (god) WANSHOU_TAB='god';
-  var view = season ? '#view-season' : guide ? '#view-guide' : altar ? '#view-altar' : rebirth ? '#view-rebirth' : home ? '#view-home' : craft ? '#view-craft' : daily ? '#view-daily' : (forge||enh||refine||gem) ? '#view-forge' : (wanshou||god) ? '#view-wanshou' : attrs ? '#view-attrs' : trs ? '#view-treasure' : shop ? '#view-shop' : lot ? '#view-lottery' : tower ? '#view-tower' : tl ? '#view-trial' : arena ? '#view-arena' : wb ? '#view-wboss' : ach ? '#view-achievement' : task ? '#view-task' : store ? '#view-store' : rank ? '#view-rank' : battle ? '#view-battle' : auction ? '#view-auction' : main ? '#view-main' : '#view-main';   /* 默认进第一个 Tab：行囊；强化/洗炼/宝石并入神兵锻冶 */
+  var view = season ? '#view-season' : guide ? '#view-guide' : altar ? '#view-altar' : rebirth ? '#view-rebirth' : home ? '#view-home' : craft ? '#view-craft' : daily ? '#view-daily' : (forge||enh||refine||gem) ? '#view-forge' : (wanshou||god) ? '#view-wanshou' : attrs ? '#view-attrs' : trs ? '#view-treasure' : shop ? '#view-shop' : lot ? '#view-lottery' : tower ? '#view-tower' : tl ? '#view-trial' : arena ? '#view-arena' : wb ? '#view-wboss' : ach ? '#view-achievement' : task ? '#view-task' : store ? '#view-store' : rank ? '#view-rank' : battle ? '#view-battle' : auction ? '#view-auction' : chat ? '#view-chat' : main ? '#view-main' : '#view-main';   /* 默认进第一个 Tab：行囊；强化/洗炼/宝石并入神兵锻冶 */
   /* 背包条静态默认显示（CSS display:flex），不随 route 显隐 */
   var needMount = (view==='#view-forge'||view==='#view-wanshou'||view==='#view-auction');
   if(needMount){ if(view==='#view-forge') mountForge(); else if(view==='#view-wanshou') mountWanshou(); else mountAuction(); }   /* 先同步挂载子面板（含 move 节点）→ transition/首屏快照已含内容，规避 Safari 异步过渡竞态致子面板不显示 */
@@ -9006,6 +9066,7 @@ function route(){
   if (view==='#view-craft') initCraft();
   if (view==='#view-store') initStore();   /* 仓库页：渲染双栏并绑定转移 */
   if (view==='#view-battle') mountBattle();   /* 域外战场：生成对手并渲染 */
+  if (view==='#view-chat') mountChat();   /* 世界聊天/私聊：渲染频道 + 绑定输入 */
   if (view==='#view-season') mountSeason();
   if (view==='#view-achievement') renderAchievement();
   if (view==='#view-task'){ renderTask(); document.getElementById('view-home').style.display='none'; document.getElementById('view-task').style.display='block'; }   /* 任务系统页：兜底强制切换（个别加载时序下 applyRoute 的 task 显隐判断失效） */
@@ -11241,6 +11302,131 @@ function aiAuction(st,p,now){
   }catch(err){}
 }
 auctionLoad();
+/* ===== 世界聊天 / 私聊议价 · 数据层 ===== */
+var CHAT_KEY='shenqi_chat';
+function chatLoad(){ var s=null; try{s=JSON.parse(localStorage.getItem(CHAT_KEY)||'null');}catch(e){} if(!s) s={world:[],priv:[]}; chatPrune(s); return s; }
+function chatPrune(s){ var cut=Date.now()-86400000; s.world=(s.world||[]).filter(function(m){return (m.time||0)>=cut;}); s.priv=(s.priv||[]).filter(function(m){return (m.time||0)>=cut;}); }
+function chatSave(){ try{ localStorage.setItem(CHAT_KEY,JSON.stringify(CHAT_DATA)); }catch(e){} }
+var CHAT_DATA=chatLoad();
+var CHAT_PEER=null, CHAT_TAB='world';
+function chatPlayerName(){ return (CHARACTER&&CHARACTER.info&&CHARACTER.info.name)?CHARACTER.info.name:'谜团'; }
+function chatTimeStr(t){ var d=new Date(t); return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2); }
+function chatEsc(s){ s=String(s==null?'':s); var A=String.fromCharCode(38); return s.replace(new RegExp(A,'g'),A+'amp;').replace(/</g,A+'lt;').replace(/>/g,A+'gt;'); }
+function chatWorldPush(m){ CHAT_DATA.world.push(m); if(CHAT_DATA.world.length>200) CHAT_DATA.world=CHAT_DATA.world.slice(-200); chatSave(); renderWorld(); }
+function chatPrivPush(m){ CHAT_DATA.priv.push(m); chatSave(); renderCons(); if(CHAT_PEER && (m.from===CHAT_PEER||m.to===CHAT_PEER)) renderDlg(); }
+function renderWorld(){ var ls=document.getElementById('chat-list'); if(!ls) return;
+  var arr=CHAT_DATA.world.slice(-120);
+  ls.innerHTML=arr.map(function(m){
+    var _cls=(m.ai?'ai':(m.from===chatPlayerName()?'me':''));
+    return '<div class="chat-msg '+_cls+'"><span class="chat-nm">'+chatEsc(m.from)+'</span><span class="chat-tx">'+chatEsc(m.text||'')+'</span><span class="chat-tm">'+chatTimeStr(m.time)+'</span></div>';
+  }).join('') || '<div class="chat-dlg-empty">世界还很安静，去冒险吧…</div>';
+  ls.scrollTop=ls.scrollHeight;
+}
+function renderCons(){ var cs=document.getElementById('chat-cons'); if(!cs) return;
+  var peers={};
+  CHAT_DATA.priv.forEach(function(m){ var other=(m.from===chatPlayerName())?m.to:m.from; if(!other||other===chatPlayerName()) return; if(!peers[other]||m.time>peers[other].time) peers[other]=m; });
+  var names=Object.keys(peers).sort(function(a,b){ return peers[b].time-peers[a].time; });
+  cs.innerHTML=names.length? names.map(function(nm){
+    var _m=peers[nm];
+    return '<div class="chat-con" data-p="'+chatEsc(nm)+'"><span class="cc-nm">'+chatEsc(nm)+'</span><span class="cc-tx">'+chatEsc((_m.ai?'AI：':'')+(_m.text||''))+'</span><span class="cc-tm">'+chatTimeStr(_m.time)+'</span></div>';
+  }).join('') : '<div class="chat-dlg-empty">还没有私聊，去世界频道点 AI 名字聊聊</div>';
+}
+function renderDlg(){ var dg=document.getElementById('chat-dlg'); if(!dg) return;
+  var pi=document.getElementById('chat-in-priv'); if(pi) pi.placeholder=(CHAT_PEER?('回复 '+CHAT_PEER+'…'):'选择会话后发送私聊');
+  if(!CHAT_PEER){ dg.innerHTML='<div class="chat-dlg-empty">选择左侧会话开始私聊</div>'; return; }
+  var ms=CHAT_DATA.priv.filter(function(m){ return (m.from===CHAT_PEER||m.to===CHAT_PEER); }).slice(-100).sort(function(a,b){ return (a.time||0)-(b.time||0); });
+  dg.innerHTML=ms.map(function(m){
+    var mine=m.from===chatPlayerName();
+    var _nm=chatEsc(mine?chatPlayerName():CHAT_PEER);
+    var _bub=chatEsc(m.text||'');
+    var _tm=chatTimeStr(m.time);
+    return '<div class="chat-b'+(mine?' mine':' peer')+'">'+(!mine?('<span class="chat-bnm">'+_nm+'</span>'):'')+'<div class="chat-bub">'+_bub+'</div><span class="chat-btm">'+_tm+'</span></div>';
+  }).join('') || '<div class="chat-dlg-empty">开始和 '+chatEsc(CHAT_PEER)+' 聊聊吧</div>';
+  var _r=function(){ dg.scrollTop=dg.scrollHeight; };
+  if(window.requestAnimationFrame) requestAnimationFrame(_r); else _r();
+}
+function openChatPeer(nm){ CHAT_PEER=nm; switchChatTab('priv'); renderDlg(); }
+function switchChatTab(t){ CHAT_TAB=t;
+  var w=document.getElementById('chat-world'), p=document.getElementById('chat-priv');
+  if(w) w.style.display=(t==='world')?'':'none'; if(p) p.style.display=(t==='priv')?'':'none';
+  var tabs=document.querySelectorAll('#chat-tabs .chat-tab'); for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('on',tabs[i].getAttribute('data-t')===t);
+  if(t==='priv'){ renderCons(); renderDlg(); }
+}
+function sendWorld(){ var inp=document.getElementById('chat-in'); var t=(inp&&inp.value||'').trim(); if(!t) return; inp.value=''; chatWorldPush({from:chatPlayerName(),ai:false,text:t,time:Date.now()}); }
+function sendPriv(){ var inp=document.getElementById('chat-in-priv'); var t=(inp&&inp.value||'').trim(); if(!t||!CHAT_PEER) return; inp.value=''; chatPrivPush({from:chatPlayerName(),to:CHAT_PEER,text:t,time:Date.now()}); aiReplyChat(CHAT_PEER,t); }
+function mountChat(){
+  var tb=document.getElementById('chat-tabs'); if(tb&&!tb.__b){ tb.__b=true; tb.addEventListener('click',function(e){ var b=e.target.closest('.chat-tab'); if(b) switchChatTab(b.getAttribute('data-t')); }); }
+  var ws=document.getElementById('chat-send'); if(ws&&!ws.__b){ ws.__b=true; ws.addEventListener('click',sendWorld); }
+  var wi=document.getElementById('chat-in'); if(wi&&!wi.__b){ wi.__b=true; wi.addEventListener('keydown',function(e){ if(e.key==='Enter') sendWorld(); }); }
+  var ps=document.getElementById('chat-psend'); if(ps&&!ps.__b){ ps.__b=true; ps.addEventListener('click',sendPriv); }
+  var pi=document.getElementById('chat-in-priv'); if(pi&&!pi.__b){ pi.__b=true; pi.addEventListener('keydown',function(e){ if(e.key==='Enter') sendPriv(); }); }
+  var cs=document.getElementById('chat-cons'); if(cs&&!cs.__b){ cs.__b=true; cs.addEventListener('click',function(e){ var c=e.target.closest('.chat-con'); if(c) openChatPeer(c.getAttribute('data-p')); }); }
+  var ls=document.getElementById('chat-list'); if(ls&&!ls.__b){ ls.__b=true; ls.addEventListener('click',function(e){ var n=e.target.closest('.chat-nm'); if(n && n.parentNode && String(n.parentNode.className).indexOf('ai')>=0 && n.textContent!==chatPlayerName()){ openChatPeer(n.textContent); } }); }
+  switchChatTab(CHAT_TAB); renderWorld(); renderCons(); renderDlg();
+}
+function aiTierN(st){ var i=(st&&st.tierIdx)||0; return (CHAR_TIERS[i]&&CHAR_TIERS[i].n)?CHAR_TIERS[i].n:''; }
+function aiPickLine(p,st){
+  var _cash=false; try{ _cash=!!aiIsCasher(p,st); }catch(e){}
+  var _stl=aiStyle(p), _tier=aiTierN(st), _lv=st.lv||1, _enh=(st.enh&&st.enh.lv)||0, _ws=(st.ws||0), _core=(st.core||0), _pay=p.pay||0;
+  var pool=[];
+  if(_core>=1){ pool.push('超脱之后终于不用被轮回清空装备了，攒下的强化护符能一直用下去！'); pool.push('突破超脱门槛，接下来专心怼最强装备。'); }
+  else if(_ws>0){ pool.push('刚轮回完第 '+_ws+' 世，永久属性又叠一层，滚雪球真爽。'); pool.push('这世轮回把秘印榨干了，但冲到'+_tier+'值了。'); }
+  if(_enh>=8){ pool.push('强化怼到 +'+_enh+'，手都酸了，面板好看了不少。'); pool.push('护符不够用了，'+_enh+' 以上的强化真烧金币，得去收点强化护符。'); }
+  else if(_enh>0){ pool.push('装备点到 +'+_enh+' 够刷副本，剩下金币不如去拍卖行换点别的。'); }
+  if(_tier){ pool.push('终于冲到'+_tier+'，刷 boss 全属性越来越快，起飞。'); pool.push(''+_tier+'达成！战力又涨一截，世界 boss 敢抢了。'); }
+  if(_lv>=60){ pool.push('练到 '+_lv+' 级，该攒秘印准备下一轮轮回了。'); }
+  if(_cash){ pool.push('又打了一堆材料，挂拍卖行换点零花钱，金币到手美滋滋。'); pool.push('副本刷完就走，材料全卖，攒钱比啥都实在。'); }
+  else if(_pay>=3){ pool.push('氪金账户余额充足，看到好装备直接一口价秒了。'); pool.push('神豪的快乐就是拍卖行随便买，不差这点金币。'); }
+  if(p.luck>=0.35){ pool.push('今天运势不错，奇遇又送了好东西，滚雪球的感觉来了。'); }
+  pool.push('拍卖行今天成交不错，我的东西卖出去了。','刚蹲到一个好价直接拍下，别人还没反应过来。','世界 boss 打了，伤害榜又往前挪了挪。');
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+function aiWorldSay(p,text){ chatWorldPush({from:p.name,ai:true,text:text,time:Date.now()}); }
+function aiChatTick(){
+  if(!FIELD_ROSTER||!FIELD_ROSTER.length){ try{ ensureFieldRoster(); }catch(e){} }
+  var r=Math.random();
+  if(r<0.45){ var n=Math.random()<0.5?1:2; for(var i=0;i<n;i++){ var p=FIELD_ROSTER[Math.floor(Math.random()*FIELD_ROSTER.length)]; try{ aiEnsureAdvance(p); }catch(e){} var st=p.st||{}; var line=aiPickLine(p,st); if(line) aiWorldSay(p,line); } }
+  if(r<0.12) aiChatDealPropose();
+}
+function aiChatDealPropose(){
+  if(!AUCTION||!AUCTION.list||!FIELD_ROSTER) return;
+  var mine=AUCTION.list.filter(function(x){ return x.seller===chatPlayerName() && x.kind!=='gold'; });
+  if(!mine.length) return;
+  var it=mine[Math.floor(Math.random()*mine.length)];
+  var itemKey=(it.item&&it.item.name)||'item';
+  var recent=false; for(var k=CHAT_DATA.priv.length-1;k>=0;k--){ var m=CHAT_DATA.priv[k]; if(m.ai&&m.kind==='deal'&&m.itemKey===itemKey){ recent=true; break; } }
+  if(recent) return;
+  var ask=Math.max(1,Math.round(it.total||it.price||0));
+  var p=FIELD_ROSTER[Math.floor(Math.random()*FIELD_ROSTER.length)];
+  try{ aiEnsureAdvance(p); }catch(e){}
+  var psych=Math.max(1,Math.round(aiItemValue(it)*(p.pay>=3?2.2:(p.pay>=2?1.6:(p.pay>=1?1.15:0.85)))));
+  if(ask<=psych*0.9) return;
+  var offer=Math.max(1,Math.round(psych*0.9));
+  if(offer>=ask) return;
+  chatPrivPush({from:p.name,to:chatPlayerName(),ai:true,text:'你上架['+it.item.name+']定价 '+ask+'，我觉得贵了，心理价 '+offer+'，能谈吗？',time:Date.now(),kind:'deal',itemKey:itemKey,ask:ask,offer:offer});
+}
+function aiReplyChat(nm,text){
+  var p=null; if(FIELD_ROSTER) for(var i=0;i<FIELD_ROSTER.length;i++) if(FIELD_ROSTER[i].name===nm){ p=FIELD_ROSTER[i]; break; }
+  if(!p){ chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:'嗯…',time:Date.now()}); return; }
+  try{ aiEnsureAdvance(p); }catch(e){}
+  var last=null; for(var j=CHAT_DATA.priv.length-1;j>=0;j--){ var m0=CHAT_DATA.priv[j]; if(m0.from===nm&&m0.to===chatPlayerName()){ last=m0; break; } }
+  if(last&&last.kind==='deal'&&!(last.deal)){
+    var num=parseFloat(String(text||'').replace(/[^\d.]/g,''));
+    if(/好|行|成交|ok|可以|接受|deal/i.test(text)||(/^\d/.test(text.trim())&&num>=last.offer)){
+      chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:'行，就按 '+last.offer+' 成交。你把这件改价到 '+last.offer+' 上架，我马上拍下。',time:Date.now(),kind:'deal',deal:true}); return;
+    }
+    if(num>0&&num<last.offer){
+      if(num>=last.offer*0.85){ chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:''+num+' 可以，改价上架我就拍。',time:Date.now(),kind:'deal',deal:true}); }
+      else { chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:'再高一点吧，'+last.offer+' 是我极限了。',time:Date.now(),kind:'deal',round:1}); }
+      return;
+    }
+    chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:'那算了，我还是去别处蹲个好价吧。',time:Date.now()}); return;
+  }
+  if(/价|钱|卖|便宜|贵|卖不/i.test(text)){ chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:'我也是按行情定的价，想要可以去拍卖行聊聊，价格好商量。',time:Date.now()}); return; }
+  if(/在吗|你好|hi|hello|哈喽/i.test(text)){ chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:'在呢，刚刷完副本，有事？',time:Date.now()}); return; }
+  var rep=(aiStyle(p).gearLove>=0.6)?['战力才是硬道理，装备好一切都好说。','刚刷完副本，材料又攒了一堆。']:['金币攒着最实在，够用就好。','今天材料行情不错，多卖点。'];
+  chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:rep[Math.floor(Math.random()*rep.length)],time:Date.now()});
+}
 var LOTTERY=[   /* 玄鉴神藏：稀缺资源池（去空奖，整体价值上移；传说档 prob<0.01 触发彩带/稀有判定） */
   {label:'锻造精华 ×20',short:'锻造精华',prob:0.12,color:'#C08A3E',_xj:'锻造精华',apply:function(){addStackable(mkEssence(20));}},
   {label:'镶嵌之锤 Lv7 ×2',short:'镶嵌锤Lv7',prob:0.10,color:'#e8b54a',_xj:'镶嵌之锤 Lv7',apply:function(){var h=mkLoot(ITEM_BLUEPRINTS.hammers[0]); h.count=2; h.maxStack=255; lotteryGive(h,false,this); }},
