@@ -6364,11 +6364,10 @@ function aiPriority(st,p){   /* 状态感知决策层：结合每个AI自身情�
            seal: (!_cash&&sealWorth)?1:0,                   /* 套现型不攒秘印追轮回（主要为赚钱，不投入复利杠杆） */
            god: (!_cash&&godMat>150&&canBoss)?0.1:0 };      /* 套现型几乎不升天神，省材料出售 */
 }
-function aiIthDrop(st,p,onlineSec){   /* AI雕俱星座挂机掉伊泰安项链：与玩家同来源(雕俱星座)、同前提(总量ITH_LEFT>0 且未拥有)、同消耗总量/发全服公告；仅掉落间隔与概率按用户指定下调(玩家每20秒0.5% → AI每60秒0.005%)，其余规则完全一致。掉落后生成真实伊泰安项链物品入背包，由aiAutoEquip穿戴到首饰槽（与玩家获得同链路，杜绝凭空） */
+function aiIthDrop(st,p,onlineSec){   /* AI雕俱星座挂机掉伊泰安项链：与玩家完全一致——仅在雕俱星座(副本0)挂机/打怪才有机会触发，且同前提(总量ITH_LEFT>0)、同消耗总量/发全服公告；仅掉落间隔与概率按用户指定下调(玩家每20秒0.5% → AI每60秒0.005%)。允许多件（与玩家一致，不限已拥有），掉落到全服总量掉完为止。掉落后生成真实伊泰安项链物品入背包，由aiAutoEquip穿戴到首饰槽（与玩家获得同链路，杜绝凭空） */
   if(!st.bag) st.bag=[];
   if(ITH_LEFT.yitaiNecklace<=0) return;   /* 项链总量已掉完：不再掉落 */
-  var _hasIth=function(bag,eq){ for(var i=0;i<bag.length;i++) if(bag[i]&&String(bag[i].name).indexOf('伊泰安项链')>=0) return true; for(var k in (eq||{})){ var e=eq[k]; if(e&&String(e.name).indexOf('伊泰安项链')>=0) return true; } return false; };
-  if(_hasIth(st.bag,st.equip)) return;   /* 已拥有则不再掉（玩家 hasYitaiNeck 同规则，杜绝重复） */
+  if(aiBestDungeonFor(st,p)!==0) return;   /* 与玩家一致：仅在雕俱星座(副本0)挂机/打怪才有机会掉落，刷其他副本不触发 */
   var rolls=onlineSec/60;   /* 雕俱星座挂机：每60秒结算一次 */
   if(Math.random()<Math.min(1,rolls*0.00005*(1+Math.min(0.5,aiAltarLines(st,p).drop*0.05)))){   /* 每60秒 0.005% 概率掉项链（玩家为每20秒0.5%，AI按用户指定下调）；×黄金神坛·福泽传说掉宝权重(同玩家luckRoll) */
     ITH_LEFT.yitaiNecklace--;
