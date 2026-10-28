@@ -6368,6 +6368,7 @@ function aiIthDrop(st,p,onlineSec){   /* AI雕俱星座挂机掉伊泰安项链�
   if(!st.bag) st.bag=[];
   if(ITH_LEFT.yitaiNecklace<=0) return;   /* 项链总量已掉完：不再掉落 */
   if(aiBestDungeonFor(st,p)!==0) return;   /* 与玩家一致：仅在雕俱星座(副本0)挂机/打怪才有机会掉落，刷其他副本不触发 */
+  if(Math.abs(((DUNGEONS[0]&&DUNGEONS[0].monLv)||1)-(st.lv||1))>20) return;   /* 等级差>20(双向)无收益：伊泰安项链也是收益，与玩家副本20级门控同规则——AI等级与雕俱星座怪(1级)差>20则不掉，杜绝高等级靠兜底副本0误判在雕俱 */
   var rolls=onlineSec/60;   /* 雕俱星座挂机：每60秒结算一次 */
   if(Math.random()<Math.min(1,rolls*0.00005*(1+Math.min(0.5,aiAltarLines(st,p).drop*0.05)))){   /* 每60秒 0.005% 概率掉项链（玩家为每20秒0.5%，AI按用户指定下调）；×黄金神坛·福泽传说掉宝权重(同玩家luckRoll) */
     ITH_LEFT.yitaiNecklace--;
@@ -6420,6 +6421,7 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
   aiAutoEquip(st,p);   /* 自动穿戴背包里最利于战力的武器/防具（仿玩家autoEquip，真实穿戴） */
   aiGemEmbed(st,p);   /* 有宝石即可自动镶嵌（玩家同规则：无锤基础成功率，锤提高成功率封顶50%） */
   aiSellTrash(st,p);   /* 低档装备(普通/稀有)堆太多拍卖无人要 → 卖系统商店换金币（与玩家shopSellPrice同价） */
+  aiSmeltExchange(st,p);   /* 锻造工坊·熔铸/兑换：多余传说装备/材料熔成 0.1 精粹，精粹按玩家同cost换永久属性 */
   aiGuardTaskDrop(st,p);   /* 每日"安全护符任务"：AI 击杀海盗岛满1000领10安全护符入真实背包（06:00重置，与玩家同口径） */
   aiBuyHeal(st,p);   /* 战力不足且金币充裕时买全能药水备战（真实购买） */
   aiUseHeal(st,p);   /* 战斗受重伤时消耗全能药水回满（真实消耗，与玩家同物） */
@@ -6449,7 +6451,7 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
       st.ws=(st.ws||0)+1; st.seal-=1;   /* 消耗轮回秘印×1；99世封顶(超脱) */
       st.tp=(st.tp||0)+1; st.stones=(st.stones||0)+50+(st.ws||0)*30;   /* 同玩家轮回奖励：轮回点+1、魂石+50+世次×30（用于点天赋/炼化法器） */
       /* 重置等级/装备/背包/副本进度；保留永久加成(perm)/神坛(altar)/成长档(grow)/天赋( talents)/法器(relic)/天神神级(gods)——玩家轮回同规则 */
-      st.effSec=0; st.lv=1; st.gold=0; st.deepTotal=0; st.enh={lv:0,stars:0,iset:0,og:0}; st.bag=[]; st.equip={}; st.godPower=0; st.godCrystal=0; st.godRune=0; st.godSeal=0;   /* 装备/真实背包/天神材料重置（天神神级保留）——玩家轮回同规则清装备背包 */
+      st.effSec=0; st.lv=1; st.gold=0; st.deepTotal=0; st.enh={lv:0,stars:0,iset:0,og:0}; st.bag=[]; st.equip={}; st.godPower=0; st.godCrystal=0; st.godRune=0; st.godSeal=0; st.legendEssence=0;   /* 装备/真实背包/天神材料重置（天神神级保留）——玩家轮回同规则清装备背包 */
     }
   }
   aiSpendRpt(st);   /* 后台自动点天赋/炼化法器（模拟真人，用轮回获得的轮回点/魂石） */
@@ -6617,6 +6619,42 @@ function aiSellTrash(st,p){   /* 低档装备(普通/稀有)练级堆太多、�
     }
   }
 }
+function aiSmeltExchange(st,p){   /* AI 锻造工坊·熔铸/兑换（与玩家同规则：传说装备/材料熔铸得 0.1 传说精粹；精粹按玩家LEGEND_EXCHANGE同cost兑换成长资源，产物真实落到AI自身状态，不凭空） */
+  if(!st.bag) return;
+  /* 熔铸：背包中未穿戴/未强化/无异能/非伊泰安的传说装备与传说材料，保留战力最强1件供换装，其余熔成 0.1 精粹/件 */
+  var cands=[];
+  for(var i=0;i<st.bag.length;i++){
+    var it=st.bag[i]; if(!it||!it.name) continue;
+    if(!isLegendEquip(it)) continue;
+    if(String(it.name).indexOf('伊泰安')>=0) continue;
+    if(it.enhanceLevel>0) continue;
+    if(it.specialEffect) continue;
+    if(it.gemAttributes&&Object.keys(it.gemAttributes).length) continue;
+    var _worn=false; for(var _k in st.equip){ if(st.equip[_k]&&st.equip[_k].id===it.id){ _worn=true; break; } }
+    if(_worn) continue;
+    cands.push(it);
+  }
+  if(cands.length>1){
+    cands.sort(function(a,b){ return aiItemScore(b)-aiItemScore(a); });
+    for(var j=1;j<cands.length;j++){
+      var _c=cands[j], _idx=st.bag.indexOf(_c);
+      if(_idx>=0){ st.bag.splice(_idx,1); st.legendEssence=(st.legendEssence||0)+0.1; }
+    }
+  }
+  /* 兑换：精粹足够时按玩家同cost换永久属性（+1亿起步，攒多/属性高后兑更高档），真实加到自身永久属性 */
+  var le=st.legendEssence||0;
+  if(le<2) return;
+  if(!st.perm) st.perm={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0};
+  var _perm=st.perm;
+  var _tot=_perm.力量+_perm.敏捷+_perm.体质+_perm.精神+_perm.智力+_perm.幸运;
+  var choice=null;
+  if(le>=80&&_tot>=2000000000){ choice={cost:80,attr:10000000000}; }
+  else if(le>=12&&_tot>=300000000){ choice={cost:12,attr:1000000000}; }
+  else if(le>=2){ choice={cost:2,attr:100000000}; }
+  if(choice){ st.legendEssence-=choice.cost;
+    _perm.力量+=choice.attr; _perm.敏捷+=choice.attr; _perm.体质+=choice.attr; _perm.精神+=choice.attr; _perm.智力+=choice.attr; _perm.幸运+=choice.attr;
+  }
+}
 function aiBuyHeal(st,p){   /* AI 战力不足且金币充裕时，从系统商店购买全能药水入背包（真实金币购买100亿/瓶，非凭空），供战斗回血补给；常备3瓶 */
   if(!st.bag) st.bag=[];
   var B=aiBuildState(st,p), pw=B?B.pw:0;
@@ -6746,29 +6784,24 @@ function stackItems(type){
   return out;
 }
 ENH.reset=function(){ this.equip=null; this.mats=[null,null,null,null,null,null]; this.availPage=0; this.hammer=null; };
-/* ============ 锻造工坊：分解/重铸经济 ============ */
-var CRAFT={tab:'decomp', recast:null, decompPage:0, recastPage:0, smeltPage:0, exchPage:0, decompPick:null, evolvePick:null};
+/* ============ 锻造工坊：熔铸/兑换 ============ */
+var CRAFT={tab:'smelt', recast:null, decompPage:0, recastPage:0, smeltPage:0, exchPage:0, decompPick:null};
 function craftSortDesc(a,b){
   var m={grey:0,blue:1,gold:2,purple:3};
   var ra=(m[itemQuality(a)]||0)*2 + (a&&a.specialEffect?1:0);
   var rb=(m[itemQuality(b)]||0)*2 + (b&&b.specialEffect?1:0);
   return rb-ra;   /* 质量倒序：传说>史诗>稀有>普通；同质量带异能条(特殊效果)者在前；同分保持原顺序(V8稳定排序) */
 }
-function craftEssenceCount(){ var n=0; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(s&&s.name==='锻造精华') n+=(s.count||1); } return n; }
-function mkEssence(n){ return {name:'锻造精华',type:'craft_mat',img:'logos/神力碎片.png',count:n,maxStack:999999,quality:'grey'}; }
-function isDecompEquip(it){ if(!it)return false; var q=itemQuality(it); if(q!=='gold'&&q!=='purple')return false; return !!EQUIPPABLE[it.type]; }
-function craftValue(it){ return itemQuality(it)==='purple'?50:15; }
 function ithKeyByItem(it){ if(!it||!it.name||String(it.name).indexOf('伊泰安')<0) return null; if(String(it.name).indexOf('项链')>=0) return 'yitaiNecklace'; if(String(it.name).indexOf('戒指')>=0) return 'yitaiRing'; if(String(it.name).indexOf('手镯')>=0) return 'yitaiBracelet'; return null; }   /* 伊泰安部件→总量key（项链/戒指/手镯各10） */
 function ithReturn(it){ var k=ithKeyByItem(it); if(k&&(ITH_LEFT[k]||0)<10){ ITH_LEFT[k]++; try{ saveGame(); }catch(e){} } }   /* 分解/熔铸/出售伊泰安→回池（在库/背包/穿戴每部位总量≤10） */
 function ithHeldCount(k){ var nm=(ITEM_BLUEPRINTS[k]||{}).name, n=0; if(!nm) return 0; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.name===nm) n+=(it.count||1); } for(var kk in equipState){ var e=equipState[kk]; if(e&&e.name===nm) n++; } for(var sp=0;sp<STORE_NUM;sp++){ var row=store[sp]; if(!row) continue; for(var si=0;si<STORE_SLOTS;si++){ var st=row[si]; if(st&&st.name===nm) n+=(st.count||1); } } return n; }   /* 背包+穿戴+仓库 该部位持有数 */
 function aiIthHeldAll(k){ var nm=(ITEM_BLUEPRINTS[k]&&ITEM_BLUEPRINTS[k].name)||''; var s=0; try{ if(FIELD_ROSTER) for(var i=0;i<FIELD_ROSTER.length;i++){ var _st=FIELD_ROSTER[i]&&FIELD_ROSTER[i].st; if(_st){ var _eq=_st.equip||{}, _bag=_st.bag||[]; for(var _e in _eq){ var _it=_eq[_e]; if(_it&&String(_it.name)===nm) s++; } for(var _b=0;_b<_bag.length;_b++){ var _bi=_bag[_b]; if(_bi&&String(_bi.name)===nm) s+=Math.max(1,_bi.count||1); } } } }catch(e){} return s; }   /* 全服AI实际持有该部位伊泰安件数（穿戴+背包真实物品，同aiWornIth/aiIthTotal口径；参与总量校正保证玩家+AI每部位≤10） */
 function craftRemoveById(id){ for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ if(bag[p][i]&&bag[p][i].id===id){ bag[p][i]=null; renderBag(); return true; } } return false; }
-function craftDecompose(id,it){ var v=craftValue(it); var _uni=(it&&String(it.name).indexOf('伊泰安')>=0); function _do(){ craftRemoveById(id); if(_uni) ithReturn(it); addStackable(mkEssence(v)); toast('分解获得 锻造精华 ×'+v); saveGame(); renderCraft(); } if(_uni){ confirmDialog('分解唯一装备「'+it.name+'」？<br><span style="color:#FF5AD8">伊泰安为全服唯一，分解后本世绝版（轮回才重置），不可逆！</span>', function(ok){ if(ok) _do(); }); } else _do(); }
 /* ============ 传说精粹熔铸 + 传说兑换所 ============ */
 function mkLegendEssence(n){ return {name:'传说精粹',type:'legend_essence',img:'logos/神力碎片.png',count:n,maxStack:999,quality:'purple'}; }
 function legendEssenceCount(){ var n=0; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(s&&s.name==='传说精粹') n+=(s.count||1); } return n; }
 function isLegendEquip(it){ if(!it) return false; return itemQuality(it)==='purple' || String(it.name).indexOf('传说')===0; }   /* 方案A：传说装备+传说材料（祝福宝石/混沌/卷轴/神印/神符/坐骑等）均可熔铸成精粹 */
-function legendSmeltValue(it){ return (it.type==='necklace'||it.type==='ring'||it.type==='bracelet')?2:1; }   /* 首饰熔 2 精粹，其余 1 */
+function legendSmeltValue(it){ return 0.1; }   /* 所有传说装备/物品熔铸均得 0.1 传说精粹 */
 function legendSmelt(id){
   var it=null; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ if(bag[p][i]&&bag[p][i].id===id){ it=bag[p][i]; break; } }
   if(!it){ toast('装备不存在'); return; }
@@ -6786,16 +6819,6 @@ var LEGEND_EXCHANGE=[
  {n:'全属性 +100亿', ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#FF5AD8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-2.9-5.4 2.9 1.2-6L3.4 8.8l6-.7z"/></svg>', cost:80, d:'永久全属性提升', give:function(){ addPerm(10000000000,0,'传说兑换所'); saveGame(); toast('永久全属性 +100亿'); }},
  {n:'随机传说材料', ic:'<svg viewBox="0 0 24 24" fill="none" stroke="#E05A3A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.5l2.6 5.6 6 .7-4.4 4.2 1.2 6-5.4-2.9-5.4 2.9 1.2-6L3.4 8.8l6-.7z"/></svg>', cost:2, d:'随机祝福宝石 ×3（材料循环）', give:function(){ var pool=[ITEM_BLUEPRINTS.earthBlessingGem,ITEM_BLUEPRINTS.fireBlessingGem,ITEM_BLUEPRINTS.waterBlessingGem,ITEM_BLUEPRINTS.windBlessingGem]; var b=pool[Math.floor(Math.random()*pool.length)]; var m=mkLoot(b); m.count=3; addStackable(m); saveGame(); toast('获得 随机传说材料 ×3'); }}
 ];
-/* ===== 自动处理：自动分解 / 自动进化 / 自动熔铸（自助工具） ===== */
-var AUTO_PROC={on:false, decomp:false, evolve:false, smelt:false, q:'gold', protect:[], smeltList:[]};   /* q=分解门槛 grey/blue/gold；protect=永不处理白名单；smeltList=可自动熔铸名单（勾选才熔） */
-function loadAutoProc(){ try{ var j=JSON.parse(localStorage.getItem('shenqi_aproc')); if(j){ AUTO_PROC.on=!!j.on; AUTO_PROC.decomp=!!j.decomp; AUTO_PROC.evolve=!!j.evolve; AUTO_PROC.smelt=!!j.smelt; AUTO_PROC.q=j.q||'gold'; AUTO_PROC.protect=(j.protect||[]).slice(); AUTO_PROC.smeltList=(j.smeltList||[]).slice(); } }catch(e){} }
-function saveAutoProc(){ try{ localStorage.setItem('shenqi_aproc',JSON.stringify({on:AUTO_PROC.on,decomp:AUTO_PROC.decomp,evolve:AUTO_PROC.evolve,smelt:AUTO_PROC.smelt,q:AUTO_PROC.q,protect:AUTO_PROC.protect,smeltList:AUTO_PROC.smeltList})); }catch(e){} }
-function collectSmeltable(){ var m={}; function add(it){ if(!it||!it.name) return; if(isLegendEquip(it)) m[it.name]=itemQuality(it); } Object.keys(ITEM_BLUEPRINTS).forEach(function(k){ var v=ITEM_BLUEPRINTS[k]; if(Array.isArray(v)) v.forEach(add); else add(v); }); for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(s&&isLegendEquip(s)&&!m[s.name]) m[s.name]=itemQuality(s); } return m; }
-function autoProtected(it){ if(!it||!it.name) return true; if(String(it.name).indexOf('伊泰安')>=0) return true; if(it.enhanceLevel>0) return true; if(it.specialEffect) return true; if(it.gemAttributes){ var _gks=Object.keys(it.gemAttributes); if(_gks.length) return true; } for(var _pk in equipState){ if(equipState[_pk]&&equipState[_pk].id===it.id) return true; } return AUTO_PROC.protect.indexOf(it.name)>=0; }   /* 保护：已装备 / 已强化 / 上过属性 / 带异能 / 伊泰安 / 白名单——卸下放背包也不自动处理 */
-function autoEvolveScan(){ var made=0, guard=0; while(guard++<25){ var hit=null; for(var p=0;p<BAG_NUM&&!hit;p++)for(var i=0;i<BAG_SLOTS&&!hit;i++){ var s=bag[p][i]; if(s&&evolveTargetOf(s)&&!autoProtected(s)){ var need=(itemQuality(s)==='blue'?6:(itemQuality(s)==='gold'?12:3)); if(evolveCountOf(s.name)>=need){ hit=s; break; } } } if(!hit) break; var name=hit.name, tgt=evolveTargetOf(hit), need2=(itemQuality(hit)==='blue'?6:(itemQuality(hit)==='gold'?12:3)), remain=need2; for(var p2=0;p2<BAG_NUM&&remain>0;p2++)for(var i2=0;i2<BAG_SLOTS&&remain>0;i2++){ var ss=bag[p2][i2]; if(ss&&ss.name===name){ var take=Math.min(ss.count||1,remain); ss.count-=take; remain-=take; if((ss.count||0)<=0) bag[p2][i2]=null; } } var _sf2=hit.specialEffect; if(itemQuality(tgt)==='purple'&&Math.random()<0.30){ _sf2=ABILITY_POOL[Math.floor(Math.random()*ABILITY_POOL.length)].k; } var nw=createItem(tgt,{id:itemIdCounter++, enhanceLevel:hit.enhanceLevel||0, specialEffect:_sf2, gemAttributes:hit.gemAttributes||[]}); placeInBag(nw); made++; } return made; }
-function autoDecompScan(){ var n=0; var thr={grey:0,blue:1,gold:2,purple:3}[AUTO_PROC.q]||0; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(s&&EQUIPPABLE[s.type]&&!isLegendEquip(s)&&!autoProtected(s)){ var iv={grey:0,blue:1,gold:2,purple:3}[itemQuality(s)]||0; if(iv>=thr){ var v=craftValue(s); craftRemoveById(s.id); addStackable(mkEssence(v)); n++; } } } return n; }   /* 只分解装备，材料（神力碎片/结晶等）不动 */
-function autoSmeltScan(){ var n=0; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(s&&isLegendEquip(s)&&!autoProtected(s)&&AUTO_PROC.smeltList.indexOf(s.name)>=0){ var v=legendSmeltValue(s); craftRemoveById(s.id); addStackable(mkLegendEssence(v)); n++; } } return n; }   /* 名单制：仅在可熔铸名单内的传说物品才自动熔铸 */
-function autoProcBag(){ if(!AUTO_PROC.on) return; var msg=[]; if(AUTO_PROC.evolve){ var e=autoEvolveScan(); if(e>0) msg.push('进化×'+e); } if(AUTO_PROC.decomp){ var d=autoDecompScan(); if(d>0) msg.push('分解×'+d); } if(AUTO_PROC.smelt){ var s2=autoSmeltScan(); if(s2>0) msg.push('熔铸×'+s2); } if(msg.length){ saveGame(); renderBag(); toast('自动处理：'+msg.join('、')); } }
 function legendExchange(i){ var e=LEGEND_EXCHANGE[i]; if(!e) return; var have=legendEssenceCount(); if(have<e.cost){ toast('传说精粹不足（需 '+e.cost+'）'); return; }
   confirmDialog('兑换「'+e.n+'」？<br>消耗 传说精粹 ×'+e.cost, function(ok){ if(!ok) return;
     if(legendEssenceCount()<e.cost){ toast('传说精粹不足'); return; }
@@ -6806,29 +6829,6 @@ function legendExchange(i){ var e=LEGEND_EXCHANGE[i]; if(!e) return; var have=le
   });
 }
 
-function evolveTargetOf(it){   /* 装备进化目标：同款更高一级品质蓝图；返回蓝图或 null（按名称品质前缀判定，非 itemQuality/type） */
-  if(!it||!EQUIPPABLE[it.type]) return null;
-  var m=it.name.match(/^(普通|稀有|史诗|传说)\s+(.*)$/); if(!m) return null;
-  var seq=['普通','稀有','史诗','传说'], qi=seq.indexOf(m[1]);
-  if(qi<0||qi>=3) return null;
-  var nq=seq[qi+1];
-  for(var k in ITEM_BLUEPRINTS){ var b=ITEM_BLUEPRINTS[k];
-    if(b&&b.type===it.type && b.name===nq+' '+m[2]) return b; }
-  return null;
-}
-function evolveCountOf(name){ var n=0; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(s&&s.name===name) n+=(s.count||1); } return n; }
-function craftEvolve(name){   /* 3件同名同品质合成高一级品质（保留强化/异能/宝石），按名字合并计数 */
-  var it=null; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ if(bag[p][i]&&bag[p][i].name===name){ it=bag[p][i]; break; } }
-  if(!it){ toast('装备不存在'); return; }
-  var tgt=evolveTargetOf(it); if(!tgt){ toast('该装备已是最高品质'); return; }
-  var need=(itemQuality(it)==='blue'?6:(itemQuality(it)==='gold'?12:3)), have=evolveCountOf(name);   /* 普通3/稀有6/史诗12 */
-  if(have<need){ toast('需 '+need+' 件「'+name+'」（当前 '+have+'）'); return; }
-  var remain=need;
-  for(var p2=0;p2<BAG_NUM&&remain>0;p2++)for(var i2=0;i2<BAG_SLOTS&&remain>0;i2++){ var ss=bag[p2][i2]; if(ss&&ss.name===name){ var take=Math.min(ss.count||1,remain); ss.count-=take; remain-=take; if((ss.count||0)<=0) bag[p2][i2]=null; } }
-  var _sf2=it.specialEffect; if(itemQuality(tgt)==='purple'&&Math.random()<0.30){ _sf2=ABILITY_POOL[Math.floor(Math.random()*ABILITY_POOL.length)].k; }   /* 进化至传说：30% 随机异能（与掉落一致） */
-  var nw=createItem(tgt,{id:itemIdCounter++, enhanceLevel:it.enhanceLevel||0, specialEffect:_sf2, gemAttributes:it.gemAttributes||[]});
-  placeInBag(nw); renderBag(); saveGame(); toast('进化成功：'+nw.name); renderCraft();
-}
 function qualityName(q){ var m={grey:'普通',blue:'稀有',gold:'史诗',purple:'传说'}; return m[q]||q; }
 function qualityColor(q){ var m={grey:'#FFFFFF',blue:'#40D2CD',gold:'#FFAC2D',purple:'#E702E7'}; return m[q]||'#efe4c8'; }   /* 品质色：普通白/稀有青/史诗橙/传说紫 */
 function craftPager(kind,total,page){
@@ -6842,49 +6842,15 @@ function craftNameHTML(it){
 }
 function renderCraft(){
   var b=document.getElementById('craft-body'); if(!b) return;
-  var ess=craftEssenceCount();
-  var eqs=[]; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(isDecompEquip(s)) eqs.push(s); } eqs.sort(craftSortDesc);
-  if(CRAFT.decompPage*6>=eqs.length) CRAFT.decompPage=0; var eqsP=eqs.slice(CRAFT.decompPage*6,(CRAFT.decompPage+1)*6);
-  var html='<div class="craft-mats"><div class="cm-block cm-g"><span class="cm-ic">铸</span><div class="cm-txt"><span class="cm-lb">锻造精华</span><b class="cm-n">'+ess.toLocaleString()+'</b></div></div><div class="cm-block cm-g"><span class="cm-ic">金</span><div class="cm-txt"><span class="cm-lb">金币</span><b class="cm-n">'+fmtWan(CURRENCY.gold)+'</b></div></div><div class="cm-block cm-le"><span class="cm-ic">粹</span><div class="cm-txt"><span class="cm-lb">传说精粹</span><b class="cm-n">'+legendEssenceCount()+'</b></div></div></div>';
+  var html='<div class="craft-mats"><div class="cm-block cm-g"><span class="cm-ic">金</span><div class="cm-txt"><span class="cm-lb">金币</span><b class="cm-n">'+fmtWan(CURRENCY.gold)+'</b></div></div><div class="cm-block cm-le"><span class="cm-ic">粹</span><div class="cm-txt"><span class="cm-lb">传说精粹</span><b class="cm-n">'+legendEssenceCount()+'</b></div></div></div>';
   html+='<div class="craft-tabs">'
-    +'<button class="ct-btn'+(CRAFT.tab==='decomp'?' on':'')+'" data-t="decomp">分解</button>'
-    +'<button class="ct-btn'+(CRAFT.tab==='recast'?' on':'')+'" data-t="recast">淬炼</button>'
-    +'<button class="ct-btn'+(CRAFT.tab==='evolve'?' on':'')+'" data-t="evolve">进化</button>'
     +'<button class="ct-btn'+(CRAFT.tab==='smelt'?' on':'')+'" data-t="smelt">熔铸</button>'
     +'<button class="ct-btn'+(CRAFT.tab==='exch'?' on':'')+'" data-t="exch">兑换</button>'
-    +'<button class="ct-btn'+(CRAFT.tab==='auto'?' on':'')+'" data-t="auto">自动</button>'
     +'</div>';
-  if(CRAFT.tab==='decomp'){
-  var eqs=[]; for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(isDecompEquip(s)) eqs.push(s); } eqs.sort(craftSortDesc);
-  if(CRAFT.decompPage*6>=eqs.length) CRAFT.decompPage=0; var eqsP=eqs.slice(CRAFT.decompPage*6,(CRAFT.decompPage+1)*6);
-  html+='<div class="craft-card"><div class="craft-card-t"><span class="craft-ic gold">熔</span>熔铸分解<span class="craft-tip">史诗+15 · 传说+50</span></div>';
-  if(eqs.length===0){ var eRows=''; for(var ei0=0;ei0<6;ei0++) eRows+='<div class="craft-row craft-row-empty"></div>'; html+='<div class="craft-list" style="padding-top:8px">'+eRows+'</div>'; html+=craftPager('decomp',eqs.length,CRAFT.decompPage); }
-  else{ var eRows=eqsP.map(function(it){ var q=itemQuality(it); return '<div class="craft-row q-'+q+(CRAFT.decompPick===it.id?' sel':'')+'" data-id="'+it.id+'"><div class="cr-slot"><img src="'+it.img+'" alt="">'+((it.gemAttributes&&it.gemAttributes.additionalAttribute)&&(it.type==='weapon'||it.type==='chest')?attrBadge(String(it.gemAttributes.additionalAttribute)):'')+(it.specialEffect?abilityBadge(it.specialEffect):'')+'</div><div class="cr-info"><div class="cr-name" style="color:'+qualityColor(q)+'">'+craftNameHTML(it)+'</div><div class="cr-sub">'+qualityName(q)+' · 分解得精华 +'+craftValue(it)+'</div></div><button class="cr-btn" data-did="'+it.id+'">分解</button></div>'; }).join(''); for(var ei=eqsP.length; ei<6; ei++) eRows+='<div class="craft-row craft-row-empty"></div>'; html+='<div class="craft-list">'+eRows+'</div>'; html+=craftPager('decomp',eqs.length,CRAFT.decompPage); }
-  html+='</div>';
-  }
-  else if(CRAFT.tab==='recast'){
-  var rec=allEquipmentForPick(); rec.sort(craftSortDesc); var cur=CRAFT.recast; if(CRAFT.recastPage*6>=rec.length) CRAFT.recastPage=0; var recP=rec.slice(CRAFT.recastPage*6,(CRAFT.recastPage+1)*6);
-  html+='<div class="craft-card"><div class="craft-card-t"><span class="craft-ic purple">淬</span>重铸淬炼<span class="craft-tip">精华×100 · 金币10亿</span></div><div class="craft-card-s">选定一件装备，随机淬炼出更强属性词条（2~6条，在原有词条上叠加）</div>';
-  if(rec.length===0){ var rRows=''; for(var ri0=0;ri0<6;ri0++) rRows+='<div class="craft-row craft-row-empty"></div>'; html+='<div class="craft-list" style="padding-top:8px">'+rRows+'</div>'; } else{ var rRows=recP.map(function(it){ var q=itemQuality(it); return '<div class="craft-row q-'+q+(cur&&cur.id===it.id?' sel':'')+'" data-r="'+it.id+'"><div class="cr-slot"><img src="'+it.img+'" alt="">'+((it.gemAttributes&&it.gemAttributes.additionalAttribute)&&(it.type==='weapon'||it.type==='chest')?attrBadge(String(it.gemAttributes.additionalAttribute)):'')+(it.specialEffect?abilityBadge(it.specialEffect):'')+'</div><div class="cr-info"><div class="cr-name" style="color:'+qualityColor(q)+'">'+craftNameHTML(it)+'</div><div class="cr-sub">'+qualityName(q)+' · 重铸需：精华×100 · 金币10亿</div></div><button class="cr-btn" data-qid="'+it.id+'">淬炼</button></div>'; }).join(''); for(var ri=recP.length; ri<6; ri++) rRows+='<div class="craft-row craft-row-empty"></div>'; html+='<div class="craft-list">'+rRows+'</div>'; } html+=craftPager('recast',rec.length,CRAFT.recastPage);
-  html+='</div>';
-  }
-  else if(CRAFT.tab==='evolve'){
-  var evoNames=[]; var evoSamp={};
-  for(var ep=0;ep<BAG_NUM;ep++)for(var ei3=0;ei3<BAG_SLOTS;ei3++){ var es=bag[ep][ei3]; if(evolveTargetOf(es)&&!evoSamp[es.name]){ evoSamp[es.name]=es; evoNames.push(es.name); } }
-  if(evoNames.length){
-    var evRows=evoNames.map(function(nm){ var it=evoSamp[nm]; var q=itemQuality(it); var tgt=evolveTargetOf(it); var hv=evolveCountOf(nm); var need=(q==='blue'?6:(q==='gold'?12:3)); var can=hv>=need;
-      return '<div class="craft-row q-'+q+(CRAFT.evolvePick===nm?' sel':'')+'" data-e="'+nm+'"><div class="cr-slot"><img src="'+it.img+'" alt="">'+((it.gemAttributes&&it.gemAttributes.additionalAttribute)&&(it.type==='weapon'||it.type==='chest')?attrBadge(String(it.gemAttributes.additionalAttribute)):'')+(it.specialEffect?abilityBadge(it.specialEffect):'')+'</div><div class="cr-info"><div class="cr-name" style="color:'+qualityColor(q)+'">'+nm+'</div><div class="cr-sub">'+hv+'/'+need+' · 进化为 '+tgt.name+'</div></div><button class="cr-btn'+(can?'':' off')+'" data-ev="'+nm+'"'+(can?'':' disabled')+'>合成</button></div>';
-    }).join('');
-    html+='<div class="craft-card"><div class="craft-card-t"><span class="craft-ic purple">升</span>装备进化<span class="craft-tip">3件同品名合成进阶</span></div><div class="craft-card-s">集齐 3 件同名同品质装备，合成高一级品质（保留强化与异能），当前可进化：'+evoNames.length+' 种</div><div class="craft-list">'+evRows+'</div></div>';
-  }else{
-    var emptyRows=''; for(var ei4=0;ei4<2;ei4++) emptyRows+='<div class="craft-row craft-row-empty"></div>';
-    html+='<div class="craft-card"><div class="craft-card-t"><span class="craft-ic purple">升</span>装备进化<span class="craft-tip">3件同品名合成进阶</span></div><div class="craft-card-s">集齐 3 件同名同品质装备，合成高一级品质（普通→稀有→史诗→传说，保留强化与异能）。当前无可用装备：普通/稀有奥格顿可在系统商店购买，逐级合成至传说。</div><div class="craft-list">'+emptyRows+'</div></div>';
-  }
-  }
-  else if(CRAFT.tab==='smelt'){
+  if(CRAFT.tab==='smelt'){
   var lgs=[]; for(var lp=0;lp<BAG_NUM;lp++)for(var li=0;li<BAG_SLOTS;li++){ var ls0=bag[lp][li]; if(isLegendEquip(ls0)) lgs.push(ls0); } lgs.sort(craftSortDesc);
   if(CRAFT.smeltPage*6>=lgs.length) CRAFT.smeltPage=0; var lgsP=lgs.slice(CRAFT.smeltPage*6,(CRAFT.smeltPage+1)*6);
-  html+='<div class="craft-card"><div class="craft-card-t"><span class="craft-ic purple">熔</span>传说熔铸<span class="craft-tip">传说装备熔成精粹</span></div><div class="craft-card-s">将多余的传说装备熔成「传说精粹」（首饰 2 个 · 其他 1 个），用于兑换成长资源</div><div class="craft-list">';
+  html+='<div class="craft-card"><div class="craft-card-t"><span class="craft-ic purple">熔</span>传说熔铸<span class="craft-tip">传说装备熔成精粹</span></div><div class="craft-card-s">将多余的传说装备 / 传说材料熔成「传说精粹」（每件 0.1 个），用于兑换成长资源</div><div class="craft-list">';
   if(lgs.length===0){ for(var li0=0;li0<6;li0++) html+='<div class="craft-row craft-row-empty"></div>'; }
   else{ var lRows=lgsP.map(function(it){ var q=itemQuality(it); return '<div class="craft-row q-'+q+'" data-lid="'+it.id+'"><div class="cr-slot"><img src="'+it.img+'" alt="">'+((it.gemAttributes&&it.gemAttributes.additionalAttribute)&&(it.type==='weapon'||it.type==='chest')?attrBadge(String(it.gemAttributes.additionalAttribute)):'')+(it.specialEffect?abilityBadge(it.specialEffect):'')+'</div><div class="cr-info"><div class="cr-name" style="color:'+qualityColor(q)+'">'+craftNameHTML(it)+'</div><div class="cr-sub">熔得 传说精粹 ×'+legendSmeltValue(it)+'</div></div><button class="cr-btn" data-ls="'+it.id+'">熔铸</button></div>'; }).join(''); html+=lRows; for(var li1=lgsP.length; li1<6; li1++) html+='<div class="craft-row craft-row-empty"></div>'; }
   html+='</div>'+craftPager('smelt',lgs.length,CRAFT.smeltPage)+'</div>';
@@ -6896,25 +6862,6 @@ function renderCraft(){
   else{ lxP.forEach(function(e,i){ var gi=CRAFT.exchPage*6+i; html+='<div class="craft-row"><div class="cr-slot">'+(e.ic&&String(e.ic).indexOf('<svg')===0?e.ic:'<img src="'+e.ic+'" alt="">')+'</div><div class="cr-info"><div class="cr-name">'+e.n+'</div><div class="cr-sub">'+e.d+' · 精粹 ×'+e.cost+'</div></div><button class="cr-btn" data-lx="'+gi+'">兑换</button></div>'; }); for(var lx1=lxP.length;lx1<6;lx1++) html+='<div class="craft-row craft-row-empty"></div>'; }
   html+='</div>'+craftPager('exch',lxAll.length,CRAFT.exchPage)+'</div>';
   }
-  else if(CRAFT.tab==='auto'){
-  var _qN={grey:'普通',blue:'稀有',gold:'史诗',purple:'传说'};
-  var smeltNames=collectSmeltable(); var smeltRows=Object.keys(smeltNames).length?Object.keys(smeltNames).map(function(n){ var q=smeltNames[n]; return '<div class="ap-srow'+(AUTO_PROC.smeltList.indexOf(n)>=0?' on':'')+'" data-sm="'+n+'"><span class="ap-sn" style="color:'+qualityColor(q)+'">'+n+'</span><div class="autosell-toggle'+(AUTO_PROC.smeltList.indexOf(n)>=0?' on':'')+'"></div></div>'; }).join(''):'<div class="ap-empty">暂无传说物品可熔铸</div>';
-
-  var qBtns=['grey','blue','gold'].map(function(q){ return '<button class="ap-q'+(AUTO_PROC.q===q?' on':'')+'" data-q="'+q+'">'+_qN[q]+'</button>'; }).join('');
-  var protHtml=AUTO_PROC.protect.length?AUTO_PROC.protect.map(function(n,i){ return '<div class="ap-prot"><span>'+n+'</span><button class="ap-pdel" data-pi="'+i+'">×</button></div>'; }).join(''):'<div class="ap-empty">暂无白名单。自动处理将跳过 已装备 与 伊泰安 唯一装备。</div>';
-  html+='<div class="craft-card"><div class="craft-card-t"><span class="craft-ic purple">自</span>自动处理<span class="craft-tip">挂机自动分解/进化/熔铸</span></div><div class="craft-card-s">开启后战斗掉落将按规则自动处理多余装备（进化优先，再分解/熔铸）。已装备与伊泰安唯一装备永不处理。</div>'
-    +'<div class="ap-row'+(AUTO_PROC.on?' on':'')+'" data-ap="on"><span class="ap-name">总开关</span><div class="autosell-toggle'+(AUTO_PROC.on?' on':'')+'"></div></div>'
-    +'<div class="ap-row'+(AUTO_PROC.decomp?' on':'')+'" data-ap="decomp"><span class="ap-name">自动分解</span><span class="ap-desc">非传说装备按门槛分解为锻造精华</span><div class="autosell-toggle'+(AUTO_PROC.decomp?' on':'')+'"></div></div>'
-    +'<div class="ap-row'+(AUTO_PROC.evolve?' on':'')+'" data-ap="evolve"><span class="ap-name">自动进化</span><span class="ap-desc">同名凑够数量自动合成更高品质</span><div class="autosell-toggle'+(AUTO_PROC.evolve?' on':'')+'"></div></div>'
-    +'<div class="ap-row'+(AUTO_PROC.smelt?' on':'')+'" data-ap="smelt"><span class="ap-name">自动熔铸</span><span class="ap-desc">仅名单内传说物品熔铸为精粹</span><div class="autosell-toggle'+(AUTO_PROC.smelt?' on':'')+'"></div></div>'
-    +'<div class="ap-sm-title">可自动熔铸名单（勾选才熔铸）</div>'
-    +'<div class="ap-sm-list">'+smeltRows+'</div>'
-    +'<div class="ap-qrow"><span>分解门槛</span>'+qBtns+'</div>'
-    +'<div class="ap-prot-title">永不自动处理（白名单）</div>'
-    +'<div class="ap-prot-list">'+protHtml+'</div>'
-    +'<div class="ap-add"><input id="ap-input" placeholder="输入装备名后添加"><button id="ap-addbtn">添加</button></div>'
-    +'</div>';
-  }
   b.innerHTML=html;
   b.querySelectorAll('.craft-tabs .ct-btn').forEach(function(el){ el.addEventListener('click',function(){ CRAFT.tab=el.getAttribute('data-t'); renderCraft(); }); });
   b.querySelectorAll('.craft-pager .cp-b').forEach(function(el){ el.addEventListener('click',function(){
@@ -6922,42 +6869,11 @@ function renderCraft(){
     if(k==='decomp'){ CRAFT.decompPage=Math.max(0,CRAFT.decompPage+d); } else if(k==='smelt'){ CRAFT.smeltPage=Math.max(0,CRAFT.smeltPage+d); } else if(k==='exch'){ CRAFT.exchPage=Math.max(0,CRAFT.exchPage+d); } else { CRAFT.recastPage=Math.max(0,CRAFT.recastPage+d); }
     renderCraft();
   }); });
-  b.querySelectorAll('.craft-row[data-id]').forEach(function(el){ var id=+el.getAttribute('data-id'); var it0=null; for(var pp0=0;pp0<BAG_NUM;pp0++)for(var ii0=0;ii0<BAG_SLOTS;ii0++){ if(bag[pp0][ii0]&&bag[pp0][ii0].id===id){ it0=bag[pp0][ii0]; break; } } el._item=it0||null; el.addEventListener('click',function(){ CRAFT.decompPick=id; renderCraft(); }); var slot0=el.querySelector('.cr-slot'); if(slot0&&it0){ slot0.addEventListener('click',function(ev){ if(('ontouchstart' in window)||(window.matchMedia&&window.matchMedia('(hover: none)').matches)){ ev.stopPropagation(); showTooltip(it0, slot0); } }); } });
-  b.querySelectorAll('.cr-btn[data-did]').forEach(function(el){ el.addEventListener('click',function(ev){ ev.stopPropagation(); var id=+el.getAttribute('data-did'); var it=null; for(var pp=0;pp<BAG_NUM;pp++)for(var ii=0;ii<BAG_SLOTS;ii++){ if(bag[pp][ii]&&bag[pp][ii].id===id){ it=bag[pp][ii]; break; } } if(it){ craftDecompose(id,it); } }); });
-  b.querySelectorAll('.craft-row[data-r]').forEach(function(el){ var id=+el.getAttribute('data-r'); var a=allEquipmentForPick(); var it1=null; for(var z=0;z<a.length;z++) if(a[z].id===id){ it1=a[z]; break; } el._item=it1||null; el.addEventListener('click',function(){ CRAFT.recast=it1; renderCraft(); }); var slot1=el.querySelector('.cr-slot'); if(slot1&&it1){ slot1.addEventListener('click',function(ev){ if(('ontouchstart' in window)||(window.matchMedia&&window.matchMedia('(hover: none)').matches)){ ev.stopPropagation(); showTooltip(it1, slot1); } }); } });
-  b.querySelectorAll('.cr-btn[data-qid]').forEach(function(el){ el.addEventListener('click',function(ev){ ev.stopPropagation(); var id=+el.getAttribute('data-qid'); var a=allEquipmentForPick(); var tq=null; for(var z2=0;z2<a.length;z2++) if(a[z2].id===id){ tq=a[z2]; break; } doRecast(tq); }); });
-  b.querySelectorAll('.craft-row[data-e]').forEach(function(el){ var nm=el.getAttribute('data-e'); var ite=null; for(var pe=0;pe<BAG_NUM;pe++)for(var ie=0;ie<BAG_SLOTS;ie++){ if(bag[pe][ie]&&bag[pe][ie].name===nm){ ite=bag[pe][ie]; break; } } el._item=ite||null; el.addEventListener('click',function(){ CRAFT.evolvePick=nm; renderCraft(); }); var slotE=el.querySelector('.cr-slot'); if(slotE&&ite){ slotE.addEventListener('click',function(ev){ if(('ontouchstart' in window)||(window.matchMedia&&window.matchMedia('(hover: none)').matches)){ ev.stopPropagation(); showTooltip(ite, slotE); } }); } });
-  b.querySelectorAll('.cr-btn[data-ev]').forEach(function(el){ el.addEventListener('click',function(ev){ ev.stopPropagation(); craftEvolve(el.getAttribute('data-ev')); }); });
   b.querySelectorAll('.craft-row[data-lid]').forEach(function(el){ var id=+el.getAttribute('data-lid'); var itl=null; for(var pl=0;pl<BAG_NUM;pl++)for(var il=0;il<BAG_SLOTS;il++){ if(bag[pl][il]&&bag[pl][il].id===id){ itl=bag[pl][il]; break; } } el._item=itl||null; var slotL=el.querySelector('.cr-slot'); if(slotL&&itl){ slotL.addEventListener('click',function(ev){ if(('ontouchstart' in window)||(window.matchMedia&&window.matchMedia('(hover: none)').matches)){ ev.stopPropagation(); showTooltip(itl, slotL); } }); } });
   b.querySelectorAll('.cr-btn[data-ls]').forEach(function(el){ el.addEventListener('click',function(ev){ ev.stopPropagation(); legendSmelt(+el.getAttribute('data-ls')); }); });
   b.querySelectorAll('.cr-btn[data-lx]').forEach(function(el){ el.addEventListener('click',function(ev){ ev.stopPropagation(); legendExchange(+el.getAttribute('data-lx')); }); });
-  b.querySelectorAll('.ap-row[data-ap]').forEach(function(el){ el.addEventListener('click',function(){ var k=el.getAttribute('data-ap'); if(k==='on'){ AUTO_PROC.on=!AUTO_PROC.on; if(!AUTO_PROC.on){ AUTO_PROC.evolve=false; AUTO_PROC.decomp=false; AUTO_PROC.smelt=false; } } else { AUTO_PROC[k]=!AUTO_PROC[k]; if(AUTO_PROC[k]) AUTO_PROC.on=true; } saveAutoProc(); renderCraft(); }); });
-  b.querySelectorAll('.ap-q[data-q]').forEach(function(el){ el.addEventListener('click',function(){ AUTO_PROC.q=el.getAttribute('data-q'); saveAutoProc(); renderCraft(); }); });
-  b.querySelectorAll('.ap-pdel[data-pi]').forEach(function(el){ el.addEventListener('click',function(ev){ ev.stopPropagation(); AUTO_PROC.protect.splice(+el.getAttribute('data-pi'),1); saveAutoProc(); renderCraft(); }); });
-  b.querySelectorAll('.ap-srow[data-sm]').forEach(function(el){ el.addEventListener('click',function(){ var n=el.getAttribute('data-sm'); var i=AUTO_PROC.smeltList.indexOf(n); if(i>=0) AUTO_PROC.smeltList.splice(i,1); else AUTO_PROC.smeltList.push(n); el.classList.toggle('on'); var t=el.querySelector('.autosell-toggle'); if(t) t.classList.toggle('on'); saveAutoProc(); }); });
-  var _apIn=document.getElementById('ap-input'), _apAdd=document.getElementById('ap-addbtn');
-  if(_apIn&&_apAdd){ _apAdd.addEventListener('click',function(){ var v=(_apIn.value||'').trim(); if(v&&AUTO_PROC.protect.indexOf(v)<0) AUTO_PROC.protect.push(v); _apIn.value=''; saveAutoProc(); renderCraft(); }); _apIn.addEventListener('keydown',function(e){ if(e.key==='Enter') _apAdd.click(); }); }
 }
-function doRecast(t){
-  if(!t){ toast('请先选定装备'); return; }
-  if(craftEssenceCount()<100){ toast('锻造精华不足（需100）'); return; }
-  if(CURRENCY.gold<1000000000){ toast('金币不足（需10亿）'); return; }
-  var remain=100; for(var p2=0;p2<BAG_NUM&&remain>0;p2++)for(var i2=0;i2<BAG_SLOTS&&remain>0;i2++){ var s=bag[p2][i2]; if(s&&s.name==='锻造精华'){ var take=Math.min(s.count||1,remain); s.count-=take; remain-=take; if(s.count<=0) bag[p2][i2]=null; } }
-  CURRENCY.gold-=1000000000;
-  var n=2+Math.floor(Math.random()*5); if(!t.washAttrs) t.washAttrs={}; var nw=rollRefine(n,true,false); for(var key in nw){ t.washAttrs[key]=(t.washAttrs[key]||0)+nw[key]; }
-  renderBag(); saveGame(); toast('重铸成功：附加 '+n+' 条属性'); renderCraft(); showCraftResult(t,nw);
-}
-function craftResClose(){ if(window._craftRes){ window._craftRes.style.display='none'; } }
-function showCraftResult(t, nw){
-  var m=window._craftRes; if(!m){ m=document.createElement('div'); m.className='craft-res-mask'; m.innerHTML='<div class="craft-res-box" id="crBox"></div>'; document.body.appendChild(m); m.addEventListener('click',function(e){ if(e.target===m) craftResClose(); }); window._craftRes=m; }
-  var box=m.querySelector('#crBox');
-  var rows='', idx=0;
-  for(var k in nw){ idx++; rows+='<div class="craft-res-row" style="animation-delay:'+(idx*40)+'ms"><span class="crr-name">'+k+'</span><span class="crr-add">+'+fmtWan(nw[k])+'</span><span class="crr-tot">累计 '+fmtWan(t.washAttrs?t.washAttrs[k]:nw[k])+'</span></div>'; }
-  var cnt=0; for(var x in t.washAttrs) cnt++;
-  box.innerHTML='<div class="craft-res-title">重铸完成</div><div class="craft-res-sub" style="color:'+ttNameColor(t)+'">'+t.name+'</div>'+rows+'<div class="craft-res-foot"><span>消耗：精华×100 · 金币10亿</span><span>词条 '+cnt+' 条</span></div><button class="craft-res-btn">收下</button>'; box.querySelector('.craft-res-btn').addEventListener('click',craftResClose);
-  m.style.display='flex';
-}
-function initCraft(){ CRAFT.tab='decomp'; CRAFT.recast=null; CRAFT.decompPage=0; CRAFT.recastPage=0; CRAFT.decompPick=null; renderCraft(); }
+function initCraft(){ CRAFT.tab='smelt'; CRAFT.decompPage=0; CRAFT.recastPage=0; CRAFT.recast=null; CRAFT.decompPick=null; renderCraft(); }
 /* ============ 洗炼系统 ============ */
 var REFINE={ equip:null, material:null };
 REFINE.reset=function(){ this.equip=null; this.material=null; };
@@ -8202,7 +8118,7 @@ function sysBuyPrice(it){
 /* 系统商店排除：传说级一律不出售（含坐骑/完整卷轴/混沌/祝福/神印牌/伊泰安/寂灭等），只能通过掉落/奖励获取 */
 function isShopExcluded(it){
   if(it.type==='mount') return false;   /* 坐骑允许在系统商店出售（1000亿） */
-  if(String(it.name).indexOf('普通 奥格顿')===0||String(it.name).indexOf('稀有 奥格顿')===0) return false;   /* 普通/稀有奥格顿：锻造进化起手素材，允许出售 */
+  if(String(it.name).indexOf('普通 奥格顿')===0||String(it.name).indexOf('稀有 奥格顿')===0) return false;   /* 普通/稀有奥格顿：允许在系统商店出售 */
   if(itemQuality(it)==='purple') return true;   /* 传说级不在商店出售 */
   var t=it.type;
   if(t==='weapon'||t==='necklace'||t==='ring'||t==='bracelet'||t==='god_seal') return true;
@@ -8213,7 +8129,7 @@ function isShopAllowed(it){
   if(String(it.name)==='太阳') return true;   /* 小太阳（太阳经验药水） */
   if(String(it.name)==='全能药水') return true;   /* 全能药水：回满血（100亿/瓶，100一组） */
   if(it.type==='mount') return true;   /* 坐骑 */
-  if(String(it.name).indexOf('普通 奥格顿')===0||String(it.name).indexOf('稀有 奥格顿')===0) return true;   /* 普通/稀有奥格顿：锻造进化起手素材 */
+  if(String(it.name).indexOf('普通 奥格顿')===0||String(it.name).indexOf('稀有 奥格顿')===0) return true;   /* 普通/稀有奥格顿 */
   if(it.type==='stat_gem'&&it.level===5) return true;   /* 所有5级石头（含5级专注宝石） */
   if(it.type==='helen_gem') return true;   /* 所有海伦宝石 */
   if(it.type==='hammer') return true;   /* 所有镶嵌之锤 */
@@ -9588,7 +9504,6 @@ var WB_AI_FIXED=[{n:'剑尊·破天',dps:0.0000120,hit:0.92},{n:'血刀·修罗'
 var WB_SHOP=[
  {n:'神力碎片',qty:5000,cost:60,bp:'godPowerFragment'},
  {n:'神力结晶',qty:500,cost:120,bp:'godCrystal'},
- {n:'锻造精华',qty:5000,cost:100,bp:'',ess:true},
  {n:'神印神力碎片',qty:500,cost:140,bp:'sealFragment'},
  {n:'神符神力碎片',qty:500,cost:140,bp:'runeFragment'}
 ];   /* 世界BOSS商店不再出售传说宝箱（传说宝箱仅世界BOSS击杀掉落） */
@@ -9823,8 +9738,6 @@ function wbGrantAIseal(){   /* BOSS击杀结算：只给参战前十名发放轮
       }
       /* 本源结晶(仅超脱BOSS,同玩家rank1) */
       if(rank===1 && WBOSS.boss && WBOSS.boss.tier==='supreme') _st.essence=(_st.essence||0)+5;
-      /* 锻造精华(同玩家：1=150/2-3=60/4-6=30/7-10=15) */
-      var _ess=rank===1?150:(rank<=3?60:(rank<=6?30:15)); _st.bag.push(mkEssence(_ess));
       /* 祝福宝石(同玩家：1=3/2-3=1) */
       if(rank<=3){ var _g=mkLoot(ITEM_BLUEPRINTS[_gemPool[Math.floor(Math.random()*4)]]); _g.count=(rank===1)?3:1; _st.bag.push(_g); }
       /* 强化祝福卷轴(完整)(同玩家：1=5/2-3=3/4-6=2/7-10=1) */
@@ -9873,14 +9786,8 @@ function wbGrantLoot(){   /* BOSS击杀即时结算：门槛判定→全部战�
     if(rank===1){
       var _g1=mkLoot(ITEM_BLUEPRINTS[_gemPool[Math.floor(Math.random()*4)]]); _g1.count=3; addStackable(_g1); loot.push({n:_g1.name,ic:'<img src="'+_g1.img+'">',c:3,rare:true});
       var _s1=mkLoot(ITEM_BLUEPRINTS.enhBlessFull); _s1.count=2; addStackable(_s1); loot.push({n:_s1.name,ic:'<img src="'+_s1.img+'">',c:2,rare:true});
-      var _e1=mkEssence(150); addStackable(_e1); loot.push({n:'锻造精华',ic:'<img src="logos/神力碎片.png">',c:150});
     } else if(rank<=3){
       var _g2=mkLoot(ITEM_BLUEPRINTS[_gemPool[Math.floor(Math.random()*4)]]); _g2.count=1; addStackable(_g2); loot.push({n:_g2.name,ic:'<img src="'+_g2.img+'">',c:1,rare:true});
-      var _e2=mkEssence(60); addStackable(_e2); loot.push({n:'锻造精华',ic:'<img src="logos/神力碎片.png">',c:60});
-    } else if(rank<=6){
-      var _e3=mkEssence(30); addStackable(_e3); loot.push({n:'锻造精华',ic:'<img src="logos/神力碎片.png">',c:30});
-    } else {
-      var _e4=mkEssence(15); addStackable(_e4); loot.push({n:'锻造精华',ic:'<img src="logos/神力碎片.png">',c:15});
     }
     if(rank===1){ wbDrop4('godOrigin',2,loot); wbDrop4('legendBox',1,loot); wbDrop4('enhBless',5,loot); wbDrop4('inheritPill',3,loot); }
     else if(rank<=3){ wbDrop4('godOrigin',1,loot); if(Math.random()<0.3) wbDrop4('legendBox',1,loot); wbDrop4('enhBless',3,loot); wbDrop4('inheritPill',2,loot); }
@@ -9909,7 +9816,6 @@ function wbFullLoot(tier){   /* 本轮全服掉落总览：该BOSS全服会掉�
   if(tier==='supreme') it('本源结晶','<img src="logos/神力结晶.png">','×5','仅超脱BOSS');
   it('祝福宝石',ic('earthBlessingGem'),'×3','榜首随机一系');
   it('强化祝福卷轴（完整）',ic('enhBlessFull'),'×2','榜首');
-  it('锻造精华','<img src="logos/神力碎片.png">','全服 ×240','1名150 · 2~3名60 · 4~6名30 · 7名后15');
   it('神格本源',ic('godOrigin'),'×3+','1名2 · 2~3名1 · 4~6名几率');
   it('传说宝箱',ic('legendBox'),'×1+','1名1 · 2~6名几率');
   it('强化祝福卷轴',ic('enhBless'),'×11+','1名5 · 2~3名3 · 4~6名2 · 7名后1');
@@ -10047,8 +9953,7 @@ function wbBuy(i){
   var it=WB_SHOP[i]; if(!it) return;
   if(WBOSS.coins<it.cost){ toast('BOSS币不足'); return; }
   WBOSS.coins-=it.cost;
-  if(it.ess){ var _e=mkEssence(it.qty); addStackable(_e); }
-  else if(it.legend){ wbLegendDrop(); }
+  if(it.legend){ wbLegendDrop(); }
   else { var bp=ITEM_BLUEPRINTS[it.bp]; if(!bp){ WBOSS.coins+=it.cost; toast('物品不存在'); return; } var mk=mkLoot(bp); mk.count=it.qty; addStackable(mk); }
   saveGame(); wbRender(); toast('兑换成功：'+it.n+' ×'+it.qty);
 }
@@ -11153,7 +11058,6 @@ function aiRarityPrice(it){   /* 珍稀度估值：无属性/材料类物品的"
   if(n.indexOf('完整')>=0&&n.indexOf('属性卷轴')>=0) return 100000000000;  /* 1000亿 */
   if(n.indexOf('混沌')>=0) return 100000000000;                    /* 1000亿 */
   if(n.indexOf('神力结晶')>=0) return 100000000000;                /* 1000亿 */
-  if(n.indexOf('锻造精华')>=0) return 50000000000;                 /* 500亿 */
   if(n.indexOf('神印碎片')>=0) return 50000000000;
   if(n.indexOf('祝福宝石')>=0) return 30000000000;                 /* 300亿 */
   if(n.indexOf('海伦宝石')>=0) return 20000000000;                 /* 200亿 */
@@ -11451,7 +11355,6 @@ function aiReplyChat(nm,text){
   chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:rep[Math.floor(Math.random()*rep.length)],time:Date.now()});
 }
 var LOTTERY=[   /* 玄鉴神藏：稀缺资源池（去空奖，整体价值上移；传说档 prob<0.01 触发彩带/稀有判定） */
-  {label:'锻造精华 ×20',short:'锻造精华',prob:0.12,color:'#C08A3E',_xj:'锻造精华',apply:function(){addStackable(mkEssence(20));}},
   {label:'镶嵌之锤 Lv7 ×2',short:'镶嵌锤Lv7',prob:0.10,color:'#e8b54a',_xj:'镶嵌之锤 Lv7',apply:function(){var h=mkLoot(ITEM_BLUEPRINTS.hammers[0]); h.count=2; h.maxStack=255; lotteryGive(h,false,this); }},
   {label:'神力结晶 ×1',short:'神力结晶',prob:0.09,color:'#FF9A4A',_xj:'神力结晶',apply:function(){ var b=mkLoot(ITEM_BLUEPRINTS.godCrystal); b.count=1; lotteryGive(b,false,this); }},
   {label:'神力碎片',short:'神力碎片',prob:0.08,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=Math.max(1,Math.floor((1-Math.random()*Math.random())*99)); this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
@@ -11582,7 +11485,7 @@ var COLLECT_SETS=[
 /* ============ 玄鉴神藏图鉴（抽奖专属·点亮稀缺资源） ============ */
 var XIANJI={}, XIANJI_DONE={}, _xjToastLast=0;
 var XIANJI_SETS=[
-  {k:'xz_mat', n:'神藏·材料', items:['锻造精华','镶嵌之锤 Lv7','混沌神石','完整属性卷轴','神力碎片','神印碎片','神符碎片'], r:{all:1000000,hp:1000000}, desc:'全属性 +100万 · 生命活力 +100万'},
+  {k:'xz_mat', n:'神藏·材料', items:['镶嵌之锤 Lv7','混沌神石','完整属性卷轴','神力碎片','神印碎片','神符碎片'], r:{all:1000000,hp:1000000}, desc:'全属性 +100万 · 生命活力 +100万'},
   {k:'xz_growth', n:'神藏·成长至宝', items:['本源结晶','传说精粹'], r:{all:3000000,hp:3000000}, desc:'全属性 +300万 · 生命活力 +300万'},
   {k:'xz_perm', n:'神藏·永久属性', items:['全属性+200','全属性+5万','全属性+100万','全属性+1亿'], r:{all:50000000,hp:50000000}, desc:'全属性 +5000万 · 生命活力 +5000万'},
   {k:'xz_rare', n:'神藏·稀珍', items:['传说武器','寂灭之息药剂'], r:{all:100000000,hp:100000000}, desc:'全属性 +1亿 · 生命活力 +1亿'}
@@ -11754,7 +11657,7 @@ function showDrops(win, x10results){
 }
 function lotteryImg(label){   /* 奖品图标：物品类按 label 匹配蓝图图标，非物品返回 null（显示文字） */
   var bp=ITEM_BLUEPRINTS, m=[
-    ['锻造精华',{img:'logos/神力碎片.png'}],['镶嵌之锤 Lv7',bp.hammers[0]],['祝福宝石',bp.earthBlessingGem],['本源结晶',{img:'logos/神力碎片.png'}],['传说精粹',{img:'logos/神力碎片.png'}],['传说武器',bp.legendWings],['神符碎片',bp.runeFragment],['神力碎片',bp.godPowerFragment],['神印碎片',bp.sealFragment],['锤7',bp.hammers[0]],
+    ['镶嵌之锤 Lv7',bp.hammers[0]],['祝福宝石',bp.earthBlessingGem],['本源结晶',{img:'logos/神力碎片.png'}],['传说精粹',{img:'logos/神力碎片.png'}],['传说武器',bp.legendWings],['神符碎片',bp.runeFragment],['神力碎片',bp.godPowerFragment],['神印碎片',bp.sealFragment],['锤7',bp.hammers[0]],
     ['混沌神石',bp.statGems[bp.statGems.length-1]],['完整属性卷轴',bp.refineScrollFull],['完整卷轴',bp.refineScrollFull],
     ['寂灭之息药剂',bp.jiMiePotion],['神符天神牌子',bp.warGodsPowerRune],['神印天神牌',bp.warGodsFavor],['坐骑',bp.mount]
   ];
@@ -12318,15 +12221,8 @@ function triggerLegendFX(){
   setTimeout(function(){ var all=document.body.querySelectorAll('.lg-flash,.lg-confetti,.lg-word'); for(var k=0;k<all.length;k++) all[k].remove(); },18000);
 }
 var ITH_TIMER=null;
-function hasYitaiNeck(){
-  var nm=ITEM_BLUEPRINTS.yitaiNecklace.name;
-  for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.name===nm) return true; }
-  for(var k in equipState){ var e=equipState[k]; if(e&&e.name===nm) return true; }
-  return false;
-}
 function ithDropNeck(src){
   if(ITH_LEFT.yitaiNecklace<=0) return;
-  if(hasYitaiNeck()) return;   /* 修复：已拥有（背包/穿戴）则不再重复掉落，杜绝日志/统计与入包不一致 */
   var yin=mkLoot(ITEM_BLUEPRINTS.yitaiNecklace);
   if(!addStackable(yin)){ toast('背包已满，伊泰安项链未掉落'); return; }   /* 修复：入包失败则回退——不扣限量、不记日志/统计，避免'掉落了却没进包' */
   ITH_LEFT.yitaiNecklace--;
@@ -12339,7 +12235,9 @@ function ithDropNeck(src){
   dailyAddRec(TR.dungeon,{t:new Date().toLocaleTimeString('zh-CN',{hour12:false,hour:'2-digit',minute:'2-digit'}),src:src||'特殊触发',items:['伊泰安项链']});   /* 非BOSS传说掉落：记录获得方式 */
 }
 function ithActive(){
-  return TR.dungeon===0 && ITH_LEFT.yitaiNecklace>0;   /* 伊泰安掉落：只要在雕俱星座(挂机/切页/死亡/最小化均可)且有剩余即触发 */
+  if(TR.dungeon!==0 || ITH_LEFT.yitaiNecklace<=0) return false;
+  var _ml=(DUNGEONS[0]&&DUNGEONS[0].monLv)||1;   /* 雕俱星座怪固定1级 */
+  return Math.abs(_ml-(TR.level||1))<=20;   /* 等级差>20(双向)无收益：伊泰安项链也是收益，与副本20级门控同规则 */
 }
 function ithStart(){
   ithStop();
@@ -12786,7 +12684,7 @@ function trKillMon(){
     if(Math.random()<0.10){ var cr=ITEM_BLUEPRINTS.godCrystal; var cl=mkLoot(cr); cl.count=1; var _as2=autoSellIf(cl);
       if(_as2){ got=true; trLog('自动出售 <b class="lg-gold">'+cl.name+'</b>，+'+_as2.toLocaleString()+' 金币'); }
       else { addStackable(cl); got=true; trDropAnim(cr.img,itemQuality(cr)); trLog('掉落 <b class="lg-item">'+cr.name+'</b>'); } if(TR.isBoss) TR.bossLoot.push(cr.name); }
-    /* 雕俱星座任意怪物死亡：0.1% 概率掉落伊泰安项链（仅当前页面打怪中触发，唯一性只掉一次） */
+    /* 雕俱星座任意怪物死亡：0.1% 概率掉落伊泰安项链（仅当前页面打怪中触发；允许多件，不限已拥有，直到全服总量掉完） */
     if(ithActive() && Math.random()<0.001){ ithDropNeck('小怪掉落'); got=true; }
   } else {
     /* 非绑定金币：0.1% 掉1亿；否则 1万~100万，金额越大概率越小(80%~8%) */
@@ -12822,8 +12720,7 @@ function trKillMon(){
   renderTrStats();
   clearTimeout(TR.spawnTimer);
   TR.spawnTimer=setTimeout(function(){ trSpawnMon(); },1000);
-  autoProcBag();   /* 自动处理：每场战斗掉落结算后按规则分解/进化/熔铸 */
-}
+  }
 function trHiddenEvent(){   /* 0.5%隐藏事件：神秘宝箱门 或 隐藏BOSS */
   if(Math.random()<0.5){ trHiddenChest(); }
   else { TR.hiddenBoss=true; trLog('<b class="lg-boss">隐藏 BOSS 降临！击败它获得丰厚奖励</b>'); }
@@ -13623,26 +13520,25 @@ function dailyDoneCount(){ var n=0; DAILY_ORDER.forEach(function(k){ if(dailyDon
 function dailyScore(){ return 10 + dailyDoneCount()*10; }   /* 登录10 + 每完成1项任务10 */
 function dailyGiveGold(n){ CURRENCY.gold=(CURRENCY.gold||0)+n; renderCurrency(); }
 function dailyGiveItem(bp,n){ try{ var m=mkLoot(ITEM_BLUEPRINTS[bp]); m.count=n; addStackable(m); }catch(e){} }
-function dailyGiveEssence(n){ try{ var e=mkEssence(n); addStackable(e); }catch(e){} }
 function dailyGiveFree(n){ LOTTERY_FREE=Math.min(LOTTERY_FREE_MAX,(LOTTERY_FREE||0)+n); saveLotteryFree(); updateLotteryFree(); }
 var DAILY_SIGN_R=[
-  function(){ dailyGiveGold(1000000000); dailyGiveEssence(30); },
+  function(){ dailyGiveGold(1000000000); },
   function(){ dailyGiveItem('godPowerFragment',300); },
   function(){ dailyGiveItem('godCrystal',50); },
-  function(){ dailyGiveEssence(200); },
+  function(){ dailyGiveGold(5000000000); },
   function(){ dailyGiveItem('runeFragment',50); },
   function(){ dailyGiveGold(10000000000); dailyGiveItem('godPowerFragment',500); },
   function(){ dailyGiveFree(5); wbLegendDrop(); }
 ];
-function dailySignRewardDesc(i){ var a=[['金币10亿 · 精华x30'],['神力碎片x300'],['神力结晶x50'],['锻造精华x200'],['神符碎片x50'],['金币100亿 · 碎片x500'],['抽奖x5 · 传说']]; return a[i][0]; }
+function dailySignRewardDesc(i){ var a=[['金币10亿'],['神力碎片x300'],['神力结晶x50'],['金币50亿'],['神符碎片x50'],['金币100亿 · 碎片x500'],['抽奖x5 · 传说']]; return a[i][0]; }
 function dailyClaimBox(s){
   dailyEnsure();
   if(DAILY.boxes[s]){ toast('该活跃度宝箱已领取'); return; }
   if(dailyScore()<s){ toast('活跃度未达 '+s); return; }
   DAILY.boxes[s]=true; saveGame();
-  if(s>=20){ dailyGiveGold(2000000000); dailyGiveEssence(50); }
+  if(s>=20){ dailyGiveGold(2000000000); }
   if(s>=40){ dailyGiveItem('godPowerFragment',200); CURRENCY.bound=(CURRENCY.bound||0)+1000000000; renderCurrency(); }
-  if(s>=60){ dailyGiveItem('godCrystal',50); dailyGiveEssence(150); }
+  if(s>=60){ dailyGiveItem('godCrystal',50); }
   if(s>=80){ dailyGiveItem('sealFragment',50); dailyGiveGold(10000000000); }
   if(s>=100){ wbLegendDrop(); dailyGiveFree(3); }
   toast('已领取 '+s+' 活跃度宝箱');
@@ -13709,7 +13605,6 @@ function saveGame(){
 }
 /* 恢复存档并重建物品共享引用（背包/装备/天神可能引用同一物品对象） */
 function loadGame(){
-  loadAutoProc();
   var raw; try{ raw=localStorage.getItem(SAVE_KEY); }catch(e){}
   if(!raw) return false;
   var s; try{ s=JSON.parse(raw); }catch(e){ return false; }
@@ -13841,7 +13736,6 @@ function doReset(){
   if(typeof stopTowerAuto==='function') stopTowerAuto(); CT.layer=1; CT.hp=0; CT.maxHp=0; CT.monHp=0; CT.monMax=0; CT.monAtk=0; CT.monDef=0; CT.monLv=82; CT.isBoss=false; CT.auto=false; CT.atkCD=0; CT.monCD=0; CT.best=0; CT.coins=0; CT.sessionCoins=0; CT.firstFree=true; CT.started=false; CT.got={}; CT.timer=null; towerSave();   /* 初始化重置挑战塔：停自动、清层数/最高纪录/塔币/首通标记（进入页面时由 ctSpawn 正常重建怪物） */
   SEASON={id:seasonWeek(),score:0,got:{},claimed:{},total:0,seasons:0}; saveSeason(); if(typeof mountSeason==='function') mountSeason();   /* 初始化重置赛季征途：积分/目标/商店/战绩全部归零 */
   TALENT.sel='none'; try{ localStorage.removeItem('shenqi_talent'); }catch(e){} if(typeof renderTalent==='function') renderTalent();   /* 初始化重置天赋流派：回到未激活 */
-  AUTO_PROC={on:false, decomp:false, evolve:false, smelt:false, q:'gold', protect:[], smeltList:[]}; try{ localStorage.removeItem('shenqi_aproc'); }catch(e){} if(typeof renderAutoProc==='function') renderAutoProc();   /* 初始化重置锻造工坊自动化：关闭自动分解/进化/熔铸，清名单与永不处理白名单 */
   AUTO_SELL_NAMES={}; try{ localStorage.removeItem('shenqi_asn'); }catch(e){}   /* 初始化重置自动出售名单：全部关闭 */
   MUT={crystal:3, on:false, tier:0, aff:[], up:{1:0,2:0,3:0}, exP:0}; if(typeof renderTreasure==='function') renderTreasure();   /* 初始化重置异变秘境：关闭词缀，清异变结晶/词缀/强化等级与结晶兑换次数 */
   BATTLE={merit:0,crystal:0,opps:[],fight:false}; DEEP={total:0,shen:0,wang:0,diyu:0,tian:0}; if(typeof renderBattle==='function') renderBattle();   /* 初始化重置域外战场与神格本元深化 */
