@@ -2035,7 +2035,7 @@ body.show-trial .stage,body.show-tower .stage{max-width:460px;display:flex;flex-
 .home-hero .hh-ico img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;}
 .home-hero .hh-main{flex:1;margin-left:15px;min-width:0;}
 .home-hero .hh-name{font-size:21px;color:#211a10;font-weight:700;letter-spacing:2px;}
-.hh-name .hh-innate,.attrs-id-name .hh-innate{display:inline-flex;vertical-align:3px;margin-left:8px;}
+.hh-name .hh-innate,.attrs-id-name .hh-innate{display:inline-flex;vertical-align:5px;margin-left:8px;}   /* 人物页天运之主胶囊：相对名字行上移2px（3px→5px） */
 .hh-name .ih-badge,#attr-float .ih-badge,.attrs-id-name .ih-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;padding:2px 9px;border-radius:20px;white-space:nowrap;}
 .hh-name .ih-top,#attr-float .ih-top,.attrs-id-name .ih-top{color:#fff;background:linear-gradient(135deg,#FF5AD8,#A02A82);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 0 10px rgba(255,90,216,.7);text-shadow:0 1px 2px rgba(0,0,0,.45);}   /* 天运之主胶囊：同步排行榜"神豪"标签质感（135°品红渐变+内白描边+品红光晕+深色投影） */
 .hh-name .ih-good,#attr-float .ih-good,.attrs-id-name .ih-good{color:#0a2030;background:linear-gradient(180deg,#9BE6FF,#57B9FF);border:1px solid rgba(255,255,255,.55);box-shadow:0 0 8px rgba(111,216,255,.5);}
@@ -2974,7 +2974,7 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .hb-hero-bottom{flex-basis:100%;min-width:0;margin-top:10px;padding-top:10px;border-top:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;gap:9px;}
 .hb-hero-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .hb-hero-tier{border-left:none;padding-left:0;margin-left:0;white-space:nowrap;font-size:15px;letter-spacing:2px;line-height:1.25;padding:2px 10px;border-radius:6px;background:rgba(0,0,0,.30);border:1px solid rgba(255,255,255,.14);}
-.hb-hero-name .ih-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;padding:2px 9px;border-radius:20px;white-space:nowrap;margin-left:9px;vertical-align:middle;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;}
+.hb-hero-name .ih-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:1px;padding:2px 9px;border-radius:20px;white-space:nowrap;margin-left:9px;vertical-align:middle;position:relative;top:-2px;-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:currentColor;}   /* 天运之主胶囊：相对名字行上移2px */
 .hb-hero-name .ih-top{color:#fff;background:linear-gradient(135deg,#FF5AD8,#A02A82);box-shadow:inset 0 0 0 1px rgba(255,255,255,.4),0 0 10px rgba(255,90,216,.7);text-shadow:0 1px 2px rgba(0,0,0,.45);}   /* 首页顶部角色卡·天运之主胶囊：同步神豪标签质感 */
 .hb-hero-name .ih-good{color:#0a2030;background:linear-gradient(180deg,#9BE6FF,#57B9FF);border:1px solid rgba(255,255,255,.55);box-shadow:0 0 8px rgba(111,216,255,.5);}
 .hb-hero-name{font-size:25px;text-shadow:0 0 12px rgba(242,201,107,.5);}
@@ -6272,7 +6272,7 @@ function aiGodUpgrade(st,p,godBudget){   /* 后台自动升级主天神（复刻
     }
   }
 }
-function aiGodAcquire(st,p,onlineSec){   /* AI真实获得天神牌子（与玩家同源）——获得才拥有、只有拥有才上阵，杜绝后台凭空生成；神印牌改由 aiGodSealContent(挑战塔70/无尽70/克里普特BOSS同概率)+aiAdventure(奇遇)同链路获得，不再独立概率模型 */
+function aiGodAcquire(st,p,onlineSec){   /* AI真实获得天神牌子（与玩家同源）——获得才拥有、只有拥有才上阵，杜绝后台凭空生成；神印牌改由 aiAdventure(奇遇 0.00001%)+aiFarmDrop(海盗岛最终BOSS 0.000001%×运势 月度全服2张)同链路获得（克里普特BOSS已不再掉神印，与玩家同规则），不再独立概率模型 */
   if(!st.gods) st.gods={main:null,sub1:null};
   var dayFrac=Math.max(1e-9,onlineSec/86400), lv=st.lv||1, lu=1+p.luck+(p.pay||0)*0.5;
   /* 神符牌子(金色品质·低属性)：克里普特/神秘宝箱同源——AI刷高阶副本获得（普通玩家多在中期才拥有金天神） */
@@ -6290,15 +6290,7 @@ function aiGodGiveSeal(st,p){   /* 给AI一块神印牌(玩家同套蓝本，拥
   else if(st.gods.main.type!=='god_seal'){ st.gods.sub1=st.gods.main; st.gods.main=_seal; }   /* 紫最强做主，已有金降副 */
   else if(!st.gods.sub1){ st.gods.sub1=_seal; }
 }
-function aiGodSealContent(st,p,onlineSec){   /* AI神印牌获得(与玩家真正同链路)：挑战塔70/无尽70 神印牌已由 AI 真实打塔到70层奖励给出（同玩家一次性层奖励，杜绝凭空）；此处仅保留克里普特BOSS 5%(同玩家概率) */
-  var lv=st.lv||1;
-  /* 克里普特BOSS 5%：等级达克里普特解锁60后，AI刷克里普特每回合BOSS击杀按玩家同概率5% */
-  if(lv>=60){
-    var bossKills=Math.max(1,Math.floor(onlineSec/1200));   /* 每20分钟一次克里普特BOSS击杀 */
-    for(var _k=0;_k<bossKills;_k++){ if(Math.random()<0.05) aiGodGiveSeal(st,p); }   /* 同玩家克里普特BOSS 神印牌 5% */
-  }
-}
-function aiGodStep(st,p,onlineSec,godBudget){ aiGodAcquire(st,p,onlineSec); aiGodSealContent(st,p,onlineSec); _aiGodEnsure(st,p); aiGodTaskDrop(st,p); aiGodDrops(st,p,onlineSec); aiGodUpgrade(st,p,godBudget); }
+function aiGodStep(st,p,onlineSec,godBudget){ aiGodAcquire(st,p,onlineSec); _aiGodEnsure(st,p); aiGodTaskDrop(st,p); aiGodDrops(st,p,onlineSec); aiGodUpgrade(st,p,godBudget); }   /* AI天神心跳：神印类天神牌不再由克里普特BOSS掉落（同玩家规则），来源=奇遇(神秘商人/逆天装备0.00001%)+海盗岛最终BOSS(月度全服2张)，由 aiFarmDrop 内 pirateSealDrop 链路获得 */
 function aiGodBonus(st){   /* 上阵天神加成：主100%/副50%（同玩家 GOD.formation 编队累加） */
   var tot={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0,vitality:0,patk:0,pdef:0,mdef:0};
   var gs=st.gods; if(!gs) return tot;
@@ -6574,6 +6566,12 @@ function aiFarmDrop(st,p,onlineSec){   /* 刷本真实掉落装备/宝石/材料
     else if(roll<0.52){ var mt=aiRollMaterial(lv); if(mt) st.bag.push(mt); }   /* 材料：神力碎片等（真实） */
     var _ph=phantomLegendDrop(); if(_ph) st.bag.push(_ph);   /* AI刷本(神之幻境)：传说奥格顿0.000001%+每月全服1件（与玩家共用总量，先到先得） */
   }
+  /* 海盗岛最终BOSS·神印天神牌：仅开放时段+等级≥80（同玩家进入限制），AI每20分钟一次BOSS击杀判定（同克里普特节奏）；0.000001%×AI自身运势×AI神坛福泽（同玩家luckRoll公式），月度全服2张与玩家共用总量（pirateSealDrop内判满即止） */
+  if(pirateOpenNow() && lv>=80){
+    var _bk=Math.max(1,Math.floor(onlineSec/1200));
+    var _db=Math.min(0.5,(aiAltarLines(st,p).drop||0)*0.05);
+    for(var _b2=0;_b2<_bk;_b2++){ var _ps=pirateSealDrop((p&&p.innate)?p.innate:1, _db); if(_ps) st.bag.push(_ps); }
+  }
 }
 function aiAutoEquip(st,p){   /* 自动穿戴背包里最利于战力的武器/防具/首饰（仿玩家autoEquip：同槽位按aiItemScore比较，穿更好的；换下的旧装回背包）。首饰5槽：项链neck/戒指ring1,ring2/手镯bangle1,bangle2（同玩家EQ_ACCEPT）。真实穿戴到st.equip，不凭空——从已真实掉落的背包物品穿戴。遵守穿戴等级要求：角色等级(st.lv)需≥装备equipLevel，超等级的旧装脱回背包（与玩家4832同规则） */
   if(!st.bag||!st.equip) return;
@@ -6692,7 +6690,7 @@ function aiTowerLoot(L,isTrial){
     case 40: item=mkLoot(rnd([ITEM_BLUEPRINTS.dominationNecklace,ITEM_BLUEPRINTS.dominationRing,ITEM_BLUEPRINTS.dominationBracelet])); break;
     case 50: item=mkLoot(Math.random()<0.5?ITEM_BLUEPRINTS.demonWings:rnd([ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots])); break;
     case 60: item=mkLoot(ITEM_BLUEPRINTS.mount); item.count=1; break;
-    case 70: item=mkLoot(rnd([ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise])); item.count=1; break;
+    case 70: item=mkLoot(rnd([ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune])); item.count=1; break;   /* 70层：随机神符类天神牌一张（不再掉神印类，玩家与AI同规则；挑战塔仅首通） */
     case 80: item=mkLoot(rnd([ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots])); break;   /* 无尽/挑战塔80层：史诗奥格顿（传说奥格顿仅无尽100层/神之幻境/世界boss） */
     case 90: item=mkLoot(ITEM_BLUEPRINTS.demonWings); break;   /* 无尽/挑战塔90层：史诗魔翼（传说武器仅世界boss传说宝箱；传说奥格顿仅无尽100层/神之幻境/世界boss） */
     default:
@@ -8591,7 +8589,7 @@ function rglBar(){
 
 var T={ layer:1, hp:0, maxHp:0, monHp:0, monMax:0, monAtk:0, monDef:0, monLv:80, isBoss:false,
   auto:false, timer:null, atkCD:0, monCD:0, best:0, started:false };
-var TRIAL_REWARDS=['10:7级镶嵌锤','20:神符天神牌','30:史诗奥格顿套装','40:魔灵首饰','50:史诗魔翼/史诗奥格顿','60:坐骑','70:神印天神牌','80:史诗奥格顿套装','90:史诗魔翼','100:传说奥格顿套装','110:全属性+100','120:全属性+120','130:全属性+130','140:全属性+140','150:全属性+200'];
+var TRIAL_REWARDS=['10:7级镶嵌锤','20:神符天神牌','30:史诗奥格顿套装','40:魔灵首饰','50:史诗魔翼/史诗奥格顿','60:坐骑','70:神符天神牌','80:史诗奥格顿套装','90:史诗魔翼','100:传说奥格顿套装','110:全属性+100','120:全属性+120','130:全属性+130','140:全属性+140','150:全属性+200'];
 function tlLoadBest(){ try{ T.best=+localStorage.getItem('shenqi_trial_best')||0; }catch(e){ T.best=0; } }
 function tlSaveBest(){ try{ localStorage.setItem('shenqi_trial_best', String(Math.max(T.best,T.layer))); }catch(e){} }
 function tlSyncChar(){ TR.level=CHARACTER.info.level||0; trSyncChar(); T.maxHp=Math.round(TR.maxHp*rglMul('hp',0.25)); if(T.hp>T.maxHp||T.hp<=0) T.hp=T.maxHp;   /* 局内肉鸽「生机」×生命 */ }
@@ -8710,7 +8708,7 @@ function tlGift(){
     case 40: item=mkLoot(rnd([ITEM_BLUEPRINTS.dominationNecklace,ITEM_BLUEPRINTS.dominationRing,ITEM_BLUEPRINTS.dominationBracelet])); break;
     case 50: item=mkLoot(Math.random()<0.5?ITEM_BLUEPRINTS.demonWings:rnd([ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots])); break;
     case 60: item=mkLoot(ITEM_BLUEPRINTS.mount); item.count=1; break;
-    case 70: item=mkLoot(rnd([ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise])); item.count=1; break;
+    case 70: item=mkLoot(rnd([ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune])); item.count=1; break;   /* 70层：随机神符类天神牌一张（不再掉神印类，玩家与AI同规则；挑战塔仅首通） */
     case 80: item=mkLoot(rnd([ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots])); break;   /* 无尽/挑战塔80层：史诗奥格顿（传说奥格顿仅无尽100层/神之幻境/世界boss） */
     case 90: item=mkLoot(ITEM_BLUEPRINTS.demonWings); break;   /* 无尽/挑战塔90层：史诗魔翼（传说武器仅世界boss传说宝箱；传说奥格顿仅无尽100层/神之幻境/世界boss） */
     case 100: item=mkLoot(rnd([ITEM_BLUEPRINTS.legendOgdenHelmet,ITEM_BLUEPRINTS.legendOgdenChest,ITEM_BLUEPRINTS.legendOgdenGloves,ITEM_BLUEPRINTS.legendOgdenLeggings,ITEM_BLUEPRINTS.legendOgdenBoots])); break;   /* 无尽100层：随机一件传说奥格顿（传说武器仅世界boss传说宝箱） */
@@ -8824,7 +8822,7 @@ function initTrial(){
 window.addEventListener('hashchange', function(){ if(location.hash.indexOf('#arena')<0){ stopArenaFight(); } });   /* 挑战中退出竞技页自动结束挑战 */
 /* ============ 挑战塔系统 ============ */
 var CT={ layer:1,hp:0,maxHp:0,monHp:0,monMax:0,monAtk:0,monDef:0,monLv:82,isBoss:false,auto:false,timer:null,atkCD:0,monCD:0,best:0,coins:0,sessionCoins:0,firstFree:true,started:false,got:{} };
-var TOWER_MILES={10:'7级镶嵌锤',20:'神符天神牌',30:'史诗奥格顿',40:'魔灵首饰',50:'史诗魔翼',60:'坐骑',70:'神印天神牌',80:'史诗奥格顿',90:'史诗魔翼'};
+var TOWER_MILES={10:'7级镶嵌锤',20:'神符天神牌',30:'史诗奥格顿',40:'魔灵首饰',50:'史诗魔翼',60:'坐骑',70:'神符天神牌',80:'史诗奥格顿',90:'史诗魔翼'};
 function towerLoad(){ try{ var o=JSON.parse(localStorage.getItem('shenqi_tower')); if(o){ CT.layer=+o.layer||1; CT.best=+o.best||0; CT.coins=+o.coins||0; CT.got=o.got||{}; CT.firstFree=(o.firstFree===undefined?true:!!o.firstFree); } }catch(e){} }
 function towerSave(){ try{ localStorage.setItem('shenqi_tower',JSON.stringify({layer:CT.layer,best:CT.best,coins:CT.coins,got:CT.got,firstFree:CT.firstFree})); }catch(e){} }
 function ctSyncChar(){ TR.level=CHARACTER.info.level||0; trSyncChar(); CT.maxHp=TR.maxHp; if(CT.hp>CT.maxHp||CT.hp<=0) CT.hp=CT.maxHp; }
@@ -8945,7 +8943,7 @@ function ctMilestoneGift(){
     case 40: item=mkLoot(rnd([ITEM_BLUEPRINTS.dominationNecklace,ITEM_BLUEPRINTS.dominationRing,ITEM_BLUEPRINTS.dominationBracelet])); break;
     case 50: item=mkLoot(Math.random()<0.5?ITEM_BLUEPRINTS.demonWings:rnd([ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots])); break;
     case 60: item=mkLoot(ITEM_BLUEPRINTS.mount); item.count=1; break;
-    case 70: item=mkLoot(rnd([ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise])); item.count=1; break;
+    case 70: item=mkLoot(rnd([ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune])); item.count=1; break;   /* 70层：随机神符类天神牌一张（不再掉神印类，玩家与AI同规则；挑战塔仅首通） */
     case 80: item=mkLoot(rnd([ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots])); break;   /* 无尽/挑战塔80层：史诗奥格顿（传说奥格顿仅无尽100层/神之幻境/世界boss） */
     case 90: item=mkLoot(ITEM_BLUEPRINTS.demonWings); break;   /* 无尽/挑战塔90层：史诗魔翼（传说武器仅世界boss传说宝箱；传说奥格顿仅无尽100层/神之幻境/世界boss） */
   }
@@ -11339,13 +11337,21 @@ function aiAuction(st,p,now){
     if(_finA){ var _gn2=0; var _bg3=st.bag||[]; for(var _g3=0;_g3<_bg3.length;_g3++) if(_bg3[_g3]&&_bg3[_g3].type==='enh_guard') _gn2+=Math.max(1,_bg3[_g3].count||1); if(_gn2<20) want.push({m:function(nm){return String(nm).indexOf('安全护符')>=0;}, give:function(e2){ if(!st.bag) st.bag=[]; var _m=mkLoot(ITEM_BLUEPRINTS.enhGuard); _m.count=Math.max(1,(e2&&e2.item)?(e2.item.count||1):1); st.bag.push(_m); }}); }   /* 超脱后强化期：安全护符不足(日产出少)时主动从拍卖补货，支撑满级强化（真实流转） */
     if((st.ws||0)>=99&&(st.core||0)<1) want.push({m:function(nm){return String(nm).indexOf('神核')>=0;}, give:function(){ st.core=(st.core||0)+1; }});
     if((st.ws||0)<99&&(st.seal||0)<1) want.push({m:function(nm){return String(nm).indexOf('轮回秘印')>=0||(String(nm).indexOf('秘印')>=0&&String(nm).indexOf('神力')<0&&String(nm).indexOf('神印')<0);}, give:function(){ st.seal=(st.seal||0)+1; }});
+    var _hasSeal=st.gods&&((st.gods.main&&st.gods.main.type==='god_seal')||(st.gods.sub1&&st.gods.sub1.type==='god_seal'));
+    if(_gearLover&&!_hasSeal) want.push({seal:true,m:function(nm){return String(nm).indexOf('神印')>=0&&String(nm).indexOf('碎片')<0;}, give:function(e2){ if(!e2||!e2.item) return; if(!st.gods) st.gods={main:null,sub1:null}; var _it3=e2.item; var _seal3={id:'ai_'+p.id+'_god_seal_'+(_it3.name||''),name:_it3.name,type:'god_seal',img:_it3.img||'',grade:0,star:1,currentExp:0,requiredExp:100,fullAttributes:(_it3.fullAttributes||{})}; if(!st.gods.main){st.gods.main=_seal3;} else if(st.gods.main.type!=='god_seal'){st.gods.sub1=st.gods.main;st.gods.main=_seal3;} else if(!st.gods.sub1){st.gods.sub1=_seal3;} }});   /* 神印天神牌：掉落稀少+越早提升天神等级+“大家都没就我有”有面子——顶尖追求型按定位抢购（出价分层见购买循环）；拍卖真实购得→立即上阵（同玩家获得才有、最强为主）；已有神印主/副位→不再买；商人/套现型不买自用 */
     for(var wi=0;wi<want.length;wi++){
       var w=want[wi], best=null, bestK=null;
       for(var i=0;i<AUCTION.list.length;i++){
         var e=AUCTION.list[i]; if(e.seller===p.name||!e.item) continue;
         if(!w.m(String(e.item.name||''))) continue;
-        if(e.cur==='gold'){   /* 金币挂单：金币支付 */
-          var _scarce=(w.ith&&ITH_LEFT)?((ITH_LEFT.yitaiNecklace||0)<=2?30:(ITH_LEFT.yitaiNecklace||0)<=5?20:12):1;   /* 稀缺度倍数：全服剩≤2件→30倍疯抢(绝版临近一条少一条，追求完美者不惜重金)、剩≤5件→20倍、正常→12倍；99世超脱后装备永久保留→再×1.5(真的一条少一条，更痛苦更疯抢) */
+        if(w.seal){   /* 神印天神牌：金币/氪金双货币，按定位分层出价 */
+          var _sd0=0; try{ var _so0=JSON.parse(localStorage.getItem('shenqi_pirate_seal')||'null'); var _ny0=new Date(); if(_so0&&_so0.ym===_ny0.getFullYear()*100+(_ny0.getMonth()+1)) _sd0=_so0.dropped||0; }catch(e){}
+          var _scS=(p.pay>=3?8:(p.pay>=2?5:3))*(_sd0<=0?1.3:(_sd0<=1?1.15:1));   /* 神印稀缺溢价（按定位分层）：神豪8倍/高氪5倍/平民追求3倍估值；当月还没人掉出→“大家都没就我有”×1.3更疯抢，掉出1张×1.15，掉满2张回基准 */
+          if(e.cur==='gold'){ var capS=Math.round(aiItemValue(e.item)*aiPaySense(p)*_scS); if(e.price>0&&e.price<=spendable&&e.price<=capS){ if(!best||e.price<best.price) best=e; } }
+          else if(e.cur==='kf'&&(st.kf||0)>0){ var capSK=_gearLover?Math.min(300,Math.round(50*aiPaySense(p)*(p.pay>=3?3:(p.pay>=2?2:1)))):Math.round(50*aiPaySense(p)); if(e.price>0&&e.price<=(st.kf||0)&&e.price<=capSK){ if(!bestK||e.price<bestK.price) bestK=e; } }   /* 氪金单：神豪上限300/高氪150/平民追求50~100，太变态不买 */
+        }
+        else if(e.cur==='gold'){   /* 金币挂单：金币支付 */
+          var _scarce=(w.ith&&ITH_LEFT&&ITH_MAX)?(function(){ var _mx=ITH_MAX.yitaiNecklace+ITH_MAX.yitaiRing+ITH_MAX.yitaiBracelet; var _lf=(ITH_LEFT.yitaiNecklace||0)+(ITH_LEFT.yitaiRing||0)+(ITH_LEFT.yitaiBracelet||0); var _pr=Math.min(1,Math.max(0,(_mx-_lf)/Math.max(1,_mx))); return _pr>=0.999?4:Math.max(8,Math.round(45-37*_pr)); })():1;   /* 稀缺度倍数=全服集齐进度连续曲线：已集齐比例0%→45倍疯抢，随流通增多平滑降至托底8~10倍（掉落稀少不会降太多），全员集齐才显著走低到4倍；轮回清空后进度回落→重新疯抢 */
           if(_finA) _scarce=Math.round(_scarce*1.5);
           var cap=(w.ith&&_gearLover&&!_nearRebirth)?Math.round(aiItemValue(e.item)*aiPaySense(p)*_scarce):Math.round(aiItemValue(e.item)*aiPaySense(p));   /* 追求型愿出极高价(估值×敏感度×稀缺度12~45倍)——看到流通会毫不犹豫抢，但非无限(太变态也不买)；普通按估值×敏感度 */
           if(e.price>0&&e.price<=spendable&&e.price<=cap){ if(!best||e.price<best.price) best=e; }   /* 买最划算的 */
@@ -11367,7 +11373,10 @@ function aiAuction(st,p,now){
       for(var i2=0;i2<AUCTION.list.length;i2++){
         var e3=AUCTION.list[i2]; if(!e3||e3.seller===p.name||!e3.item) continue;
         var et=e3.item.type; if(et!=='weapon'&&et!=='helmet'&&et!=='chest'&&et!=='gloves'&&et!=='leggings'&&et!=='boots') continue;
-        var cap2=Math.round(aiItemValue(e3.item)*aiPaySense(p)*(_gearLover?1.4:1));   /* 顶尖追求型愿出更高价抢顶级装备（不差钱只求最好，模拟现实神豪） */
+        var _cur3=st.equip[_slotMap[et]]||null;
+        var _leg3=(itemQuality(e3.item)==='purple');   /* 传说级终极装备（传说奥格顿/传说魔翼/神裁之刃） */
+        var _missingLeg=_gearLover&&_leg3&&(!_cur3||itemQuality(_cur3)!=='purple');   /* 顶尖追求型且自身缺该传说部位（没穿 或 穿的不是传说）→补套装疯抢；已集齐该部位→不溢价 */
+        var cap2=_missingLeg?Math.round(aiItemValue(e3.item)*aiPaySense(p)*(_finA?12:8)):Math.round(aiItemValue(e3.item)*aiPaySense(p)*(_gearLover?1.4:1));   /* 传说稀缺溢价：缺部位追求型出8倍疯抢集齐一套（有面子，不差钱），99世超脱后永久保留再×1.5→12倍；已集齐→1.4倍正常追求价 */
         if(!(e3.price>0&&e3.price<=spendable&&e3.price<=cap2)){ if(!st._wantGear) st._wantGear=e3.item.name; continue; }   /* 想买但太贵/超预算→记录求购意向（世界聊天喊收） */
         var cur=st.equip[_slotMap[et]]||null;
         if(cur&&aiItemScore(e3.item)<=aiItemScore(cur)) continue;   /* 比当前穿戴好才买 */
@@ -12593,6 +12602,19 @@ function phantomLegendDrop(){   /* 神之幻境传说奥格顿：0.000001%概率
   return mkLoot(ps[Math.floor(Math.random()*ps.length)]);
 }
 
+function pirateSealDrop(inn,dropB){   /* 海盗岛最终BOSS·神印天神牌：0.000001%×先天运势(0.9~1.8)×天运之主再×2×(1+神坛福泽0~50%) + 每月全服最多2张（玩家与AI共用总量，掉满当月不再掉，下月刷新）；命中产出真实可穿戴神印天神牌随机一张 */
+  var o=null; try{ o=JSON.parse(localStorage.getItem('shenqi_pirate_seal')||'null'); }catch(e){}
+  var now=new Date(), ym=now.getFullYear()*100+(now.getMonth()+1);
+  if(!o||o.ym!==ym) o={ym:ym,dropped:0};
+  if(o.dropped>=2) return null;   /* 本月全服已掉满2张：任何玩家（AI/我）当月都不能再获得 */
+  var _inn=(typeof inn==='number'&&inn>0)?inn:1;
+  var _b=(typeof dropB==='number'&&dropB>0)?Math.min(0.5,dropB):0;
+  var _p=0.00000001*Math.min(1.8,_inn)*(_inn>=1.8?2:1)*(1+_b);   /* 基础0.000001% × 先天运势 × 天运之主再×2 × (1+神坛福泽)（同 luckRoll 公式；AI传自身运势与自身神坛福泽） */
+  if(Math.random()>=_p) return null;
+  o.dropped++; try{ localStorage.setItem('shenqi_pirate_seal',JSON.stringify(o)); }catch(e){}
+  var seals=[ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise];
+  return mkLoot(seals[Math.floor(Math.random()*seals.length)]);
+}
 function dropLegendForDungeon(d){   /* 掉落传说保底：按副本给对应传说装备 */
   var dm=DUNGEONS[d].mode;
   if(dm==='phantom'||dm==='armor'){ var ps=[ITEM_BLUEPRINTS.legendOgdenHelmet,ITEM_BLUEPRINTS.legendOgdenChest,ITEM_BLUEPRINTS.legendOgdenGloves,ITEM_BLUEPRINTS.legendOgdenLeggings,ITEM_BLUEPRINTS.legendOgdenBoots]; return mkLoot(ps[Math.floor(Math.random()*ps.length)]); }
@@ -12619,10 +12641,12 @@ function trRollDrop(){
     if(antiRoll(TR.isBoss?0.20:0.001)){ var hl=ITEM_BLUEPRINTS.statGems.filter(function(x){ return x.type==='helen_gem'; }); if(hl.length) out.push(mkLoot(hl[Math.floor(Math.random()*hl.length)])); } }
   else if(d.mode==='loot'){ if(TR.isBoss && antiRoll(0.10)){ out.push(mkLoot(ITEM_BLUEPRINTS.demonWings)); } }
   else if(d.mode==='phantom'){ if(TR.isBoss){ var _pg=phantomLegendDrop(); if(_pg) out.push(_pg); } }   /* 神之幻境 BOSS：传说奥格顿 0.000001% × 运势 + 每月全服仅1件（全服通用总量1，先到先得，下月刷新） */
-  else if(d.mode==='pirate'){   /* 海盗岛：小怪1%、Boss10% 掉（6级宝石/6级专注/混沌神石）任意一种；Boss 1%×运势 掉祝福宝石箱 */
+  else if(d.mode==='pirate'){   /* 海盗岛：小怪1%、Boss10% 掉（6级宝石/6级专注/混沌神石）任意一种；Boss 1%×运势 掉祝福宝石箱；最终BOSS另掉神印天神牌（0.000001%×运势 月度全服2张，与AI共用总量） */
     var _piPool=[function(){ var g=ITEM_BLUEPRINTS.statGems.filter(function(x){ return x.level===6&&x.name.indexOf('专注')<0; }); return g.length?mkLoot(g[Math.floor(Math.random()*g.length)]):null; }, function(){ var g=ITEM_BLUEPRINTS.statGems.filter(function(x){ return x.level===6&&x.name.indexOf('专注')>=0; }); return g.length?mkLoot(g[Math.floor(Math.random()*g.length)]):null; }, function(){ return mkLoot(ITEM_BLUEPRINTS.godCrystal); }];
     function _piOne(){ return _piPool[Math.floor(Math.random()*_piPool.length)](); }
-    if(TR.isBoss){ if(antiRoll(0.10)){ var _pb=_piOne(); if(_pb) out.push(_pb); } if(luckRoll(0.01)){ out.push(mkLoot(ITEM_BLUEPRINTS.gemBox)); } }
+    if(TR.isBoss){ if(antiRoll(0.10)){ var _pb=_piOne(); if(_pb) out.push(_pb); } if(luckRoll(0.01)){ out.push(mkLoot(ITEM_BLUEPRINTS.gemBox)); }
+      var _ps=pirateSealDrop((CHARACTER&&CHARACTER.innate)?CHARACTER.innate:1, altarDropBonus()); if(_ps) out.push(_ps);   /* 海盗王·黑帆（最终BOSS·传说级）：神印天神牌 0.000001%×运势 月度全服2张（与AI共用总量） */
+    }
     else { if(antiRoll(0.01)){ var _pm=_piOne(); if(_pm) out.push(_pm); } }
   }
   else if(d.mode==='gem'){
@@ -12639,20 +12663,13 @@ function trRollDrop(){
   }
   else if(d.mode==='godcard'){
     var isB=TR.isBoss;
-    var seals=[ITEM_BLUEPRINTS.warGodsFavor,ITEM_BLUEPRINTS.adamBone,ITEM_BLUEPRINTS.mercuryRam,
-               ITEM_BLUEPRINTS.omniscientOracle,ITEM_BLUEPRINTS.godsPraise];
     var runes=[ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune];
     function pickGod(pool){ if(pool.length) out.push(mkLoot(pool[Math.floor(Math.random()*pool.length)])); }
     /* 神力碎片：神符5%小怪/80%BOSS，神印1%小怪/50%BOSS */
     if(antiRoll(isB?0.80:0.05)) out.push(mkLoot(ITEM_BLUEPRINTS.runeFragment));
     if(antiRoll(isB?0.50:0.01)) out.push(mkLoot(ITEM_BLUEPRINTS.sealFragment));
-    /* 天神牌子（仅BOSS）：神符类50%、神印类20% */
+    /* 天神牌子（仅BOSS）：只掉神符类天神牌子50%（不再掉神印类天神牌子，玩家与AI同规则） */
     if(isB && antiRoll(0.50)) pickGod(runes);
-    /* 神印天神牌子：5%（无月限） */
-    if(isB && luckRoll(0.05)){
-      var candSeals=seals;
-      if(candSeals.length){ out.push(mkLoot(candSeals[Math.floor(Math.random()*candSeals.length)])); }
-    }
   }
   var _oc=location.hash.indexOf('#treasure')>=0 && document.visibilityState==='visible', _fxed=false, _fo=[];
   for(var _li=0;_li<out.length;_li++){ var _it2=out[_li]; if(itemQuality(_it2)==='purple'){ if(!_oc) continue;   /* 离线挂机不掉传说（挂机传说不再触发弹幕） */ } _fo.push(_it2); }
@@ -13528,12 +13545,12 @@ function initTreasureUI(){
     '绑定金币（1万~10万，80%~30%金额越大概率越低）、神力碎片（1-8个，10%~60%，每日上限300）、神力结晶（10%）、伊泰安项链（全服唯一：每20秒0.5% 或 任意怪死亡0.1%，打怪/挂机均可）',
     '武器·魔翼（BOSS 10%）、金币（0.1%概率1亿）',
     '宝石：小怪5级10%；BOSS 5级专注50%',
-    '小怪：神符碎片5%、神印碎片1%；BOSS：神符碎片80%、神印碎片50%、神符牌50%、神印牌5%',
+    '小怪：神符碎片5%、神印碎片1%；BOSS：神符碎片80%、神印碎片50%、神符牌50%',
     '首饰（BOSS 30%、小怪0.001%）、BOSS镶嵌/拆卸锤20%、海伦宝石（小怪0.1%）',
     '防具（小怪0.001%、BOSS 50%）、海伦宝石（小怪0.1%、BOSS 20%）',
     '升级专用：怪物79~83级、经验全场最高（无BOSS，海量升级经验）',
     'BOSS：金币1亿100%（神级10亿）、传说奥格顿套装0.000001%（每月全服仅1件）、寂灭之息药剂（小怪0.00001%、BOSS 0.1%，打怪/挂机均可）',
-    '限时20:00-23:00：小怪1%掉6级宝石/6级专注/混沌神石（任一种）；BOSS 10%掉宝石类、1%掉祝福宝石箱'
+    '限时20:00-23:00：小怪1%掉6级宝石/6级专注/混沌神石（任一种）；BOSS 10%掉宝石类、1%掉祝福宝石箱、最终BOSS掉神印天神牌0.000001%（每月全服仅2张）'
   ];
   var ds=document.getElementById('tr-dungeons');
   if(ds) ds.addEventListener('click',function(e){ var t=e.target.closest('.tr-dun'); if(!t) return; var _nd=+t.getAttribute('data-i'); if(isPhantomDungeon(_nd)&&TR.level<75){ toast('需角色等级 Lv.75 才能进入神之幻境'); return; } if(isPirateDungeon(_nd)&&!pirateOpenNow()){ toast('海盗岛仅每日 20:00-23:00 开放'); return; } TR.dungeon=_nd; TR.kill=0; TR.isBoss=false; TR.hp=TR.maxHp; ithStart(); trPhantomTimer(); trSpawnMon(); renderTreasure(); trLog('进入 <b>'+DUNGEONS[TR.dungeon].name+'</b>，<b style="color:#52C6DA">可掉落：'+trDropsInfo[TR.dungeon]+'</b>');   /* 可掉落提示用锐凡青蓝 */ });
