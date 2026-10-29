@@ -1140,6 +1140,11 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 .au-cur-it{flex:1;text-align:center;padding:8px 4px;border-radius:9px;font-size:12px;color:#d9cbb0;cursor:pointer;
   background:linear-gradient(180deg,rgba(50,40,24,.85),rgba(28,22,13,.9));border:1px solid rgba(214,177,110,.35);}
 .au-cur-it.on{color:#fff;border-color:rgba(255,90,216,.8);background:linear-gradient(180deg,rgba(90,10,72,.92),rgba(40,6,32,.96));box-shadow:0 0 12px rgba(231,2,231,.4);}
+.au-relic-type{display:flex;gap:6px;}   /* 上架材料类型选择：与上架物品"按金币/氪金出售"按钮同款样式（默认金色描边胶囊、选中品红渐变高亮），名称与持有数分两行显示（持有行小字），持有点数实时随持有量刷新 */
+.au-relic-type button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center;padding:8px 4px;border-radius:9px;font-size:12px;line-height:1.3;color:#d9cbb0;cursor:pointer;background:linear-gradient(180deg,rgba(50,40,24,.85),rgba(28,22,13,.9));border:1px solid rgba(214,177,110,.35);}
+.au-relic-type button .au-r-h{font-size:10px;opacity:.8;color:#b8a878;}
+.au-relic-type button.on{color:#fff;border-color:rgba(255,90,216,.8);background:linear-gradient(180deg,rgba(90,10,72,.92),rgba(40,6,32,.96));box-shadow:0 0 12px rgba(231,2,231,.4);}
+.au-relic-type button.on .au-r-h{color:#e6d6ff;opacity:.95;}
 .au-price-row{display:flex;align-items:center;gap:6px;}
 .au-price-row input{flex:1;min-width:0;}
 .au-unit{display:flex;gap:4px;}
@@ -6564,8 +6569,16 @@ function aiBuyGoldFromAuction(st,p){   /* 神豪/高氪强化缺金币→从拍�
     var _cap=aiGoldRateKf()*aiPaySense(p, st);   /* 买家接受上限：动态基准每亿价×敏感度(神豪2.2/高氪1.6/微氪0.85)，太贵不买 */
     if(_unit>_cap) continue;
     st.kf-=e.price; aiAucProfit(st,'kf',-e.price); st.gold+=_n*100000000;   /* 扣氪金得金币(亿→原始金币)；买入支出→利润累计 */
-    var q=null; try{ if(FIELD_ROSTER) for(var k=0;k<FIELD_ROSTER.length;k++) if(FIELD_ROSTER[k].name===e.seller){ q=FIELD_ROSTER[k]; break; } }catch(err){}
-    if(q&&q.st){ q.st.kf=(q.st.kf||0)+e.price; aiAucProfit(q.st,'kf',e.price); }   /* 卖家(套现AI)收氪金；拍卖收入→利润累计 */
+    var _pn=(CHARACTER&&CHARACTER.info&&CHARACTER.info.name)||'谜团';
+    if(e.seller===_pn){   /* 卖家=玩家：真实到账氪金+成交记录（同 aiAuction 内 _payPlayerSeller 口径，修复"玩家上架金币被AI买走不收款/无竞拍结束记录"） */
+      try{ auctionPay('kf', -e.price); }catch(err){}
+      try{ aucPlayerBook('kf', e.price); }catch(err){}
+      try{ toast('你的 金币 '+fmtWan(_n*100000000)+' 已售出，获得 '+fmtWan(e.price)+' 氪金'); }catch(err){}
+      try{ AUCTION.history.unshift({id:'S'+((AUCTION._id||0))+'x',item:{name:'金币',type:'currency'},seller:e.seller,ai:false,price:e.price,cur:'kf',n:_n,time:Date.now(),type:'sold'}); if(AUCTION.history.length>100) AUCTION.history.length=100; }catch(err){}
+    } else {   /* 卖家=AI：照原逻辑给AI卖家收氪金 */
+      var q=null; try{ if(FIELD_ROSTER) for(var k=0;k<FIELD_ROSTER.length;k++) if(FIELD_ROSTER[k].name===e.seller){ q=FIELD_ROSTER[k]; break; } }catch(err){}
+      if(q&&q.st){ q.st.kf=(q.st.kf||0)+e.price; aiAucProfit(q.st,'kf',e.price); }   /* 卖家(套现AI)收氪金；拍卖收入→利润累计 */
+    }
     AUCTION.list.splice(i,1); auctionSave();
     return;   /* 一次买一份（卖家差异化定价，各AI不同价） */
   }
@@ -11098,10 +11111,11 @@ function auctionQty(it){ return (it&&it.count)||1; }
 function auctionPlayerBal(cur){ return cur==='gold'?((CURRENCY&&CURRENCY.gold)||0):(cur==='tower'?((typeof CT!=='undefined'&&CT&&CT.coins)||0):(cur==='kf'?((CURRENCY&&CURRENCY.kf)||0):((ARENA&&ARENA.score)||0))); }   /* 玩家余额：金币/塔币/氪金/竞技积分 */
 function auctionPay(cur,amt){ if(cur==='gold'){ CURRENCY.gold=Math.max(0,(CURRENCY.gold||0)-amt); } else if(cur==='tower'){ if(typeof CT!=='undefined'&&CT) CT.coins=Math.max(0,(CT.coins||0)-amt); } else if(cur==='kf'){ CURRENCY.kf=Math.max(0,(CURRENCY.kf||0)-amt); } else { if(ARENA) ARENA.score=Math.max(0,(ARENA.score||0)-amt); } }   /* 传负值=给买家/卖家加账(玩家氪金kf一并支持) */
 function aucRow(e,mode){   /* 拍卖行卡片：左图标(数量角标) | 中名字+子信息 | 右价格+操作 */
-  var it=e.item||{}; var q=itemQuality(it); var qc=(e.kind==='gold')?'#e0b45a':qualityColor(q); var nm=it.name||'未知';
+  var it=e.item||{}; var _isGold=(e.kind==='gold'||it.name==='金币'||it.type==='currency');   /* 金币单判定兼容历史成交记录（history未存kind字段）：kind或物品名/类型命中即按金币单渲染，图标/数量/总价口径统一 */
+  var q=itemQuality(it); var qc=_isGold?'#e0b45a':qualityColor(q); var nm=it.name||'未知';
   var n=Number(e.n||1);
-  var _ic=(e.kind==='gold')?'<div class="au-row-ic">'+aucCurIcon('gold')+'</div>':'<div class="au-row-ic"><img src="'+(it.img||'')+'" alt=""></div>';
-  var _gq=(e.kind==='gold')?(fmtWan(n*100000000)):('×'+n);   /* 金币挂单：数量列=具体金额总值(左图标已是金币，不加单位) */
+  var _ic=_isGold?'<div class="au-row-ic">'+aucCurIcon('gold')+'</div>':'<div class="au-row-ic"><img src="'+(it.img||'')+'" alt=""></div>';
+  var _gq=_isGold?(fmtWan(n*100000000)):('×'+n);   /* 金币挂单：数量列=具体金额总值(左图标已是金币，不加单位) */
   var sub, right;
   if(mode==='mine'){   /* 我的竞拍 4 列：物品 | 数量 | 单价 | 下架按钮（简洁无冗余文字） */
     return '<div class="au-row au-row-mine">'+
@@ -11115,7 +11129,7 @@ function aucRow(e,mode){   /* 拍卖行卡片：左图标(数量角标) | 中名
     return '<div class="au-row au-row-fin">'+
       '<div class="au-fin-left">'+_ic+'<div class="au-row-info"><div class="au-row-nm" style="color:'+qc+'">'+nm+'</div></div></div>'+
       '<div class="au-fin-qty">'+_gq+'</div>'+
-      '<div class="au-fin-total">'+aucCurIcon(e.cur)+' '+fmtWan(e.kind==='gold'?e.price:e.price*e.n)+'</div>'+
+      '<div class="au-fin-total">'+aucCurIcon(e.cur)+' '+fmtWan(_isGold?e.price:e.price*e.n)+'</div>'+
       '<div class="au-fin-type '+( _sold?'sold':'bought')+'">'+( _sold?'售出':'购入')+'</div>'+
       '</div>';
   } else {
@@ -11199,20 +11213,20 @@ function openAucSell(){   /* 上架弹窗：物品/金币双模式。物品=选�
   var old=document.getElementById('au-mask'); if(old) old.remove();
   var over=document.createElement('div'); over.className='au-mask'; over.id='au-mask';
   over.innerHTML='<div class="au-box"><div class="au-box-head">上架<span><button class="au-box-x" data-x="1">×</button></span></div>'+
-    '<div class="au-mode" id="au-mode"><button class="on" data-mode="item">上架物品</button><button data-mode="gold">上架金币</button><button data-mode="relic">上架轮回材料</button></div>'+
+    '<div class="au-mode" id="au-mode"><button class="on" data-mode="item">上架物品</button><button data-mode="gold">上架金币</button><button data-mode="relic">上架材料</button></div>'+
     '<div class="au-box-body" id="au-body-item"><div class="au-sel-slot-wrap"><div class="au-sel-slot" id="au-sel-slot"><div class="au-sel-slot-empty">＋</div></div><div class="au-sel-slot-name" id="au-sel-slot-name">点击选择要上架的物品</div></div><div class="au-cur" id="au-cur"><button type="button" class="au-cur-it on" data-c="gold">按金币出售</button><button type="button" class="au-cur-it" data-c="kf">按氪金出售</button></div><div class="au-fields">'+
     '<div class="au-field"><label>单价</label><div class="au-price-row"><input id="au-price-in" type="number" min="1" value="1"><div class="au-unit" id="au-unit"><button type="button" data-u="10000">万</button><button type="button" data-u="100000000">亿</button><button type="button" data-u="1000000000000">兆</button></div></div><div class="au-field-hint">单位 × 输入值 = 定价（不选单位即为原价）</div></div>'+
     '<div class="au-field"><label>数量</label><input id="au-n-in" type="number" min="1" value="1"></div>'+
-    '<div class="au-total" id="au-total"><div class="au-t-item" id="au-t-item">当前出售商品：未选择</div><div class="au-t-price" id="au-t-price">当前商品总价：1 金币</div><div class="au-t-fee" id="au-t-fee">上架手续费：1 金币</div></div>'+
+    '<div class="au-field"><label>汇总</label><div class="au-total" id="au-total"><div class="au-t-item" id="au-t-item">当前出售商品：未选择</div><div class="au-t-price" id="au-t-price">当前商品总价：1 金币</div><div class="au-t-fee" id="au-t-fee">上架手续费：1 金币</div></div></div>'+
     '</div></div>'+
     '<div class="au-box-body" id="au-body-gold" style="display:none"><div class="au-gold-hero">'+aucCurIcon('gold')+'<div class="au-gold-hero-t">上架金币 · 买家付氪金购买</div></div><div class="au-fields">'+
     '<div class="au-field"><label>金币数量(亿)</label><input id="au-gold-n" type="number" min="1" value="10"></div>'+
     '<div class="au-field"><label>氪金总价</label><input id="au-gold-price" type="number" min="1" value="10"></div>'+
     '<div class="au-field-hint">标价氪金，卖出后你获得等量氪金 · 手续费2%（交易金币总额）从金币扣</div>'+
-    '<div class="au-total au-total-gold" id="au-gold-total"><div class="au-gt-a" id="au-gold-amt">出售金币总额：10亿 金币</div><div class="au-gt-t" id="au-gold-tot">当前商品总价：10 氪金</div><div class="au-gt-f" id="au-gold-fee">上架手续费：2000万 金币（交易金币总额 2%）</div></div>'+
+    '<div class="au-field"><label>汇总</label><div class="au-total au-total-gold" id="au-gold-total"><div class="au-gt-a" id="au-gold-amt">出售金币总额：10亿 金币</div><div class="au-gt-t" id="au-gold-tot">当前商品总价：10 氪金</div><div class="au-gt-f" id="au-gold-fee">上架手续费：2000万 金币（交易金币总额 2%）</div></div></div>'+
     '</div></div>'+
     '<div class="au-box-body" id="au-body-relic" style="display:none"><div class="au-gold-hero"><img src="logos/轮回秘印.png" style="width:38px;height:38px;flex:none"><div class="au-gold-hero-t">上架轮回材料 · 秘印/碎片/神核（计数型，走拍卖行真实流转）</div></div><div class="au-fields">'+
-    '<div class="au-field"><label>类型</label><div class="au-relic-type" id="au-relic-type"><button type="button" class="on" data-r="seal">轮回秘印（持有 <b id="au-r-h-seal">0</b>）</button><button type="button" data-r="frag">神核碎片（持有 <b id="au-r-h-frag">0</b>）</button><button type="button" data-r="core">太初神核（持有 <b id="au-r-h-core">0</b>）</button></div></div>'+
+    '<div class="au-field"><label>类型</label><div class="au-relic-type" id="au-relic-type"><button type="button" class="on" data-r="seal"><span class="au-r-n">轮回秘印</span><span class="au-r-h">持有 <b id="au-r-h-seal">0</b></span></button><button type="button" data-r="frag"><span class="au-r-n">神核碎片</span><span class="au-r-h">持有 <b id="au-r-h-frag">0</b></span></button><button type="button" data-r="core"><span class="au-r-n">太初神核</span><span class="au-r-h">持有 <b id="au-r-h-core">0</b></span></button></div></div>'+
     '<div class="au-field"><label>数量</label><input id="au-relic-n" type="number" min="1" value="1"></div>'+
     '<div class="au-field"><label>单价(金币)</label><input id="au-relic-price" type="number" min="1" value="100000000"><div class="au-field-hint">按金币出售，买家付金币 · 参考价：秘印5兆/枚、神核1京/颗、碎片10兆/片（世界BOSS掉落必须品，稀缺）</div></div>'+
     '<div class="au-total au-total-gold" id="au-relic-total"><div class="au-gt-a" id="au-relic-amt">出售数量：1</div><div class="au-gt-t" id="au-relic-tot">当前商品总价：1亿 金币</div><div class="au-gt-f" id="au-relic-fee">上架手续费：100万 金币（总价 1%）</div></div>'+
