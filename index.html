@@ -13360,7 +13360,7 @@ function renderRank(){
   serverStartInit(); ensureFieldRoster();
   var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
   var arr=[];
-  FIELD_ROSTER.forEach(function(p){ var b=aiBuild(p,sec); arr.push({n:p.name.split('（')[0], pw:b.pw, tier:b.tier, lv:b.lv, rr:aiArenaRank(b), ws:(p.st.ws||0), wEnh:(p.st.enh&&p.st.enh.lv)||0, aEnh:aiMaxArmorEnh(p.st), gold:(p.st.gold||0), limit:aiIthTotal(p.st), ascore:(p.st.arenaTotal!=null)?p.st.arenaTotal:Math.max(p.st.arenaMax||0,p.st.arenaScore||0), trial:(p.st.trialLv||0), profit:aiAucProfitTotal(p.st), merchant:aiIsMerchant(p), p:p}); });
+  FIELD_ROSTER.forEach(function(p){ var b=aiBuild(p,sec); arr.push({n:p.name.split('（')[0], pw:b.pw, tier:b.tier, lv:b.lv, rr:aiArenaRank(b), ws:(p.st.ws||0), wEnh:(p.st.enh&&p.st.enh.lv)||0, aEnh:aiMaxArmorEnh(p.st), gold:(p.st.gold||0), limit:aiIthTotal(p.st), ascore:(p.st.arenaTotal!=null)?p.st.arenaTotal:Math.max(p.st.arenaMax||0,p.st.arenaScore||0), trial:(p.st.trialLv||0), profit:aiAucProfitTotal(p.st), merchant:aiIsMerchant(p), online:!(p.st&&p.st._offline), p:p}); });
   aiSaveField(true);   /* renderRank批量核算100名AI后强制原子落盘(去重版2s窗口已合并序列化，此处立即写锚点防重复核算)，耗电优化第2/3项 */
   arr.push({n:'你', pw:rolePower(), tier:charTierName(), lv:CHARACTER.info.level, rr:arenaRank(), ws:REBIRTH.count, wEnh:(equipState['weapon']?equipState['weapon'].enhanceLevel||0:0), aEnh:maxArmorEnh(), gold:(CURRENCY&&CURRENCY.gold)||0, limit:ithHeldCount('yitaiNecklace')+ithHeldCount('yitaiRing')+ithHeldCount('yitaiBracelet'), ascore:(ARENA.totalScore||0), trial:(T.best||0), profit:(AUCTION.profitGold||0)+(AUCTION.profitKf||0)*aiGoldRateKf()*100000000, me:true});   /* 玩家拍卖利润：金币利润+氪金利润×当前市场牌价折算金币口径（与AI同口径） */
   var tabs=document.getElementById('rank-tabs');
@@ -13394,13 +13394,16 @@ function renderRank(){
     if(_v>=2) return '<span class="lb-pay" style="background:linear-gradient(135deg,#FFD700,#B8860B);color:#2a1a00">高氪</span>';
     if(_v>=1) return '<span class="lb-pay" style="background:linear-gradient(135deg,#52C6DA,#1E5F73);color:#eaf7ff">微氪</span>';
     return '<span class="lb-pay" style="background:linear-gradient(135deg,#8a8375,#4a463e);color:#cfc9bd">白嫖</span>'; }
+  function _odTg(o){ if(o&&o.me) return '';   /* 自己(玩家)恒定在线，不贴标签 */
+    if(o&&o.online) return '<span class="lb-pay" style="background:linear-gradient(135deg,#33E08C,#00704A);color:#eafff7">在线</span>';   /* 在线AI：亮绿胶囊（区别于商人翡翠绿#2ECC71：此#33E08C偏翠+渐变更亮） */
+    return '<span class="lb-pay" style="background:linear-gradient(135deg,#8a8a8a,#3d3d3d);color:#e8e8e8">离线</span>'; }   /* 离线AI：中性深灰（每日在线配额耗尽已下线/跨天自动恢复） */
   for(var i=0;i<top.length;i++){
     var o=top[i], podium=(i<3)?['top1','top2','top3'][i]:'';
     var mb=(i<3)?['m1','m2','m3'][i]:'';
     var rankHtml=i<3?('<span class="lb-rank"><span class="lb-medal '+mb+'">'+(i+1)+'</span></span>'):('<span class="lb-rank lb-'+(i+1)+'">'+(i+1)+'</span>');
-    rows+='<div class="lb-row'+(o.me?' me':'')+(podium?' '+podium:'')+'" data-i="'+i+'">'+rankHtml+'<span class="lb-n">'+o.n+_payTg(o.p)+'<i style="color:'+(_ac[Math.min(o.rr,6)]||'#aaa')+';font-style:normal">（'+o.tier+'）</i><em style="color:#8a8375;font-style:normal"> Lv.'+o.lv+'</em></span><span class="lb-v">'+valfn(o)+'</span></div>';
+    rows+='<div class="lb-row'+(o.me?' me':'')+(podium?' '+podium:'')+'" data-i="'+i+'">'+rankHtml+'<span class="lb-n">'+o.n+_payTg(o.p)+_odTg(o)+'<i style="color:'+(_ac[Math.min(o.rr,6)]||'#aaa')+';font-style:normal">（'+o.tier+'）</i><em style="color:#8a8375;font-style:normal"> Lv.'+o.lv+'</em></span><span class="lb-v">'+valfn(o)+'</span></div>';
   }
-  if(meIdx>=20){ var m=arr[meIdx]; rows+='<div class="lb-row me" data-i="'+meIdx+'"><span class="lb-rank">'+(meIdx+1)+'</span><span class="lb-n">'+m.n+_payTg(m.p)+'<i style="color:'+(_ac[Math.min(m.rr,6)]||'#aaa')+';font-style:normal">（'+m.tier+'）</i><em style="color:#8a8375;font-style:normal"> Lv.'+m.lv+'</em></span><span class="lb-v">'+valfn(m)+'</span></div>'; }
+  if(meIdx>=20){ var m=arr[meIdx]; rows+='<div class="lb-row me" data-i="'+meIdx+'"><span class="lb-rank">'+(meIdx+1)+'</span><span class="lb-n">'+m.n+_payTg(m.p)+_odTg(m)+'<i style="color:'+(_ac[Math.min(m.rr,6)]||'#aaa')+';font-style:normal">（'+m.tier+'）</i><em style="color:#8a8375;font-style:normal"> Lv.'+m.lv+'</em></span><span class="lb-v">'+valfn(m)+'</span></div>'; }
   list.innerHTML=rows;
   list.__arr=arr;   /* 每次渲染记录最新数据快照：点击浮层用当前行数据(与排行行一致)，避免旧闭包arr导致"点了A却显示B"（含初始化后旧数据残留） */
   if(!list.__b){ list.__b=true; list.addEventListener('click',function(e){ var r=e.target.closest('.lb-row'); if(!r) return; var idx=parseInt(r.getAttribute('data-i'),10); var o=(list.__arr||[])[idx]; if(!o) return; if(o.me){ showRankDetailMe(); } else if(o.p){ showRankDetailAI(o); } }); }   /* 点击榜单行 → 玩家详情浮层 */
