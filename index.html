@@ -6035,7 +6035,7 @@ function aiFarmExp(st,p,onlineSec){   /* AI真实经验制（与玩家100%同规
   var B=aiBuildState(st,p);
   var c=aiCanKillMon(st,p,d,-1,{hp:mhp,atk:atk,def:dfn,agi:1,lv:el},B);
   if(!c.canKill||c.dps<=0) return 0;   /* 打不动/破不了防→无击杀无经验（与玩家同） */
-  var cycle=Math.max(0.25,c.killSec);   /* 小怪击杀周期=真实dps口径（同玩家打怪：dps/血量），秒杀也保底0.25s/只 */
+  var cycle=Math.max(1.0,c.killSec+1.0);   /* 小怪击杀周期=真实dps击杀耗时+击杀后1秒刷新（同玩家：击杀后setTimeout 1s刷下一只，秒杀也最多1只/秒——不再0.25s/只虚快4倍，修复AI升级比玩家快的问题） */
   var kills=Math.max(0,onlineSec/cycle);
   var _d=el-lv, _sc; if(_d>0) _sc=Math.pow(1.15,Math.min(_d,20)); else if(_d===0) _sc=1; else { var _low=-_d; _sc=_low>=20?0:Math.pow(0.7,_low); }   /* 等级差经验系数（玩家trExpScale同式，但用AI自身等级：同×1/越级+15%封顶20/刷低级×0.7低20级0） */
   var per=Math.round(aiExpPerKill(el,d)*_sc*aiExpMult(st)*155)/100;   /* 每怪经验=玩家同公式×等级差×太阳/轮回加成；×1.55=玩家真实刷法期望系数（trGainExp乘区：91.4%普通×1 + 8%精英×3 + 1/150 Boss×60 → 期望×1.5536，AI按同款混合刷法折算，与玩家打怪升级同速度口径） */
