@@ -6532,8 +6532,7 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
       for(var _ptR=0;_ptR<_protIt.length;_ptR++){
         var _askR=Math.max(600,Math.round(50*aiSellAsk(p, st)*12));   /* 保护价：≥600氪金，超出追求型AI上限500→短期保住；不愁卖不贱卖 */
         var _feeR=aucFee(_askR);
-        if((st.kf||0)>=_feeR){ st.kf-=_feeR; AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_protIt[_ptR].it,price:_askR,cur:'kf',n:1,time:Date.now()}); _rbIds.push(AUCTION.list[0].id); }
-        else if((st.gold||0)>=kfFeeGold(_feeR)){ st.gold-=kfFeeGold(_feeR); AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_protIt[_ptR].it,price:_askR,cur:'kf',n:1,time:Date.now()}); _rbIds.push(AUCTION.list[0].id); }   /* 氪金不足→按当前市场牌价折算成金币垫付（与玩家同规则，非1:1） */
+        if((st.gold||0)>=kfFeeGold(_feeR)){ st.gold-=kfFeeGold(_feeR); AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_protIt[_ptR].it,price:_askR,cur:'kf',n:1,time:Date.now()}); _rbIds.push(AUCTION.list[0].id); }   /* 手续费全部扣金币：氪金单手续费按市场牌价折算成金币扣（氪金不在系统内耗损，与玩家同规则，非1:1） */
         else { var _nmR=String(_protIt[_ptR].it.name||''); if(_nmR.indexOf('项链')>=0&&ITH_LEFT.yitaiNecklace<ITH_MAX.yitaiNecklace) ITH_LEFT.yitaiNecklace++; else if(_nmR.indexOf('戒指')>=0&&ITH_LEFT.yitaiRing<ITH_MAX.yitaiRing) ITH_LEFT.yitaiRing++; else if(_nmR.indexOf('手镯')>=0&&ITH_LEFT.yitaiBracelet<ITH_MAX.yitaiBracelet) ITH_LEFT.yitaiBracelet++; else if(aiIsMerchant(p)) _keepM.push(_protIt[_ptR].it); }   /* 手续费不足：伊泰安→回收掉落池(物品不凭空消失)；商人非伊泰安(神印/传说)→暂存轮回后放回背包(商人囤货保护，生意本钱不清空) */
       }
       st.ws=(st.ws||0)+1; st.seal-=1;   /* 消耗轮回秘印×1；99世封顶(超脱) */
@@ -7230,13 +7229,17 @@ function renderRefine(){
     $res.innerHTML=parts.join('')||'<span class="refr-none">—</span>';
   }
 }
-function doRefineAbility(){   /* 洗炼页·重随异能：消耗1属性卷轴，将传说装备的异能换一条新的（不与当前重复） */
+function doRefineAbility(){   /* 洗炼页·重随异能：消耗100属性卷轴+10完整的属性卷轴（跨格按总量扣减，不足提示阻止），将传说装备的异能换一条新的（不与当前重复） */
   if(!REFINE.equip){ toast('请先选择洗炼目标'); return; }
   if(!REFINE.equip.specialEffect){ toast('该装备暂无异能词缀'); return; }
-  var found=null;
-  for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){ var it=bag[p][i]; if(it&&it.type==='normal_scroll'){ found=it; break; } }
-  if(!found){ toast('没有属性卷轴'); return; }
-  consumeStack(found,1);
+  var _n1=0,_n2=0;
+  for(var _pp=0;_pp<BAG_NUM;_pp++) for(var _pi=0;_pi<BAG_SLOTS;_pi++){ var _pit=bag[_pp][_pi]; if(_pit&&_pit.type==='normal_scroll') _n1+=(_pit.count||1); else if(_pit&&_pit.type==='full_scroll') _n2+=(_pit.count||1); }
+  if(_n1<100){ toast('属性卷轴不足（需 100 个，当前 '+_n1+'）'); return; }
+  if(_n2<10){ toast('完整的属性卷轴不足（需 10 个，当前 '+_n2+'）'); return; }
+  var _c1=100;   /* 跨格扣减属性卷轴100（堆叠可分散多格，不足已阻止） */
+  for(var _p1=0;_p1<BAG_NUM&&_c1>0;_p1++) for(var _i1=0;_i1<BAG_SLOTS&&_c1>0;_i1++){ var _it1=bag[_p1][_i1]; if(_it1&&_it1.type==='normal_scroll'){ var _t1=Math.min(_it1.count||1,_c1); _it1.count-=_t1; _c1-=_t1; if(_it1.count<=0) bag[_p1][_i1]=null; } }
+  var _c2=10;   /* 跨格扣减完整的属性卷轴10 */
+  for(var _p2=0;_p2<BAG_NUM&&_c2>0;_p2++) for(var _i2=0;_i2<BAG_SLOTS&&_c2>0;_i2++){ var _it2=bag[_p2][_i2]; if(_it2&&_it2.type==='full_scroll'){ var _t2=Math.min(_it2.count||1,_c2); _it2.count-=_t2; _c2-=_t2; if(_it2.count<=0) bag[_p2][_i2]=null; } }
   var cur=REFINE.equip.specialEffect, pool=[];
   for(var _z=0;_z<ABILITY_POOL.length;_z++) if(ABILITY_POOL[_z].k!==cur) pool.push(ABILITY_POOL[_z]);
   var nk=pool[Math.floor(Math.random()*pool.length)].k;
@@ -11246,7 +11249,7 @@ function openAucSell(){   /* 上架弹窗：物品/金币双模式。物品=选�
   over.querySelectorAll('.au-cur-it').forEach(function(el){ el.addEventListener('click',function(){ over.querySelectorAll('.au-cur-it').forEach(function(x){ x.classList.remove('on'); }); this.classList.add('on'); AU_SEL.cur=this.getAttribute('data-c'); _auTotal(); }); });
   over.querySelectorAll('#au-unit button').forEach(function(el){ el.addEventListener('click',function(){ var isOn=this.classList.contains('on'); over.querySelectorAll('#au-unit button').forEach(function(x){ x.classList.remove('on'); }); if(isOn){ AU_SEL.unit=1; } else { this.classList.add('on'); AU_SEL.unit=parseFloat(this.getAttribute('data-u'))||1; } _auTotal(); }); });   /* 单价倍率：万/亿/兆可选，×输入值=实际定价；再点已选单位=取消回原价×1 */
   var _elP=document.getElementById('au-price-in'), _elN=document.getElementById('au-n-in');
-  function _auTotal(){ var v=parseInt(_elP.value,10)||0, n=parseInt(_elN.value,10)||1; var t=v*(AU_SEL.unit||1)*n; var fee=Math.max(1,Math.ceil(t*0.01)); var _it=(AU_SEL.slot&&AU_SEL.slot.s)||null; var _itn=_it?_it.name:'未选择'; var e1=document.getElementById('au-t-item'); if(e1) e1.textContent='当前出售商品：'+_itn+' ×'+n; var e2=document.getElementById('au-t-price'); if(e2) e2.textContent='当前商品总价：'+fmtWan(t)+' '+aucCurName(AU_SEL.cur); var e3=document.getElementById('au-t-fee'); if(e3) e3.textContent='上架手续费：'+fmtWan(fee)+' '+aucCurName(AU_SEL.cur)+'（总价 1%）'; }   /* 三行：出售商品×数量 / 当前总价 / 上架手续费；物品名来自选中AU_SEL.slot.s，随单价/数量/选中实时刷新 */
+  function _auTotal(){ var v=parseInt(_elP.value,10)||0, n=parseInt(_elN.value,10)||1; var t=v*(AU_SEL.unit||1)*n; var fee=Math.max(1,Math.ceil(t*0.01)); var _it=(AU_SEL.slot&&AU_SEL.slot.s)||null; var _itn=_it?_it.name:'未选择'; var e1=document.getElementById('au-t-item'); if(e1) e1.textContent='当前出售商品：'+_itn+' ×'+n; var e2=document.getElementById('au-t-price'); if(e2) e2.textContent='当前商品总价：'+fmtWan(t)+' '+aucCurName(AU_SEL.cur); var e3=document.getElementById('au-t-fee'); if(e3){ var _feeG=(AU_SEL.cur==='kf')?kfFeeGold(fee):fee; e3.textContent='上架手续费：'+fmtWan(_feeG)+' 金币'+(AU_SEL.cur==='kf'?'（'+fee+' 氪金按牌价折算）':'（总价 1%）'); } }   /* 三行：出售商品×数量 / 当前总价 / 上架手续费；物品名来自选中AU_SEL.slot.s，随单价/数量/选中实时刷新；氪金单手续费显示按牌价折算的金币（扣费全部走金币，与提交扣费一致） */
   _elP.addEventListener('input',_auTotal); _elN.addEventListener('input',_auTotal); _auTotal();   /* 单价/数量输入或单位/货币切换时实时刷新当前总价（单位×单价×数量） */
   var _gnIn=document.getElementById('au-gold-n'), _gpIn=document.getElementById('au-gold-price');
   function _goldTotal(){ var gn=parseInt(_gnIn.value,10)||0, gp=parseInt(_gpIn.value,10)||0; var gf=Math.max(1,Math.ceil(gn*100000000*0.02)); var a=document.getElementById('au-gold-amt'), t=document.getElementById('au-gold-tot'), f=document.getElementById('au-gold-fee'); if(a) a.textContent='出售金币总额：'+fmtWan(gn*100000000)+' 金币'; if(t) t.textContent='当前商品总价：'+fmtWan(gp)+' 氪金'; if(f) f.textContent='上架手续费：'+fmtWan(gf)+' 金币（交易金币总额 2%）'; }   /* 上架金币总价三行：行1出售金币总额、行2当前商品总价（氪金标价）、行3上架手续费（金币总额2%从金币扣，与物品tab手续费行同型）；随输入实时刷新 */
@@ -11291,15 +11294,16 @@ function openAucSell(){   /* 上架弹窗：物品/金币双模式。物品=选�
     var price=(parseInt(document.getElementById('au-price-in').value,10)||0)*(AU_SEL.unit||1); var n=parseInt(document.getElementById('au-n-in').value,10)||1;   /* 单价按选定单位换算为实际定价 */
     if(price<=0){ toast('定价需大于0'); return; }
     var have=auctionQty(it); if(n<1) n=1; if(n>have) n=have;   /* 数量限制仅取决于你持有的物品数 */
-    var total=price*n, fee=aucFee(total), _paidGold=false;   /* 1% 上架手续费：优先从所选货币扣；氪金单氪金不足时按当前市场牌价折算成金币垫付（玩家/AI统一，打破无氪金无法上架稀有品的死循环） */
-    if(AU_SEL.cur==='kf'&&(CURRENCY.kf||0)<fee&&(CURRENCY.gold||0)>=kfFeeGold(fee)){ CURRENCY.gold-=kfFeeGold(fee); _paidGold=true; aucPlayerBook('gold',-kfFeeGold(fee)); }
-    else { if(auctionPlayerBal(AU_SEL.cur)<fee){ toast('上架费不足：需 1% 手续费 '+fmtWan(fee)+' '+aucCurName(AU_SEL.cur)+'（氪金不足可按市场牌价用金币垫付）'); return; } auctionPay(AU_SEL.cur, fee); aucPlayerBook(AU_SEL.cur,-fee); }   /* 上架手续费→玩家拍卖总成本累计（按实际支付币种；金币垫付记金币成本） */
+    var total=price*n, fee=aucFee(total);   /* 1% 上架手续费：氪金单计费额为氪金数，全部折算成金币扣（氪金不在系统内耗损，玩家/AI统一） */
+    var _feeGold=(AU_SEL.cur==='kf')?kfFeeGold(fee):fee;   /* 氪金单手续费=氪金数×市场牌价折算金币（100氪金=X亿金币动态比例）；金币单手续费=总价1%金币 */
+    if((CURRENCY.gold||0)<_feeGold){ toast('上架费不足：需手续费 '+fmtWan(_feeGold)+' 金币'+(AU_SEL.cur==='kf'?'（'+fee+' 氪金按市场牌价折算）':'')); return; }
+    CURRENCY.gold-=_feeGold; aucPlayerBook('gold',-_feeGold);   /* 手续费全部扣金币→玩家拍卖总成本（金币成本累计） */
     /* 从背包移除 n 件，入拍卖（物品真实流转，不凭空） */
     var rem=n; for(var p2=0;p2<BAG_NUM&&rem>0;p2++) for(var i2=0;i2<BAG_SLOTS&&rem>0;i2++){ var s=bag[p2][i2]; if(s&&s===it){ var take=Math.min(rem,auctionQty(s)); if(take>=auctionQty(s)) bag[p2][i2]=null; else s.count-=take; rem-=take; } }
-    if(rem>0){ if(_paidGold) CURRENCY.gold+=kfFeeGold(fee); else auctionPay(AU_SEL.cur,-fee); toast('物品移除失败'); return; }   /* 移除失败退回手续费（按实际支付方式退回） */
+    if(rem>0){ CURRENCY.gold+=_feeGold; toast('物品移除失败'); return; }   /* 移除失败退回手续费（金币） */
     var copy=JSON.parse(JSON.stringify(it)); copy.count=n;
     AUCTION.list.unshift({ id:'A'+(AUCTION._id++), seller:(CHARACTER&&CHARACTER.info&&CHARACTER.info.name)||'谜团', ai:false, item:copy, price:price, cur:AU_SEL.cur, n:n, time:Date.now() });
-    auctionSave(); recomputeIthLeft(); saveGame(); renderBag(); renderAuction(); over.remove(); toast('已上架 '+it.name+' ×'+n+'，定价 '+fmtWan(price)+' '+aucCurName(AU_SEL.cur)+'，手续费 '+fmtWan(fee)+' '+aucCurName(AU_SEL.cur)+(_paidGold?'（金币垫付）':''));
+    auctionSave(); recomputeIthLeft(); saveGame(); renderBag(); renderAuction(); over.remove(); toast('已上架 '+it.name+' ×'+n+'，定价 '+fmtWan(price)+' '+aucCurName(AU_SEL.cur)+'，手续费 '+fmtWan(_feeGold)+' 金币');
   }); }
 }
 function aucFee(total){ return Math.max(1, Math.ceil(total*0.01)); }   /* 上架手续费：总价1%（至少1），从卖家对应货币扣除，玩家/AI统一（消耗，非凭空生成） */
@@ -11503,9 +11507,10 @@ function aiAuction(st,p,now){
         else if(aiIsMerchant(p)&&_isIth2){ var _ir3=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0; _ask2=Math.max(1,Math.round(_mv2*aiSellAsk(p, st)*1.6*(_ir3<=2?10:(_ir3<=5?6:3)))); }   /* 高卖×1.6×稀缺系数赚差价（眼光毒辣，限量品流通越少越贵） */
         else _ask2=Math.max(1,Math.round(_mv2*aiSellAsk(p, st)*(aiIsMerchant(p)?1.6:1)));
         var _fee2=aucFee(_ask2);
-        var _payOk=e2.cur==='kf'?((st.kf||0)>=e2.price&&(st.gold||0)>=_fee2):((st.gold||0)>=e2.price+_fee2);   /* 货款+上架手续费：氪金单货款扣氪金、手续费金币垫付（同玩家氪金上架规则），金币单扣金币 */
+        var _fee2G=kfFeeGold(_fee2);   /* 氪金单手续费折算金币（市场牌价） */
+        var _payOk=e2.cur==='kf'?((st.kf||0)>=e2.price&&(st.gold||0)>=_fee2G):((st.gold||0)>=e2.price+_fee2);   /* 货款+上架手续费：氪金单货款扣氪金、手续费全部扣金币（折算，同玩家规则），金币单扣金币 */
         if(!_payOk) return;
-        if(e2.cur==='kf'){ st.kf-=e2.price; aiAucProfit(st,'kf',-e2.price); st.gold-=_fee2; aiAucProfit(st,'gold',-_fee2); }
+        if(e2.cur==='kf'){ st.kf-=e2.price; aiAucProfit(st,'kf',-e2.price); st.gold-=_fee2G; aiAucProfit(st,'gold',-_fee2G); }
         else { st.gold-=e2.price+_fee2; aiAucProfit(st,'gold',-(e2.price+_fee2)); }   /* 货款+上架手续费(买入支出+成本→利润累计) */
         var _copy2=JSON.parse(JSON.stringify(e2.item));
         for(var _mj2=0;_mj2<AUCTION.list.length;_mj2++) if(AUCTION.list[_mj2].id===e2.id){ AUCTION.list.splice(_mj2,1); break; }
@@ -11671,7 +11676,7 @@ function aiAuction(st,p,now){
             var _ithRem=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0;   /* 全服项链剩余量：后期流通少→炒作系数高(最高10000氪金，有价无市顶尖接)；前期剩余多→正常限量价 */
             var _askK=Math.min(10000,Math.max(500,Math.round(500*aiSellAsk(p, st)*(aiIsMerchant(p)?1.6:1)*(_ithRem<=2?10:(_ithRem<=5?6:3)))));   /* 氪金定价：500氪金基准×报价系数(商人×1.6赚差价)×流通稀缺(剩≤2×10炒作顶格10000、≤5×6、多×3)；买家=神豪/高氪(氪金购买力强)，玩家卖≈500~10000氪金——前期金币少买不起、后期有价无市等顶尖接 */
             var _feeK=aucFee(_askK);
-            if((st.kf||0)>=_feeK){ st.bag.splice(idx,1); st.kf-=_feeK; aiAucProfit(st,'kf',-_feeK); AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_selIth,price:_askK,cur:'kf',n:1,time:Date.now()}); recomputeIthLeft(); auctionSave(); }   /* 氪金手续费从氪金账户扣（同玩家规则），付不起则继续囤 */
+            if((st.gold||0)>=kfFeeGold(_feeK)){ st.bag.splice(idx,1); st.gold-=kfFeeGold(_feeK); aiAucProfit(st,'gold',-kfFeeGold(_feeK)); AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_selIth,price:_askK,cur:'kf',n:1,time:Date.now()}); recomputeIthLeft(); auctionSave(); }   /* 手续费全部扣金币：氪金单手续费按市场牌价折算成金币扣（氪金不在系统内耗损，与玩家同规则），付不起则继续囤 */
           }
           else if(_kfRate>=1 && (aiIsMerchant(p)||!(gold<minGold*1.2))){ /* 早期金币市场弱：商人一律囤(限量品卖不到好价不出手，本性——扛到世界喊话或中后期再卖，缺钱也囤，靠卖金币换氪金周转)；追求型/普通不缺钱也囤；普通缺钱急用→金币价变现(平民要生活) */ }
           else {   /* 中后期金币市场强(买家金币多，金币价卖得好) 或 缺钱急用 → 按金币价上架（现有逻辑） */
