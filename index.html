@@ -8579,7 +8579,7 @@ function applyRoute(){
   if (attrs) renderAttrs();
   if (ach) renderAchievement();
   /* 强化/洗炼/宝石并入神兵锻冶，天神并入万法归宗，均由聚合页渲染 */
-  if (trs){ stopArenaFight(); trSyncChar(); renderTreasure(); }   /* 进入副本：仅停竞技挑战；试炼自动攻击不因切页停止（互斥交给战斗按钮） */
+  if (trs){ stopArenaFight(); trSyncChar(); renderTreasure(); if(TR_ONLINE_T){ clearInterval(TR_ONLINE_T); TR_ONLINE_T=null; } TR_ONLINE_T=setInterval(function(){ try{ updDungeonOnline(); }catch(e){} },30000); }   /* 进入副本：仅停竞技挑战；试炼自动攻击不因切页停止（互斥交给战斗按钮）；副本页停留时每30秒刷新在线人数（只更新人数文本不重绘战斗，避免闪屏） */
   if (tl){ stopArenaFight(); initTrial(); }   /* 进入试炼：仅停竞技挑战；副本挂机不因切页停止（互斥交给战斗按钮） */
   if (tower){ stopArenaFight(); initTower(); }   /* 进入挑战塔：停竞技；不再停试炼自动（切回试炼页自动恢复），点挑战塔自动攻击时才互斥停试炼 */
   if (shop) renderShop();
@@ -9246,6 +9246,7 @@ function route(){
   if(!h || h==='#'){ location.replace('#home'); return; }   /* 默认进入基地大厅 */
   if (h.indexOf('#god')<0) stopGodAuto();   /* 离开天神页即停止自动升级 */
   if (h.indexOf('#arena')<0) stopArenaFight(); /* 离开竞技页即停止战斗 */
+  if (h.indexOf('#treasure')<0 && typeof TR_ONLINE_T!=='undefined' && TR_ONLINE_T){ clearInterval(TR_ONLINE_T); TR_ONLINE_T=null; }   /* 离开副本页：停止在线人数定时刷新 */
   if (typeof WBOSS!=='undefined' && h.indexOf('#wboss')<0){ if(WB_REFRESH){ clearInterval(WB_REFRESH); WB_REFRESH=null; } } /* 离开世界BOSS页：仅停血条刷新，出战战斗后台持续（进入副本/试炼/塔/竞技/域外讨伐才停） */
   /* 统一绑定所有二级页返回按钮（不依赖 renderHome，刷新/直开页面也有效） */
   ['arena','forge','wanshou','gem','enhance','refine','shop','treasure','trial','lottery','achievement','task','attrs','main','rebirth','altar','guide','season','battle','rank','auction','chat'].forEach(function(k){
@@ -12468,7 +12469,7 @@ function pirateOpenNow(){ var _h=new Date().getHours(); return _h>=20 && _h<23; 
 function isPirateDungeon(d){ return d>=0&&d<DUNGEONS.length&&DUNGEONS[d].mode==='pirate'; }   /* 海盗岛判断（按 mode） */
 var TR={ dungeon:0, isBoss:false, hp:0, maxHp:0, patk:0, pdef:0, attrDef:false, attr:'无', absorb:0, absorbPct:0,
   kill:0, killToBoss:150, auto:false, timer:null, regen:null, revTimer:null, revCount:0, suppressLog:false, atkTick:0, monAtkCoef:0.1,
-  monHp:0, monMax:0, lastAtk:0, level:1, exp:0, reqExp:100, spawnTimer:null, bossLoot:[], bossType:null, bossTier:0, forceBoss:null, phantomTimer:null, bossLevel:60, nobleSub:null,
+  monHp:0, monMax:0, lastAtk:0, level:1, exp:0, reqExp:100, spawnTimer:null, bossLoot:[], bossType:null, bossTier:0, forceBoss:null, phantomTimer:null, bossLevel:60, nobleSub:null, _stopped:false,   /* 副本战斗停止标记：开其他战斗(竞技/塔/世界boss/域外)时stopTreasure置true=退出副本，重新挂机/切换副本置false=重新进入；供副本在线人数判定（进入副本即算在线，被其他战斗打断即退出不计） */
   stats:{ kill:0, drop:0, gold:0, rare:0, bossKill:0, legend:0, per:(function(){ var a=[]; for(var si=0;si<DUNGEONS.length;si++) a.push({kill:0,drop:0,bossKill:0,legend:0,bossRewards:[]}); return a; })(), recent:[] } };
 function monsterSVG(color, boss){
   return '<svg viewBox="0 0 64 64">'+
@@ -13660,13 +13661,23 @@ function renderChar(){
 }
 function dungeonOnlineCnt(di){   /* 副本在线人数：任何玩家(100名AI+我)在当前副本刷怪都计入——AI按 aiBestDungeonFor 当前刷本目标归入(与AI发育决策同源，非凭空)；参与世界boss讨伐的AI暂停刷本不计入(同aiAdvanceStep规则)；我在该副本挂机/战斗中计入 */
   var c=0, wbN={}; try{ if(WBOSS&&WBOSS.ai) for(var _w=0;_w<WBOSS.ai.length;_w++) if(WBOSS.ai[_w]&&WBOSS.ai[_w].n) wbN[WBOSS.ai[_w].n]=1; }catch(e){}
-  try{ if(FIELD_ROSTER) for(var i=0;i<FIELD_ROSTER.length;i++){ var p=FIELD_ROSTER[i]; if(!p||!p.st) continue; if(wbN[p.name]) continue; try{ if(aiBestDungeonFor(p.st,p)===di) c++; }catch(e){} } }catch(e){}
-  try{ if(TR.dungeon===di&&(TR.auto||(TR.maxHp>0))) c++; }catch(e){}
+  try{ if(FIELD_ROSTER) for(var i=0;i<FIELD_ROSTER.length;i++){ var p=FIELD_ROSTER[i]; if(!p||!p.st) continue; if(wbN[p.name]) continue; try{ if(p.st._battle==='farm'&&aiBestDungeonFor(p.st,p)===di) c++; }catch(e){} } }catch(e){}
+  try{ if(TR.dungeon===di&&!TR._stopped&&(TR.auto||(TR.maxHp>0))) c++; }catch(e){}
   return c;
+}
+function dungeonLvText(i){   /* 副本卡片进入条件+在线人数文本（神之幻境/海盗岛/锁定态与人数同行显示，抽离供停留页低频刷新复用） */
+  var _lock=isPhantomDungeon(i)&&TR.level<75; var _isP=isPirateDungeon(i); var _locked=_isP?(!pirateOpenNow()):_lock;
+  return _isP?((pirateOpenNow())?('在线 '+dungeonOnlineCnt(i)+' 人'):('20:00-23:00（'+dungeonOnlineCnt(i)+'）')):((isPhantomDungeon(i)&&_lock)?('需 Lv.75（'+dungeonOnlineCnt(i)+'）'):('在线 '+dungeonOnlineCnt(i)+' 人'));
+}
+var TR_ONLINE_T=null;   /* 副本页停留时在线人数定时刷新句柄 */
+function updDungeonOnline(){   /* 副本页停留时每30秒刷新在线人数：只更新各卡片人数/条件文本，不重绘战斗画面（避免闪屏/重置挂机动画） */
+  var d=document.getElementById('tr-dungeons'); if(!d) return;
+  var cs=d.querySelectorAll('.tr-dun');
+  for(var i=0;i<cs.length&&i<DUNGEONS.length;i++){ var lv=cs[i].querySelector('.tr-dun-lv'); if(lv) lv.textContent=dungeonLvText(i); }
 }
 function renderTreasure(){
   ROGUE.on=false;   /* 进副本秘境：肉鸽停用（副本不吃buff），保留存档，回试炼自动恢复 */
-  var d=document.getElementById('tr-dungeons'); if(d){ d.innerHTML=DUNGEONS.map(function(x,i){ var _lock=isPhantomDungeon(i)&&TR.level<75; var _isP=isPirateDungeon(i); var _locked=_isP?(!pirateOpenNow()):_lock; var _lv=_isP?((pirateOpenNow())?('在线 '+dungeonOnlineCnt(i)+' 人'):('20:00-23:00（'+dungeonOnlineCnt(i)+'）')):((isPhantomDungeon(i)&&_lock)?('需 Lv.75（'+dungeonOnlineCnt(i)+'）'):('在线 '+dungeonOnlineCnt(i)+' 人'));   /* 进入条件主显+在线人数括号短数字（神之幻境/海盗岛条件与人数同行显示，已解锁/已开放仍显示"在线 N 人"） */ return '<div class="tr-dun'+(i===TR.dungeon?' on':'')+(_locked?' lock':'')+'" data-i="'+i+'"><div class="tr-dun-name">'+x.name+'</div><div class="tr-dun-lv">'+_lv+'</div><span class="tr-dun-tag">'+x.tag+'</span></div>'; }).join(''); }
+  var d=document.getElementById('tr-dungeons'); if(d){ d.innerHTML=DUNGEONS.map(function(x,i){ var _lock=isPhantomDungeon(i)&&TR.level<75; var _isP=isPirateDungeon(i); var _locked=_isP?(!pirateOpenNow()):_lock; var _lv=dungeonLvText(i);   /* 进入条件主显+在线人数括号短数字（神之幻境/海盗岛条件与人数同行显示，已解锁/已开放仍显示"在线 N 人"） */ return '<div class="tr-dun'+(i===TR.dungeon?' on':'')+(_locked?' lock':'')+'" data-i="'+i+'"><div class="tr-dun-name">'+x.name+'</div><div class="tr-dun-lv">'+_lv+'</div><span class="tr-dun-tag">'+x.tag+'</span></div>'; }).join(''); }
   if(!TR.maxHp) trSyncChar();
   if(TR.monMax<=0) trSpawnMon();
   var _mst=document.getElementById('tr-mut-st'); if(_mst){ _mst.innerHTML = MUT.on ? (MUT_TIERS[MUT.tier-1]?MUT_TIERS[MUT.tier-1].n:'异变')+' · 结晶 '+MUT.crystal : '结晶 '+MUT.crystal; }
@@ -13676,7 +13687,7 @@ function trSetAuto(on){
   var was=TR.auto;
   TR.auto=on;
   var b=document.getElementById('tr-auto'); if(b){ b.classList.toggle('on',on); b.textContent=on?'挂机中':'挂机'; }
-  if(on){ stopTrialAuto(); stopArenaFight(); stopTowerAuto(); wbStop(); if(TR.timer) clearTimeout(TR.timer);   /* 开副本挂机：停其他所有战斗自动（全互斥） */
+  if(on){ stopTrialAuto(); stopArenaFight(); stopTowerAuto(); wbStop(); if(TR.timer) clearTimeout(TR.timer); TR._stopped=false;   /* 开副本挂机：停其他所有战斗自动（全互斥）；_stopped重置=重新进入副本（在线人数据此计入） */
     OFFLINE.sampleGold=CURRENCY.gold; OFFLINE.sampleBound=CURRENCY.bound; OFFLINE.sampleExp=TR.exp; OFFLINE.winStart=Date.now(); OFFLINE.winGold=0; OFFLINE.winBound=0; OFFLINE.winExp=0; OFFLINE.goldRate=0; OFFLINE.boundRate=0; OFFLINE.expRate=0;
     (function loop(){ if(!TR.auto) return; trAtk(); sampleOffline(); TR.timer=setTimeout(loop,Math.max(380,charAtkSpeed())); })();   /* 省电：挂机攻速下限250ms（<=4次/秒） */ }
   else { if(TR.timer){ clearTimeout(TR.timer); TR.timer=null; } }
@@ -13786,7 +13797,7 @@ function initTreasureUI(){
     '限时20:00-23:00：小怪1%掉6级宝石/6级专注/混沌神石（任一种）；BOSS 10%掉宝石类、1%掉祝福宝石箱、最终BOSS掉神印天神牌0.000001%（每月全服仅2张）'
   ];
   var ds=document.getElementById('tr-dungeons');
-  if(ds) ds.addEventListener('click',function(e){ var t=e.target.closest('.tr-dun'); if(!t) return; var _nd=+t.getAttribute('data-i'); if(isPhantomDungeon(_nd)&&TR.level<75){ toast('需角色等级 Lv.75 才能进入神之幻境'); return; } if(isPirateDungeon(_nd)&&!pirateOpenNow()){ toast('海盗岛仅每日 20:00-23:00 开放'); return; } TR.dungeon=_nd; TR.kill=0; TR.isBoss=false; TR.hp=TR.maxHp; ithStart(); trPhantomTimer(); trSpawnMon(); renderTreasure(); trLog('进入 <b>'+DUNGEONS[TR.dungeon].name+'</b>，<b style="color:#52C6DA">可掉落：'+trDropsInfo[TR.dungeon]+'</b>');   /* 可掉落提示用锐凡青蓝 */ });
+  if(ds) ds.addEventListener('click',function(e){ var t=e.target.closest('.tr-dun'); if(!t) return; var _nd=+t.getAttribute('data-i'); if(isPhantomDungeon(_nd)&&TR.level<75){ toast('需角色等级 Lv.75 才能进入神之幻境'); return; } if(isPirateDungeon(_nd)&&!pirateOpenNow()){ toast('海盗岛仅每日 20:00-23:00 开放'); return; } TR.dungeon=_nd; TR.kill=0; TR.isBoss=false; TR.hp=TR.maxHp; TR._stopped=false; ithStart(); trPhantomTimer(); trSpawnMon(); renderTreasure(); trLog('进入 <b>'+DUNGEONS[TR.dungeon].name+'</b>，<b style="color:#52C6DA">可掉落：'+trDropsInfo[TR.dungeon]+'</b>');   /* 可掉落提示用锐凡青蓝 */ });
   if(ds) ds.addEventListener('wheel',function(e){
     if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ e.preventDefault(); ds.scrollLeft+=e.deltaY; }
   },{passive:false});
@@ -13811,7 +13822,7 @@ function closeTrStats(){ var w=document.getElementById('tr-stats'); if(w) w.clas
   var mb=document.getElementById('tr-mutate-btn'); if(mb&&!mb.__b){ mb.__b=true; mb.addEventListener('click',function(){ mutatePanel(); }); }
   renderTrStats();
 }
-function stopTreasure(){ trSetAuto(false); OFFLINE.dur=0; OFFLINE.pending=false; if(OFFLINE.expireTimer){ clearTimeout(OFFLINE.expireTimer); OFFLINE.expireTimer=null; } offlineHide(); }   /* 离开寻宝页彻底清空离线补偿状态 */
+function stopTreasure(){ trSetAuto(false); if(typeof TR!=='undefined'&&TR) TR._stopped=true; OFFLINE.dur=0; OFFLINE.pending=false; if(OFFLINE.expireTimer){ clearTimeout(OFFLINE.expireTimer); OFFLINE.expireTimer=null; } offlineHide(); }   /* 停止副本战斗=退出副本（开其他战斗/手动停止都走此）：置_stopped标记，副本在线人数据此不再计入；重新挂机或切换副本时重置为false */
 
 /* ============ 离线时长补算掉落 ============ */
 var OFFLINE={ hiddenAt:0, dur:0, pending:false, expireTimer:null, sampleGold:0, sampleBound:0, sampleExp:0, winStart:0, winGold:0, winBound:0, winExp:0, goldRate:0, boundRate:0, expRate:0 };
