@@ -5692,6 +5692,8 @@ function buildTooltip(item){
     for (var ti=0;ti<types.length;ti++) h+='<div class="tt-w">'+types[ti]+'</div>';
     if(nm.indexOf('神石')>=0){ ['力量','敏捷','体质','智力','精神','幸运'].forEach(function(n){ var key={'力量':'strength','敏捷':'agility','体质':'constitution','智力':'intelligence','精神':'spirit','幸运':'luck'}[n]; if(item[key]) h+='<div class="tt-y">'+n+' + '+item[key]+'</div>'; }); }
     else if (item.value>0) h+='<div class="tt-y">'+item.stat+' +'+item.value+'</div>'; if(item.defense) h+='<div class="tt-y">物理防御 +'+item.defense+'</div>';
+    if((item.level||0)>=6) h+='<div class="tt-o">镶嵌费用：每次10亿金币（无论成败）</div>';   /* 6级及以上属性宝石（6级各系/6级专注/混沌神石level8）高档费用 */
+    if(nm==='专注宝石Lv6'){ h+='<div class="tt-purple">镶嵌特性：每颗最终伤害减免 +0.3%</div>'; h+='<div class="tt-y">镶嵌失败时消耗1个安全护符</div>'; h+='<div class="tt-y">无安全护符失败时宝石与装备一起破碎消失</div>'; }   /* 6级专注宝石专属高风险规则 */
     h+='<div class="tt-gap"></div><div><span class="tt-b">限制：</span><span class="tt-w">31级以上</span></div>';
     h+='<div class="tt-w">镶嵌在装备上可以提升<span class="tt-y"> '+item.stat+'(+'+item.value+') </span>的魔法宝石.</div>';
     if(nm.indexOf('神石')>=0) h+='<div class="tt-o">(时间限制掉落道具)</div>';
