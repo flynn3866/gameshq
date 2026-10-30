@@ -11755,25 +11755,27 @@ function aiAuction(st,p,now){
     if((st.ws||0)<99&&(st.seal||0)<1) want.push({need:true,m:function(nm){return String(nm).indexOf('轮回秘印')>=0||(String(nm).indexOf('秘印')>=0&&String(nm).indexOf('神力')<0&&String(nm).indexOf('神印')<0);}, give:function(e2){ st.seal=(st.seal||0)+1; }});
     var _hasSeal=st.gods&&((st.gods.main&&st.gods.main.type==='god_seal')||(st.gods.sub1&&st.gods.sub1.type==='god_seal'));
     if(_gearLover&&(st.ws||0)>=99&&!_hasSeal) want.push({seal:true,m:function(nm){return String(nm).indexOf('神印')>=0&&String(nm).indexOf('碎片')<0;}, give:function(e2){ if(!e2||!e2.item) return; if(!st.gods) st.gods={main:null,sub1:null}; var _it3=e2.item; var _seal3={id:'ai_'+p.id+'_god_seal_'+(_it3.name||''),name:_it3.name,type:'god_seal',img:_it3.img||'',grade:0,star:1,currentExp:0,requiredExp:100,fullAttributes:(_it3.fullAttributes||{})}; if(!st.gods.main){st.gods.main=_seal3;} else if(st.gods.main.type!=='god_seal'){st.gods.sub1=st.gods.main;st.gods.main=_seal3;} else if(!st.gods.sub1){st.gods.sub1=_seal3;} }});   /* 神印天神牌：99世轮回后开始可升天神→需求大；掉落稀少+越早提升天神等级+”大家都没就我有”有面子——顶尖追求型按定位抢购（出价分层见购买循环）；未到99世买了会被轮回清空→不买；拍卖真实购得→立即上阵（同玩家获得才有、最强为主）；已有神印主/副位→不再买；商人/套现型不买自用 */
+    var _rD2=(typeof _relicDem==='number'&&!isNaN(_relicDem))?_relicDem:1;   /* 全服超脱AI占比需求信号（与供给侧同源计算：上架数>=3未算时按1=无人超脱需求满溢） */
+    var _demN=0.6+0.4*_rD2;   /* 必须品(核/碎片/秘印)需求度：超脱占比0%→1.0(开服需求最旺全价最贵)、50%→0.8缓慢回落、100%→0.6(80%以上终局需求走低——但保底0.6不贱卖，全属性提升价值托底) */
     for(var wi=0;wi<want.length;wi++){
       var w=want[wi], best=null, bestK=null;
       for(var i=0;i<AUCTION.list.length;i++){
         var e=AUCTION.list[i]; if(e.seller===p.name||!e.item) continue;
         if(!w.m(String(e.item.name||''))) continue;
-        if(w.seal){   /* 神印天神牌：金币/氪金双货币，按定位分层出价 */
-          var _sd0=0; try{ var _so0=JSON.parse(localStorage.getItem('shenqi_pirate_seal')||'null'); var _ny0=new Date(); if(_so0&&_so0.ym===_ny0.getFullYear()*100+(_ny0.getMonth()+1)) _sd0=_so0.dropped||0; }catch(e){}
-          var _scS=(p.pay>=3?8:(p.pay>=2?5:3))*(_sd0<=0?1.3:(_sd0<=1?1.15:1))*(_tmA?(_tmA.sealMult||1):1);   /* 神印稀缺溢价（按定位分层）：神豪8倍/高氪5倍/平民追求3倍估值；当月还没人掉出→“大家都没就我有”×1.3更疯抢，掉出1张×1.15，掉满2张回基准；顶尖型再乘定位系数（全服第一×1.15更疯抢天神、极速轮回×1.4秘印同源但该型不买神印牌见_gearLover=false） */
-          if(e.cur==='gold'){ var capS=Math.round(aiItemValue(e.item)*aiPaySense(p, st)*_scS); if(e.price>0&&e.price<=spendable&&e.price<=capS){ if(!best||e.price<best.price) best=e; } }
-          else if(e.cur==='kf'&&(st.kf||0)>0){ var _scSK=(_sd0<=0?2.2:(_sd0<=1?1.4:0.8))*((st.ws||0)>=99?1.5:1);   /* 神印需求稀缺：99世后天神可升需求大×1.5；本月0张掉落(大家都没)→疯抢×2.2、1张×1.4、掉满2张(市场供给多需求下来)→0.8价格回归正常；基础120氪金×敏感度×定位(神豪1.5/高氪1.2)×顶尖sealMult，封顶1000(炒作天花板：后期需求大最高约1000氪金/个，掉落多了需求下来回归) */
-            var capSK=_gearLover?Math.min(1000,Math.round(120*aiPaySense(p, st)*_scSK*(p.pay>=3?1.5:(p.pay>=2?1.2:1))*(_tmA?(_tmA.sealMult||1):1))):Math.round(120*aiPaySense(p, st)); if(e.price>0&&e.price<=(st.kf||0)&&e.price<=capSK){ if(!bestK||e.price<bestK.price) bestK=e; } }   /* 氪金单：顶尖超脱需求大时可出到~1000(全服第一×1.15最疯)，普通追求~500；后期掉落多→回落正常价；未99世不买(会清空) */
+        if(w.seal){   /* 神印天神牌：金币/氪金双货币，锚定1000氪金/张，按时期饱和度需求度波动（神印牌每月固定2张保底+概率掉落，永远有供给、不会绝版——不按月内已掉张数定价，区别于伊泰安全服总量固定掉一件少一件） */
+          var _rD=(typeof _relicDem==='number'&&!isNaN(_relicDem))?_relicDem:1;   /* 兜底：_relicDem 仅卖家上架段计算，未算时按1（无人超脱→需求满溢） */
+          var _demS2=0.7+0.6*_rD;   /* 饱和度需求度：全服超脱占比0%→1.3（早期大家都没，需求高溢价）、50%→1.0、100%→0.7（后期大家都有了，需求回落） */
+          var _baseS=100000000000/aiGoldRateKf();   /* 1000氪金锚点→金币折算：开服约800亿→360天约1兆（随通胀线性增长，价格坚挺），金币=锚点×当前牌价 */
+          if(e.cur==='gold'){ var capS=Math.min(Math.round(_baseS*2), Math.round(_baseS*_demS2*(p.pay>=3?1.4:(p.pay>=2?1.2:1))*(_tmA?(_tmA.sealMult||1):1))); if(e.price>0&&e.price<=spendable&&e.price<=capS){ if(!best||e.price<best.price) best=e; } }   /* 金币单：1000氪金锚点×牌价×饱和度×定位(神豪1.4/高氪1.2)×顶尖sealMult，封顶2000氪金等值（炒作2倍） */
+          else if(e.cur==='kf'&&(st.kf||0)>0){ var capSK=_gearLover?Math.min(2000,Math.round(1000*_demS2*(p.pay>=3?1.4:(p.pay>=2?1.2:1))*(_tmA?(_tmA.sealMult||1):1))):Math.round(1000*_demS2); if(e.price>0&&e.price<=(st.kf||0)&&e.price<=capSK){ if(!bestK||e.price<bestK.price) bestK=e; } }   /* 氪金单：1000氪金锚点×饱和度×定位×顶尖sealMult，封顶2000（炒作天花板2倍）；未99世不买(会清空) */
         }
         else if(e.cur==='gold'){   /* 金币挂单：金币支付 */
           var _scarce=(w.ith&&ITH_LEFT&&ITH_MAX)?(function(){ var _mx=ITH_MAX.yitaiNecklace+ITH_MAX.yitaiRing+ITH_MAX.yitaiBracelet; var _lf=(ITH_LEFT.yitaiNecklace||0)+(ITH_LEFT.yitaiRing||0)+(ITH_LEFT.yitaiBracelet||0); var _pr=Math.min(1,Math.max(0,(_mx-_lf)/Math.max(1,_mx))); return _pr>=0.999?4:Math.max(8,Math.round(45-37*_pr)); })():1;   /* 稀缺度倍数=全服集齐进度连续曲线：已集齐比例0%→45倍疯抢，随流通增多平滑降至托底8~10倍（掉落稀少不会降太多），全员集齐才显著走低到4倍；轮回清空后进度回落→重新疯抢 */
           if(_finA) _scarce=Math.round(_scarce*1.5);
-          var cap=w.need?Math.round(aiItemValue(e.item)*(p.pay>=2?3:(p.pay>=1?2:1.5))):((w.ith&&_gearLover&&!_nearRebirth)?Math.round(aiItemValue(e.item)*aiPaySense(p, st)*_scarce*(_tmA?(_tmA.scarce||1):1)):Math.round(aiItemValue(e.item)*aiPaySense(p, st)));   /* 必须品(秘印/核/碎片)咬牙上限：估值×(神豪/高氪3倍、微氪2倍、白嫖1.5倍)——轮回/超脱刚需掉了就少等不起，挂单价在市场价~咬牙倍数内照买；超倍数=被宰→放弃喊收；追求型限量品维持稀缺度疯抢分层 */
+          var cap=w.need?Math.round(aiItemValue(e.item)*(p.pay>=2?3:(p.pay>=1?2:1.5))*_demN):((w.ith&&_gearLover&&!_nearRebirth)?Math.round(aiItemValue(e.item)*aiPaySense(p, st)*_scarce*(_tmA?(_tmA.scarce||1):1)):Math.round(aiItemValue(e.item)*aiPaySense(p, st)));   /* 必须品(秘印/核/碎片)咬牙上限：估值×(神豪/高氪3倍、微氪2倍、白嫖1.5倍)×需求度(开服1.0最贵→终局0.6回落保底)——轮回/超脱刚需掉了就少等不起，早期全价咬牙、后期掉落多/终局玩家多才缓慢回落(全属性价值托底不贱卖)；超倍数=被宰→放弃喊收；追求型限量品维持稀缺度疯抢分层 */
           if(e.price>0&&e.price*Math.max(1,e.n||1)<=spendable&&e.price<=cap){ if(!best||e.price<best.price) best=e; }   /* 买最划算的（预算按总价=单价×数量） */
         } else if(e.cur==='kf'&&(w.ith||w.need)&&(st.kf||0)>0){   /* 氪金挂单：神豪/高氪用氪金账户抢购（金币不足也能买，氪金是钞能力）；必须品(秘印/核/碎片)按金币咬牙上限折算氪金出价——关键时刻直接氪金买，不占便宜不吃亏 */
-          if(w.need){ var _capGN=Math.round(aiItemValue(e.item)*(p.pay>=2?3:(p.pay>=1?2:1.5))); var capKN=Math.max(1,Math.round(_capGN*aiGoldRateKf()/100000000)); if(e.price>0&&e.price*Math.max(1,e.n||1)<=(st.kf||0)&&e.price<=capKN){ if(!bestK||e.price<bestK.price) bestK=e; } }   /* 必须品氪金单：上限=金币咬牙上限×当前牌价折算（1氪金≈X亿金币，aiGoldRateKf口径）——神豪/高氪氪金账户关键时刻直接用 */
+          if(w.need){ var _capGN=Math.round(aiItemValue(e.item)*(p.pay>=2?3:(p.pay>=1?2:1.5))*_demN); var capKN=Math.max(1,Math.round(_capGN*aiGoldRateKf()/100000000)); if(e.price>0&&e.price*Math.max(1,e.n||1)<=(st.kf||0)&&e.price<=capKN){ if(!bestK||e.price<bestK.price) bestK=e; } }   /* 必须品氪金单：上限=金币咬牙上限(×需求度)×当前牌价折算（1氪金≈X亿金币，aiGoldRateKf口径）——开服最贵后期缓慢回落，神豪/高氪氪金账户关键时刻直接用 */
           else {
           var _scarceK=(w.ith&&ITH_LEFT)?((ITH_LEFT.yitaiNecklace||0)<=1?5:(ITH_LEFT.yitaiNecklace||0)<=3?3:(ITH_LEFT.yitaiNecklace||0)<=5?2:1):1;   /* 限量炒作系数：全服项链剩余≤1→×5炒作翻5倍顶格、≤3→×3、≤5→×2、流通尚多→×1锚点价（总量固定稀缺永久，1万氪金固定锚点±10%波动，绝版冲刺才翻5倍） */
           if(_finA) _scarceK=Math.round(_scarceK*1.5);
@@ -11797,7 +11799,8 @@ function aiAuction(st,p,now){
         var _cur3=st.equip[_slotMap[et]]||null;
         var _leg3=(itemQuality(e3.item)==='purple');   /* 传说级终极装备（传说奥格顿/传说魔翼/神裁之刃） */
         var _missingLeg=_gearLover&&_leg3&&(!_cur3||itemQuality(_cur3)!=='purple');   /* 顶尖追求型且自身缺该传说部位（没穿 或 穿的不是传说）→补套装疯抢；已集齐该部位→不溢价 */
-        var cap2=_missingLeg?Math.round(aiItemValue(e3.item)*aiPaySense(p, st)*(_finA?12:8)*((_tmA&&p.top!=='rush')?1.5:1)):Math.round(aiItemValue(e3.item)*aiPaySense(p, st)*(_gearLover?1.4:1));   /* 传说稀缺溢价：缺部位追求型出8倍疯抢集齐一套（有面子，不差钱），99世超脱后永久保留再×1.5→12倍；顶尖型(全服第一/完美收藏)为集齐套装再×1.5更疯抢；已集齐→1.4倍正常追求价 */
+        var _noWipe=(st.ws||0)>=99;   /* 99世轮回封顶：装备/天神不再被轮回清空（分界=投入会不会打水漂；99世后即使未超脱觉醒也不再轮回→装备永久保留） */
+        var cap2=_missingLeg?Math.round(aiItemValue(e3.item)*aiPaySense(p, st)*(_noWipe?(12*((_tmA&&p.top!=='rush')?1.5:1)):(aiIsMerchant(p)?8:1.5))):Math.round(aiItemValue(e3.item)*aiPaySense(p, st)*(_gearLover?1.4:1));   /* 传说稀缺溢价·以清空分界：99世前装备会被轮回清空→投入打水漂→非商人AI只出1.5倍"确实很便宜才买"(克制过渡装，不疯抢)；商人例外(囤货保护单轮回后拿回→生意本钱不打水漂，维持8倍疯抢)；99世后装备永久→全力追求(12倍疯抢集齐一套，顶尖全服第一/完美收藏再×1.5更疯抢)；已集齐→1.4倍正常追求价 */
         if(!(e3.price>0&&e3.price<=spendable&&e3.price<=cap2)){ if(!st._wantGear) st._wantGear=e3.item.name; continue; }   /* 想买但太贵/超预算→记录求购意向（世界聊天喊收） */
         var cur=st.equip[_slotMap[et]]||null;
         if(cur&&aiItemScore(e3.item)<=aiItemScore(cur)) continue;   /* 比当前穿戴好才买 */
