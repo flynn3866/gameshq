@@ -8308,22 +8308,30 @@ function cRows(arr){
   return h;
 }
 
-var INNATE_AUTO={on:false, timer:null};   /* 自动随机状态 */
-function stopInnateAuto(){ if(INNATE_AUTO.timer){ clearTimeout(INNATE_AUTO.timer); INNATE_AUTO.timer=null; } INNATE_AUTO.on=false; var _ab=$('#innate-rollauto'); if(_ab) _ab.textContent='自动生成'; }
-function scheduleInnateAuto(){ INNATE_AUTO.timer=setTimeout(function(){ INNATE_AUTO.timer=null; doInnateRoll(true); },300); }   /* 每秒约3.3次 */
+var INNATE_AUTO={on:false, timer:null, lastRender:0};   /* 自动随机状态：lastRender=节流渲染时间戳（自动模式每~300ms才全量渲染一次，避免每帧重渲染卡顿） */
+function saveInnateNow(){   /* 自动模式终态一次性存档：命中/停止/确认时保存最终先天运势（延迟存档——自动刷过程值不写localStorage，仅在终态落盘） */
+  try{ saveGame(); }catch(e){} try{ recalcCharacter(); }catch(e){} try{ renderAttrs(); }catch(e){}
+}
+function stopInnateAuto(){ if(INNATE_AUTO.timer){ clearTimeout(INNATE_AUTO.timer); INNATE_AUTO.timer=null; } INNATE_AUTO.on=false; saveInnateNow(); var _ab=$('#innate-rollauto'); if(_ab) _ab.textContent='自动生成'; }
+function scheduleInnateAuto(){ INNATE_AUTO.timer=setTimeout(function(){ INNATE_AUTO.timer=null; doInnateRoll(true); },100); }   /* 自动生成间隔100ms（约10次/秒）；每帧仅随机不写盘不渲染（落盘/渲染节流见performInnateRoll与saveInnateNow） */
 function performInnateRoll(silent){
   CHARACTER.innateRollCount=(CHARACTER.innateRollCount||0)+1;   /* 生成次数：从初始化起累加 */
   CHARACTER.innate=randomRollOrigin();
-  saveGame(); recalcCharacter(); renderAttrs();
-  if(!silent) toast('已重新生成角色原始属性 · 先天运势 '+CHARACTER.innate.toFixed(2)+'（第 '+CHARACTER.innateRollCount+' 次）');
+  if(silent){   /* 自动模式：延迟存档+节流渲染——每帧只做轻量随机，不写盘；每~300ms节流一次全量重算+渲染（recalcCharacter+renderAttrs），终态落盘统一走saveInnateNow */
+    if(Date.now()-INNATE_AUTO.lastRender>=300){ INNATE_AUTO.lastRender=Date.now(); try{ recalcCharacter(); }catch(e){} try{ renderAttrs(); }catch(e){} }
+    return;
+  }
+  try{ saveGame(); }catch(e){} try{ recalcCharacter(); }catch(e){} try{ renderAttrs(); }catch(e){}
+  toast('已重新生成角色原始属性 · 先天运势 '+CHARACTER.innate.toFixed(2)+'（第 '+CHARACTER.innateRollCount+' 次）');
 }
 function doInnateRoll(fromAuto){   /* 统一随机入口：天运之主保护确认，自动不替用户选择 */
   if(CHARACTER.innate>=1.8){
+    if(fromAuto) saveInnateNow();   /* 自动命中天运之主：先一次性落盘最终值，再弹确认框（数据确认时存档） */
     var _tp=setTimeout(function(){ var _m=document.getElementById('confirm-mask'); if(_m) _m.remove(); stopInnateAuto(); toast('自动生成已停止（10分钟未确认，视为取消）'); },600000);   /* 超时10分钟默认取消，自动停止 */
     confirmDialog('你当前已是 <span style="color:#B08CFF;font-weight:700;letter-spacing:1px">天运之主</span>（先天运势 1.80）<br>重新生成将放弃这份绝世运势……<br><span style="color:#C9A24B">确认要重新生成吗？</span>', function(ok){
       if(_tp){ clearTimeout(_tp); _tp=null; }
-      if(ok){ performInnateRoll(fromAuto); if(INNATE_AUTO.on) scheduleInnateAuto(); }
-      else stopInnateAuto();   /* 用户选不重新生成 → 自动停止 */
+      if(ok){ performInnateRoll(fromAuto); if(fromAuto) saveInnateNow(); if(INNATE_AUTO.on) scheduleInnateAuto(); }   /* 自动确认后：落盘新值再继续（数据确认时存档）；手动模式performInnateRoll已全量落盘 */
+      else stopInnateAuto();   /* 用户选不重新生成 → 自动停止（stop内落盘当前值） */
     });
   } else { performInnateRoll(fromAuto); if(INNATE_AUTO.on) scheduleInnateAuto(); }
 }
