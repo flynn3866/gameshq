@@ -6471,11 +6471,11 @@ function aiPriority(st,p){   /* 状态感知决策层：结合每个AI自身情�
   var sealWorth=canBoss&&lv>=60&&(st.seal||0)<1;  /* 战力够+等级高+无秘印→优先攒秘印尽早轮回(永久+30%复利最强杠杆) */
   var _res={ enhTarget: _cash?Math.max(2,Math.min(4,2+Math.floor(tier/2))):Math.round((needPower?Math.max(5,Math.min(9,6+Math.floor(tier/2))):5)*(0.55+_stl.gearLove*0.55)),   /* 套现型只点到够刷本(+2~4)，省金币去卖；追求型按战力缺口×装备追求度(4~10各不同)滚雪球 */
            seal: (!_cash&&sealWorth)?1:0,                   /* 套现型不攒秘印追轮回（主要为赚钱，不投入复利杠杆） */
-           god: (!_cash&&godMat>150&&canBoss)?0.1:0 };      /* 套现型几乎不升天神，省材料出售 */
+           god: 0 };      /* 99世前不升天神：升级材料会被轮回清空纯浪费，上阵基础属性附加够快速练级（套现型本就不升） */
   var _tm=aiTopMod(p, st);
   if(_tm){   /* 顶尖型差异化（阶段感知）：超脱前蓄力——强化克制(_tm.enh≤9)/天神不升或低(会被轮回清空)/秘印必攒(轮回复利)；超脱后全力——强化冲20或16/天神正常升。rush天然长远逻辑(秘印第一/装备克制) */
     _res.enhTarget=_tm.enh;
-    _res.god=(!_cash&&godMat>150&&canBoss)?(_tm.god||0):0;
+    _res.god=0;   /* 99世前不升天神（顶尖蓄力同——材料会被轮回清空，纯浪费；上阵基础属性够练级） */
     _res.seal=(canBoss&&(st.seal||0)<1)?1:0;
   }
   return _res;
@@ -6561,7 +6561,7 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
   aiIthDrop(st,p,onlineSec);   /* AI真实获得伊泰安（全服唯一）：与玩家同源、消耗总量、存档持有件数、发全服公告（雕俱星座挂机专属，塔/竞技心跳不在雕俱→不掉） */
   aiFarmDrop(st,p,onlineSec);   /* 刷本真实掉落装备/宝石/材料入背包（与玩家同掉落规则，不凭空生成） */
   aiAutoEquip(st,p);   /* 自动穿戴背包里最利于战力的武器/防具（仿玩家autoEquip，真实穿戴） */
-  aiGemEmbed(st,p);   /* 有宝石即可自动镶嵌（玩家同规则：无锤基础成功率，锤提高成功率封顶50%） */
+  if((st.ws||0)>=99) aiGemEmbed(st,p);   /* 99世前不镶嵌（石头+锤投入会被轮回清空浪费）；99世后装备永久→有宝石即可自动镶嵌（玩家同规则：无锤基础成功率，锤提高成功率封顶50%） */
   aiSellTrash(st,p);   /* 低档装备(普通/稀有)堆太多拍卖无人要 → 卖系统商店换金币（与玩家shopSellPrice同价） */
   aiSmeltExchange(st,p);   /* 锻造工坊·熔铸/兑换：多余传说装备/材料熔成 0.1 精粹，精粹按玩家同cost换永久属性 */
   aiGuardTaskDrop(st,p);   /* 每日"安全护符任务"：AI 击杀海盗岛满1000领10安全护符入真实背包（06:00重置，与玩家同口径） */
@@ -6665,6 +6665,7 @@ function aiBuyGoldFromAuction(st,p){   /* 神豪/高氪强化缺金币→从拍�
 function aiEnhance(st,p,enhTarget){   /* AI逐级点强化真实穿戴武器+5件防具（与玩家 weaponEnhCfg/armorEnhCfg 同款花费+概率；扣金币→成功+1，失败→有安全护符消耗1个不掉级继续/无则掉落1级至0并继续，金币不足→氪金购买买不到即停；先武器后防具，防具目标=武器目标×0.6(2~20)，目标由状态感知决策层定；神豪氪金烧完也可能不到目标，看概率，与玩家一致 */
   st.enh=st.enh||{lv:0,stars:0,iset:0,og:0};
   var maxLv=Math.min(20,enhTarget||5);
+  if((st.ws||0)<99&&st.equip&&st.equip.weapon&&itemQuality(st.equip.weapon)==='purple') maxLv=Math.min(maxLv,5);   /* 99世前传说武器(会被轮回清空)强化封顶+5，不浪费金币；99世后/普通武器按目标档 */
   var _final=!!(st&&(st.ascended||((st.ws||0)>=99&&(st.core||0)>=1)));   /* 超脱后装备不再被轮回清空：护符才有保级价值（未超脱强化会被轮回清空→省护符留给超脱后） */
   var _guard=function(bag){ var gi=-1; for(var h=0;h<(bag||[]).length;h++) if(bag[h]&&bag[h].type==='enh_guard'){ gi=h; break; } return gi; };
   var _buy=function(){ if(!_final) return true; var b=st.gold; aiBuyGoldFromAuction(st,p); return st.gold===b; };   /* 超脱后强化缺金币→从拍卖行买"金币挂单"(走拍卖行，禁止私下交易)；未超脱不氪金强化(轮回清空不浪费，攒到超脱收益永久保留)；买不到才停 */
@@ -11754,7 +11755,7 @@ function aiAuction(st,p,now){
     if((st.ws||0)>=99&&(st.core||0)<1){ want.push({need:true,m:function(nm){return String(nm).indexOf('神核')>=0&&String(nm).indexOf('碎片')<0;}, give:function(e2){ st.core=(st.core||0)+1; }}); want.push({need:true,m:function(nm){return String(nm).indexOf('神核碎片')>=0;}, give:function(e2){ st.frag=(st.frag||0)+Math.max(1,Number(e2&&e2.n)||1); }}); }   /* 99世缺核：优先买神核(快)或买碎片凑99合成(更省：99片≈核市场价)，真实计数流转；核单排除碎片单；必须品咬牙上限=估值×定位倍数（神豪/高氪3、微氪2、白嫖1.5）——刚需掉了就少等不起，市场价~咬牙上限内照买 */
     if((st.ws||0)<99&&(st.seal||0)<1) want.push({need:true,m:function(nm){return String(nm).indexOf('轮回秘印')>=0||(String(nm).indexOf('秘印')>=0&&String(nm).indexOf('神力')<0&&String(nm).indexOf('神印')<0);}, give:function(e2){ st.seal=(st.seal||0)+1; }});
     var _hasSeal=st.gods&&((st.gods.main&&st.gods.main.type==='god_seal')||(st.gods.sub1&&st.gods.sub1.type==='god_seal'));
-    if(_gearLover&&(st.ws||0)>=99&&!_hasSeal) want.push({seal:true,m:function(nm){return String(nm).indexOf('神印')>=0&&String(nm).indexOf('碎片')<0;}, give:function(e2){ if(!e2||!e2.item) return; if(!st.gods) st.gods={main:null,sub1:null}; var _it3=e2.item; var _seal3={id:'ai_'+p.id+'_god_seal_'+(_it3.name||''),name:_it3.name,type:'god_seal',img:_it3.img||'',grade:0,star:1,currentExp:0,requiredExp:100,fullAttributes:(_it3.fullAttributes||{})}; if(!st.gods.main){st.gods.main=_seal3;} else if(st.gods.main.type!=='god_seal'){st.gods.sub1=st.gods.main;st.gods.main=_seal3;} else if(!st.gods.sub1){st.gods.sub1=_seal3;} }});   /* 神印天神牌：99世轮回后开始可升天神→需求大；掉落稀少+越早提升天神等级+”大家都没就我有”有面子——顶尖追求型按定位抢购（出价分层见购买循环）；未到99世买了会被轮回清空→不买；拍卖真实购得→立即上阵（同玩家获得才有、最强为主）；已有神印主/副位→不再买；商人/套现型不买自用 */
+    if(_gearLover&&!_hasSeal) want.push({seal:true,m:function(nm){return String(nm).indexOf('神印')>=0&&String(nm).indexOf('碎片')<0;}, give:function(e2){ if(!e2||!e2.item) return; if(!st.gods) st.gods={main:null,sub1:null}; var _it3=e2.item; var _seal3={id:'ai_'+p.id+'_god_seal_'+(_it3.name||''),name:_it3.name,type:'god_seal',img:_it3.img||'',grade:0,star:1,currentExp:0,requiredExp:100,fullAttributes:(_it3.fullAttributes||{})}; if(!st.gods.main){st.gods.main=_seal3;} else if(st.gods.main.type!=='god_seal'){st.gods.sub1=st.gods.main;st.gods.main=_seal3;} else if(!st.gods.sub1){st.gods.sub1=_seal3;} }});   /* 神印天神牌：任何世次都买（上阵天神神级轮回保留→99世前买来练级加速/追求实力也划算）；99世前克制：锚点半价捡漏不出高价（见购买循环），99世后全力追求（升天神核心）；掉落稀少+越早提升天神等级有面子——顶尖追求型按定位抢购；已有神印主/副位→不再买；商人/套现型不买自用 */
     var _rD2=(typeof _relicDem==='number'&&!isNaN(_relicDem))?_relicDem:1;   /* 全服超脱AI占比需求信号（与供给侧同源计算：上架数>=3未算时按1=无人超脱需求满溢） */
     var _demN=0.6+0.4*_rD2;   /* 必须品(核/碎片/秘印)需求度：超脱占比0%→1.0(开服需求最旺全价最贵)、50%→0.8缓慢回落、100%→0.6(80%以上终局需求走低——但保底0.6不贱卖，全属性提升价值托底) */
     for(var wi=0;wi<want.length;wi++){
@@ -11762,12 +11763,13 @@ function aiAuction(st,p,now){
       for(var i=0;i<AUCTION.list.length;i++){
         var e=AUCTION.list[i]; if(e.seller===p.name||!e.item) continue;
         if(!w.m(String(e.item.name||''))) continue;
-        if(w.seal){   /* 神印天神牌：金币/氪金双货币，锚定1000氪金/张，按时期饱和度需求度波动（神印牌每月固定2张保底+概率掉落，永远有供给、不会绝版——不按月内已掉张数定价，区别于伊泰安全服总量固定掉一件少一件） */
+        if(w.seal){   /* 神印天神牌：金币/氪金双货币，锚定1000氪金/张；任何世次都买（上阵天神神级轮回保留，99世前买来练级/追求实力也划算），99世前克制锚点半价捡漏不出高价、99世后按时期饱和度需求度全力波动（神印牌每月固定2张保底+概率掉落，永远有供给、不会绝版——不按月内已掉张数定价，区别于伊泰安全服总量固定掉一件少一件） */
+          var _noWipeS=(st.ws||0)>=99;   /* 99世轮回封顶：天神不再被清（99世前克制捡漏、99世后全力） */
           var _rD=(typeof _relicDem==='number'&&!isNaN(_relicDem))?_relicDem:1;   /* 兜底：_relicDem 仅卖家上架段计算，未算时按1（无人超脱→需求满溢） */
           var _demS2=0.7+0.6*_rD;   /* 饱和度需求度：全服超脱占比0%→1.3（早期大家都没，需求高溢价）、50%→1.0、100%→0.7（后期大家都有了，需求回落） */
           var _baseS=100000000000/aiGoldRateKf();   /* 1000氪金锚点→金币折算：开服约800亿→360天约1兆（随通胀线性增长，价格坚挺），金币=锚点×当前牌价 */
-          if(e.cur==='gold'){ var capS=Math.min(Math.round(_baseS*2), Math.round(_baseS*_demS2*(p.pay>=3?1.4:(p.pay>=2?1.2:1))*(_tmA?(_tmA.sealMult||1):1))); if(e.price>0&&e.price<=spendable&&e.price<=capS){ if(!best||e.price<best.price) best=e; } }   /* 金币单：1000氪金锚点×牌价×饱和度×定位(神豪1.4/高氪1.2)×顶尖sealMult，封顶2000氪金等值（炒作2倍） */
-          else if(e.cur==='kf'&&(st.kf||0)>0){ var capSK=_gearLover?Math.min(2000,Math.round(1000*_demS2*(p.pay>=3?1.4:(p.pay>=2?1.2:1))*(_tmA?(_tmA.sealMult||1):1))):Math.round(1000*_demS2); if(e.price>0&&e.price<=(st.kf||0)&&e.price<=capSK){ if(!bestK||e.price<bestK.price) bestK=e; } }   /* 氪金单：1000氪金锚点×饱和度×定位×顶尖sealMult，封顶2000（炒作天花板2倍）；未99世不买(会清空) */
+          if(e.cur==='gold'){ var capS=_noWipeS?Math.min(Math.round(_baseS*2), Math.round(_baseS*_demS2*(p.pay>=3?1.4:(p.pay>=2?1.2:1))*(_tmA?(_tmA.sealMult||1):1))):Math.round(_baseS*0.5); if(e.price>0&&e.price<=spendable&&e.price<=capS){ if(!best||e.price<best.price) best=e; } }   /* 金币单：99世前锚点半价捡漏(便宜才买练级，早期约400亿/后期5000亿)；99世后1000氪金锚点×牌价×饱和度×定位(神豪1.4/高氪1.2)×顶尖sealMult，封顶2000氪金等值（炒作2倍） */
+          else if(e.cur==='kf'&&(st.kf||0)>0){ var capSK=_noWipeS?(_gearLover?Math.min(2000,Math.round(1000*_demS2*(p.pay>=3?1.4:(p.pay>=2?1.2:1))*(_tmA?(_tmA.sealMult||1):1))):Math.round(1000*_demS2)):500; if(e.price>0&&e.price<=(st.kf||0)&&e.price<=capSK){ if(!bestK||e.price<bestK.price) bestK=e; } }   /* 氪金单：99世前500封顶(半价捡漏，比锚点便宜才买)；99世后1000氪金锚点×饱和度×定位×顶尖sealMult，封顶2000（炒作天花板2倍） */
         }
         else if(e.cur==='gold'){   /* 金币挂单：金币支付 */
           var _scarce=(w.ith&&ITH_LEFT&&ITH_MAX)?(function(){ var _mx=ITH_MAX.yitaiNecklace+ITH_MAX.yitaiRing+ITH_MAX.yitaiBracelet; var _lf=(ITH_LEFT.yitaiNecklace||0)+(ITH_LEFT.yitaiRing||0)+(ITH_LEFT.yitaiBracelet||0); var _pr=Math.min(1,Math.max(0,(_mx-_lf)/Math.max(1,_mx))); return _pr>=0.999?4:Math.max(8,Math.round(45-37*_pr)); })():1;   /* 稀缺度倍数=全服集齐进度连续曲线：已集齐比例0%→45倍疯抢，随流通增多平滑降至托底8~10倍（掉落稀少不会降太多），全员集齐才显著走低到4倍；轮回清空后进度回落→重新疯抢 */
