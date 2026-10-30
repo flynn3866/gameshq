@@ -2788,6 +2788,16 @@ body.hb-compact .sub-tabs{display:none;}   /* 基地页隐藏空顶部导航条�
 .lb-tab{flex:1;font-size:11px;padding:6px 0;border-radius:6px;background:rgba(0,0,0,.3);color:#b7ae9c;border:1px solid rgba(255,255,255,.08);cursor:pointer;}
 .lb-tab.on{color:#E8CB74;border-color:#C9A24B;background:rgba(201,162,75,.12);}
 .rank-tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.rank-stat{display:flex;flex-direction:column;gap:7px;margin:8px 0 10px;padding:10px 12px;border:1px solid rgba(255,215,0,.25);border-radius:12px;background:linear-gradient(180deg,rgba(30,18,6,.85),rgba(15,10,5,.9));}
+.rank-stat-t{display:flex;align-items:center;gap:6px;font-size:12px;color:#F2C96B;font-weight:800;letter-spacing:1px;margin-top:2px;}
+.rank-stat-t:first-child{margin-top:0;}
+.rank-stat-sub{display:flex;align-items:center;gap:6px;font-size:11px;color:#d8b96a;font-weight:700;margin-top:6px;letter-spacing:.5px;}
+.rank-stat-sub:before{content:'';width:4px;height:4px;border-radius:50%;background:#d8b96a;}
+.rank-stat-row{display:flex;flex-wrap:wrap;gap:6px;}
+.rank-stat-i{display:flex;align-items:center;gap:5px;font-size:12px;color:#e8d9b8;background:rgba(255,215,0,.08);padding:4px 9px;border-radius:8px;border:1px solid rgba(255,215,0,.15);}
+.rank-stat-i b{color:#fff;font-weight:800;}
+.rank-stat-i em{font-style:normal;color:#8a8375;font-size:11px;}
+.rank-stat-kf{color:#7CF7C8;font-weight:700;}
 .rank-tab{flex:1 0 30%;padding:8px 2px;font-size:11px;letter-spacing:1px;border-radius:10px;cursor:pointer;color:#b7ae9c;
   background:linear-gradient(180deg,rgba(56,44,26,.85),rgba(32,24,14,.9));border:1px solid rgba(214,177,110,.32);}
 .rank-tab.on{color:#fff;border-color:rgba(255,172,45,.85);
@@ -3320,8 +3330,8 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div class="rb-card rb-mat rb-sb">
         <div class="rb-sb-line"><span>永久全属性加成：<b id="rb-seal-boon">+0%</b></span><span class="rb-sb-hint">独立于轮回世次 · 永不重置</span></div>
         <div class="rb-sb-row">
-          <div class="rb-sb-info">每消耗 <b>100 枚</b>轮回秘印 或 <b>1 枚</b>太初神核 → 永久全属性 <b>+1%</b><br><span class="rb-sb-hold">当前持有 秘印 <b id="rb-seal-n">0</b> 枚 · 神核 <b id="rb-core-n">0</b> 颗 · 可炼化 <b id="rb-seal-n2">0</b> 次（印）/ <b id="rb-core-n2">0</b> 次（核）</span></div>
-          <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;"><button class="rb-btn rb-box-btn" id="rb-seal-boon-btn">炼化 ×100 秘印</button><button class="rb-btn rb-box-btn" id="rb-core-boon-btn">炼化 ×1 神核</button></div>
+          <div class="rb-sb-info" style="flex:1;min-width:0;">每消耗 <b>100 枚</b>轮回秘印 或 <b>1 枚</b>太初神核 → 永久全属性 <b>+1%</b><br><span class="rb-sb-hold">当前持有秘印 <b id="rb-seal-n">0</b> 枚，可炼化 <b id="rb-seal-n2">0</b> 次（印）<br>当前持有神核 <b id="rb-core-n">0</b> 颗，可炼化 <b id="rb-core-n2">0</b> 次（核）</span></div>
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;"><button class="rb-btn rb-box-btn" id="rb-seal-boon-btn" style="white-space:normal;line-height:1.35;">炼化<br>秘印 ×100</button><button class="rb-btn rb-box-btn" id="rb-core-boon-btn" style="white-space:normal;line-height:1.35;">炼化<br>神核 ×1</button></div>
         </div>
         <div class="rb-hint" style="margin:0;font-size:11px;text-align:center;">顶尖玩家富余秘印的稳定战力出口 · 平民 1 枚启动轮回不受影响</div>
       </div>
@@ -3496,6 +3506,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
         <div class="rank-title" id="rank-title"></div>
         <div class="lb-list" id="rank-list"></div>
         <div class="lb-hint" id="rank-hint">全服 100 名固定玩家 + 你 · 实时 · 随服务器发育演化</div>
+        <div class="rank-stat" id="rank-stat"></div>
       </div>
     </div>
   </div>
@@ -6000,13 +6011,20 @@ function buildFieldRoster(){ var out=[], used={}, names=FIELD_NAMES.slice();
     out.push({id:i,_v:2,name:pick(),innate:innate,effort:effort,pay:pay,luck:luck});
   }
   return ensureTopAIs(out); }
-function ensureTopAIs(r){   /* 顶尖型AI标记（幂等：已有top不重标）：3名追求极限战力的玩家——①神豪1名=全服第一目标型(top:'first'，以全服最强战力为唯一目标：抢限量/神坛拉满/强化冲20/战神必拿) ②高氪1名=装备完美收藏型(top:'perfect'，追求面板完美/套装集齐，为缺件愿出高价) ③高氪1名=极速复利轮回型(top:'rush'，以最快逼近99世超脱为目标：秘印/神坛优先，装备不被轮回清空的投入克制)。排除商人(97~99)；老档名单复用后补标，不重置AI任何状态 */
+function ensureTopAIs(r){   /* 顶尖型AI标记（强制收敛为恰好9名，杜绝历史残留多标）：全服第一目标型×3(神豪，top:'first'，以全服最强战力为唯一目标：抢限量/神坛拉满/强化冲20/战神必拿)、完美收藏型×3(高氪，top:'perfect'，追求面板完美/套装集齐，为缺件愿出高价)、极速复利轮回型×3(高氪，top:'rush'，以最快逼近99世超脱为目标：秘印/神坛优先，装备不被轮回清空的投入克制)。先清空全部旧top（旧档可能残留历史版本多标）再按定位各标3名——顶尖AI玩家恒为9人，不重置AI其他任何状态 */
   if(!r||!r.length) return r;
+  for(var _i=0;_i<r.length;_i++){ if(r[_i]) delete r[_i].top; }   /* 先清残留：历史版本可能给多人标过top（如旧档多first/perfect/rush），统一清除再重标——保证不出现十几个"顶尖AI" */
   var f=0,pf=0,rs=0;
-  for(var i=0;i<r.length;i++){ var a=r[i]; if(!a||a.id>=97) continue;
-    if(!a.top&&a.pay===3&&!f){ a.top='first'; f=1; }
-    else if(!a.top&&a.pay===2&&!pf){ a.top='perfect'; pf=1; }
-    else if(!a.top&&a.pay===2&&!rs){ a.top='rush'; rs=1; }
+  for(var i=0;i<r.length;i++){ var a=r[i]; if(!a||a.id>=97) continue;   /* 跳过商人(id97~99)：商人赚钱定位，不作顶尖型 */
+    if(a.pay===3&&f<3){ a.top='first'; f++; }
+    else if(a.pay===2&&pf<3){ a.top='perfect'; pf++; }
+    else if(a.pay===2&&rs<3){ a.top='rush'; rs++; }
+  }
+  for(var i2=0;i2<r.length;i2++){ var b=r[i2]; if(!b||b.id>=97||b.top) continue;   /* 兜底补位：随机分布下神豪/高氪名额不足时，保证顶尖型恒为9人（first缺口→高氪顶上；perfect/rush缺口→微氪补位） */
+    if(f<3&&b.pay===2){ b.top='first'; f++; }
+    else if(f<3){ b.top='first'; f++; }
+    else if(pf<3){ b.top='perfect'; pf++; }
+    else if(rs<3){ b.top='rush'; rs++; }
   }
   return r;
 }
@@ -6373,13 +6391,13 @@ function aiTopMod(p, st){   /* 顶尖型差异化决策参数（roster稳定标�
   var t=p&&p.top; if(!t) return null;
   var _fin=!!(st&&(st.ascended||((st.ws||0)>=99&&(st.core||0)>=1)));   /* 超脱=装备/天神永久保留（消耗核标记后core可为0仍超脱，同玩家ascended） */
   if(t==='first') return _fin
-    ? {aggro:0.85,gearLove:0.95,ithGoal:5,scarce:1.6,kfMult:2,sealMult:1.15,enh:20,kfCap:10000,goldKeep:2.5,gearOn:true,god:0.15}   /* 超脱·全力冲刺：疯抢限量/强化冲20/氪金封顶10000(伊泰安炒作天花板，后期流通少顶格接)——最终阶位登顶 */
+    ? {aggro:0.85,gearLove:0.95,ithGoal:5,scarce:1.6,kfMult:2,sealMult:1.15,enh:20,kfCap:50000,goldKeep:2.5,gearOn:true,god:0.15}   /* 超脱·全力冲刺：疯抢限量/强化冲20/氪金封顶50000(伊泰安1万氪金固定锚点起步±10%波动、炒作预期翻5倍→5万顶格接)——最终阶位登顶，总量固定稀缺永久、后期流通少顶格接 */
     : {aggro:0.85,gearLove:0.5,ithGoal:3,scarce:1.0,kfMult:0.8,sealMult:1.15,enh:9,kfCap:300,goldKeep:2.5,gearOn:false,god:0};   /* 蓄力期：神坛/秘印/轮回第一，装备不疯抢不强冲(会被清空)，天神超脱后再升 */
   if(t==='perfect') return _fin
-    ? {aggro:0.6,gearLove:0.95,ithGoal:5,scarce:1.35,kfMult:1.5,sealMult:1.0,enh:16,kfCap:8000,goldKeep:1.5,gearOn:true,god:0.1}   /* 超脱·全力冲刺：为集齐套装出高价/均衡强化冲16/氪金封顶8000(伊泰安炒作天花板) */
+    ? {aggro:0.6,gearLove:0.95,ithGoal:5,scarce:1.35,kfMult:1.5,sealMult:1.0,enh:16,kfCap:50000,goldKeep:1.5,gearOn:true,god:0.1}   /* 超脱·全力冲刺：为集齐套装出高价/均衡强化冲16/氪金封顶50000(伊泰安1万锚点±10%、炒作翻5倍顶格接) */
     : {aggro:0.6,gearLove:0.55,ithGoal:3,scarce:1.0,kfMult:0.7,sealMult:1.0,enh:9,kfCap:300,goldKeep:1.5,gearOn:false,god:0.05};   /* 蓄力期：克制，装备够用 */
   return _fin
-    ? {aggro:0.85,gearLove:0.9,ithGoal:5,scarce:1.25,kfMult:1.5,sealMult:1.4,enh:20,kfCap:8000,goldKeep:2.5,gearOn:true,god:0.15}   /* rush·超脱全力冲刺：最快轮回攒下的复利底子最厚，超脱后装备/天神永久→同步全力追战力（复利+装备双拉满，与全服第一争锋但比神豪理性，不无脑溢价；氪金封顶8000） */
+    ? {aggro:0.85,gearLove:0.9,ithGoal:5,scarce:1.25,kfMult:1.5,sealMult:1.4,enh:20,kfCap:50000,goldKeep:2.5,gearOn:true,god:0.15}   /* rush·超脱全力冲刺：最快轮回攒下的复利底子最厚，超脱后装备/天神永久→同步全力追战力（复利+装备双拉满，与全服第一争锋但比神豪理性，不无脑溢价；氪金封顶50000——伊泰安1万锚点±10%、炒作翻5倍顶格接） */
     : {aggro:0.85,gearLove:0.45,ithGoal:3,scarce:0.8,kfMult:0.6,sealMult:1.4,enh:9,kfCap:300,goldKeep:2.5,gearOn:false,god:0};   /* rush·蓄力期：秘印/神坛/轮回第一，装备/天神克制(会被轮回清空不浪费)；超脱后释放为全力冲刺 */
 }
 function aiStyle(p, st){   /* 个体化风格向量（每个AI稳定唯一）：从 id/innate/luck/effort/pay 派生的连续偏好，供决策层做"符合自身定位+系统最优"的差异化——高奇遇/高运势→激进(敢投神坛博奇遇滚雪球)、低奇遇→保守(先稳强化)；装备追求度 gearLove 高→冲极限强化/珍稀自留、低→够用省资源(配合套现型)。纯派生无状态，不改守恒/同源/非统一 */
@@ -6565,9 +6583,9 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
 }
 function altarLvFromGold(gold){ var lv=0,cost=5000; while(lv<120&&gold>=cost){ gold-=cost; cost=Math.round(cost*1.6); lv++; } return lv; }   /* AI神坛成本：5千×1.6^lv（玩家 altarPourCost 同型） */
 /* ===== AI氪金市场 + 逐级强化（玩家同一套强化表，金币靠刷本生产/玩家间交易，杜绝凭空） ===== */
-function aiGoldRateKf(){   /* 动态牌价(每亿金币基准氪金价)：100氪金=X亿金币(开服80亿→90天+130亿封顶,防金币过贱)，每亿基准价=100/X(早服1.25氪金/亿、晚服0.77)；AI上架定价与买家接受度都以此为基准 */
+function aiGoldRateKf(){   /* 动态牌价(每亿金币基准氪金价)：100氪金=X亿金币(开服80亿→360天线性涨至1000亿封顶——金币必然通胀：开服金币稀少80亿、后期金币泛滥1000亿上限，中间持续浮动)，每亿基准价=100/X(早服1.25氪金/亿、晚服0.1)；AI上架定价与买家接受度都以此为基准；总量固定的稀缺品(伊泰安)价格坚挺且随金币增多不停增长由本通胀曲线体现 */
   var _d=Math.max(0,Math.floor((Date.now()-SERVER_START)/86400000));
-  var _y=10000000000*(0.8+0.5*Math.min(1,_d/90))/100000000;   /* X亿(80~130) */
+  var _y=10000000000*(0.8+9.2*Math.min(1,_d/360))/100000000;   /* X亿(80~1000，360天线性，中间随时浮动) */
   return 100/_y;
 }
 function kfFeeGold(kfFee){ return Math.max(1, Math.round((kfFee||0)/aiGoldRateKf()*100000000)); }   /* 氪金手续费→金币按当前市场牌价折算（100氪金=X亿金币 → 1氪金=1亿/X金币）：早服牌价1.25氪金/亿→1氪金≈8000万金币，晚服0.77→≈1.3亿金币；玩家/AI上架氪金单手续费金币垫付统一用此口径（市场价动态浮动） */
@@ -9817,7 +9835,7 @@ function checkRankUp(){
 function stopArenaFight(){ if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.timer=null; } ARENA.fight=false; renderOppList(); }
 
 /* ===== 世界BOSS榜：全服共享超厚血条 · 分时段讨伐 · 伤害排名 ===== */
-var WBOSS={day:'',slot:-1,mul:1,boss:null,bossMax:1,bossHp:1,my:0,ai:[],lastVisit:0,startTime:0,killed:false,reward:{got:false},coins:0,totalKill:0,totalDmg:0,bestDmg:0,timeBase:0,smiteTs:0,revive:null,loot:null};   /* loot=击杀战利品记录(即时入账后展示，持久化，击杀后至下次刷新可重查) */   /* timeBase=服务器开刷时间戳(天数成长)；startTime=本轮8点开刷固定锚点，AI磨血据此单调累加；smiteTs=BOSS上次集火AI时间戳；revive=玩家被杀后自动复活定时器 */
+var WBOSS={day:'',slot:-1,mul:1,boss:null,bossMax:1,bossHp:1,my:0,ai:[],lastVisit:0,startTime:0,killed:false,reward:{got:false},coins:0,totalKill:0,totalDmg:0,bestDmg:0,timeBase:0,smiteTs:0,revive:null,loot:null,_waitNext:true};   /* loot=击杀战利品记录(即时入账后展示，持久化，击杀后至下次刷新可重查) */   /* timeBase=服务器开刷时间戳(天数成长)；startTime=本轮8点开刷固定锚点，AI磨血据此单调累加；smiteTs=BOSS上次集火AI时间戳；revive=玩家被杀后自动复活定时器；_waitNext=等待每日8点定时刷新标记：全局默认true（全新玩家/初始化后都严格等下一个8点才刷BOSS，不立即刷新），doReset重置置true、读档恢复、到达8点置false开始当日正常轮 */
 var WB_SESSION=null;
 var WB_REFRESH=null;   /* 世界BOSS页血条动态刷新定时器（3秒，仅页面停留时运行） */
 var WB_AI_FIXED=[{n:'剑尊·破天',dps:0.0000120,hit:0.92},{n:'血刀·修罗',dps:0.0000090,hit:0.90},{n:'风神·无痕',dps:0.0000060,hit:0.88},{n:'星陨·落',dps:0.0000045,hit:0.88},{n:'霜华·冷',dps:0.0000030,hit:0.86},{n:'雷帝·狂',dps:0.0000023,hit:0.86},{n:'焚天·焰',dps:0.0000016,hit:0.84},{n:'幽影·匿',dps:0.0000013,hit:0.84},{n:'苍狼·啸',dps:0.0000010,hit:0.82},{n:'月蚀·冥',dps:0.00000085,hit:0.82},{n:'云麾·苍',dps:0.00000070,hit:0.80},{n:'渊帝·影',dps:0.00000055,hit:0.80}];   /* 世界BOSS固定参战玩家梯队：dps=每秒占共享血比例(攻击区间)，hit=命中率(模拟MISS)，无输出上限，按各自dps×BOSS存活时长持续磨血直至被杀 */
@@ -10209,7 +10227,7 @@ function wbNextRefresh(){
 }   /* 讨伐结束后显示下一轮8点刷新倒计时（8点前→今日8点，已过→明日8点） */
 function wbRenderBoss(){
   var el=document.getElementById('wb-boss'); if(!el) return;
-  if(!WBOSS.boss){ el.innerHTML='<span class="wb-status st-wait">未开始 · 等待刷新</span><div class="wb-bname">世界BOSS 即将降临…</div>'; return; }
+  if(!WBOSS.boss){ el.innerHTML='<span class="wb-status st-wait">未开始 · 等待刷新</span><div class="wb-bname">世界BOSS · 即将降临</div><div class="wb-btier">初始化 · 等待每日刷新</div>'+(function(){ try{ return '<div class="wb-next"><span class="wb-next-ic">⟳</span><span class="wb-next-t">'+wbNextRefresh()+'</span></div>'; }catch(e){ return ''; } })(); return; }   /* 未开始(等待)状态与讨伐中/已讨伐卡片同构同高：状态标+名称+档位信息行+每日刷新时间行，仅文案不同——初始化后严格按每日8点刷新，倒计时用同一wbNextRefresh */
   var o=WBOSS.boss;
   var pct=WBOSS.bossMax?Math.max(0,Math.min(100,WBOSS.bossHp/WBOSS.bossMax*100)):0;
   var txt;
@@ -10350,7 +10368,7 @@ function wbServerNotice(){   /* 打开系统：公告世界BOSS当前状态（�
     sessionStorage.setItem('_wb_notice_n','3');
   }catch(e){}
   var st=wbStatus(); if(!st) return;
-  if(st.text==='已讨伐') return;   /* 去掉"已讨伐"打开公告：每次打开页面都弹，过于打扰；讨伐中/即将降临等其他状态仍照常公告 */
+  if(st.text==='已讨伐'||st.text==='即将降临') return;   /* 去掉"已讨伐/即将降临"打开公告：每次打开页面都弹，过于打扰；只有世界BOSS刷新完成(可讨伐)才公告提醒 */
   showServerNotice(st.text);   /* 简短公告：仅状态标题 */
 }
 function wbServerTick(){   /* 每60秒：世界BOSS时段刷新(开打)时弹全服公告，每个时段最多弹3次 */
@@ -11519,7 +11537,7 @@ function aiAuction(st,p,now){
         var _mv=aiItemValue(_it);
         var _isEq=(_typ==='weapon'||_typ==='helmet'||_typ==='chest'||_typ==='gloves'||_typ==='leggings'||_typ==='boots');
         var _isIth=String(_it.name||'').indexOf('伊泰安')>=0;
-        if(e.cur==='kf'){ if(_isIth){ var _irK=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0; var _askIthK=Math.max(1,Math.round(500*aiSellAsk(p, st)*1.6*(_irK<=2?10:(_irK<=5?6:3)))); if(e.price<=_mspK&&e.price<=Math.round(_askIthK*0.75)){ if(!_bestIthK||e.price<_bestIthK.price) _bestIthK=e; } } continue; }   /* 氪金单只收伊泰安（转手赚氪金差价）：氪金价≤转手氪金价×0.75(毛利≥25%盖双向手续费)——玩家急售氪金限量品是商人利润来源 */
+        if(e.cur==='kf'){ if(_isIth){ var _irK=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0; var _askIthK=Math.min(50000,Math.max(10000,Math.round(10000*aiSellAsk(p, st)*1.6*(_irK<=2?5:(_irK<=5?3:1))))); if(e.price<=_mspK&&e.price<=Math.round(_askIthK*0.75)){ if(!_bestIthK||e.price<_bestIthK.price) _bestIthK=e; } } continue; }   /* 氪金单只收伊泰安（转手赚氪金差价）：氪金价≤转手氪金价×0.75(毛利≥25%盖双向手续费)——玩家急售氪金限量品是商人利润来源；转手锚点1万氪金±10%波动、稀缺(剩≤2×5翻5倍顶格5万、≤5×3、多×1锚点)——玩家急售氪金限量品是商人利润来源 */
         if(_isIth){ var _ir=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0; var _askIth=Math.max(1,Math.round(_mv*aiSellAsk(p, st)*1.6*(_ir<=2?10:(_ir<=5?6:3)))); if(e.price<=_mspIth&&e.price<_askIth){ if(!_bestIth||e.price<_bestIth.price) _bestIth=e; } }   /* 伊泰安金币单：买入价<转手预期价即收（稀缺系数×3~×10：全服剩≤2→绝版冲刺价高愿收、剩多→正常，眼光毒辣）；货比三家取最低价 */
         else if(_isEq){ if(e.price<=_msp&&e.price<=Math.round(_mv*0.7)){ if(!_bestEq||e.price<_bestEq.price) _bestEq=e; } }   /* 装备捡漏≤70%估值 */
         else { if(e.price<=_msp&&e.price<=Math.round(_mv*0.7)){ if(!_best||e.price<_best.price) _best=e; } }   /* 材料/宝石/杂物捡漏≤70%估值 */
@@ -11528,7 +11546,7 @@ function aiAuction(st,p,now){
         if(!e2) return;
         var _mv2=aiItemValue(e2.item);
         var _ask2; var _isIth2=String(e2.item.name||'').indexOf('伊泰安')>=0;
-        if(e2.cur==='kf'){ var _ir2=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0; _ask2=Math.max(1,Math.round(500*aiSellAsk(p, st)*1.6*(_ir2<=2?10:(_ir2<=5?6:3)))); }   /* 氪金伊泰安转手：500氪金基准×报价系数×稀缺(剩≤2×10炒作顶格、≤5×6、多×3)同主动上架口径 */
+        if(e2.cur==='kf'){ var _ir2=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0; _ask2=Math.min(50000,Math.max(10000,Math.round(10000*aiSellAsk(p, st)*1.6*(_ir2<=2?5:(_ir2<=5?3:1))))); }   /* 氪金伊泰安转手：1万氪金固定锚点起步±10%波动×报价系数×稀缺(剩≤2×5炒作翻5倍顶格5万、≤5×3、多×1)同主动上架口径 */
         else if(aiIsMerchant(p)&&_isIth2){ var _ir3=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0; _ask2=Math.max(1,Math.round(_mv2*aiSellAsk(p, st)*1.6*(_ir3<=2?10:(_ir3<=5?6:3)))); }   /* 高卖×1.6×稀缺系数赚差价（眼光毒辣，限量品流通越少越贵） */
         else _ask2=Math.max(1,Math.round(_mv2*aiSellAsk(p, st)*(aiIsMerchant(p)?1.6:1)));
         var _fee2=aucFee(_ask2);
@@ -11600,9 +11618,9 @@ function aiAuction(st,p,now){
         } else if(e.cur==='kf'&&(w.ith||w.need)&&(st.kf||0)>0){   /* 氪金挂单：神豪/高氪用氪金账户抢购（金币不足也能买，氪金是钞能力）；必须品(秘印/核/碎片)按金币咬牙上限折算氪金出价——关键时刻直接氪金买，不占便宜不吃亏 */
           if(w.need){ var _capGN=Math.round(aiItemValue(e.item)*(p.pay>=2?3:(p.pay>=1?2:1.5))); var capKN=Math.max(1,Math.round(_capGN*aiGoldRateKf()/100000000)); if(e.price>0&&e.price*Math.max(1,e.n||1)<=(st.kf||0)&&e.price<=capKN){ if(!bestK||e.price<bestK.price) bestK=e; } }   /* 必须品氪金单：上限=金币咬牙上限×当前牌价折算（1氪金≈X亿金币，aiGoldRateKf口径）——神豪/高氪氪金账户关键时刻直接用 */
           else {
-          var _scarceK=(w.ith&&ITH_LEFT)?((ITH_LEFT.yitaiNecklace||0)<=1?12:(ITH_LEFT.yitaiNecklace||0)<=3?8:(ITH_LEFT.yitaiNecklace||0)<=5?5:3):3;   /* 限量炒作系数：全服项链剩余≤1→绝版冲刺×12、≤3→×8、≤5→×5、流通尚多→×3（后期流通少→有价无市炒作到顶格） */
+          var _scarceK=(w.ith&&ITH_LEFT)?((ITH_LEFT.yitaiNecklace||0)<=1?5:(ITH_LEFT.yitaiNecklace||0)<=3?3:(ITH_LEFT.yitaiNecklace||0)<=5?2:1):1;   /* 限量炒作系数：全服项链剩余≤1→×5炒作翻5倍顶格、≤3→×3、≤5→×2、流通尚多→×1锚点价（总量固定稀缺永久，1万氪金固定锚点±10%波动，绝版冲刺才翻5倍） */
           if(_finA) _scarceK=Math.round(_scarceK*1.5);
-          var capK=(_gearLover&&!_nearRebirth)?Math.min(_tmA?(_tmA.kfCap||500):500,Math.round(250*aiPaySense(p, st)*_scarceK*(_tmA?(_tmA.kfMult||1):1))):Math.round(50*aiPaySense(p, st));   /* 追求型氪金上限：250氪金基准×敏感度×炒作系数(3~12→超脱×1.5)，封顶(普通500/全服第一10000钞能力/完美收藏8000/极速轮回8000)——后期流通少有价无市，顶尖顶格接；顶尖型按定位×系数；普通50×敏感度 */
+          var capK=(_gearLover&&!_nearRebirth)?Math.min(_tmA?(_tmA.kfCap||500):500,Math.round(10000*aiPaySense(p, st)*_scarceK*(_tmA?(_tmA.kfMult||1):1))):Math.round(50*aiPaySense(p, st));   /* 追求型氪金上限：1万氪金固定锚点基准×敏感度×炒作系数(1~5→超脱×1.5)，封顶(普通500/顶尖型见aiTopMod kfCap=50000——全服第一/完美收藏/极速轮回超脱全力期5万钞能力顶格接)——后期流通少有价无市，顶尖顶格接；顶尖型按定位×系数；普通50×敏感度 */
           if(e.price>0&&e.price*Math.max(1,e.n||1)<=(st.kf||0)&&e.price<=capK){ if(!bestK||e.price<bestK.price) bestK=e; }
           }
         }
@@ -11699,7 +11717,7 @@ function aiAuction(st,p,now){
           var _want=chatWantIth();      /* 世界喊话：最近10分钟有人喊要伊泰安 → 需求信号，限量品不愁卖，此时按氪金价上架卖好价 */
           if(_want){   /* 有人喊要 → 按氪金价上架（限量绝版卖好价；1氪金≈1亿金币基准，神豪氪金充足直接抢） */
             var _ithRem=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0;   /* 全服项链剩余量：后期流通少→炒作系数高(最高10000氪金，有价无市顶尖接)；前期剩余多→正常限量价 */
-            var _askK=Math.min(10000,Math.max(500,Math.round(500*aiSellAsk(p, st)*(aiIsMerchant(p)?1.6:1)*(_ithRem<=2?10:(_ithRem<=5?6:3)))));   /* 氪金定价：500氪金基准×报价系数(商人×1.6赚差价)×流通稀缺(剩≤2×10炒作顶格10000、≤5×6、多×3)；买家=神豪/高氪(氪金购买力强)，玩家卖≈500~10000氪金——前期金币少买不起、后期有价无市等顶尖接 */
+            var _askK=Math.min(50000,Math.max(10000,Math.round(10000*aiSellAsk(p, st)*(aiIsMerchant(p)?1.6:1)*(_ithRem<=2?5:(_ithRem<=5?3:1)))));   /* 氪金定价：1万氪金固定锚点起步×报价系数(±10%波动，商人×1.6赚差价)×流通稀缺(剩≤2×5炒作翻5倍顶格5万、≤5×3、多×1锚点价)；买家=神豪/高氪/顶尖型(氪金购买力强，顶尖超脱期kfCap=5万顶格接)，玩家卖≈9000~50000氪金——前期金币少买不起、后期金币通胀氪金购买力坚挺、有价无市等顶尖接 */
             var _feeK=aucFee(_askK);
             if((st.gold||0)>=kfFeeGold(_feeK)){ st.bag.splice(idx,1); st.gold-=kfFeeGold(_feeK); aiAucProfit(st,'gold',-kfFeeGold(_feeK)); AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_selIth,price:_askK,cur:'kf',n:1,time:Date.now()}); recomputeIthLeft(); auctionSave(); }   /* 手续费全部扣金币：氪金单手续费按市场牌价折算成金币扣（氪金不在系统内耗损，与玩家同规则），付不起则继续囤 */
           }
@@ -13453,7 +13471,43 @@ function renderRank(){
   list.__arr=arr;   /* 每次渲染记录最新数据快照：点击浮层用当前行数据(与排行行一致)，避免旧闭包arr导致"点了A却显示B"（含初始化后旧数据残留） */
   if(!list.__b){ list.__b=true; list.addEventListener('click',function(e){ var r=e.target.closest('.lb-row'); if(!r) return; var idx=parseInt(r.getAttribute('data-i'),10); var o=(list.__arr||[])[idx]; if(!o) return; if(o.me){ showRankDetailMe(); } else if(o.p){ showRankDetailAI(o); } }); }   /* 点击榜单行 → 玩家详情浮层 */
   var hint=document.getElementById('rank-hint'); if(hint) hint.textContent='全服 '+head+'榜 · 100 名固定玩家 + 你 · 实时 · 随服务器发育演化';
+  renderRankStat();   /* 榜单下方统计表格：顶尖型AI玩家 / 顶尖商人 / 神豪类玩家（含剩余氪金） */
 }
+function renderRankStat(){   /* 排行榜统计表格：①顶尖型AI玩家(全服第一/完美收藏/极速轮回，含当前阶段蓄力/全力) ②顶尖商人(3%商人全员，含拍卖利润) ③神豪类玩家(pay≥3，含当前剩余氪金)——数据全部来自FIELD_ROSTER真实st字段(p.top/aiIsMerchant/st.kf)，无凭空；由60秒interval与renderRank共同刷新 */
+  try{
+    serverStartInit(); ensureFieldRoster();
+    var _top=[], _mch=[], _wh=[];   /* _top: 顶尖型按类收集（first全服第一/perfect完美收藏/rush极速轮回，各至多3名），下方渲染时分三类显示 */
+    var _topSeen={first:0,perfect:0,rush:0};   /* 顶尖型防御：每类(全服第一/完美收藏/极速轮回)各取最多3名，即使旧档/历史残留多标也只显示9人 */
+    FIELD_ROSTER.forEach(function(p){
+      if(!p||!p.st) return;
+      var _fin=!!(p.st.ascended||((p.st.ws||0)>=99&&(p.st.core||0)>=1));   /* 超脱=全力冲刺期（装备永久保留），否则蓄力期——同aiTopMod阶段感知 */
+      if(p.top&&!p.st._offline&&_topSeen[p.top]<3){ _topSeen[p.top]++; _top.push({tg:p.top, n:p.name.split('（')[0], ph:_fin?'全力冲刺':'蓄力期'}); }   /* 只列在线顶尖型且每类至多3名 */
+      if(aiIsMerchant(p)){ _mch.push({n:p.name.split('（')[0], pf:aiAucProfitTotal(p.st)}); }
+      if((p.pay||0)>=3){ _wh.push({n:p.name.split('（')[0], kf:(p.st.kf||0)}); }
+    });
+    var _el=document.getElementById('rank-stat'); if(!_el) return;
+    var _h='';
+    _h+='<div class="rank-stat-t">✦ 顶尖AI玩家</div>';
+    var _grp=[{k:'first',t:'全服第一'},{k:'perfect',t:'完美收藏'},{k:'rush',t:'极速轮回'}];   /* 三类分组顺序 */
+    _grp.forEach(function(g){
+      var _one=_top.filter(function(o){ return o.tg===g.k; });
+      _h+='<div class="rank-stat-sub">'+g.t+'（'+_one.length+'）</div><div class="rank-stat-row">';
+      if(_one.length) _one.forEach(function(o){ _h+='<span class="rank-stat-i"><b>'+o.n+'</b><em>'+o.ph+'</em></span>'; });
+      else _h+='<span class="rank-stat-i"><em>暂无</em></span>';
+      _h+='</div>';
+    });
+    _h+='<div class="rank-stat-t">✦ 顶尖商人</div><div class="rank-stat-row">';
+    if(_mch.length) _mch.forEach(function(o){ _h+='<span class="rank-stat-i"><b>'+o.n+'</b><em>拍卖利润 '+fmtWan(o.pf)+'</em></span>'; });
+    else _h+='<span class="rank-stat-i"><em>暂无商人</em></span>';
+    _h+='</div>';
+    _h+='<div class="rank-stat-t">✦ 神豪类玩家（剩余氪金）</div><div class="rank-stat-row">';
+    if(_wh.length) _wh.forEach(function(o){ _h+='<span class="rank-stat-i"><b>'+o.n+'</b><em class="rank-stat-kf">氪金 '+fmtWan(o.kf)+'</em></span>'; });
+    else _h+='<span class="rank-stat-i"><em>暂无神豪</em></span>';
+    _h+='</div>';
+    _el.innerHTML=_h;
+  }catch(e){}
+}
+if(!window.__rankStatInt){ window.__rankStatInt=setInterval(function(){ try{ if(document.getElementById('rank-stat')&&String(location.hash).indexOf('#rank')>=0) renderRankStat(); }catch(e){} },60000); }   /* 统计表格每分钟刷新一次（仅在排行页时刷新，轻量无全量核算） */
 try{ renderRank(); }catch(e){}   /* 页面加载预渲染榜单（隐藏页亦即时计算，进入排行页即时显示） */
 function rankBaseAtkHp(){   /* 玩家判阶口径：基础物攻/生命（不含装备/天神/百分比乘区；判阶只用6大基础属性） */
   try{ var b=CHARACTER.base||{}, p=CHARACTER.bonus||{};
@@ -14272,7 +14326,7 @@ function loadGame(){
   if(s.xianji) XIANJI=s.xianji;
   if(s.xianjiDone) XIANJI_DONE=s.xianjiDone;
   if(s.altar){ ALTAR.atk=s.altar.atk||0; ALTAR.def=s.altar.def||0; ALTAR.hp=s.altar.hp||0; ALTAR.gold=s.altar.gold||0; ALTAR.crit=s.altar.crit||0; ALTAR.true=s.altar.true||0; ALTAR.hit=s.altar.hit||0; ALTAR.fdr=s.altar.fdr||0; ALTAR.ls=s.altar.ls||0; ALTAR.drop=s.altar.drop||0; ALTAR.sac=s.altar.sac||0; }
-  if(s.wboss){ WBOSS.coins=s.wboss.coins||0; WBOSS.totalKill=s.wboss.totalKill||0; WBOSS.totalDmg=s.wboss.totalDmg||0; WBOSS.bestDmg=s.wboss.bestDmg||0; WBOSS.day=s.wboss.day||''; WBOSS.slot=(typeof s.wboss.slot==='number')?s.wboss.slot:-1; WBOSS.boss=s.wboss.boss||null; WBOSS.bossMax=s.wboss.bossMax||1; WBOSS.bossHp=(typeof s.wboss.bossHp==='number')?s.wboss.bossHp:(s.wboss.bossMax||1); WBOSS.my=s.wboss.my||0; WBOSS.ai=(s.wboss.ai||[]).map(function(a){ return {n:a.n,dmg:a.dmg||0,dps:a.dps,hit:a.hit,hp:a.hp||0,hp0:a.hp0||0,dead:!!a.dead,deadAt:a.deadAt||0}; }); if(WBOSS.boss){ for(var _qi=0;_qi<WBOSS.ai.length;_qi++){ if(!WBOSS.ai[_qi].hp0){ WBOSS.ai[_qi].hp=WBOSS.ai[_qi].hp0=Math.round((WBOSS.boss.atk||1)*(50+Math.random()*50)); } } } WBOSS.killed=!!s.wboss.killed; WBOSS.reward=s.wboss.reward||{got:false}; WBOSS.timeBase=s.wboss.timeBase||0; WBOSS.startTime=s.wboss.startTime||0; WBOSS.lastVisit=s.wboss.lastVisit||0; WBOSS.smiteTs=s.wboss.smiteTs||0; WBOSS.loot=s.wboss.loot||null; WBOSS._settled=!!s.wboss._settled; if(!WBOSS.startTime&&WBOSS.day){ WBOSS.day=''; } }   /* 旧档缺磨血锚点：置空day触发下轮wbEnsure重建，避免AI冻结(伤害不增/血量不减) */
+  if(s.wboss){ WBOSS.coins=s.wboss.coins||0; WBOSS.totalKill=s.wboss.totalKill||0; WBOSS.totalDmg=s.wboss.totalDmg||0; WBOSS.bestDmg=s.wboss.bestDmg||0; WBOSS.day=s.wboss.day||''; WBOSS.slot=(typeof s.wboss.slot==='number')?s.wboss.slot:-1; WBOSS.boss=s.wboss.boss||null; WBOSS.bossMax=s.wboss.bossMax||1; WBOSS.bossHp=(typeof s.wboss.bossHp==='number')?s.wboss.bossHp:(s.wboss.bossMax||1); WBOSS.my=s.wboss.my||0; WBOSS.ai=(s.wboss.ai||[]).map(function(a){ return {n:a.n,dmg:a.dmg||0,dps:a.dps,hit:a.hit,hp:a.hp||0,hp0:a.hp0||0,dead:!!a.dead,deadAt:a.deadAt||0}; }); if(WBOSS.boss){ for(var _qi=0;_qi<WBOSS.ai.length;_qi++){ if(!WBOSS.ai[_qi].hp0){ WBOSS.ai[_qi].hp=WBOSS.ai[_qi].hp0=Math.round((WBOSS.boss.atk||1)*(50+Math.random()*50)); } } } WBOSS.killed=!!s.wboss.killed; WBOSS.reward=s.wboss.reward||{got:false}; WBOSS.timeBase=s.wboss.timeBase||0; WBOSS.startTime=s.wboss.startTime||0; WBOSS.lastVisit=s.wboss.lastVisit||0; WBOSS.smiteTs=s.wboss.smiteTs||0; WBOSS.loot=s.wboss.loot||null; WBOSS._settled=!!s.wboss._settled; WBOSS._waitNext=!!s.wboss._waitNext; if(!WBOSS.startTime&&WBOSS.day){ WBOSS.day=''; } }   /* 旧档缺磨血锚点：置空day触发下轮wbEnsure重建，避免AI冻结(伤害不增/血量不减)；_waitNext读档恢复（初始化后未到8点刷新页面→仍等待下一个8点，不立即刷新；旧存档无此字段→false进入正常轮不受影响） */
   if(s.mutate){ MUT.crystal=(s.mutate.crystal!=null)?Math.floor(s.mutate.crystal):3; MUT.on=!!s.mutate.on; MUT.tier=s.mutate.tier||0; MUT.aff=(s.mutate.aff||[]).slice(); MUT.up=(s.mutate.up||{1:0,2:0,3:0}); MUT.exP=(s.mutate.exP||0); }
   if(s.daily && s.daily.date){ DAILY=s.daily; }
   if(s.rebirth){ REBIRTH.count=s.rebirth.count||0; REBIRTH.stones=s.rebirth.stones||0; REBIRTH.tp=s.rebirth.tp||0; REBIRTH.ascended=s.rebirth.ascended||0; REBIRTH.essence=s.rebirth.essence||0;
