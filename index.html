@@ -3314,14 +3314,14 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
           <button class="rb-btn rb-box-btn" id="rb-box-open">开启遗物匣</button>
           <button class="rb-btn rb-craft-btn" id="rb-craft-core">合成太初神核 (0/99)</button>
         </div>
-        <div class="rb-hint" style="margin:0;font-size:11px;text-align:center;">太古遗物匣 · 世界BOSS讨伐按排名掉落 · 开启随机得轮回秘印或太初神核碎片（开8匣保底1碎片）</div>
+        <div class="rb-hint" style="margin:0;font-size:11px;text-align:center;">太古遗物匣 · 世界BOSS讨伐按排名掉落 · 开启随机得轮回秘印或太初神核碎片（5%概率，开50匣保底1碎片）</div>
       </div>
       <div class="rb-sec-t"><span class="rb-sec-ic"></span>秘印炼化 · 富余秘印化战力</div>
       <div class="rb-card rb-mat rb-sb">
         <div class="rb-sb-line"><span>永久全属性加成：<b id="rb-seal-boon">+0%</b></span><span class="rb-sb-hint">独立于轮回世次 · 永不重置</span></div>
         <div class="rb-sb-row">
-          <div class="rb-sb-info">每消耗 <b>20 枚</b>轮回秘印 → 永久全属性 <b>+1%</b><br><span class="rb-sb-hold">当前持有 <b id="rb-seal-n">0</b> 枚 · 可炼化 <b id="rb-seal-n2">0</b> 次</span></div>
-          <button class="rb-btn rb-box-btn" id="rb-seal-boon-btn">炼化 ×20</button>
+          <div class="rb-sb-info">每消耗 <b>100 枚</b>轮回秘印 或 <b>1 枚</b>太初神核 → 永久全属性 <b>+1%</b><br><span class="rb-sb-hold">当前持有 秘印 <b id="rb-seal-n">0</b> 枚 · 神核 <b id="rb-core-n">0</b> 颗 · 可炼化 <b id="rb-seal-n2">0</b> 次（印）/ <b id="rb-core-n2">0</b> 次（核）</span></div>
+          <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;"><button class="rb-btn rb-box-btn" id="rb-seal-boon-btn">炼化 ×100 秘印</button><button class="rb-btn rb-box-btn" id="rb-core-boon-btn">炼化 ×1 神核</button></div>
         </div>
         <div class="rb-hint" style="margin:0;font-size:11px;text-align:center;">顶尖玩家富余秘印的稳定战力出口 · 平民 1 枚启动轮回不受影响</div>
       </div>
@@ -6055,7 +6055,7 @@ var AI_STEP=1800;   /* 单步核算秒（30分钟）：段首战力算段内增�
 var AI_BOSS_SEG=[[5,30],[30,60],[60,100],[100,500],[300,800],[600,1000],[1000,2000]];   /* 副本Boss→永久全属性区间(玩家 bossPermReward 真实量级：低阶几千、中阶百万、神之幻境基础数亿，异变另叠加最高90亿/只) */
 function aiInvest(p){ return 0.5+p.effort*0.3+p.pay*0.4+(p.innate-1.0)*0.5+p.luck*0.5; }   /* 综合投入度（驱动异变/神坛/金币效率） */
 function aiWsFromDay(effDay,p){ return 0; }   /* 已废弃：轮回世次改由真实状态机累加（aiAdvanceStep 达到大帝→轮回），不再按天数推导；保留函数占位避免旧引用报错 */
-function aiReincMult(st,p){ var tl=st.talents||{},rl=st.relic||{}; var other=(rl.eye||0)+(rl.codex||0)+(rl.amulet||0)+(rl.realm||0)+(rl.banner||0); return 1+(st.ws||0)*0.30+tl.all*0.05+rl.eye*0.10+((st.ws||0)>=99?10.1:0)+(rl.end||0)*0.02+other*0.01; }   /* 玩家 reincMult 同式：每世永久+30%·天赋全属性+5%/级·本源+10%/级·超脱+1000%·太初本源+2%/级·其余法器+1%/级。AI 与玩家完全同规则（AI 后台自动点天赋/法器，模拟真人） */
+function aiReincMult(st,p){ var tl=st.talents||{},rl=st.relic||{}; var other=(rl.eye||0)+(rl.codex||0)+(rl.amulet||0)+(rl.realm||0)+(rl.banner||0); return 1+(st.ws||0)*0.30+tl.all*0.05+rl.eye*0.10+((st.ascended||((st.ws||0)>=99&&(st.core||0)>=1))?10.1:0)+(rl.end||0)*0.02+other*0.01+(st.sealBoon||0)*0.01; }   /* 玩家 reincMult 同式：每世永久+30%·天赋全属性+5%/级·本源+10%/级·超脱+1000%·太初本源+2%/级·其余法器+1%/级·秘印炼化+1%/次(独立永久战力)。AI 与玩家完全同规则（AI 后台自动点天赋/法器/炼化，模拟真人） */
 function aiReincCritMul(st){ var tl=st.talents||{}; return 1+tl.crit*0.30; }   /* 玩家 reincCritMul 同式：天赋·会心暴伤+30%/级 */
 function aiAltarLines(st,p){   /* AI黄金神坛10线（与玩家完全一致）：累计investGold金币按玩家ALTAR_BASE成本公式逐线分配等级（守恒：金币真实投入、等级按玩家成本折算；个体差异由投资额pourGold+分配优先级承载）。10线效果全部复用玩家公式（攻乘patk+mdef/守乘pdef/生乘hp，其余见aiBuildState与aiCanKillMon） */
   var ig=(st&&st.altar)?((st.altar.investGold||0)):0;
@@ -6210,7 +6210,7 @@ function initAiState(p,sec){   /* 首次：静态发育初始化（perm从0，�
   var gearPct=1-Math.exp(-effDay*Math.pow(p.pay,1.7)*0.05*p.effort);   /* 装备练度按充值强分化：神豪(pay3)~15天满装→pw兆碾压神之幻境→~28天大帝；高氪~42天；微氪(pay1)~60天；白嫖(pay0)无装备→pw低→刷低阶慢=平民。真实"钱=装备=战力" */
   p.st={effSec:0, exp:0, lv:0, grow:calcGrowth(p.innate),   /* 等级：与玩家同规则真实经验制起步——初始0级(同玩家doReset 0级)，0级→100万经验升1级，不再由在线秒数推导；exp 累积刷本击杀经验（历史遗留lv:1已修为0：杜绝任何路径(初始化/惰性重建)回到1级导致AI初始六维直接吃满1级成长而与玩家0级不一致） */
     bag:[], equip:{},   /* 真实背包+穿戴（与玩家完全同构：bag[BAG_NUM][BAG_SLOTS]、equip键=weapon/helm/armor/glove/leg/boot+首饰）；掉落真实入包、自动穿戴最优、强化/镶嵌作用于真实装备——不再用练度抽象，杜绝凭空 */
-    perm:{力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0}, ith:{neck:0,ring:0,bracelet:0}, deepTotal:0, ws:0, seal:0, frag:0, core:0,   /* ith=伊泰安首饰实际持有件数(neck 0~10 / ring 0~20 / bracelet 0~20，全服共10套每套1项链+2手镯+2戒指：AI从世界boss传说宝箱/雕俱获得，消耗总量ITH_LEFT，与玩家同源)；seal轮回秘印/frag太初神核碎片/core太初神核：均只世界boss掉落(前十)或金币购买，杜绝凭空生成 */
+    perm:{力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0}, ith:{neck:0,ring:0,bracelet:0}, deepTotal:0, ws:0, seal:0, frag:0, core:0, sealBoon:0, ascended:0, essence:0,   /* ith=伊泰安首饰实际持有件数(neck 0~10 / ring 0~20 / bracelet 0~20，全服共10套每套1项链+2手镯+2戒指：AI从世界boss传说宝箱/雕俱获得，消耗总量ITH_LEFT，与玩家同源)；seal轮回秘印/frag太初神核碎片/core太初神核：均只世界boss掉落(前十)或金币购买，杜绝凭空生成；sealBoon=秘印炼化次数(100秘印或1神核→永久全属性+1%，同玩家sealBoonClick，永不重置)；ascended=超脱标记(消耗1核+本源结晶50，同玩家ascend)；essence本源结晶(超脱/世界boss获得) */
     altar:{investGold:0},   /* 黄金神坛10线：初始0投入（与玩家"需金币灌注"一致），10线等级由 aiAltarLines 按 investGold 用玩家ALTAR_BASE成本公式确定性分配 */
     enh:{lv:0,stars:Math.round(gearPct*2),   /* 强化等级 lv 由 aiEnhance 逐级点强化产出（花费+概率同玩家），stars/套装件数保留练度推导（装备集齐程度） */
          iset:gearPct>=0.9?5:(gearPct>=0.7?3:0), og:gearPct>=0.85?5:(gearPct>=0.65?3:(gearPct>=0.5?2:0))},
@@ -6238,6 +6238,15 @@ function aiSpendRpt(st){   /* 后台自动点天赋/炼化法器（模拟真人�
     for(var i=0;i<_order.length&&!s;i++){ var k=_order[i];
       if(ws>=_req[k]){ var n=(rl[k]||0)+1; if((st.stones||0)>=n*100){ st.stones-=n*100; rl[k]=n; s=true; } } }   /* 成本=(Lv+1)×100魂石递增(同玩家 rbUpRelic)，无Lv上限 */
     if(!s) break; }
+}
+function aiSealBoon(st,p){   /* AI后台自动秘印/神核炼化（同玩家sealBoonClick：100枚秘印或1枚太初神核→永久全属性+1%，sealBoon累计→aiReincMult×1%/次，永不重置）：轮回是刚需——未超脱(可轮回)留1印保轮回、留1核保超脱资格，只炼化富余；超脱后秘印/核无轮回/门槛用途全富余→炼化收益明显（后期秘印越攒越多）；商人神核优先上架卖钱(赚钱定位)不炼化核 */
+  if((st.ws||0)<99){   /* 未超脱：仍可轮回 */
+    if((st.seal||0)>=101){ st.seal-=100; st.sealBoon=(st.sealBoon||0)+1; gLog('炼化','AI 秘印炼化 · 永久全属性+1%'); }   /* 100炼化+留1轮回刚需 */
+    if(!aiIsMerchant(p)&&(st.core||0)>=2){ st.core-=1; st.sealBoon=(st.sealBoon||0)+1; gLog('炼化','AI 神核炼化 · 永久全属性+1%'); }   /* 1炼化+留1超脱资格（99世+核超脱消耗，商人核优先卖钱） */
+  } else {   /* ws>=99：秘印无轮回用途，全富余可炼化 */
+    if((st.seal||0)>=100){ st.seal-=100; st.sealBoon=(st.sealBoon||0)+1; gLog('炼化','AI 秘印炼化 · 永久全属性+1%'); }
+    if(st.ascended&&!aiIsMerchant(p)&&(st.core||0)>=1){ st.core-=1; st.sealBoon=(st.sealBoon||0)+1; gLog('炼化','AI 神核炼化 · 永久全属性+1%'); }   /* 核炼化仅超脱标记后（ws=99未超脱时保留核触发超脱消耗，不被炼化；商人核优先卖钱） */
+  }
 }
 /* ===== AI 天神系统（与玩家完全同链路：消耗神力碎片+神力结晶+碎片+金币升级，保存每个AI的天神神级数据） ===== */
 var AI_GOD_SEAL_POOL=['warGodsFavor','adamBone','mercuryRam','omniscientOracle','godsPraise'];   /* 紫色天神(神印)：复用玩家 ITEM_BLUEPRINTS 蓝本（属性=玩家同套终值） */
@@ -6350,6 +6359,9 @@ function aiEnsureAdvance(p){   /* 惰性核算：lastUpdate→now 一次性补�
   if(p.st.kf===undefined){ p.st.kf = p.pay>=3?500000000:(p.pay>=2?10000000:(p.pay>=1?Math.round(100000+Math.random()*900000):0)); }   /* 旧存档补氪金（与 initAiState 同口径×10：神豪5亿/高氪1000万/微氪0~100万/白嫖0） */
   if(p.st._seller===undefined){ p.st._seller=(p.pay>=2?0:(Math.random()<0.4?1:0)); }   /* 旧存档补"愿售金者"：神豪/高氪只买不卖 */
   if(!p.st._enhInited){ p.st._enhInited=1; p.st.enh=p.st.enh||{lv:0,stars:0,iset:0,og:0}; p.st.enh.lv=0; }   /* 旧存档：强化等级不再由练度一次性推导，改为逐级点强化，从0开始由 aiEnhance 用攒的金币逐级产出（stars/套装件数保留练度） */
+  if(p.st.sealBoon===undefined) p.st.sealBoon=0;   /* 旧存档补秘印炼化次数（同玩家sealBoon，永久全属性+1%/次） */
+  if(p.st.ascended===undefined) p.st.ascended=0;   /* 旧存档补超脱标记 */
+  if((p.st.ws||0)>=99&&(p.st.core||0)>=1&&!p.st.ascended){ p.st.core-=1; p.st.ascended=1; p.st.essence=(p.st.essence||0)+50; }   /* 超脱觉醒（同玩家ascend）：99世圆满+持有太初神核→消耗神核×1+本源结晶+50+永久标记（此后装备/天神不再被轮回清空）——AI与玩家同规则，杜绝AI白拿超脱不吃核的不对称 */
   var now=Date.now(), last=p.st.lastUpdate||SERVER_START;
   var secDelta=Math.max(0,(now-last)/1000);
   if(secDelta>0) aiAdvance(p,secDelta);
@@ -6359,7 +6371,7 @@ function aiEnsureAdvance(p){   /* 惰性核算：lastUpdate→now 一次性补�
 function aiAdvance(p,secDelta){ var st=p.st, remain=secDelta; while(remain>0){ var ds=Math.min(AI_STEP,remain); aiAdvanceStep(st,p,ds); remain-=ds; } }
 function aiTopMod(p, st){   /* 顶尖型差异化决策参数（roster稳定标记p.top + 阶段感知）：first=全服第一目标型(神豪)、perfect=完美收藏型(高氪)、rush=极速轮回型(高氪)。关键设计：未超脱(ws<99，装备/强化/天神会被轮回清空)→蓄力期——只投不被清空的资产(神坛/秘印/快速轮回)，装备不疯抢、强化克制(不被轮回清空的投入不浪费)；超脱(99世+神核，装备/天神永久)→全力冲刺期——疯抢限量、强化冲20、氪金上限全开。这才是"最终阶位顶尖"的长远逻辑；rush天然符合(秘印/神坛第一、装备克制)，不随阶段变化 */
   var t=p&&p.top; if(!t) return null;
-  var _fin=!!(st&&(st.ws||0)>=99&&(st.core||0)>=1);   /* 超脱=装备/天神永久保留 */
+  var _fin=!!(st&&(st.ascended||((st.ws||0)>=99&&(st.core||0)>=1)));   /* 超脱=装备/天神永久保留（消耗核标记后core可为0仍超脱，同玩家ascended） */
   if(t==='first') return _fin
     ? {aggro:0.85,gearLove:0.95,ithGoal:5,scarce:1.6,kfMult:2,sealMult:1.15,enh:20,kfCap:10000,goldKeep:2.5,gearOn:true,god:0.15}   /* 超脱·全力冲刺：疯抢限量/强化冲20/氪金封顶10000(伊泰安炒作天花板，后期流通少顶格接)——最终阶位登顶 */
     : {aggro:0.85,gearLove:0.5,ithGoal:3,scarce:1.0,kfMult:0.8,sealMult:1.15,enh:9,kfCap:300,goldKeep:2.5,gearOn:false,god:0};   /* 蓄力期：神坛/秘印/轮回第一，装备不疯抢不强冲(会被清空)，天神超脱后再升 */
@@ -6380,7 +6392,7 @@ function aiStyle(p, st){   /* 个体化风格向量（每个AI稳定唯一）：
   return {aggro:aggro, gearLove:gearLove};
 }
 function aiPriority(st,p){   /* 状态感知决策层：结合每个AI自身情况(等级/战力档/强化/材料/运势/轮回阶段)+系统最优玩法动态排优先级——系统最优：①战力滚雪球(战力高→刷boss全属性快→战力更高)②轮回永久+30%复利(最强杠杆,攒秘印尽早轮回)③未超脱金币不浪费在轮回清空的强化/天神(投神坛保留)。决策输入是AI自身实时状态+个体风格向量,不是固定套路 */
-  var _final=(st.ws||0)>=99&&(st.core||0)>=1;   /* 超脱后不再轮回清空装备/天神 */
+  var _final=!!(st&&(st.ascended||((st.ws||0)>=99&&(st.core||0)>=1)));   /* 超脱后不再轮回清空装备/天神（消耗核标记后core可为0仍超脱，同玩家ascended） */
   var _cash=aiIsCasher(p,st)||aiIsMerchant(p);   /* 套现/白嫖赚钱型：很少提升实力，够刷副本+能到最终阶位即可，其余资源全倾向出售换钱（现实大量此类玩家）；商人(3%)同属赚钱定位——不强化/不攒印/不升天神，金币全力变现 */
   var _stl=aiStyle(p, st);   /* 个体风格：装备追求度 → 强化目标平滑（同档AI也各不同） */
   if(_final){ if(_cash) return {enhTarget:4, seal:0, god:0};   /* 套现型超脱后也只点到够刷最高副本(+4)，不追极限强化/天神，金币继续出售套现 */
@@ -6494,7 +6506,7 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
     if(Math.random()<_sunP&&(st.gold||0)>=1000000){ st.gold-=1000000; st.sunUntil=Date.now()+12*60*60*1000; gLog('购买','AI 购买了 小太阳（打怪经验翻倍12h）'); }
   }
   aiUseHeal(st,p);   /* 战斗受重伤时消耗全能药水回满（真实消耗，与玩家同物） */
-  var _final = (st.ws||0)>=99 && (st.core||0)>=1;   /* 最终阶位(超脱)：不再轮回，装备/天神不再被清空 */
+  var _final = !!(st&&(st.ascended||((st.ws||0)>=99&&(st.core||0)>=1)));   /* 最终阶位(超脱)：不再轮回，装备/天神不再被清空（消耗核标记后core可为0仍超脱，同玩家ascended） */
   var _dec=aiPriority(st,p), _enhTarget=_final?20:_dec.enhTarget;   /* 状态感知决策：按自身情况定强化目标/攒秘印/天神预算 */
   var _stlA=aiStyle(p, st);   /* 个体风格：激进度 → 神坛(奇遇滚雪球)投入比例差异化——激进敢赌(高投神坛博一夜暴富)、保守稳(多留金币备战) */
   var _altarPct=0.18+_stlA.aggro*0.28;   /* 神坛投入比例随激进度(0.4~0.42) */
@@ -6548,6 +6560,7 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
     }
   }
   aiSpendRpt(st);   /* 后台自动点天赋/炼化法器（模拟真人，用轮回获得的轮回点/魂石） */
+  aiSealBoon(st,p);   /* 后台自动秘印/神核炼化（同玩家sealBoonClick：100秘印或1神核→永久全属性+1%，永不重置）：轮回刚需优先（未超脱留1印保轮回、留1核保超脱资格），只炼化富余；超脱后秘印/核无轮回用途全富余→炼化收益明显 */
   /* 99世缺神核：不再凭空购买——神核来源=世界boss匣子碎片合成(同玩家99碎片=1核，aiAuction供给段自动合成)+从拍卖行真实购买(aiAuction神核上架/按需购买段扫货)，卖家(商人囤核变现/多余核)真实收款，杜绝私下交易与凭空生成；市场稀缺→非前十且碎片不足的AI超脱慢（与玩家同规则） */
 }
 function altarLvFromGold(gold){ var lv=0,cost=5000; while(lv<120&&gold>=cost){ gold-=cost; cost=Math.round(cost*1.6); lv++; } return lv; }   /* AI神坛成本：5千×1.6^lv（玩家 altarPourCost 同型） */
@@ -6585,7 +6598,7 @@ function aiBuyGoldFromAuction(st,p){   /* 神豪/高氪强化缺金币→从拍�
 function aiEnhance(st,p,enhTarget){   /* AI逐级点强化真实穿戴武器+5件防具（与玩家 weaponEnhCfg/armorEnhCfg 同款花费+概率；扣金币→成功+1，失败→有安全护符消耗1个不掉级继续/无则掉落1级至0并继续，金币不足→氪金购买买不到即停；先武器后防具，防具目标=武器目标×0.6(2~20)，目标由状态感知决策层定；神豪氪金烧完也可能不到目标，看概率，与玩家一致 */
   st.enh=st.enh||{lv:0,stars:0,iset:0,og:0};
   var maxLv=Math.min(20,enhTarget||5);
-  var _final=(st.ws||0)>=99&&(st.core||0)>=1;   /* 超脱后装备不再被轮回清空：护符才有保级价值（未超脱强化会被轮回清空→省护符留给超脱后） */
+  var _final=!!(st&&(st.ascended||((st.ws||0)>=99&&(st.core||0)>=1)));   /* 超脱后装备不再被轮回清空：护符才有保级价值（未超脱强化会被轮回清空→省护符留给超脱后） */
   var _guard=function(bag){ var gi=-1; for(var h=0;h<(bag||[]).length;h++) if(bag[h]&&bag[h].type==='enh_guard'){ gi=h; break; } return gi; };
   var _buy=function(){ if(!_final) return true; var b=st.gold; aiBuyGoldFromAuction(st,p); return st.gold===b; };   /* 超脱后强化缺金币→从拍卖行买"金币挂单"(走拍卖行，禁止私下交易)；未超脱不氪金强化(轮回清空不浪费，攒到超脱收益永久保留)；买不到才停 */
   /* --- 武器（主目标，最高优先） --- */
@@ -6894,7 +6907,7 @@ function aiBuildState(st,p){   /* 玩家同口径：六维(含perm)→攻防血�
   var ti=0; for(var i=CHAR_TIERS.length-1;i>=0;i--) if(mx>=CHAR_TIERS[i].m){ ti=i; break; }
   var agi=Math.max(10, Math.round(A.敏捷)), pw=battlePower(Math.round(patk),Math.round(pdef),Math.round(hp),agi);   /* 敏捷=六维敏捷(同玩家battlePower/攻速口径)：避免固定250导致AI攻速51秒/次、战力低估 */
   var hp2=hp+Math.round(pw*100);   /* 防秒杀（玩家同款：生命=原算+战力×100） */
-  var asc=(st.ws>=99 && (st.core||0)>=1); var tierIdx=asc?6:ti;   /* 超脱·轮回主宰=99世圆满+太初神核×1(与世界boss遗物匣碎片合成，玩家同规则)。AI神核来自世界boss前十开匣或金币购买，杜绝凭空生成 */
+  var asc=!!(st.ascended||((st.ws>=99 && (st.core||0)>=1))); var tierIdx=asc?6:ti;   /* 超脱·轮回主宰=99世圆满+太初神核×1(与世界boss遗物匣碎片合成，玩家同规则，超脱消耗核后由ascended标记保持阶位)；AI神核来自世界boss前十开匣或金币购买，杜绝凭空生成 */
   var fdr=Math.min(0.9, Math.min(0.5,(alt.fdr||0)*0.005+Math.min(0.3,((st.talents||{}).fdr||0)*0.03))+(aiWornIth(st)>=5?0.30:0)+(og>=5?0.10:0)+aiEnh20Fdr(st));   /* 神坛·御天(封顶50%)+轮回天赋·御守(封顶30%)+伊泰安5件+30%+奥格顿5件+10%+防具强化+20每件+3%(全同玩家fd口径)，整体封顶90% */
   var ig=0,tr=0,add=0;
   var ithN=aiWornIth(st);   /* AI穿戴中的伊泰安件数（真实穿在5首饰槽+武器防具，同玩家ISET数equipState口径，获得才有，杜绝凭空） */
@@ -10051,10 +10064,10 @@ function wbGrantAIseal(){   /* BOSS击杀结算：只给参战前十名发放轮
       /* 金币(同玩家)：第1名 bossMax×12% / 2-3名 ×5% */
       var _gold=0; if(rank===1) _gold=Math.round(WBOSS.bossMax*0.12); else if(rank<=3) _gold=Math.round(WBOSS.bossMax*0.05);
       if(_gold>0) _st.gold=(_st.gold||0)+_gold;
-      /* 遗物匣(rank<=6同玩家数量)→自动开箱(玩家openReliquary同概率：85%秘印/15%碎片/8匣保底；99碎片合1神核)——秘印量完全同玩家口径 */
+      /* 遗物匣(rank<=6同玩家数量)→自动开箱(玩家openReliquary同概率：95%秘印/5%碎片/50匣保底；99碎片合1神核)——秘印量完全同玩家口径 */
       var _bx=(rank<=6)?_pool[rank]:0;
       for(var _b=0;_b<_bx;_b++){ _st.boxCount=(_st.boxCount||0)+1;
-        if((_st.boxCount||0)>=8 || Math.random()<0.15){ _st.frag=(_st.frag||0)+1; _st.boxCount=0; }
+        if((_st.boxCount||0)>=50 || Math.random()<0.05){ _st.frag=(_st.frag||0)+1; _st.boxCount=0; }
         else _st.seal=(_st.seal||0)+1;
         if((_st.frag||0)>=99){ _st.frag-=99; _st.core=(_st.core||0)+1; }
       }
@@ -10796,8 +10809,11 @@ function renderRebirth(){
   var sl=document.getElementById('rb-seal'); if(sl) sl.textContent=REBIRTH.seal||0;
   var sbv=document.getElementById('rb-seal-boon'); if(sbv) sbv.textContent='+'+((REBIRTH.sealBoon||0)*1)+'%';
   var sn=document.getElementById('rb-seal-n'); if(sn) sn.textContent=REBIRTH.seal||0;
-  var sn2=document.getElementById('rb-seal-n2'); if(sn2) sn2.textContent=Math.floor((REBIRTH.seal||0)/20);
-  var sbBtn=document.getElementById('rb-seal-boon-btn'); if(sbBtn) sbBtn.classList.toggle('dis', (REBIRTH.seal||0)<20);
+  var scn=document.getElementById('rb-core-n'); if(scn) scn.textContent=REBIRTH.core||0;
+  var sn2=document.getElementById('rb-seal-n2'); if(sn2) sn2.textContent=Math.floor((REBIRTH.seal||0)/100);
+  var scn2=document.getElementById('rb-core-n2'); if(scn2) scn2.textContent=Math.floor((REBIRTH.core||0)/1);
+  var sbBtn=document.getElementById('rb-seal-boon-btn'); if(sbBtn) sbBtn.classList.toggle('dis', (REBIRTH.seal||0)<100);
+  var cbBtn=document.getElementById('rb-core-boon-btn'); if(cbBtn) cbBtn.classList.toggle('dis', (REBIRTH.core||0)<1);
   var fr=document.getElementById('rb-frag'); if(fr) fr.textContent=REBIRTH.frag||0;
   var co=document.getElementById('rb-core'); if(co) co.textContent=REBIRTH.core||0;
   var ob=document.getElementById('rb-box-open'); if(ob) ob.classList.toggle('dis', (REBIRTH.reliquary||0)<=0);
@@ -10820,8 +10836,8 @@ function renderRebirth(){
 function openReliquary(){   /* 开启太古遗物匣：主产物1样 + 本源结晶副产物保底（开8匣保底1碎片） */
   if((REBIRTH.reliquary||0)<=0){ toast('没有太古遗物匣'); return; }
   REBIRTH.reliquary--; REBIRTH.boxCount=(REBIRTH.boxCount||0)+1;
-  var guaranteed=REBIRTH.boxCount>=8, r=Math.random(), main='', sub=0;
-  if(guaranteed || r<0.15){
+  var guaranteed=REBIRTH.boxCount>=50, r=Math.random(), main='', sub=0;   /* 保底放宽至50匣：太初神核碎片产出更稀缺（随机5% + 50匣保底） */
+  if(guaranteed || r<0.05){
     REBIRTH.frag=(REBIRTH.frag||0)+1; REBIRTH.boxCount=0; main='太初神核碎片 ×1';
     sub = (r<0.03)?10:(2+Math.floor(Math.random()*2));   /* 大爆10 · 稀有2~3 */
   } else { REBIRTH.seal=(REBIRTH.seal||0)+1; main='轮回秘印 ×1'; sub = 1+Math.floor(Math.random()*2); }   /* 普通1~2 */
@@ -10837,13 +10853,21 @@ function craftCore(){   /* 99 碎片合成 1 太初神核 */
   toast('合成成功：太初神核 ×1');
 }
 function sealBoonClick(){
-  var need=20;
-  if((REBIRTH.seal||0)<need){ toast('轮回秘印不足（炼化需 20 枚）'); return; }
-  confirmDialog('秘印炼化 · 永久全属性 +1%？<br><span style="color:#F2C96B">消耗轮回秘印 ×20（当前 '+(REBIRTH.seal||0)+' 枚）</span><br><span style="color:#7CF7C8">独立于轮回世次 · 永不重置</span>', function(ok){
+  if((REBIRTH.seal||0)<100){ toast('轮回秘印不足（炼化需 100 枚，当前 '+(REBIRTH.seal||0)+' 枚）'); return; }
+  confirmDialog('秘印炼化 · 永久全属性 +1%？<br><span style="color:#F2C96B">消耗轮回秘印 ×100（当前 '+(REBIRTH.seal||0)+' 枚）</span><br><span style="color:#7CF7C8">独立于轮回世次 · 永不重置</span>', function(ok){
     if(!ok) return;
-    REBIRTH.seal-=need; REBIRTH.sealBoon=(REBIRTH.sealBoon||0)+1;
+    REBIRTH.seal-=100; REBIRTH.sealBoon=(REBIRTH.sealBoon||0)+1;
     recalcCharacter(); renderRebirth(); saveGame();
     toast('<b style="color:#F2C96B">秘印炼化成功 · 永久全属性 +1%</b>（累计 +'+Math.round((reincMult()-1)*100)+'%）');
+  });
+}
+function coreBoonClick(){
+  if((REBIRTH.core||0)<1){ toast('太初神核不足（炼化需 1 枚，当前 '+(REBIRTH.core||0)+' 颗）'); return; }
+  confirmDialog('神核炼化 · 永久全属性 +1%？<br><span style="color:#F2C96B">消耗太初神核 ×1（当前 '+(REBIRTH.core||0)+' 颗）</span><br><span style="color:#7CF7C8">独立于轮回世次 · 永不重置</span>', function(ok){
+    if(!ok) return;
+    REBIRTH.core-=1; REBIRTH.sealBoon=(REBIRTH.sealBoon||0)+1;
+    recalcCharacter(); renderRebirth(); saveGame();
+    toast('<b style="color:#F2C96B">神核炼化成功 · 永久全属性 +1%</b>（累计 +'+Math.round((reincMult()-1)*100)+'%）');
   });
 }
 function mountRebirth(){
@@ -10856,6 +10880,7 @@ function mountRebirth(){
   var ob=document.getElementById('rb-box-open'); if(ob&&!ob.__b){ ob.__b=true; ob.addEventListener('click',openReliquary); }
   var cc=document.getElementById('rb-craft-core'); if(cc&&!cc.__b){ cc.__b=true; cc.addEventListener('click',craftCore); }
   var sb=document.getElementById('rb-seal-boon-btn'); if(sb&&!sb.__b){ sb.__b=true; sb.addEventListener('click',sealBoonClick); }
+  var cb=document.getElementById('rb-core-boon-btn'); if(cb&&!cb.__b){ cb.__b=true; cb.addEventListener('click',coreBoonClick); }
   renderRebirth();
 }
 
