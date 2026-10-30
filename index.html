@@ -1245,6 +1245,10 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 .bar{height:10px;border-radius:5px;background:#141312;border:1px solid #3a352e;overflow:hidden;box-shadow:inset 0 2px 4px rgba(0,0,0,.6);}
 .bar-fill{height:100%;width:0;border-radius:5px;background:linear-gradient(90deg,#4CAF50,#8BC34A);box-shadow:0 0 5px rgba(76,175,80,.5);transition:width .3s;}
 #god-target img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain;border-radius:3px;}
+#god-dc-target img{position:absolute;inset:1px;width:calc(100% - 2px);height:calc(100% - 2px);object-fit:contain;border-radius:3px;}
+/* 天神拆解：产出网格 3排×5格 + 凹槽与升级#god-target同尺寸 */
+.god-dc-grid{display:grid;grid-template-columns:repeat(5,34px);gap:6px;justify-content:center;margin-top:6px;}
+.god-dc-grid .pick{width:34px;height:34px;}
 
 /* 天神总属性两列 */
 #god-attrs .c-row,#god-attrs2 .c-row{padding:2px 0;}
@@ -1297,7 +1301,10 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 @media(max-width:560px){
   #god-form{flex-wrap:nowrap;justify-content:center;}
   #god-target{width:40px;height:40px;}
+  #god-dc-target{width:40px;height:40px;}
   #god-mats-slots .pick{width:32px;height:32px;}
+  .god-dc-grid{grid-template-columns:repeat(5,34px);gap:5px;}
+  .god-dc-grid .pick{width:34px;height:34px;}
 }
 
 /* ===== 底部选择面板（Bottom Sheet）：不遮满全屏、可滑动选择 ===== */
@@ -3786,6 +3793,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
         <div class="gem-sec rate-sec">
           <div class="rate-info"><span>成功概率</span><b id="gem-rate">0%</b></div>
           <div class="rate-info"><span>消耗金额</span><b id="gem-cost">0</b></div>
+          <div class="rate-info"><span>安全护符</span><b id="gem-guard">0</b></div>
           <div class="rate-info"><span>金币</span><b id="gem-gold">0</b></div>
         </div>
         <button class="btn gem-ok" id="gem-embed-btn">镶嵌</button>
@@ -3832,7 +3840,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
         <div class="pgtabs god-head-tabs">
           <button class="pgtab on" data-gtab="formation">编队</button>
           <button class="pgtab" data-gtab="upgrade">升级</button>
-          <button class="pgtab" data-gtab="inherit">继承</button>
+          <button class="pgtab" data-gtab="inherit">拆解</button>
           <button class="pgtab" data-gtab="refine">精炼</button>
         </div>
       </div>
@@ -3886,7 +3894,17 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
               </div>
             </div>
             <div class="god-pane" id="god-inherit" style="display:none;">
-              <div class="sys-card"><div class="sys-title">继承</div><div class="sys-tip">功能开发中</div></div>
+              <div class="sys-card">
+                <div class="sys-title">拆解目标</div>
+                <div class="sys-slotline god-up-line"><div class="eq-cell"><div class="slot tt-slot" id="god-dc-target"></div></div><div class="god-up-info" id="god-dc-info"></div></div>
+              </div>
+              <div class="sys-card">
+                <div class="sys-title">拆解产出 <span class="mat-hint" id="god-dc-hint"></span></div>
+                <div class="god-dc-grid" id="god-dc-mats"></div>
+              </div>
+              <div style="display:flex;justify-content:center;width:100%;margin:8px auto 2px;">
+                <button class="btn sys-ok" id="god-dc-btn" style="flex:none;padding:6px 24px;margin:0;">拆解</button>
+              </div>
             </div>
             <div class="god-pane" id="god-refine" style="display:none;">
               <div class="sys-card"><div class="sys-title">精炼</div><div class="sys-tip">功能开发中</div></div>
@@ -4365,7 +4383,7 @@ var ITEM_BLUEPRINTS = {
     enhanceLevel:0, defense:50000000, resistance:50000000, attribute:"无",
     maxHp:100000000, maxVitality:100000000, strength:200000000, agility:200000000, constitution:200000000,
     intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0,
-    price:1000000000, durability:"1000/1000", category:"头盔", equipLevel:1,
+    price:1000000000, durability:"1000/1000", category:"头盔", equipLevel:80,
     gemSlots:Array(6).fill(null)
   },
   legendOgdenChest: {
@@ -4373,7 +4391,7 @@ var ITEM_BLUEPRINTS = {
     enhanceLevel:0, defense:50000000, resistance:50000000, attribute:"无",
     maxHp:100000000, maxVitality:100000000, strength:200000000, agility:200000000, constitution:200000000,
     intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0,
-    price:1000000000, durability:"1200/1200", category:"胸甲", equipLevel:1,
+    price:1000000000, durability:"1200/1200", category:"胸甲", equipLevel:80,
     gemSlots:Array(6).fill(null)
   },
   legendOgdenGloves: {
@@ -4381,7 +4399,7 @@ var ITEM_BLUEPRINTS = {
     enhanceLevel:0, defense:50000000, resistance:50000000, attribute:"无",
     maxHp:100000000, maxVitality:100000000, strength:200000000, agility:200000000, constitution:200000000,
     intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0,
-    price:1000000000, durability:"800/800", category:"护手", equipLevel:1,
+    price:1000000000, durability:"800/800", category:"护手", equipLevel:80,
     gemSlots:Array(6).fill(null)
   },
   legendOgdenLeggings: {
@@ -4389,7 +4407,7 @@ var ITEM_BLUEPRINTS = {
     enhanceLevel:0, defense:50000000, resistance:50000000, attribute:"无",
     maxHp:100000000, maxVitality:100000000, strength:200000000, agility:200000000, constitution:200000000,
     intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0,
-    price:1000000000, durability:"1000/1000", category:"护腿", equipLevel:1,
+    price:1000000000, durability:"1000/1000", category:"护腿", equipLevel:80,
     gemSlots:Array(6).fill(null)
   },
   legendOgdenBoots: {
@@ -4397,7 +4415,7 @@ var ITEM_BLUEPRINTS = {
     enhanceLevel:0, defense:50000000, resistance:50000000, attribute:"无",
     maxHp:100000000, maxVitality:100000000, strength:200000000, agility:200000000, constitution:200000000,
     intelligence:200000000, spirit:200000000, luck:200000000, damageAbsorption:0,
-    price:1000000000, durability:"900/900", category:"护鞋", equipLevel:1,
+    price:1000000000, durability:"900/900", category:"护鞋", equipLevel:80,
     gemSlots:Array(6).fill(null)
   },
   demonWings: {
@@ -5860,6 +5878,8 @@ function randomRollOrigin(){  /* 只随机先天运势（0级生成）：六维/
   return innate;
 }
 function recalcCharacter(){
+  /* 超等级已穿戴装备自动脱回背包（与AI aiAutoEquip同规则：角色等级需≥装备equipLevel，传说奥格顿等80级装备低等级穿不上；已穿着的超等级旧装脱下回包） */
+  try{ var _plv=CHARACTER.info.level||1; for(var _eqk in equipState){ var _eqv=equipState[_eqk]; if(_eqv&&(_eqv.equipLevel||0)>_plv){ equipState[_eqk]=null; placeInBag(_eqv); } } }catch(e){}
   /* 基础：原始+升级分配（6 大属性） */
   var base={力量:10,敏捷:10,体质:10,精神:10,智力:10,幸运:10};
   var gr=CHARACTER.growth||{attr:1000,hp:100,pdef:1}; var lvB=((CHARACTER.info.level||0))*gr.attr;   /* 每升1级，6项基础属性各+先天运势成长；0级=0，即初始=基础10 */
@@ -6347,15 +6367,39 @@ function aiGodAcquire(st,p,onlineSec){   /* AI真实获得天神牌子（与玩�
     return;
   }
 }
-function aiGodGiveSeal(st,p){   /* 给AI一块神印牌(玩家同套蓝本，拥有才上阵)：紫神印做主，已有金则金降副、主升紫（同玩家"获得才有、最强为主"） */
+function aiGodGiveSeal(st,p){   /* 给AI一块神印牌(玩家同套蓝本，拥有才上阵)：紫牌产出极稀(月度全服2张+奇遇0.00001%)几乎不拆——按定位决策：战力向(追求型)优先都用紫(主副都换紫，换下的金拆材料)；赚钱向(商人/套现白嫖，实力次要能赚钱就不要实力)不浪费紫上阵→好牌卖钱(暂存背包由aiAuction卖，卖不掉囤着也不拆)；无主时任何定位都上紫保底战力——不拆紫牌(稀缺好货) */
   if(!st.gods) st.gods={main:null,sub1:null};
+  var _cash=aiIsCasher(p,st)||aiIsMerchant(p);
   var _bp=aiGodBlueprint('god_seal');
   var _seal={ id:'ai_'+p.id+'_god_seal_'+_bp.name, name:_bp.name, type:_bp.type, img:_bp.img, grade:0, star:1, currentExp:0, requiredExp:100, fullAttributes:_bp.fullAttributes };
-  if(!st.gods.main){ st.gods.main=_seal; }
-  else if(st.gods.main.type!=='god_seal'){ st.gods.sub1=st.gods.main; st.gods.main=_seal; }   /* 紫最强做主，已有金降副 */
-  else if(!st.gods.sub1){ st.gods.sub1=_seal; }
+  if(!st.gods.main){ st.gods.main=_seal; return; }   /* 无主保底（任何定位都要基本战力） */
+  if(_cash){ if(!st.bag) st.bag=[]; _seal.count=1; st.bag.push(_seal); gLog('天神','AI 神印牌暂存背包（赚钱定位：好牌卖钱，实力次要不浪费上阵）'); return; }   /* 赚钱向：已有主不浪费紫——好牌卖钱 */
+  /* 战力向：优先都用紫（上阵天神优先紫，紫也能做主也能做副） */
+  if(st.gods.main.type!=='god_seal'){ var _old=st.gods.main; if(!st.gods.sub1){ st.gods.sub1=_old; } else if(_old.type==='god_rune'){ st.godPower=(st.godPower||0)+500; st.godCrystal=(st.godCrystal||0)+10; gLog('拆解','AI 拆解神符天神牌 · 神力碎片+500、神力结晶+10'); } else { if(!st.bag) st.bag=[]; _old.count=_old.count||1; st.bag.push(_old); } st.gods.main=_seal; return; }   /* 紫主，旧金降副/副位被占则旧金拆材料或暂存 */
+  if(!st.gods.sub1){ st.gods.sub1=_seal; return; }
+  if(st.gods.sub1.type==='god_rune'){ var _old2=st.gods.sub1; st.gods.sub1=_seal; st.godPower=(st.godPower||0)+500; st.godCrystal=(st.godCrystal||0)+10; gLog('拆解','AI 拆解神符天神牌 · 神力碎片+500、神力结晶+10'); return; }   /* 紫副替换金副（战力向主副都优先紫），旧金拆材料 */
+  if(!st.bag) st.bag=[]; _seal.count=1; st.bag.push(_seal); gLog('天神','AI 神印牌暂存背包（主副已满紫，稀缺好牌囤留/待卖，不拆解）');   /* 主紫副紫槽满：紫不拆（稀缺好货）——留背包囤/等卖 */
 }
-function aiGodStep(st,p,onlineSec,godBudget){ aiGodAcquire(st,p,onlineSec); _aiGodEnsure(st,p); aiGodTaskDrop(st,p); aiGodDrops(st,p,onlineSec); aiGodUpgrade(st,p,godBudget); }   /* AI天神心跳：神印类天神牌不再由克里普特BOSS掉落（同玩家规则），来源=奇遇(神秘商人/逆天装备0.00001%)+海盗岛最终BOSS(月度全服2张)，由 aiFarmDrop 内 pirateSealDrop 链路获得 */
+function aiGodDecompBag(st,p,force){   /* AI处理背包中真实获得的天神牌（海盗岛神印牌等真实掉落，不凭空）：按定位决策——战力向(追求型)：优先都用紫(主副都换紫，换下的金/槽满多余金在force时拆材料500神力碎片+10神力结晶)；赚钱向(商人/套现白嫖)：紫不浪费上阵→卖钱(aiAuction卖，卖不掉囤着也不拆)；**紫牌(神印)稀缺好货永不拆解**，只有金牌(神符，产出多属性弱)才是拆解对象；force=false时金牌留bag等 aiAuction 卖牌机会（先卖后拆）；材料进 st.godPower/st.godCrystal 供 aiGodUpgrade 升级 */
+  if(!st.bag) return;
+  var _cash=aiIsCasher(p,st)||aiIsMerchant(p);
+  for(var i=st.bag.length-1;i>=0;i--){ var g=st.bag[i]; if(!g||(g.type!=='god_seal'&&g.type!=='god_rune')) continue;
+    var _placed=false;
+    if(!st.gods) st.gods={main:null,sub1:null};
+    if(!st.gods.main){ st.gods.main=g; st.bag.splice(i,1); _placed=true; continue; }   /* 无主保底上阵（任何定位都要基本战力） */
+    if(g.type==='god_seal'){
+      if(!_cash){   /* 战力向：优先都用紫（主副都换紫） */
+        if(st.gods.main.type!=='god_seal'){ var _old=st.gods.main; st.bag.splice(i,1); if(!st.gods.sub1){ st.gods.sub1=_old; } else if(_old.type==='god_rune'){ if(force){ st.godPower=(st.godPower||0)+500; st.godCrystal=(st.godCrystal||0)+10; gLog('拆解','AI 拆解神符天神牌 · 神力碎片+500、神力结晶+10'); } else { st.bag.push(_old); } } else { st.bag.push(_old); } st.gods.main=g; _placed=true; continue; }   /* 紫主，旧金降副/副位被占则旧金force拆或留bag */
+        if(!st.gods.sub1){ st.gods.sub1=g; st.bag.splice(i,1); _placed=true; continue; }
+        if(st.gods.sub1.type==='god_rune'){ var _old2=st.gods.sub1; st.gods.sub1=g; st.bag.splice(i,1); if(force){ st.godPower=(st.godPower||0)+500; st.godCrystal=(st.godCrystal||0)+10; gLog('拆解','AI 拆解神符天神牌 · 神力碎片+500、神力结晶+10'); } else { st.bag.push(_old2); } _placed=true; continue; }   /* 紫副替换金副，旧金force拆/留bag */
+      }   /* 主紫副紫槽满 / 赚钱向：紫不拆（稀缺好货）——留bag囤/等卖 */
+    } else {   /* 金牌(神符)：普通货自用上阵；槽满多余→卖或拆 */
+      if(!st.gods.sub1){ st.gods.sub1=g; st.bag.splice(i,1); _placed=true; continue; }
+      if(force){ st.bag.splice(i,1); st.godPower=(st.godPower||0)+500; st.godCrystal=(st.godCrystal||0)+10; gLog('拆解','AI 拆解神符天神牌 · 神力碎片+500、神力结晶+10'); }
+    }
+  }
+}
+function aiGodStep(st,p,onlineSec,godBudget){ aiGodAcquire(st,p,onlineSec); aiGodDecompBag(st,p,false); _aiGodEnsure(st,p); aiGodTaskDrop(st,p); aiGodDrops(st,p,onlineSec); aiGodUpgrade(st,p,godBudget); }   /* AI天神心跳：神印类天神牌不再由克里普特BOSS掉落（同玩家规则），来源=奇遇(神秘商人/逆天装备0.00001%)+海盗岛最终BOSS(月度全服2张)，由 aiFarmDrop 内 pirateSealDrop 链路获得；背包多余天神牌先上阵，卖牌/拆解由 aiAuction 后段兜底处理 */
 function aiGodBonus(st){   /* 上阵天神加成：主100%/副50%（同玩家 GOD.formation 编队累加） */
   var tot={力量:0,敏捷:0,体质:0,精神:0,智力:0,幸运:0,hp:0,vitality:0,patk:0,pdef:0,mdef:0};
   var gs=st.gods; if(!gs) return tot;
@@ -6414,7 +6458,10 @@ function aiPriority(st,p){   /* 状态感知决策层：结合每个AI自身情�
   var _cash=aiIsCasher(p,st)||aiIsMerchant(p);   /* 套现/白嫖赚钱型：很少提升实力，够刷副本+能到最终阶位即可，其余资源全倾向出售换钱（现实大量此类玩家）；商人(3%)同属赚钱定位——不强化/不攒印/不升天神，金币全力变现 */
   var _stl=aiStyle(p, st);   /* 个体风格：装备追求度 → 强化目标平滑（同档AI也各不同） */
   if(_final){ if(_cash) return {enhTarget:4, seal:0, god:0};   /* 套现型超脱后也只点到够刷最高副本(+4)，不追极限强化/天神，金币继续出售套现 */
-    var _gn=0; var _bag=st.bag||[]; for(var _g=0;_g<_bag.length;_g++) if(_bag[_g]&&_bag[_g].type==='enh_guard') _gn+=Math.max(1,_bag[_g].count||1); return {enhTarget: (_gn>=10?20:12)*Math.round(100*(0.6+_stl.gearLove*0.45))/100, seal:0, god: (_gn>=10?0.15:0)*(0.6+_stl.gearLove*0.45)}; }   /* 最终阶位：护符充足→全力强化(装备追求度高者冲20、低者~12)+正常升天神；护符不足→先强化到护符能保的+12档+省金币优先囤护符(高强化无护失败掉级损失大，护符是超脱后刚需) */
+    var _gn=0; var _bag=st.bag||[]; for(var _g=0;_g<_bag.length;_g++) if(_bag[_g]&&_bag[_g].type==='enh_guard') _gn+=Math.max(1,_bag[_g].count||1);
+    var _ogN=0; var _eqOg=st.equip||{}; ['helm','armor','glove','leg','boot'].forEach(function(tk){ var _eOg=_eqOg[tk]; if(_eOg&&String(_eOg.name||'').indexOf('传说 奥格顿')>=0) _ogN++; });
+    if(_ogN>=3){ var _tierUp=(p.pay||0)>=3?20:((p.pay||0)>=2?18:15); return {enhTarget:_tierUp, seal:0, god:(_gn>=10?0.15:0)*(0.6+_stl.gearLove*0.45)}; }   /* 超脱后穿齐3件以上传说奥格顿→强化目标提档：神豪冲+20、高氪冲+18、其他追求实力/面子的追求型冲+15保底（传说套值得冲高；护符不足时 aiEnhance 自动止损停在可保档位） */
+    return {enhTarget: (_gn>=10?20:12)*Math.round(100*(0.6+_stl.gearLove*0.45))/100, seal:0, god: (_gn>=10?0.15:0)*(0.6+_stl.gearLove*0.45)}; }   /* 最终阶位：护符充足→全力强化(装备追求度高者冲20、低者~12)+正常升天神；护符不足→先强化到护符能保的+12档+省金币优先囤护符(高强化无护失败掉级损失大，护符是超脱后刚需) */
   var lv=st.lv||1, tier=st.tierIdx||0, enh=st.enh&&st.enh.lv||0;
   var godMat=(st.godPower||0)+(st.godCrystal||0)*10+(st.godRune||0)*5+(st.godSeal||0)*5;   /* 天神材料折算(碎片/结晶/破重) */
   var canBoss=lv>=30&&tier>=1;                    /* 战力够刷中高级boss→全属性滚雪球起点(战力不足刷不动→属性增长慢) */
@@ -6623,13 +6670,15 @@ function aiEnhance(st,p,enhTarget){   /* AI逐级点强化真实穿戴武器+5�
   var w=st.equip&&st.equip.weapon, lv=w?(w.enhanceLevel||0):0, _w0=lv;
   for(var g=0;w&&g<60&&lv<maxLv;g++){
     var cfg=weaponEnhCfg(lv);
-    if(st.gold>=cfg.cost){ st.gold-=cfg.cost;
+    if(st.gold>=cfg.cost){
+      if(lv>=8&&_guard(st.bag)<0){ break; }   /* 强化等级≥8：高等级成功概率太低——必须有安全护符才强化（没有护符就不强化，无护失败掉级浪费金币） */
+      st.gold-=cfg.cost;
       if(Math.random()<cfg.rate){ lv++; }   /* 成功：不消耗安全护符 */
       else {
         var gi=_guard(st.bag);
-        if(_final&&gi>=0){ st.bag[gi].count=(st.bag[gi].count||1)-1; if(st.bag[gi].count<=0) st.bag.splice(gi,1); }   /* 超脱后：失败用护符保级（不掉级） */
+        if(gi>=0&&(lv>=8||_final)){ st.bag[gi].count=(st.bag[gi].count||1)-1; if(st.bag[gi].count<=0) st.bag.splice(gi,1); }   /* 失败用护符保级（不掉级）：强化等级≥8（高等级概率低，护符是强制必需品）或超脱后（装备永久，保级值得）——不然高等级失败掉级很浪费钱 */
         else if(_final&&gi<0&&lv>=12){ break; }   /* 超脱后高强化(≥+12,成功率<0.1%)且无护符：停止冲高，省金币去买护符（无护冲高失败掉级损失大） */
-        else { lv=Math.max(0,lv-1); }   /* 未超脱 或 低档无护：直接掉1级（未超脱装备将被轮回清空，不值得耗护符） */
+        else { lv=Math.max(0,lv-1); }   /* 低档无护：直接掉1级（未超脱低等级装备将被轮回清空，不值得耗护符） */
       }
     }
     else if(_buy()) break;
@@ -6638,25 +6687,30 @@ function aiEnhance(st,p,enhTarget){   /* AI逐级点强化真实穿戴武器+5�
   /* --- 防具：5件逐级（同玩家 armorEnhCfg 花费+概率+安全护符；防具为次要提升，用剩余金币） --- */
   var armorTarget=Math.min(20,Math.max(2,Math.round(maxLv*0.6)));
   var _armorMissing=0;
-  ['helm','armor','glove','leg','boot'].forEach(function(tk){
+  ['helm','armor','glove','leg','boot'].sort(function(a,b){ var _ea=st.equip&&st.equip[a], _eb=st.equip&&st.equip[b]; var _la=String(_ea&&_ea.name||'').indexOf('传说 奥格顿')>=0?1:0; var _lb=String(_eb&&_eb.name||'').indexOf('传说 奥格顿')>=0?1:0; return _lb-_la; }).forEach(function(tk){   /* 传说件优先强化（先冲传说奥格顿），普通件强化不超过+5（多了浪费） */
     var e=st.equip&&st.equip[tk]; if(!e) return;
+    var _isOg=String(e.name||'').indexOf('传说 奥格顿')>=0;
     var alv=e.enhanceLevel||0, _a0=alv;
-    for(var q=0;q<60&&alv<armorTarget;q++){
+    var _cap=_isOg?armorTarget:Math.min(5,armorTarget);   /* 传说件强化到目标档；普通件封顶+5 */
+    for(var q=0;q<60&&alv<_cap;q++){
       var ac=armorEnhCfg(alv);
-      if(st.gold>=ac.cost){ st.gold-=ac.cost;
+      if(st.gold>=ac.cost){
+        if(alv>=8&&_guard(st.bag)<0){ break; }   /* 同武器：强化等级≥8必须有护符才强化（没有护符就不强化，无护失败掉级浪费金币） */
+        st.gold-=ac.cost;
         if(Math.random()<ac.rate){ alv++; }
-        else { var g2=_guard(st.bag); if(_final&&g2>=0){ st.bag[g2].count=(st.bag[g2].count||1)-1; if(st.bag[g2].count<=0) st.bag.splice(g2,1); } else { alv=Math.max(0,alv-1); } }   /* 超脱后防具失败用护符保级；未超脱/无护→掉级（省护符） */
+        else { var g2=_guard(st.bag); if(g2>=0&&(alv>=8||_final)){ st.bag[g2].count=(st.bag[g2].count||1)-1; if(st.bag[g2].count<=0) st.bag.splice(g2,1); } else { alv=Math.max(0,alv-1); } }   /* 失败用护符保级：强化等级≥8（护符强制必需品）或超脱后（装备永久）；低档无护→掉级（省护符） */
       }
       else if(_buy()) break;
     }
     e.enhanceLevel=alv; if(alv>=15&&_a0<15){ try{ showServerNotice('恭贺 「'+((p&&p.name)||'神秘玩家')+'」 的 '+(e.name||'防具')+' 强化至 +15！神兵锋芒毕露，天下谁与争锋！'); }catch(e){} }   /* 每件防具独立强化等级（与玩家同对象），防具榜取5件最高 */
-    if(alv<armorTarget && (st.gold||0)<armorEnhCfg(alv).cost) _armorMissing=1;
+    if(alv<_cap && (st.gold||0)<armorEnhCfg(alv).cost) _armorMissing=1;
   });
   st._enhSaving = ((w&&(st.enh.lv||0)<maxLv && (st.gold||0)<weaponEnhCfg(st.enh.lv).cost)||_armorMissing) ? 1 : 0;   /* 武器或任一防具仍缺金币→本步天神升级让路，金币全留强化（强化绝对优先） */
 }
 function aiMaxArmorEnh(st){ var mx=0; ['helm','armor','glove','leg','boot'].forEach(function(tk){ var e=st.equip&&st.equip[tk]; if(e&&(e.enhanceLevel||0)>mx) mx=e.enhanceLevel||0; }); return mx; }   /* AI防具强化：5件中取最高（与玩家 maxArmorEnh 同口径，防具榜用） */
 function aiCritDmgRed(st){ var e18=0; ['helm','armor','glove','leg','boot'].forEach(function(tk){ var e=st.equip&&st.equip[tk]; if(e&&(e.enhanceLevel||0)>=18) e18++; }); return (aiWornIth(st)>=5?0.30:0)+e18*0.03; }   /* AI暴击伤害减免=伊泰安5件+30%+防具强化+18每件+3%（同玩家 playerCritDmgRed 口径），被暴击时暴击倍率×(1-此值) */
 function aiEnh20Fdr(st){ var e20=0; ['helm','armor','glove','leg','boot'].forEach(function(tk){ var e=st.equip&&st.equip[tk]; if(e&&(e.enhanceLevel||0)>=20) e20++; }); return e20*0.03; }   /* AI防具强化+20每件最终伤害减免+3%（同玩家 fd enhN 口径） */
+function aiGemFdr(st){ var n=0; for(var tk2 in (st.equip||{})){ var e2=st.equip[tk2]; if(!e2||!e2.gemSlots) continue; for(var s4=0;s4<e2.gemSlots.length;s4++){ var g4=e2.gemSlots[s4]; if(g4&&String(g4.name||'')==='专注宝石Lv6') n++; } } return Math.min(0.30,n*0.003); }   /* AI同玩家：6级专注宝石每颗最终伤害减免+0.3%（穿戴已镶统计，槽位天然上限） */
 function aiArmorAbs(st){ var ab=0; ['helm','armor','glove','leg','boot'].forEach(function(tk){ var e=st.equip&&st.equip[tk]; if(e) ab+=armorEnhAbs(e.enhanceLevel||0)+(e.damageAbsorption||0); }); return ab; }   /* AI防具强化伤害吸收：每件 armorEnhAbs+装备固定吸收合计（同玩家） */
 /* ===== AI 真实物品体系：掉落入背包 → 自动穿戴 → 自动镶嵌（与玩家完全同链路，杜绝凭空） ===== */
 function aiItemScore(it){ if(!it) return -1; return (it.strength||0)+(it.agility||0)+(it.constitution||0)+(it.spirit||0)+(it.intelligence||0)+(it.luck||0)+(it.maxHp||0)/5+(it.physicalAttack||0)*3+(it.defense||0)*2; }   /* 装备战力评分（仿玩家穿装判断） */
@@ -6709,6 +6763,8 @@ function aiFarmDrop(st,p,onlineSec){   /* 刷本真实掉落装备/宝石/材料
 function aiAutoEquip(st,p){   /* 自动穿戴背包里最利于战力的武器/防具/首饰（仿玩家autoEquip：同槽位按aiItemScore比较，穿更好的；换下的旧装回背包）。首饰5槽：项链neck/戒指ring1,ring2/手镯bangle1,bangle2（同玩家EQ_ACCEPT）。真实穿戴到st.equip，不凭空——从已真实掉落的背包物品穿戴。遵守穿戴等级要求：角色等级(st.lv)需≥装备equipLevel，超等级的旧装脱回背包（与玩家4832同规则） */
   if(!st.bag||!st.equip) return;
   var lv=st.lv||1;
+  var _cashEq=aiIsMerchant(p)||aiIsCasher(p,st);   /* 赚钱型：传说套未穿齐3件前不穿（好货卖钱，战力次要） */
+  var _ogWornEq=0; ['helm','armor','glove','leg','boot'].forEach(function(tk){ var _eWq=st.equip[tk]; if(_eWq&&String(_eWq.name||'').indexOf('传说 奥格顿')>=0) _ogWornEq++; });
   var types=[['weapon','weapon'],['helmet','helm'],['chest','armor'],['gloves','glove'],['leggings','leg'],['boots','boot'],
              ['necklace','neck'],['ring','ring1'],['ring','ring2'],['bracelet','bangle1'],['bracelet','bangle2']];
   for(var ti=0;ti<types.length;ti++){
@@ -6718,32 +6774,49 @@ function aiAutoEquip(st,p){   /* 自动穿戴背包里最利于战力的武器/�
     for(var i=0;i<st.bag.length;i++){
       var it=st.bag[i]; if(!it||it.type!==t) continue;
       if((it.equipLevel||0)>lv) continue;   /* 仅可穿戴（equipLevel≤角色等级）者参与评分 */
+      if(_cashEq&&_ogWornEq<3&&String(it.name||'').indexOf('传说 奥格顿')>=0) continue;   /* 赚钱型未穿齐3件：传说套不穿，留背包卖钱（好货变现，战力次要；已穿齐3件→自留保战力继续穿满套） */
       if(!best||aiItemScore(it)>aiItemScore(best)){ best=it; bestIdx=i; }
     }
     if(bestIdx>=0){ var old=st.equip[slot]||null; st.equip[slot]=st.bag[bestIdx]; st.bag.splice(bestIdx,1); if(old) st.bag.push(old); }
   }
 }
-function aiGemEmbed(st,p){   /* 自动镶嵌：有宝石即可按玩家同规则镶嵌——基础成功率，镶嵌锤提高成功率(封顶50%)；成功→宝石镶入空槽、耗宝石(有锤再耗锤)，失败→耗宝石不镶。无锤也能嵌（真实，非凭空） */
+function aiGemEmbed(st,p){   /* 自动镶嵌（与玩家 doGemEmbed 完全同规则）：装备槽含首饰（项链/戒指×2/手镯×2，同玩家首饰可镶）——仅满足 gemOpenTo 槽位限制的宝石可镶（属性石→武器/胸甲、海伦→头盔、属性宝石按 STAT_GEM_EQ 表、混沌神石全槽）；同件装备同名宝石不重复（sameTypeExists）；每次镶嵌扣金币（5级宝石12万/其他158926，同玩家）；成功率=基础×锤加成封顶50%；有锤无论成败都消耗1个；成功→宝石入空槽+耗宝石，失败→耗宝石不镶。**传说装备优先镶、高等级宝石(6级/混沌神石)优先上**（属性更多，好装备上好石，同玩家直觉）。真实流转不凭空 */
   if(!st.bag||!st.equip) return;
-  var seq=[['weapon','weapon'],['helm','helmet'],['armor','chest'],['glove','gloves'],['leg','leggings'],['boot','boots']];
-  for(var i=0;i<st.bag.length;){
-    var gem=st.bag[i]; if(!gem){ i++; continue; }
-    if(gem.type!=='stat_gem'&&gem.type!=='attribute_gem'&&gem.type!=='helen_gem'){ i++; continue; }
+  var _gemList=[]; for(var _gq=0;_gq<st.bag.length;_gq++){ var _gmq=st.bag[_gq]; if(_gmq&&(_gmq.type==='stat_gem'||_gmq.type==='attribute_gem'||_gmq.type==='helen_gem')) _gemList.push(_gmq); }
+  _gemList.sort(function(a,b){ return ((b.level||0)-(a.level||0))||((String(b.name||'')).localeCompare(String(a.name||''))); });   /* 高等级宝石优先（6级/混沌神石 level8 先上），同等级按名稳定 */
+  var seq=[['weapon','weapon'],['helm','helmet'],['armor','chest'],['glove','gloves'],['leg','leggings'],['boot','boots'],
+           ['neck','necklace'],['ring1','ring'],['ring2','ring'],['bangle1','bracelet'],['bangle2','bracelet']]
+    .sort(function(a,b){ var _ea=st.equip&&st.equip[a[0]], _eb=st.equip&&st.equip[b[0]]; var _la=String(_ea&&_ea.name||'').indexOf('传说')>=0?1:0; var _lb=String(_eb&&_eb.name||'').indexOf('传说')>=0?1:0; return _lb-_la; });   /* 传说装备优先镶（好装备上好石） */
+  for(var _gi=0;_gi<_gemList.length;_gi++){ var gem=_gemList[_gi];
+    if(gem.type!=='stat_gem'&&gem.type!=='attribute_gem'&&gem.type!=='helen_gem') continue;
     var base=gemBaseRate(gem)||0;
     var placed=false;
     for(var ti=0;ti<seq.length&&!placed;ti++){
       var e=st.equip[seq[ti][0]]; if(!e||!e.gemSlots) continue;
-      if(gem.type==='attribute_gem' && !(e.type==='weapon'||e.type==='chest')) continue;
-      if(gem.type==='helen_gem' && e.type!=='helmet') continue;
+      if(!gemOpenTo(e,gem)) continue;   /* 同玩家宝石↔装备槽位限制（不同宝石镶嵌装备限制） */
+      if(sameTypeExists(e,gem)) continue;   /* 同件装备同名宝石只能镶嵌一颗（同玩家；attribute_gem 不受此限） */
       var slot=-1; for(var s2=0;s2<e.gemSlots.length;s2++) if(!e.gemSlots[s2]){ slot=s2; break; }
       if(slot<0) continue;
-      var hmIdx=-1; for(var h=0;h<st.bag.length;h++) if(st.bag[h]&&st.bag[h].type==='hammer'){ hmIdx=h; break; }   /* 有锤→提高成功率 */
+      var cost=gemEmbedCost(gem);   /* 统一费用：6级及以上属性宝石10亿/5级12万/其他158926 */
+      if((st.gold||0)<cost) continue;   /* 金币不足→这件装备镶不上，换下一槽/装备（有金币再镶） */
+      var _bi=st.bag.indexOf(gem), hmIdx=-1; for(var h=0;h<st.bag.length;h++) if(st.bag[h]&&st.bag[h].type==='hammer'){ hmIdx=h; break; }   /* 有锤→提高成功率 */
       var mult=hmIdx>=0?((st.bag[hmIdx].successRateBonus||1)):1;
+      st.gold-=cost;   /* 无论成败均消耗金额（同玩家，扣费在判定前） */
       var ok=Math.random()<Math.min(0.5,base*mult);
-      if(ok){ e.gemSlots[slot]=gem; st.bag.splice(i,1); if(hmIdx>=0) st.bag.splice(hmIdx>i?hmIdx-1:hmIdx,1); placed=true; break; }   /* 成功：耗宝石(+锤) */
-      else { st.bag.splice(i,1); placed=true; break; }   /* 失败：耗宝石不镶入（无锤仅耗宝石，同玩家） */
+      if(ok){ e.gemSlots[slot]=gem; st.bag.splice(_bi,1); if(hmIdx>=0) st.bag.splice(hmIdx>_bi?hmIdx-1:hmIdx,1); placed=true; break; }   /* 成功：镶入+耗宝石+耗锤（有锤；6级专注宝石成功不扣护符） */
+      else {
+        var _f6a=gem.type==='stat_gem'&&gem.level===6&&String(gem.name||'').indexOf('专注宝石')>=0;   /* 6级专注宝石专属（同玩家）：失败扣1安全护符；背包无护符→宝石与装备一起破碎消失 */
+        if(_f6a){
+          var _guA=-1; for(var _gq2=0;_gq2<st.bag.length;_gq2++) if(st.bag[_gq2]&&st.bag[_gq2].type==='enh_guard'){ _guA=_gq2; break; }
+          st.bag.splice(_bi,1); if(hmIdx>_bi) hmIdx--;   /* 宝石消耗（失败本就不镶入） */
+          if(_guA>=0){ if(_guA>_bi) _guA--; st.bag[_guA].count=(st.bag[_guA].count||1)-1; if(st.bag[_guA].count<=0) st.bag.splice(_guA,1); if(hmIdx>_guA) hmIdx--; }   /* 失败扣1个安全护符 */
+          else { st.equip[seq[ti][0]]=null; }   /* 背包无安全护符：装备破碎消失（同玩家） */
+          if(hmIdx>=0) st.bag.splice(hmIdx,1);   /* 有锤无论成败都耗（同玩家） */
+          placed=true; break;
+        }
+        st.bag.splice(_bi,1); if(hmIdx>=0) st.bag.splice(hmIdx>_bi?hmIdx-1:hmIdx,1); placed=true; break;   /* 失败：耗宝石+耗锤（有锤，无论成败都耗，同玩家），不镶入 */
+      }
     }
-    if(!placed) i++;
   }
 }
 function aiSellTrash(st,p){   /* 低档装备(普通/稀有)练级堆太多、拍卖无人问津 → 直接卖系统商店换钱（与玩家 shopSellPrice 同价）。史诗/传说/材料/宝石/锤/穿戴保留（战力与可交易价值）；卖真实物品换金币（非凭空） */
@@ -6926,7 +6999,7 @@ function aiBuildState(st,p){   /* 玩家同口径：六维(含perm)→攻防血�
   var agi=Math.max(10, Math.round(A.敏捷)), pw=battlePower(Math.round(patk),Math.round(pdef),Math.round(hp),agi);   /* 敏捷=六维敏捷(同玩家battlePower/攻速口径)：避免固定250导致AI攻速51秒/次、战力低估 */
   var hp2=hp+Math.round(pw*100);   /* 防秒杀（玩家同款：生命=原算+战力×100） */
   var asc=!!(st.ascended||((st.ws>=99 && (st.core||0)>=1))); var tierIdx=asc?6:ti;   /* 超脱·轮回主宰=99世圆满+太初神核×1(与世界boss遗物匣碎片合成，玩家同规则，超脱消耗核后由ascended标记保持阶位)；AI神核来自世界boss前十开匣或金币购买，杜绝凭空生成 */
-  var fdr=Math.min(0.9, Math.min(0.5,(alt.fdr||0)*0.005+Math.min(0.3,((st.talents||{}).fdr||0)*0.03))+(aiWornIth(st)>=5?0.30:0)+(og>=5?0.10:0)+aiEnh20Fdr(st));   /* 神坛·御天(封顶50%)+轮回天赋·御守(封顶30%)+伊泰安5件+30%+奥格顿5件+10%+防具强化+20每件+3%(全同玩家fd口径)，整体封顶90% */
+  var fdr=Math.min(0.9, Math.min(0.5,(alt.fdr||0)*0.005+Math.min(0.3,((st.talents||{}).fdr||0)*0.03))+(aiWornIth(st)>=5?0.30:0)+(og>=5?0.10:0)+aiEnh20Fdr(st)+aiGemFdr(st));   /* 神坛·御天(封顶50%)+轮回天赋·御守(封顶30%)+伊泰安5件+30%+奥格顿5件+10%+防具强化+20每件+3%+6级专注宝石每颗+0.3%(全同玩家fd口径)，整体封顶90% */
   var ig=0,tr=0,add=0;
   var ithN=aiWornIth(st);   /* AI穿戴中的伊泰安件数（真实穿在5首饰槽+武器防具，同玩家ISET数equipState口径，获得才有，杜绝凭空） */
   if(tierIdx>=6){ ig+=0.30;tr+=0.30; } else if(tierIdx>=5){ ig+=0.20;tr+=0.20; } else if(tierIdx>=4){ ig+=0.08;tr+=0.08; } else if(tierIdx>=3){ ig+=0.05; }   /* 阶位攻击特性：超脱30%+真伤30%/大帝20%+20%/神王8%+8%/真神5%（同玩家 roleTierAtk：修复原缺超脱10%） */
@@ -6962,7 +7035,7 @@ function aiSaveField(force){   /* 落盘去重+原子：批量核算(心跳/rend
     else{ if(__aiSaveTimer) return; __aiSaveTimer=setTimeout(function(){ __aiSaveTimer=null; __aiSavePending=0; try{ localStorage.setItem('shenqi_field_roster',JSON.stringify(FIELD_ROSTER)); }catch(e){} },2000); }
   }catch(e){}
 }
-function aiHeartbeat(){ ensureFieldRoster(); for(var i=0;i<FIELD_ROSTER.length;i++){ var _p=FIELD_ROSTER[i]; aiEnsureAdvance(_p); if(_p.st&&_p.st._offline) continue;   /* 已下线AI：停止拍卖交易（真实玩家下线=不在游戏，不交易） */ if(typeof aiAuction==='function' && AUCTION && AUCTION.list){ try{ aiAuction(_p.st,_p,Date.now()); }catch(e){} } } aiSaveField(true); try{ aiArenaTick(); }catch(e){} try{ if(location.hash.indexOf('#home')>=0 && typeof renderLimitHome==='function') renderLimitHome(); }catch(e){} try{ if(typeof aiChatTick==='function') aiChatTick(); }catch(e){} }   /* 低频心跳：挂机页面持续发育（配合打开时惰性补算）；停在主页时同步刷新限量神装剩余（AI掉落伊泰安后主页实时更新）；AI 参与拍卖（真实资源上架/购买）；AI 世界发言+私聊议价；AI 之间真实竞技对战（限频结算，同玩家规则） */
+function aiHeartbeat(){ ensureFieldRoster(); for(var i=0;i<FIELD_ROSTER.length;i++){ var _p=FIELD_ROSTER[i]; aiEnsureAdvance(_p); if(_p.st&&_p.st._offline) continue;   /* 已下线AI：停止拍卖交易（真实玩家下线=不在游戏，不交易） */ if(typeof aiAuction==='function' && AUCTION && AUCTION.list){ try{ aiAuction(_p.st,_p,Date.now()); }catch(e){} } try{ if(typeof aiGodDecompBag==='function') aiGodDecompBag(_p.st,_p,true); }catch(e){} } aiSaveField(true); try{ aiArenaTick(); }catch(e){} try{ if(location.hash.indexOf('#home')>=0 && typeof renderLimitHome==='function') renderLimitHome(); }catch(e){} try{ if(typeof aiChatTick==='function') aiChatTick(); }catch(e){} }   /* 低频心跳：挂机页面持续发育（配合打开时惰性补算）；停在主页时同步刷新限量神装剩余（AI掉落伊泰安后主页实时更新）；AI 参与拍卖（真实资源上架/购买）；拍卖后背包多余天神牌兜底拆解成升级材料（先给卖牌机会，卖不掉/不卖才拆，同玩家拆解数量）；AI 世界发言+私聊议价；AI 之间真实竞技对战（限频结算，同玩家规则） */
 function aiBuild(p,sec){
   serverStartInit(); aiEnsureAdvance(p);   /* 惰性补算到当前，再读存档确定性构建 */
   var st=p.st, B=aiBuildState(st,p);
@@ -7485,6 +7558,11 @@ var STAT_GEM_EQ={
   '攻击之石':['weapon'],   /* 攻击石头仅可镶嵌武器，不可用于胸甲/盾牌 */
   '混沌神石':['weapon','helmet','chest','leggings','shield','gloves','boots','necklace','ring','bracelet']
 };
+function gemEmbedCost(gem){   /* 镶嵌金币统一口径（玩家UI/doGemEmbed/AI共用）：6级及以上属性宝石（6级力量/敏捷/体质/幸运/生命/攻击之石、6级专注宝石、混沌神石level8）每次10亿；5级12万；其他(1-4级/海伦/祝福属性宝石)158926——无论成败照扣（扣费在判定前） */
+  if(!gem) return 0;
+  if(gem.type==='stat_gem'&&(gem.level||0)>=6) return 1000000000;
+  return gem.level===5?120000:158926;
+}
 function gemOpenTo(eq, gem){
   if(!eq||!gem) return false;
   if(gem.type==='attribute_gem') return eq.type==='chest'||eq.type==='weapon';
@@ -7625,7 +7703,8 @@ function renderGemEmbed(){
   if(GEM.hammer&&base>0) mult=hammerMult(GEM.hammer.level);
   var total=Math.min(0.5, base*mult);
   $('#gem-rate').textContent=(function(x){var v=Math.round(x*1000)/10; return v+'%';})(total);   /* 成功概率=最终成功率 */
-  var $gc=$('#gem-cost'); if($gc) $gc.textContent=fmtWan(GEM.selGem?(GEM.selGem.level===5?120000:158926):0);   /* 5级12万/其他158926，单位显示 */
+  var $gc=$('#gem-cost'); if($gc) $gc.textContent=fmtWan(GEM.selGem?gemEmbedCost(GEM.selGem):0);   /* 统一费用：6级及以上属性宝石10亿/5级12万/其他158926，单位显示 */
+  var $ggu=$('#gem-guard'); if($ggu){ var _gn2=0; var _gItems=stackItems('enh_guard'); for(var _gi3=0;_gi3<_gItems.length;_gi3++) _gn2+=(_gItems[_gi3].count||1); $ggu.textContent=_gn2; }   /* 拥有安全护符数量（点击镶嵌时随renderGem及时更新） */
   var $gg=$('#gem-gold'); if($gg){ $gg.textContent=fmtWan(CURRENCY.gold); $gg.style.color=getCurrencyStyle(CURRENCY.gold); }
 }
 function renderGemExtract(){
@@ -7687,23 +7766,36 @@ function doGemEmbed(){
   if(GEM.slotIdx>=slots.length){ toast('宝石槽已满'); return; }
   if(slots[GEM.slotIdx]){ toast('该槽已有宝石'); return; }
   if(sameTypeExists(GEM.equip,GEM.selGem)){ toast('已镶嵌同类型宝石'); return; }
-  var cost=(GEM.selGem.level===5)?120000:158926;   /* 5级12万/其他158926 */
+  var cost=gemEmbedCost(GEM.selGem);   /* 统一费用：6级及以上属性宝石10亿/5级12万/其他158926 */
   if(CURRENCY.gold<cost){ toast('金币不足'); return; }
-  CURRENCY.gold-=cost; renderCurrency();   /* 无论成败均消耗金额 */
+  CURRENCY.gold-=cost; renderCurrency();   /* 无论成败均消耗金额（扣费在判定前） */
   var base=gemBaseRate(GEM.selGem), total=base;
   if(GEM.hammer) total=base*hammerMult(GEM.hammer.level);
   var ok=Math.random()<Math.min(0.5,total);
   if(ok){
-    /* 成功：镶入该槽、消耗宝石、槽位移到下一空槽、取消选中 */
+    /* 成功：镶入该槽、消耗宝石、槽位移到下一空槽、取消选中（6级专注宝石成功不扣安全护符） */
     slots[GEM.slotIdx]=JSON.parse(JSON.stringify(GEM.selGem));
     applyGemAttrs(GEM.equip,GEM.selGem);
     playSoundEffect('embedSuccess'); enhFx('success','gem-equip'); toast('镶嵌成功');
     consumeStackRet(GEM.selGem,1); GEM.selGem=null;
     for (var i=GEM.slotIdx+1;i<slots.length;i++){ if(!slots[i]){ GEM.slotIdx=i; break; } }
   } else {
-    /* 失败：消耗宝石但保持选中（耗尽才取消）、槽位原样不动 */
-    playSoundEffect('embedFail'); toast('镶嵌失败');
-    if(consumeStackRet(GEM.selGem,1)<=0) GEM.selGem=null;
+    playSoundEffect('embedFail');
+    var _f6=GEM.selGem&&GEM.selGem.type==='stat_gem'&&GEM.selGem.level===6&&String(GEM.selGem.name||'').indexOf('专注宝石')>=0;   /* 6级专注宝石专属：失败扣1安全护符；无护符→宝石与装备一起破碎消失（成功不扣护符） */
+    if(_f6){
+      var _gl=consumeStackRet(GEM.selGem,1);   /* 宝石消耗（失败本就不镶入） */
+      var _gu=stackItems('enh_guard')[0]||null;
+      if(_gu){ consumeStackRet(_gu,1); toast('镶嵌失败，消耗1个安全护符'); }
+      else {   /* 背包无安全护符：宝石与装备一起破碎消失 */
+        for(var _ek in equipState){ if(equipState[_ek]===GEM.equip){ equipState[_ek]=null; } }
+        for(var _bp=0;_bp<BAG_NUM;_bp++) for(var _bi2=0;_bi2<BAG_SLOTS;_bi2++){ if(bag[_bp][_bi2]===GEM.equip){ bag[_bp][_bi2]=null; } }
+        GEM.equip=null; GEM.slotIdx=0; toast('没有安全护符，装备与宝石一起破碎消失！');
+      }
+      if(_gl<=0) GEM.selGem=null;
+    } else {
+      toast('镶嵌失败');
+      if(consumeStackRet(GEM.selGem,1)<=0) GEM.selGem=null;
+    }
   }
   /* 使用了镶嵌之锤：无论镶嵌成败均消耗 1 个，用完取消选中 */
   if(GEM.hammer){ if(consumeStackRet(GEM.hammer,1)<=0) GEM.hammer=null; }
@@ -7729,7 +7821,7 @@ function doGemExtract(){
 /* ============ 天神系统 ============ */
 var LOADED_GODS = [];   /* 已加载到天神系统的天神（按序，左列显示） */
 function isGodItem(it){ return it && (it.type === 'god_seal' || it.type === 'god_rune'); }
-var GOD={ formation:{main:null,sub1:null,sub2:null,sub3:null}, selected:null, upTarget:null, tab:'formation', page:1 };
+var GOD={ formation:{main:null,sub1:null,sub2:null,sub3:null}, selected:null, upTarget:null, dcTarget:null, tab:'formation', page:1 };
 function ownedGods(){ return LOADED_GODS; }
 function isFormed(g){ for (var k in GOD.formation){ if(GOD.formation[k]&&GOD.formation[k].id===g.id) return true; } return false; }
 function calcGodProgress(g){ var r=g.requiredExp||100; if(r<=0) return 0; return Math.min(100,(g.currentExp||0)/r*100); }
@@ -7796,7 +7888,7 @@ function renderGod(){
     var liIdx=(GOD.page-1)*pp+si;
     var g=slice[si];
     var d=document.createElement('div');
-    d.className='god-li'+(g?'':' empty')+(g&&((GOD.selected&&GOD.selected.id===g.id)||(GOD.upTarget&&GOD.upTarget.id===g.id))?' sel':'');
+    d.className='god-li'+(g?'':' empty')+(g&&((GOD.selected&&GOD.selected.id===g.id)||(GOD.upTarget&&GOD.upTarget.id===g.id)||(GOD.dcTarget&&GOD.dcTarget.id===g.id))?' sel':'');
     d.setAttribute('data-li', liIdx);
     d._item=g||null;
     if(g){
@@ -7805,6 +7897,7 @@ function renderGod(){
         +(isFormed(g)?'<span class="god-on">上阵中</span>':'');
       (function(gg){ d.addEventListener('click', function(e){ if(godSuppressClick){ godSuppressClick=false; return; } if(e){ e.stopPropagation(); } showTooltip(gg, d);
         if(GOD.tab==='upgrade'){ GOD.upTarget=gg; }
+        else if(GOD.tab==='inherit'){ if(isFormed(gg)){ toast('上阵天神不能拆解，要先拆下才能拆解'); GOD.selected=null; GOD.dcTarget=null; } else { GOD.dcTarget=gg; GOD.selected=gg; } }   /* 拆解页：仅未上阵天神可选，上阵提示需先拆下 */
         else GOD.selected=gg;
         renderGod(); }); })(g);
     }else{
@@ -7813,9 +7906,12 @@ function renderGod(){
     list.appendChild(d);
   }
   $('#god-pageinfo').textContent=GOD.page+'/'+pages;
-  $('#god-sel-hint').textContent=GOD.selected?(GOD.selected.name+' · '+(GOD.selected.grade||0)+'重'+(GOD.selected.star||1)+'星'):'点击列表选中天神';
+  $('#god-sel-hint').textContent = GOD.tab==='inherit'
+    ? (GOD.dcTarget?(GOD.dcTarget.name+' · 拆解可得 '+(GOD.dcTarget.type==='god_rune'?'500 神力碎片 + 10 神力结晶':'2000 神力碎片 + 50 神力结晶')):'点击列表选择要拆解的天神（上阵天神需先拆下）')
+    : (GOD.selected?(GOD.selected.name+' · '+(GOD.selected.grade||0)+'重'+(GOD.selected.star||1)+'星'):'点击列表选中天神');
   if(GOD.tab==='formation') renderGodForm();
   else if(GOD.tab==='upgrade') renderGodUpgrade();
+  else if(GOD.tab==='inherit') renderGodInherit();
   saveGame();
 }
 function renderGodForm(){
@@ -7862,6 +7958,7 @@ function godLongPress(g){
     if(!placeInBag(g)){ toast('背包已满，无法回退'); return; }
     LOADED_GODS.splice(gi,1);
     if(GOD.selected&&GOD.selected.id===g.id) GOD.selected=null;
+    if(GOD.dcTarget&&GOD.dcTarget.id===g.id) GOD.dcTarget=null;
     /* 等级清零：重置为原始状态 0重1星 */
     g.grade=0; g.star=1; g.currentExp=0; g.requiredExp=calcReqExp(g);
     renderGod(); renderBag();
@@ -7956,6 +8053,50 @@ function renderGodUpgrade(){
   $('#god-bar').style.width=prog+'%';
   $('#god-rate').textContent=calcGodRate(g)+'%';
   $('#god-cost').textContent=fmtWan(calcGodCost(g));
+}
+function renderGodInherit(){   /* 拆解页：顶部凹槽=选中的天神牌子（仅未上阵可选），下方3排×5格从第1格起显示拆解产出（神符牌=500神力碎片+10神力结晶；神印牌=2000神力碎片+50神力结晶，带数量角标），最下拆解按钮 */
+  var t=document.getElementById('god-dc-target'); if(!t) return;
+  var g=GOD.dcTarget;
+  t.innerHTML=g?'<img src="'+g.img+'">':''; t._item=g;
+  var info=document.getElementById('god-dc-info');
+  if(info) info.innerHTML = g ? '<div class="gu-name '+(g.type==='god_rune'?'tt-gold':'tt-purple')+'">'+g.name+'</div><div class="gu-star '+(g.type==='god_rune'?'tt-gold':'tt-purple')+'">'+(g.grade||0)+'重'+(g.star||1)+'星</div>' : '';
+  var hint=document.getElementById('god-dc-hint'); if(hint) hint.textContent=g?(g.type==='god_rune'?'拆解可得：500 神力碎片 + 10 神力结晶':'拆解可得：2000 神力碎片 + 50 神力结晶'):'';
+  var ms=document.getElementById('god-dc-mats'); if(!ms) return;
+  ms.innerHTML='';
+  var out=[];
+  if(g){ var _fr=(g.type==='god_rune'?500:2000), _cr=(g.type==='god_rune'?10:50);
+    out=[{img:'logos/神力碎片.png',n:_fr},{img:'logos/神力结晶.png',n:_cr}];
+  }
+  for(var i=0;i<15;i++){   /* 3排×5格：从第1格开始出现产出材料，其余为空 */
+    var m=out[i];
+    var d=document.createElement('div'); d.className='pick'+(m?'':' empty');
+    if(m) d.innerHTML='<img src="'+m.img+'">'+(m.n?'<span class="qty">'+m.n+'</span>':'');
+    ms.appendChild(d);
+  }
+  var btn=document.getElementById('god-dc-btn'); if(btn){ btn.onclick=doGodDecomp; }
+}
+function _bagSpaceFor(bp,qty){   /* 拆解前背包容量预检：同名可叠加空间+空槽足够容纳 qty 个（真实材料叠加入包，放不下则阻止拆解） */
+  var max=bp.maxStack||1, remain=qty, empty=0;
+  for(var p=0;p<BAG_NUM;p++) for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i];
+    if(s&&s.name===bp.name) remain=Math.max(0,remain-(max-(s.count||1)));
+    else if(!s) empty++;
+  }
+  return remain<=0 || (empty>0&&remain<=max);
+}
+function doGodDecomp(){   /* 拆解执行：选中的天神牌子从系统移除（消失），背包叠加增加神力碎片+神力结晶（真实物品，同规则不凭空）；上阵天神先提示拆下 */
+  var g=GOD.dcTarget; if(!g){ toast('请先选择要拆解的天神'); return; }
+  if(isFormed(g)){ toast('上阵天神不能拆解，要先拆下才能拆解'); return; }
+  var gi=LOADED_GODS.indexOf(g); if(gi<0){ toast('天神不存在'); return; }
+  var bp1=ITEM_BLUEPRINTS.godPowerFragment, bp2=ITEM_BLUEPRINTS.godCrystal;
+  var _fr=(g.type==='god_rune'?500:2000), _cr=(g.type==='god_rune'?10:50);
+  if(!_bagSpaceFor(bp1,_fr)||!_bagSpaceFor(bp2,_cr)){ toast('背包空间不足，无法拆解'); return; }
+  LOADED_GODS.splice(gi,1);   /* 天神牌子消失（与回退同链路：从系统移除，不凭空） */
+  var m1=mkLoot(bp1); m1.count=_fr; addStackable(m1);
+  var m2=mkLoot(bp2); m2.count=_cr; addStackable(m2);
+  if(GOD.selected&&GOD.selected.id===g.id) GOD.selected=null;
+  GOD.dcTarget=null;
+  renderGod(); renderBag();
+  toast('拆解成功：'+g.name+' → 神力碎片 ×'+_fr+'、神力结晶 ×'+_cr);
 }
 var godFxTimer=null, godFx=null;
 function godFxShow(cls,text){
@@ -8226,7 +8367,8 @@ function renderAttrs(){
         :'<div class="tt-empty">当前暂无生效特性</div>');
   }
 }
-function finalDR(){ var dr=0; if(ISET>=5) dr+=0.30; if(OG>=5) dr+=0.10; var enhN=0; for(var ek in equipState){ var ee=equipState[ek]; if(ee&&(ee.enhanceLevel||0)>=20) enhN++; } dr+=Math.min(0.30,enhN*0.03); return Math.min(0.90,dr); }   /* 最终伤害减免：伊泰安30%+奥格顿10%+强20每件3%（去×9%换算），封顶90% */
+function gemFdrPct(){ var n=0; for(var ek2 in equipState){ var ee2=equipState[ek2]; if(!ee2||!ee2.gemSlots) continue; for(var s3=0;s3<ee2.gemSlots.length;s3++){ var g3=ee2.gemSlots[s3]; if(g3&&String(g3.name||'')==='专注宝石Lv6') n++; } } return Math.min(0.30,n*0.003); }   /* 6级专注宝石：每颗最终伤害减免+0.3%（穿戴已镶统计，槽位天然上限），并入角色最终伤害减免 */
+function finalDR(){ var dr=0; if(ISET>=5) dr+=0.30; if(OG>=5) dr+=0.10; var enhN=0; for(var ek in equipState){ var ee=equipState[ek]; if(ee&&(ee.enhanceLevel||0)>=20) enhN++; } dr+=Math.min(0.30,enhN*0.03); dr+=gemFdrPct(); return Math.min(0.90,dr); }   /* 最终伤害减免：伊泰安30%+奥格顿10%+强20每件3%（去×9%换算）+6级专注宝石每颗0.3%，封顶90% */
 var ELEM_MAP={'土属性':'earth','火属性':'fire','水属性':'water','风属性':'wind'};
 function elemKey(attr){ return (attr&&ELEM_MAP[attr])||null; }   /* 属性名→元素key */
 function restrainRate(ae,tn){   /* 属性克制：目标无本体属性→1；水克火/火克风/风克土/土克水×1.5；被克×0.75；同属性/无→1 */
@@ -8331,8 +8473,8 @@ function roleTraits(){
   if(equipState['weapon']&&equipState['weapon'].gemAttributes&&equipState['weapon'].gemAttributes.additionalAttribute) atr=true;
   if(equipState['armor']&&equipState['armor'].gemAttributes&&equipState['armor'].gemAttributes.additionalAttribute) dattr=true;
   if(ISET>=5){ cdTotal+=0.30; cdSrc.push('伊泰安首饰5件+30%'); }
-  var fd=Math.min(0.9,(ISET>=5?0.30:0)+(OG>=5?0.10:0)+enhN*0.03+altarFdrPct()+reincFdr());
-  if(fd>0){ var fl=[]; if(ISET>=5) fl.push('伊泰安首饰5件+30%'); if(OG>=5) fl.push('传说奥格顿5件+10%'); if(enhN>0) fl.push('强化+20防具'+enhN+'件+'+pct(enhN*0.03)); if(altarFdrPct()>0) fl.push('黄金神坛·御天+'+pct(altarFdrPct())); if(reincFdr()>0) fl.push('轮回天赋·御守+'+pct(reincFdr())); out.push({n:'最终伤害减免',d:'受到的最终伤害降低'+pct(fd)+'。提供：'+jn(fl),p:pct(fd)}); }
+  var fd=Math.min(0.9,(ISET>=5?0.30:0)+(OG>=5?0.10:0)+enhN*0.03+altarFdrPct()+reincFdr()+gemFdrPct());
+  if(fd>0){ var fl=[]; if(ISET>=5) fl.push('伊泰安首饰5件+30%'); if(OG>=5) fl.push('传说奥格顿5件+10%'); if(enhN>0) fl.push('强化+20防具'+enhN+'件+'+pct(enhN*0.03)); if(altarFdrPct()>0) fl.push('黄金神坛·御天+'+pct(altarFdrPct())); if(reincFdr()>0) fl.push('轮回天赋·御守+'+pct(reincFdr())); if(gemFdrPct()>0) fl.push('镶嵌6级专注宝石每颗+0.3%'); out.push({n:'最终伤害减免',d:'受到的最终伤害降低'+pct(fd)+'。提供：'+jn(fl),p:pct(fd)}); }
   if(OG>=5) out.push({n:'最终伤害加成',d:'造成的最终伤害提高10%。提供：传说奥格顿5件',p:'10%'});
   if(tt&&titleAtk().ls>0){ var _lz=titleAtk().ls; lsTotal+=_lz; lsSrc.push(tt.n+'称号+'+pct(_lz)); }   /* 称号吸血：璀璨星钻10%（戴上生效） */
   if(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0){ lsTotal+=0.10; lsSrc.push('伊泰安项链+10%'); out.push({n:'秒杀小怪',d:'1%概率秒杀任何小怪(无视等级)，对80级以下Boss同样有效。提供：伊泰安项链',p:'1%'}); } if(altarLsPct()>0){ lsTotal+=altarLsPct(); lsSrc.push('黄金神坛·噬血+'+pct(altarLsPct())); } var _rlv=(REBIRTH.talents.lifesteal*0.02+REBIRTH.relic.realm*0.01); if(_rlv>0){ lsTotal+=_rlv; lsSrc.push('轮回天赋·噬魂/法器·回响+'+pct(_rlv)); }   /* 轮回天赋·吸血(2%/级)+法器·回响(1%/级)：攻击吸血合并显示 */
@@ -10760,7 +10902,7 @@ function doReincarnate(){
     /* 重置（保留 PERM永久/图鉴/轮回数据） */
     for(var p=0;p<BAG_NUM;p++)for(var i=0;i<BAG_SLOTS;i++)bag[p][i]=null;
     equipState={};
-    LOADED_GODS.length=0; GOD.formation={main:null,sub1:null,sub2:null,sub3:null}; GOD.selected=null; GOD.upTarget=null;
+    LOADED_GODS.length=0; GOD.formation={main:null,sub1:null,sub2:null,sub3:null}; GOD.selected=null; GOD.upTarget=null; GOD.dcTarget=null;
     CURRENCY.gold=Math.round(CURRENCY.gold*0.2);   /* 保留20%金币 */
     stopTrialAuto(); T.started=false; T.layer=1; T.best=0;
     CHARACTER.info.level=0; TR.level=0; TR.exp=0; TR.reqExp=1000000;
@@ -11577,6 +11719,19 @@ function aiAuction(st,p,now){
       var _finN=0; for(var _fI=0;_fI<FIELD_ROSTER.length;_fI++){ var _fS=FIELD_ROSTER[_fI]; if(_fS&&_fS.st&&(_fS.st.ws||0)>=99) _finN++; }
       if(_finN>0&&Math.random()<0.4&&AUCTION.list.filter(function(x){return x.seller===p.name;}).length<3){
         for(var _bo2=st.bag.length-1;_bo2>=0;_bo2--){ var _bob2=st.bag[_bo2]; if(!_bob2) continue; var _nmS=String(_bob2.name||''); if(_nmS.indexOf('神印')<0||_nmS.indexOf('碎片')>=0) continue; var _askS=Math.max(1,Math.round(aiItemValue(_bob2)*aiSellAsk(p, st)*1.6)); var _feeS=aucFee(_askS); if((st.gold||0)<_feeS) break; st.bag.splice(_bo2,1); st.gold-=_feeS; aiAucProfit(st,'gold',-_feeS); AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_bob2,price:_askS,cur:'gold',n:1,time:Date.now()}); recomputeIthLeft(); auctionSave(); break; }   /* 神印囤货出货：全服已有超脱AI(天神可升需求存在)→机会挂高价(买家=超脱追求型出得起)；无超脱→继续囤等需求；上架手续费→利润成本 */
+      }
+    }
+    if((aiIsMerchant(p)||aiIsCasher(p,st))&&AUCTION.list.filter(function(x){return x.seller===p.name;}).length<3){   /* 赚钱向好货变现（商人+套现白嫖，实力次要）：背包中多余的天神牌（紫神印/金神符）与传说奥格顿套（真实获得）→挂拍卖高价出售换钱（与卖紫牌同规则：好牌是好货卖钱比拆/自留更合算；卖不掉留bag囤——紫牌永不拆解、金牌兜底拆材料自用）；已穿齐3件以上传说奥格顿→自留保战力不卖 */
+      var _ogWorn=0; var _eqW=st.equip||{}; ['helm','armor','glove','leg','boot'].forEach(function(tk){ var _eW=_eqW[tk]; if(_eW&&String(_eW.name||'').indexOf('传说 奥格顿')>=0) _ogWorn++; });
+      for(var _bg=st.bag.length-1;_bg>=0;_bg--){ var _gg=st.bag[_bg]; if(!_gg) continue;
+        var _isGodCard=_gg.type==='god_seal'||_gg.type==='god_rune';
+        var _isOgLoot=(_gg.type==='helmet'||_gg.type==='chest'||_gg.type==='gloves'||_gg.type==='leggings'||_gg.type==='boots')&&String(_gg.name||'').indexOf('传说 奥格顿')>=0;
+        if(!_isGodCard&&!_isOgLoot) continue;
+        if(_isOgLoot&&_ogWorn>=3) continue;   /* 已穿齐3件以上传说→自留保战力不卖 */
+        var _askG=Math.max(1,Math.round(aiItemValue(_gg)*aiSellAsk(p, st)*1.6)); var _feeG=aucFee(_askG);
+        if((st.gold||0)<_feeG) break;
+        st.bag.splice(_bg,1); st.gold-=_feeG; aiAucProfit(st,'gold',-_feeG);
+        AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_gg,price:_askG,cur:'gold',n:1,time:Date.now()}); auctionSave(); break;
       }
     }
     /* ---------- 秘印/神核/碎片供给：走拍卖行真实交易（用户铁律：所有交易必须走拍卖行；计数型材料挂单与金币挂单kind:'gold'同构——计数扣减→挂单→买家计数入账，总量守恒不凭空） ---------- */
