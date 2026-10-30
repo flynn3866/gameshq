@@ -6927,19 +6927,24 @@ function aiTowerLoot(L,isTrial){
   return item;
 }
 function aiTowerDmg(st,p,B,mon){
-  var lvd=(st.lv||1)-(mon.lv||82); var pS=(lvd>=10)?lvSuppress(lvd):(lvd<=-10?0.5:1);
+  var lvd=(st.lv||1)-(mon.lv||82); var pS=(lvd>=10)?lvSuppress(lvd):(lvd<=-10?0.5:1);   /* 角色攻防倍率（同玩家 tlCharDmg pS：压制怪提升、被怪压制0.5）——怪物防御不乘mS与玩家 tlCharDmg def:T.monDef 完全一致，AI仅攻乘pS */
   var atk=Math.round(B.atk*pS);
   var crit=Math.random()<Math.min(1,critRate(((B.A&&B.A['幸运'])||0), mon.atk, false)+(B.wingEquip?0.10:0)+(B.bladeEquip?0.15:0));   /* 暴击率：AI六维幸运vs怪攻 + 真实穿戴魔翼+10% + 神裁+15%（同玩家 tlCharDmg/ctCharDmg critRate(charLuck(),T.monAtk)+legendWing+shencaiBlade） */
   var _cm=crit?(2*(B.critAltar||1)*(B.critBlade||1)):1;   /* 塔/试炼暴击伤害：神坛会心×神裁×1.5（同玩家 tlCharDmg/ctCharDmg _critMul=2*talentCritMul()*altarCritMul()*shencaiCritMul()；AI无天赋流派→talent=1，塔场景无轮回会心与玩家一致） */
-  var dmg=Math.round(calcHit({atk:Math.round(atk*_cm), realAtk:atk, ig:B.ig||0, real:B.tr||0, add:B.add||0, attackElem:B.atkElem, atkElemPct:(B.atkElem?0.3:0)}, {def:mon.def, fdr:0, mdef:0, attrDefDR:0, defElemResist:0, nativeElem:null, abs:0}));
+  var _mFdr=0,_mmDef=0; if(mon.traits){ for(var _tq=0;_tq<mon.traits.length;_tq++){ var _tv=mon.traits[_tq]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(怪物)特性：dmgred→最终伤害减免(合计封顶50%)；armor铁壁血盾→主伤害减伤（同玩家 tlCharDmg _mFdr/_mmDef） */
+  var dmg=Math.round(calcHit({atk:Math.round(atk*_cm), realAtk:atk, ig:B.ig||0, real:B.tr||0, add:B.add||0, attackElem:B.atkElem, atkElemPct:(B.atkElem?0.3:0)}, {def:mon.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(mon.defElem?0.3:0), defElemResist:(mon.defElem?0.3:0), nativeElem:mon.defElem||null, abs:0}));   /* 怪物防御不乘mS（同玩家 tlCharDmg def:T.monDef 结构）+怪物特性终减/铁壁/属性防御抗性（同玩家 tlCharDmg 8972-8973） */
   dmg+=(B.asc?Math.round(mon.hp*0.03):0);   /* 超脱·天道共鸣：攻击附带生命上限3%真实伤害（同玩家 ascendSkyDmg） */
   return Math.max(1,dmg);
 }
-function aiTowerCanKill(st,p,B,mon){
+function aiTowerCanKill(st,p,B,mon,L,isTrial){
   var dmg=aiTowerDmg(st,p,B,mon);
   var lvd=(st.lv||1)-(mon.lv||82); var pS=(lvd>=10)?lvSuppress(lvd):(lvd<=-10?0.5:1);
-  var _mraw=mon.atk*pS*0.75;   /* 怪物反击期望（玩家 ctRoleHit/tlRoleHit 0.55~0.95 均值0.75） */
-  var mDmg=Math.round(calcHit({atk:_mraw,realAtk:_mraw,ig:0,real:0,add:0},{def:Math.round(B.def*pS),fdr:B.fdr||0,mdef:0,attrDefDR:0,defElemResist:0,nativeElem:null,abs:B.armorAbs||0}));
+  var mS=(lvd<=-10)?lvSuppress(-lvd):(lvd>=10?0.5:1);   /* 怪物侧等级压制（同玩家 tlRoleHit/ctRoleHit mS）：修复原错用pS当怪物倍率——3级AI打82级试炼怪时怪物攻击被错乘0.5反而变弱、能越级秒推119层；现与玩家一致：角色等级远低→怪物攻防巨幅提升 */
+  var _bc=(mon.isBoss&&isTrial)?bossAtkCoef(bossTierOfLayer(L||0)):1;   /* 试炼BOSS反击×阶位系数1~10（同玩家 tlRoleHit raw=monAtk*bossAtkCoef*mS*波动）；挑战塔BOSS不乘（同玩家 ctRoleHit） */
+  var _mraw=mon.atk*_bc*mS*0.75;   /* 怪物反击期望（玩家 tlRoleHit/ctRoleHit raw=monAtk*bossAtkCoef*mS*波动0.55~0.95 均值0.75）——怪物攻击×自身等级压制 mS */
+  var _ma=monTraitAtk(mon.traits||null, _mraw);   /* 怪物特性攻击→A：增伤/真伤/无视防御/破防；bm：暴击/吸血/晕/减速/毒/流血/反弹（同玩家 tlRoleHit monTraitAtk；AI期望判定取A+暴击，持续类特性因期望结算不逐帧——与副本AI同近似度） */
+  var _mc=_ma.bm&&_ma.bm.crit?2:1;   /* 怪物暴击×2（玩家 tlRoleHit crit?2*(1-playerCritDmgRed())；AI无暴伤减免天赋→×1不变） */
+  var mDmg=Math.round(calcHit({atk:Math.round(_ma.A.atk*_mc), realAtk:_ma.A.realAtk, ig:_ma.A.ig||0, real:_ma.A.real||0, add:_ma.A.add||0, attackElem:mon.atkElem||null, atkElemPct:(mon.atkElem?0.3:0)}, {def:Math.round(B.def*pS),fdr:B.fdr||0,mdef:0,attrDefDR:0,defElemResist:0,nativeElem:null,abs:B.armorAbs||0}));   /* 怪物特性增伤/真伤/无视防御+元素攻击（同玩家 tlRoleHit） */
   mDmg=Math.max(mDmg, Math.round(_mraw*0.10));
   var aA=Math.min(1280, Math.max(380, Math.round(305000/Math.pow(Math.max(10,(B.agi||10)),0.3228))));   /* 玩家 charAtkSpeed 攻速（同公式含上限1280，修复低敏捷缺上限与玩家攻速不一致） */
   var mA=(mon.lv<=30)?4000:1300;   /* 玩家 ctMonInterval/tlMonInterval 攻速 */
@@ -6949,11 +6954,20 @@ function aiTowerCanKill(st,p,B,mon){
   var killT=mon.hp/dmg2*aA, dieT=_netDps>0?(B.hp/_netDps):Infinity;
   return killT<dieT;   /* 击杀时间<死亡时间（吸血计入） → 能过层 */
 }
+function aiTrialMonFull(L){   /* 无尽试炼完整怪物（与玩家 tlSpawn 怪物侧100%同规则）：基础数值+每10层BOSS按阶位特性+装甲强化 / 50层后小怪85%带0~5特性+攻防元素+特性强度放大(≥×10)——修复原AI只用裸基础值打弱化怪（玩家50层后小怪带特性×10+、BOSS带阶位特性+元素攻防，AI却打无增强裸怪，怪物实力不一致） */
+  var s=tlMonStatsAt(L);
+  var mon={lv:s.lv,atk:s.atk,hp:s.hp,def:s.def,isBoss:s.isBoss,traits:null,atkElem:null,defElem:null};
+  if(s.isBoss){ var _t=bossTierOfLayer(L); var _n=genTraitCount(_t); mon.traits=genBossTraits(_t,_n,_n); var __ab=applyBossArmor(mon.traits,mon.hp,mon.def,_t); mon.hp=__ab.hp; mon.def=__ab.def; }   /* 试炼BOSS：阶位特性+装甲血/防强化（同玩家 tlSpawn） */
+  else { mon.traits=(L>=50&&Math.random()<0.85)?genBossTraits(2,0,5):null; }   /* 50层后小怪85%带0~5个特性（同玩家） */
+  var _ae=assignElem(bossTierOfLayer(L),0); mon.atkElem=_ae.atkElem; mon.defElem=_ae.defElem;   /* 按层阶位随机属性攻防（同玩家 tlSpawn） */
+  var _ts=traitStrength(mon.traits?mon.traits.length:0); if(_ts>1){ mon.hp=Math.round(mon.hp*_ts); mon.atk=Math.round(mon.atk*_ts); mon.def=Math.round(mon.def*_ts); }   /* 有特性怪物强度≥×10，特性越多越强（同玩家 tlSpawn） */
+  return mon;
+}
 function aiTrialRun(st,p,B){   /* 无尽试炼：一次性向上（层数只增不减，同玩家T.layer），每10层BOSS大奖+永久全属性+本源结晶，全部真实入 AI 状态 */
   var L=(st.trialLv||0)+1, guard=0;
   while(L<=1500 && guard<400){
-    var mon=tlMonStatsAt(L);
-    if(!aiTowerCanKill(st,p,B,mon)) break;
+    var mon=aiTrialMonFull(L);
+    if(!aiTowerCanKill(st,p,B,mon,L,true)) break;
     if(L%10===0){   /* 每10层BOSS大奖（同玩家 tlGift） */
       var item=aiTowerLoot(L,true); if(item) aiStackItem(st,item);
       aiAddPerm(st, L*100000000);   /* 永久全属性 +层数×1亿（同玩家 tlGift addPerm） */
@@ -6966,7 +6980,7 @@ function aiTowerRun(st,p,B){   /* 挑战塔：可重刷，每层永久属性+塔
   var L=(st.towerLv||0)+1, guard=0;
   while(L<=1500 && guard<400){
     var mon=ctMonStatsAt(L);
-    if(!aiTowerCanKill(st,p,B,mon)) break;
+    if(!aiTowerCanKill(st,p,B,mon,L,false)) break;
     var coins=Math.max(2, Math.floor(L/4)+1);
     if(mon.isBoss) coins+=Math.floor(L/2);
     if(st.towerGot&&st.towerGot[L]){ coins=Math.max(1, Math.floor(coins*0.6)); }   /* 重复挑战：基础60%塔币 */
