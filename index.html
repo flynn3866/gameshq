@@ -6008,7 +6008,7 @@ var FIELD_ROSTER=null;   /* 100名固定AI玩家（持久化localStorage，一�
 var FIELD_NAMES=['剑荡八荒','御剑听雨','踏雪无痕','一念乾坤','玄天降世','紫霄剑主','沧海一粟','血洗苍穹','刀剑如梦','星辰坠落','孤傲剑魂','斩尽天下','疯魔乱世','笑傲风云','不败神话','万古长青','不朽传说','巅峰王者','冷月葬花','寒江孤影','青衫仗剑','白衣胜雪','赤焰焚天','幽冥主宰','天骄霸主','无双剑圣','风起云涌','龙啸九天','凤舞九霄','一怒屠城','血染江山','逆天改命','堕入凡尘','仙界第一','神话无敌','紫禁之巅','大梦一场','浮生若梦','云淡风轻','素手挽歌','倾国倾城','惊鸿一瞥','落花有意','流水无情','彼岸花开','三生三世','十里桃花','红尘客栈','南柯一梦','西域狂刀','北冥有鱼','沧澜剑仙','烈焰焚城','寒霜之子','雷电法王','狂战八方','圣光降临','暗夜使者','暮光之城','沙漠之狐','雪域苍狼','孤胆英雄','铁血丹心','侠骨柔情','剑气纵横','名动四方','独步天下','唯我独尊','盖世无双','英雄本色','王者归来','天之骄子','红尘剑客','逍遥散仙','镇魔天师','琴瑟和鸣','醉卧沙场','剑气如虹','御风而行','一念成魔','青灯古佛','牧野流星','守望星空','逐鹿中原','血战到底','破晓时分','黎明之剑','黄昏霸主','极昼之影','银河战舰','星际游侠','荒野镖客','绝地求生','天命所归','乾坤未定','龙战于野','其血玄黄','大道至简','洪荒之力','白泽灵主','青鸾仙子','紫微帝君','凌霄剑尊','太虚真人'];
 function aiServerDayByLv(lv){ var x; lv=lv||0; if(lv<=0) return 0.5; if(lv<=30) x=lv/150; else if(lv<=60) x=0.2+(lv-30)/30*0.13; else x=0.33+(lv-60)/20*0.67; return Math.max(0.5, x*(338000/1.3)/86400); }   /* 玩家等级→开服天数：AI与玩家同开服时长发育（普通投入基准≈3天满级80） */
 function aiCalibrateServer(){ var lv=(CHARACTER&&CHARACTER.info&&typeof CHARACTER.info.level==='number')?CHARACTER.info.level:0; var day=aiServerDayByLv(lv); SERVER_START=Date.now()-Math.round(day*86400000); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} try{ localStorage.removeItem('shenqi_field_roster'); }catch(e){} FIELD_ROSTER=null; ensureFieldRoster(); try{ if(typeof renderRank==='function') renderRank(); }catch(e){} try{ if(typeof renderBattle==='function') renderBattle(); }catch(e){} toast('已按角色 Lv.'+lv+' 校准AI开服：约 '+Math.round(day*10)/10+' 天前'); }
-function serverStartInit(){ if(!SERVER_START){ var r; try{ r=parseInt(localStorage.getItem('shenqi_server_start'),10); }catch(e){} if(!(r&&r>0)){ var _lv=(CHARACTER&&CHARACTER.info&&typeof CHARACTER.info.level==='number')?CHARACTER.info.level:0; r=_lv>0?(Date.now()-Math.round(aiServerDayByLv(_lv)*86400000)):Date.now(); } SERVER_START=(r&&r>0)?r:Date.now(); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} } }
+function serverStartInit(){ if(!SERVER_START){ var r; try{ r=parseInt(localStorage.getItem('shenqi_server_start'),10); }catch(e){} SERVER_START=(r&&r>0)?r:Date.now(); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} } }   /* 开服时间统一读取持久化字段 shenqi_server_start：初始化开新服(14617)时写入固定值，此后每次打开一律读取该字段（不随打开时间变化、不按玩家等级倒推）；仅当服务器从未记录(首次启动/数据被清=真开服)时以当前时间作为开服时刻写入一次；等级倒推仅保留在 aiCalibrateServer 手动校准 */
 function aiRollInnate(){  /* AI先天运势：与玩家rollInnate同一套分布（天运1.8全服唯一归玩家"谜团"独占，AI传说档落高级档） */
   var r=Math.random()*100, t;
   if(r<0.01){ t=1-Math.sqrt(1-Math.random()); return Math.round((1.20+t*0.59)*100)/100; }   /* 传说档0.01%→落高级档（不占天运1.8） */
@@ -6155,13 +6155,13 @@ function aiCanKillMon(st,p,d,bt,bh,B){   /* AI打副本Boss能否击杀/是否�
   var mS=(lvd<=-10)?lvSuppress(-lvd):(lvd>=10?0.5:1);      /* 怪物攻防倍率（同trAtk __mS） */
   var _cr=Math.min(1,critRate(B.luck||0,Math.max(1,bh.atk||1),false)+(B.wingEquip?0.10:0)+(B.bladeEquip?0.15:0));   /* 会心·暴击率：AI六维幸运vs怪攻 + 真实穿戴传说魔翼+10% + 神裁之刃+15%（同玩家 trAtk：critRate(charLuck(),s.atk)+legendWing+shencaiBlade） */
   var isCrit=Math.random()<_cr;
-  var _cm=isCrit?(2*(B.critAltar||1)*(B.critReinc||1)):1;   /* 会心·暴击伤害：神坛会心×轮回会心（同玩家副本 trAtk _critMul=2*talentCritMul()*reincCritMul()*altarCritMul()；AI无天赋流派→talent=1，副本场景无神裁暴伤与玩家一致） */
+  var _cm=isCrit?(2*(B.critAltar||1)*(B.critReinc||1)*(B.critSp||1)):1;   /* 会心·暴击伤害：神坛会心×轮回会心×异能锋芒（同玩家副本 trAtk _critMul=2*talentCritMul()*reincCritMul()*altarCritMul()×(1+_sp.critDmg)；AI无天赋流派→talent=1，副本场景无神裁暴伤与玩家一致） */
   var atk=Math.round((B.atk||0)*pS*_cm);   /* AI物理攻击×等级压制×暴击 */
   var _tp=roleVsFoeTier(B.tierIdx, bt>=0?bt:-1);   /* 阶位压制：高阶无视低阶10%防御+伤害10%（同玩家 trAtk __tp：进增伤乘区） */
-  var _ig=(B.ig||0)+(_tp.ig||0), _rl=B.tr||0, _add=(B.add||0)+(_tp.m-1);   /* 攻击特性=完整真实值：阶位+伊泰安5件+称号+无尽徽章+图鉴武器+神坛破妄+轮回天赋（aiBuildState同口径累加，杜绝凭空）；增伤乘区=奥格顿5件+阶位压制（同玩家 trAtk _add） */
+  var _ig=(B.ig||0)+(_tp.ig||0), _rl=B.tr||0, _add=(B.add||0)+(_tp.m-1)+(bt>=0?(B.bossDmg||0):0);   /* 攻击特性=完整真实值：阶位+伊泰安5件+称号+无尽徽章+图鉴武器+神坛破妄+轮回天赋+异能破虚（aiBuildState同口径累加，杜绝凭空）；增伤乘区=奥格顿5件+阶位压制+异能猎尊(打Boss才加，同玩家 trAtk _add T.isBoss?_sp.bossDmg) */
   var hit=hitRate(HIT_P2M, Math.max(1,B.atk||1), Math.max(1,bh.atk||1), lv, el, 'BOSS', (B.hitBonus||0), 0);   /* 命定·命中+0.5%/级（同玩家 altarHitBonus 进 hitRate，仅攻击方向）；闪避代理=怪物攻击力（同玩家 trAtk HIT_P2M 用 s.atk，修复原用bh.def） */
   var dmg=Math.max(1, Math.round(calcHit({atk:atk, realAtk:Math.round((B.atk||0)*pS), ig:_ig, real:_rl, add:_add, attackElem:B.atkElem||null, atkElemPct:(B.atkElem?0.3:0)}, {def:(bh.def||1)*mS, fdr:0, mdef:0, attrDefDR:0, defElemResist:0, nativeElem:null, abs:0})));   /* 统一结算：主伤害(有效防御+等级压制+暴击)+真伤→增伤→怪物终减→吸收（同玩家 trAtk 结构） */
-  var aA=Math.min(1280, Math.max(380, Math.round(305000/Math.pow(Math.max(10,(B.agi||10)),0.3228))));   /* AI真实攻速ms（同玩家 charAtkSpeed 公式含上限1280封底1.28s/击，修复低敏捷时缺上限导致攻速慢至145s/击而与玩家不一致） */
+  var aA=Math.max(380, Math.round(Math.min(1280, Math.max(380, Math.round(305000/Math.pow(Math.max(10,(B.agi||10)),0.3228))))/(1+(B.atkSpd||0))));   /* AI真实攻速ms（同玩家 charAtkSpeed 公式含上限1280封底1.28s/击+异能疾攻缩短攻击间隔：同玩家13257 base/(1+_esA.atkSpd)，保底380ms；修复低敏捷时缺上限导致攻速慢至145s/击而与玩家不一致） */
   var dps=Math.max(0,dmg)*hit*(1000/aA);   /* 每秒伤害=单击×命中×真实每秒攻击次数（同玩家实际攻速口径） */
   var killSec=dps>0?((bh.hp||1)/dps):Infinity;
   var _mraw=(bh.atk||1)*(bt>=0?bossAtkCoef(bt):1)*mS*_tp.m*0.75;   /* 怪物攻击×Boss阶位系数×等级压制×阶位压制×波动均值0.75（同玩家 roleHitDamage raw=monAtk*bossAtkCoef*mS*tp.m*波动0.55~0.95，取期望） */
@@ -6918,7 +6918,7 @@ function aiTowerLoot(L,isTrial){
     case 90: item=mkLoot(ITEM_BLUEPRINTS.demonWings); break;   /* 无尽/挑战塔90层：史诗魔翼（传说武器仅世界boss传说宝箱；传说奥格顿仅无尽100层/神之幻境/世界boss） */
     default:
       if(isTrial){
-        if(L===100) item=mkLoot(rnd([ITEM_BLUEPRINTS.legendOgdenHelmet,ITEM_BLUEPRINTS.legendOgdenChest,ITEM_BLUEPRINTS.legendOgdenGloves,ITEM_BLUEPRINTS.legendOgdenLeggings,ITEM_BLUEPRINTS.legendOgdenBoots]));   /* 无尽100层：随机一件传说奥格顿（传说武器仅世界boss传说宝箱） */
+        if(L===100) item=trialLegendDrop();   /* 无尽100层：全服永久20件名额传说奥格顿（与玩家共用localStorage计数，谁先通过谁拿走，拿满不再掉；传说武器仅世界boss传说宝箱） */
         else if(L>=110&&L<=150) item=null;   /* 110~150层：纯永久属性，不发物品（同玩家） */
         else { item=mkLoot(ITEM_BLUEPRINTS.godCrystal); item.count=1; }   /* 150后：神力结晶保底（同玩家） */
       }
@@ -6930,9 +6930,9 @@ function aiTowerDmg(st,p,B,mon){
   var lvd=(st.lv||1)-(mon.lv||82); var pS=(lvd>=10)?lvSuppress(lvd):(lvd<=-10?0.5:1);   /* 角色攻防倍率（同玩家 tlCharDmg pS：压制怪提升、被怪压制0.5）——怪物防御不乘mS与玩家 tlCharDmg def:T.monDef 完全一致，AI仅攻乘pS */
   var atk=Math.round(B.atk*pS);
   var crit=Math.random()<Math.min(1,critRate(((B.A&&B.A['幸运'])||0), mon.atk, false)+(B.wingEquip?0.10:0)+(B.bladeEquip?0.15:0));   /* 暴击率：AI六维幸运vs怪攻 + 真实穿戴魔翼+10% + 神裁+15%（同玩家 tlCharDmg/ctCharDmg critRate(charLuck(),T.monAtk)+legendWing+shencaiBlade） */
-  var _cm=crit?(2*(B.critAltar||1)*(B.critBlade||1)):1;   /* 塔/试炼暴击伤害：神坛会心×神裁×1.5（同玩家 tlCharDmg/ctCharDmg _critMul=2*talentCritMul()*altarCritMul()*shencaiCritMul()；AI无天赋流派→talent=1，塔场景无轮回会心与玩家一致） */
+  var _cm=crit?(2*(B.critAltar||1)*(B.critBlade||1)*(B.critSp||1)):1;   /* 塔/试炼暴击伤害：神坛会心×神裁×异能锋芒（同玩家 tlCharDmg/ctCharDmg _critMul=2*talentCritMul()*altarCritMul()*shencaiCritMul()×(1+_sp.critDmg)；AI无天赋流派→talent=1，塔场景无轮回会心与玩家一致） */
   var _mFdr=0,_mmDef=0; if(mon.traits){ for(var _tq=0;_tq<mon.traits.length;_tq++){ var _tv=mon.traits[_tq]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(怪物)特性：dmgred→最终伤害减免(合计封顶50%)；armor铁壁血盾→主伤害减伤（同玩家 tlCharDmg _mFdr/_mmDef） */
-  var dmg=Math.round(calcHit({atk:Math.round(atk*_cm), realAtk:atk, ig:B.ig||0, real:B.tr||0, add:B.add||0, attackElem:B.atkElem, atkElemPct:(B.atkElem?0.3:0)}, {def:mon.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(mon.defElem?0.3:0), defElemResist:(mon.defElem?0.3:0), nativeElem:mon.defElem||null, abs:0}));   /* 怪物防御不乘mS（同玩家 tlCharDmg def:T.monDef 结构）+怪物特性终减/铁壁/属性防御抗性（同玩家 tlCharDmg 8972-8973） */
+  var dmg=Math.round(calcHit({atk:Math.round(atk*_cm), realAtk:atk, ig:B.ig||0, real:B.tr||0, add:(B.add||0)+(mon.isBoss?(B.bossDmg||0):0), attackElem:B.atkElem, atkElemPct:(B.atkElem?0.3:0)}, {def:mon.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(mon.defElem?0.3:0), defElemResist:(mon.defElem?0.3:0), nativeElem:mon.defElem||null, abs:0}));   /* 怪物防御不乘mS（同玩家 tlCharDmg def:T.monDef 结构）+怪物特性终减/铁壁/属性防御抗性（同玩家 tlCharDmg 8972-8973）+异能猎尊(试炼/塔BOSS才加，同玩家 tlCharDmg T.isBoss?_sp.bossDmg) */
   dmg+=(B.asc?Math.round(mon.hp*0.03):0);   /* 超脱·天道共鸣：攻击附带生命上限3%真实伤害（同玩家 ascendSkyDmg） */
   return Math.max(1,dmg);
 }
@@ -6946,7 +6946,7 @@ function aiTowerCanKill(st,p,B,mon,L,isTrial){
   var _mc=_ma.bm&&_ma.bm.crit?2:1;   /* 怪物暴击×2（玩家 tlRoleHit crit?2*(1-playerCritDmgRed())；AI无暴伤减免天赋→×1不变） */
   var mDmg=Math.round(calcHit({atk:Math.round(_ma.A.atk*_mc), realAtk:_ma.A.realAtk, ig:_ma.A.ig||0, real:_ma.A.real||0, add:_ma.A.add||0, attackElem:mon.atkElem||null, atkElemPct:(mon.atkElem?0.3:0)}, {def:Math.round(B.def*pS),fdr:B.fdr||0,mdef:0,attrDefDR:0,defElemResist:0,nativeElem:null,abs:B.armorAbs||0}));   /* 怪物特性增伤/真伤/无视防御+元素攻击（同玩家 tlRoleHit） */
   mDmg=Math.max(mDmg, Math.round(_mraw*0.10));
-  var aA=Math.min(1280, Math.max(380, Math.round(305000/Math.pow(Math.max(10,(B.agi||10)),0.3228))));   /* 玩家 charAtkSpeed 攻速（同公式含上限1280，修复低敏捷缺上限与玩家攻速不一致） */
+  var aA=Math.max(380, Math.round(Math.min(1280, Math.max(380, Math.round(305000/Math.pow(Math.max(10,(B.agi||10)),0.3228))))/(1+(B.atkSpd||0))));   /* 玩家 charAtkSpeed 攻速（同公式含上限1280+异能疾攻缩短攻击间隔同玩家13257，保底380ms） */
   var mA=(mon.lv<=30)?4000:1300;   /* 玩家 ctMonInterval/tlMonInterval 攻速 */
   var dmg2=Math.max(1,dmg), _healDps=dmg2*(B.lsTotal||0)*(1000/aA);   /* 每秒吸血：单击伤害×真实吸血(伊泰安/称号/神坛/轮回)×真实每秒攻击次数（同玩家塔内吸血，无则0不凭空） */
   var _mDps=Math.max(1,mDmg)*(1000/mA);   /* 怪物每秒伤害 */
@@ -7043,7 +7043,13 @@ function aiBuildState(st,p){   /* 玩家同口径：六维(含perm)→攻防血�
   var _titleLs=(_as>=ARENA_RANKS[4].min&&_as<ARENA_RANKS[5].min)?0.10:0;   /* 称号吸血：仅璀璨星钻吸血10%（同玩家 arenaTitle 星钻 ls=0.10，按竞技历史最高积分锚定；王者/战神称号无吸血→0） */
   var _reincLs=((st.talents||{}).lifesteal||0)*0.02+((st.relic||{}).realm||0)*0.01;   /* 轮回天赋·噬血 2%/级 + 法器·护符 1%/级（同玩家 reincHeal） */
   var lsTotal=_neckLs+_titleLs+Math.min(0.1,(alt.ls||0)*0.005)+_reincLs;   /* AI攻击吸血合计：伊泰安项链10%+称号(星钻)10%+黄金神坛·噬血(封顶10%)+轮回天赋/法器吸血——全部真实来源，无则0；暴击伤害分量（同玩家各场景组合：副本=神坛×轮回·无神裁；塔/竞技/世界BOSS=神坛×神裁·无轮回） */
-  return {pw:pw,atk:Math.round(patk),def:Math.round(pdef),hp:Math.round(hp2),hp0:Math.round(hp),agi:agi,tierIdx:tierIdx,asc:asc,fdr:fdr,tr:tr,ig:ig,add:add,atkElem:(ithN>=3&&p.id%2===0)?'fire':(ithN>=3?'wind':null),A:A,armorAbs:aiArmorAbs(st),alt:alt,critMult:_critAltar*_critReinc*_critBlade,critAltar:_critAltar,critReinc:_critReinc,critBlade:_critBlade,hitBonus:Math.min(0.5,(alt.hit||0)*0.005),lsPct:Math.min(0.1,(alt.ls||0)*0.005),lsTotal:lsTotal,dropBonus:Math.min(0.5,(alt.drop||0)*0.05),goldMult:1+(alt.gold||0)*0.005,luck:A['幸运']||0,wingEquip:_wingEq,bladeEquip:_bladeEq};   /* 神坛10线效果（会心/命定/噬血/福泽/敛财）随战力返回，供aiCanKillMon战斗与掉落复用（同玩家公式）；atkElem属性攻击也按实际伊泰安持有件数；armorAbs=防具强化伤害吸收；critMult=神坛会心×轮回会心×神裁（完整倍率），critAltar/critReinc/critBlade=分量供各场景按玩家同组合调用（副本2×神坛×轮回；塔/竞技/世界BOSS 2×神坛×神裁）；lsTotal=真实穿戴/称号/神坛/轮回吸血合计；luck=AI六维幸运（同玩家charLuck）；wing/bladeEquip=真实穿戴传说魔翼/神裁之刃（同玩家legendWing/shencaiBlade） */
+  /* 装备异能条（同玩家 equipSpecials：AI真实穿戴带specialEffect的装备——来源=拍卖行购买玩家挂售的异能传说装（AI自身刷本无传说档→不产异能装，与掉落梯度一致，杜绝凭空）——异能攻击类真实附加攻防：破虚真伤/锋芒暴伤/嗜血吸血/猎尊对BOSS/疾攻攻速/财源金币，与玩家各场景同规则；AI为模拟战斗判定无持续血量追踪，击杀回血类(onKillHeal)不做逐次结算） */
+  var _spA={trueDmg:0,bossDmg:0,critDmg:0,vamp:0,onKillHeal:0,atkSpd:0,goldMul:0};
+  try{ var _eqA=st.equip||{}; for(var _ekA in _eqA){ var _itA=_eqA[_ekA]; if(_itA&&_itA.specialEffect&&ABILITY_MAP[_itA.specialEffect]){ var _abA=ABILITY_MAP[_itA.specialEffect]; _spA[_abA.k]=(_spA[_abA.k]||0)+(_abA.f||0); } } }catch(e){}
+  tr+=_spA.trueDmg;   /* 异能·破虚：真实伤害%（同玩家 trAtk/tlCharDmg _rl+_sp.trueDmg） */
+  lsTotal+=_spA.vamp+_spA.onKillHeal;   /* 异能·噬血(吸血)/嗜血(命中回复)：均按造成伤害回复，等效并入攻击吸血（同玩家 trAtk 9096 _sp2.vamp+_sp2.onKillHeal 都加） */
+  var _critSp=1+_spA.critDmg;   /* 异能·锋芒：暴击伤害乘区（同玩家 暴击倍率×(1+_sp.critDmg)，只作用主伤害） */
+  return {pw:pw,atk:Math.round(patk),def:Math.round(pdef),hp:Math.round(hp2),hp0:Math.round(hp),agi:agi,tierIdx:tierIdx,asc:asc,fdr:fdr,tr:tr,ig:ig,add:add,atkElem:(ithN>=3&&p.id%2===0)?'fire':(ithN>=3?'wind':null),A:A,armorAbs:aiArmorAbs(st),alt:alt,critMult:_critAltar*_critReinc*_critBlade*_critSp,critAltar:_critAltar,critReinc:_critReinc,critBlade:_critBlade,critSp:_critSp,bossDmg:_spA.bossDmg,atkSpd:_spA.atkSpd,hitBonus:Math.min(0.5,(alt.hit||0)*0.005),lsPct:Math.min(0.1,(alt.ls||0)*0.005),lsTotal:lsTotal,dropBonus:Math.min(0.5,(alt.drop||0)*0.05),goldMult:1+(alt.gold||0)*0.005+_spA.goldMul,luck:A['幸运']||0,wingEquip:_wingEq,bladeEquip:_bladeEq};   /* 神坛10线效果（会心/命定/噬血/福泽/敛财）随战力返回，供aiCanKillMon战斗与掉落复用（同玩家公式）；atkElem属性攻击也按实际伊泰安持有件数；armorAbs=防具强化伤害吸收；critMult=神坛会心×轮回会心×神裁×异能锋芒（完整倍率），critAltar/critReinc/critBlade/critSp=分量供各场景按玩家同组合调用（副本2×神坛×轮回×锋芒；塔/竞技/世界BOSS 2×神坛×神裁×锋芒）；bossDmg=异能·猎尊对Boss增伤（打怪结算处按是否Boss附加，同玩家T.isBoss）；atkSpd=异能·疾攻；lsTotal=真实穿戴/称号/神坛/轮回/异能嗜血吸血合计；luck=AI六维幸运（同玩家charLuck）；wing/bladeEquip=真实穿戴传说魔翼/神裁之刃（同玩家legendWing/shencaiBlade） */
 }
 var __aiSavePending=0,__aiSaveTimer=null;
 function aiSaveField(force){   /* 落盘去重+原子：批量核算(心跳/renderRank 各100次)在2s窗口内合并为1次实际写，大幅降序列化次数；force=true 立即写(批次核算末尾原子落盘，消除重复核算窗口——AI惰性补算依赖落盘锚点防重) */
@@ -8509,6 +8515,15 @@ function roleTraits(){
   var _am=altarCritMul(), _rm=reincCritMul(); if(_am*_rm>1){ var _cs=[]; if(_am>1)_cs.push('黄金神坛·会心+'+pct(_am-1)); if(_rm>1)_cs.push('轮回天赋·会心+'+pct(_rm-1)); out.push({n:'暴击伤害',d:'暴击时暴击伤害提高'+pct(_am*_rm-1)+'。提供：'+jn(_cs),p:pct(_am*_rm-1)}); }   /* 会心(神坛)×轮回天赋·会心(暴伤30%/级)连乘：合并显示总提升 */
   if(altarHitBonus()>0) out.push({n:'命中率',d:'攻击命中率提升'+pct(altarHitBonus())+'。提供：黄金神坛·命定',p:pct(altarHitBonus())});
   if(altarDropBonus()>0) out.push({n:'传说掉宝',d:'传说级物品掉落权重提升'+pct(altarDropBonus())+'。提供：黄金神坛·福泽',p:pct(altarDropBonus())});
+  /* 装备异能条（与战斗附加同口径 equipSpecials：真实穿戴异能装备生效并显示——属性页与角色浮层共用本函数，两处同步） */
+  var _esD=equipSpecials();
+  if(_esD.trueDmg>0) out.push({n:'异能·破虚',d:'每次攻击附加攻击力'+pct(_esD.trueDmg)+'的真实伤害（跳过防御，受最终伤害减免削减）。提供：穿戴异能装备',p:pct(_esD.trueDmg),pr:90});
+  if(_esD.bossDmg>0) out.push({n:'异能·猎尊',d:'对Boss造成的伤害提高'+pct(_esD.bossDmg)+'。提供：穿戴异能装备',p:pct(_esD.bossDmg),pr:82});
+  if(_esD.critDmg>0) out.push({n:'异能·锋芒',d:'暴击时暴击伤害提高'+pct(_esD.critDmg)+'（只作用主伤害）。提供：穿戴异能装备',p:pct(_esD.critDmg),pr:84});
+  if(_esD.atkSpd>0) out.push({n:'异能·疾攻',d:'攻击间隔缩短'+pct(_esD.atkSpd)+'。提供：穿戴异能装备',p:pct(_esD.atkSpd),pr:56});
+  if(_esD.goldMul>0) out.push({n:'异能·敛金',d:'金币获取提高'+pct(_esD.goldMul)+'。提供：穿戴异能装备',p:pct(_esD.goldMul),pr:52});
+  if(_esD.vamp>0) out.push({n:'异能·噬血',d:'攻击恢复造成伤害'+pct(_esD.vamp)+'的生命。提供：穿戴异能装备',p:pct(_esD.vamp),pr:70});
+  if(_esD.onKillHeal>0) out.push({n:'异能·嗜血',d:'每次命中回复造成伤害'+pct(_esD.onKillHeal)+'的生命。提供：穿戴异能装备',p:pct(_esD.onKillHeal),pr:55});
   var _rk={天运之主:100,无视防御:95,真实伤害:90,最终伤害加成:88,最终伤害减免:85,暴击伤害:84,命中率:78,传说掉宝:74,攻击吸血:70,秒杀小怪:68,免疫负面:66,属性攻击:60,属性防御:58,暴击伤害减免:50,抗暴率:45,伤害吸收:40};   /* 特性优先级：数值越大越靠前（最厉害的特性置顶） */
   out.sort(function(a,b){ return (b.pr!=null?b.pr:(_rk[b.n]||0))-(a.pr!=null?a.pr:(_rk[a.n]||0)); });
   return out;
@@ -9032,7 +9047,7 @@ function tlGift(){
     case 70: item=mkLoot(rnd([ITEM_BLUEPRINTS.warGodsPowerRune,ITEM_BLUEPRINTS.godsTrustRune])); item.count=1; break;   /* 70层：随机神符类天神牌一张（不再掉神印类，玩家与AI同规则；挑战塔仅首通） */
     case 80: item=mkLoot(rnd([ITEM_BLUEPRINTS.epicOgdenHelmet,ITEM_BLUEPRINTS.epicOgdenChest,ITEM_BLUEPRINTS.epicOgdenGloves,ITEM_BLUEPRINTS.epicOgdenLeggings,ITEM_BLUEPRINTS.epicOgdenBoots])); break;   /* 无尽/挑战塔80层：史诗奥格顿（传说奥格顿仅无尽100层/神之幻境/世界boss） */
     case 90: item=mkLoot(ITEM_BLUEPRINTS.demonWings); break;   /* 无尽/挑战塔90层：史诗魔翼（传说武器仅世界boss传说宝箱；传说奥格顿仅无尽100层/神之幻境/世界boss） */
-    case 100: item=mkLoot(rnd([ITEM_BLUEPRINTS.legendOgdenHelmet,ITEM_BLUEPRINTS.legendOgdenChest,ITEM_BLUEPRINTS.legendOgdenGloves,ITEM_BLUEPRINTS.legendOgdenLeggings,ITEM_BLUEPRINTS.legendOgdenBoots])); break;   /* 无尽100层：随机一件传说奥格顿（传说武器仅世界boss传说宝箱） */
+    case 100: if(location.hash.indexOf('#trial')<0||document.visibilityState!=='visible'){ item=mkLoot(ITEM_BLUEPRINTS.godCrystal); item.count=1; } else { item=trialLegendDrop(); } break;   /* 无尽100层：全服永久20件名额传说奥格顿（玩家与AI共用localStorage配额，拿满不再掉；离线/切页不发传说→保底神力结晶且不占名额；传说武器仅世界boss传说宝箱） */
       break;
     case 110: case 120: case 130: case 140: case 150: break;   /* 110~150层：不单发永久属性物品，统一走下方 +层数×1亿 永久全属性 */
     default: item=mkLoot(ITEM_BLUEPRINTS.godCrystal); item.count=1; break;   /* 150后：神力结晶保底 */
@@ -9880,16 +9895,16 @@ function playerHit(o,s){
   var gap=CHARACTER.info.level-(o.level||1);   /* 等级压制：角色高→攻压制；对手高→角色弱 */
   var lvR=gap>=10?lvSuppress(gap):(gap<=-10?0.5:1);
   var _ft=foeTierOf(o), _tp2=roleVsFoeTier(charTierIdx(), _ft);   /* 阶位压制 */
-  var _rt=roleTierAtk(); var _ta=titleAtk(); var _tm=tMedalAtk();   /* 角色阶位+称号+无尽徽章攻击特性 */
+  var _rt=roleTierAtk(); var _ta=titleAtk(); var _tm=tMedalAtk(); var _sp=equipSpecials();   /* 角色阶位+称号+无尽徽章攻击特性 + 异能汇总（破虚真伤/锋芒暴伤；竞技PvP无Boss→猎尊不适用，同玩家各场景口径） */
   var isCrit=Math.random()<Math.min(1,critRate(charLuck(),o.atk,false)+(legendWing()?0.10:0)+(shencaiBlade()?0.15:0));   /* 竞技角色打对手统一暴击：幸运 vs 对手攻击(抗暴代理) */
   var _ig=_rt.ig+_ta.ig+_tm.ig+(ISET>=5?0.3:0)+(ARENA.killBoss>=1&&ARENA.medalOn?0.1:0)+(legendWing()?0.10:0)+(shencaiBlade()?0.15:0)+_tp2.ig;   /* 角色无视防御：阶位+称号+徽章+伊泰安（只作用主伤害有效防御） */
-  var _rl=wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk()+supremeMedalAtk()+altarTruePct();   /* 角色真实伤害% */
+  var _rl=wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk()+supremeMedalAtk()+altarTruePct()+_sp.trueDmg;   /* 角色真实伤害%+异能破虚 */
   var _add=(OG>=5?0.1:0)+(_tp2.m-1);   /* 增伤乘区：奥格顿5件+阶位压制 */
   var _mFdr=0,_mmDef=0; if(o.fdr) _mFdr+=o.fdr; if(o.trait&&(o.trait.fx==='pdef'||o.trait.fx==='boss')) _mFdr+=0.3; if(o.traits){ for(var _tk=0;_tk<o.traits.length;_tk++){ var _tv=o.traits[_tk]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(对手)：神坛御天→终减 + dmgred→最终伤害减免(上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
-  var dmg=Math.max(1, Math.round(calcHit({atk:s.patk*lvR*(isCrit?(2*altarCritMul()*shencaiCritMul()*(1-(o.critDR||0))):1), realAtk:s.patk*lvR, ig:_ig+reincIgnore(), real:_rl+reincTrue(), add:_add, attackElem:elemKey((CHARACTER.combat[4]||{}).v), atkElemPct:(((CHARACTER.combat[4]||{}).v!=='无')?0.3:0)}, {def:o.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(o.defElem?0.3:0), defElemResist:(o.defElem?0.3:0), nativeElem:o.defElem||null, abs:0}))); dmg+=ascendSkyDmg(s.hp);   /* 统一结算：主伤害(有效防御+等级压制+暴击→×(1-对手暴击减免))+真伤→增伤→对手终减→吸收 */
+  var dmg=Math.max(1, Math.round(calcHit({atk:s.patk*lvR*(isCrit?(2*altarCritMul()*shencaiCritMul()*(1-(o.critDR||0))*(1+_sp.critDmg)):1), realAtk:s.patk*lvR, ig:_ig+reincIgnore(), real:_rl+reincTrue(), add:_add, attackElem:elemKey((CHARACTER.combat[4]||{}).v), atkElemPct:(((CHARACTER.combat[4]||{}).v!=='无')?0.3:0)}, {def:o.def, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(o.defElem?0.3:0), defElemResist:(o.defElem?0.3:0), nativeElem:o.defElem||null, abs:0}))); dmg+=ascendSkyDmg(s.hp);   /* 统一结算：主伤害(有效防御+等级压制+暴击→×(1-对手暴击减免)×异能锋芒)+真伤→增伤→对手终减→吸收 */
   arenaShootArrow(function(){   /* 箭矢从左下角射向对手，命中后才结算掉血/飘字/震动 */
   if(Math.random()>hitRate(HIT_P2M,TR.patk,o.atk,CHARACTER.info.level,(o.level||1),o.boss?'BOSS':null,altarHitBonus())){ floatDmg('MISS','enemy',true); return; }   /* 玩家打对手统一MISS判定 */
-  var _ls3=(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls+altarLsPct(); if(_ls3>0){ var hl=Math.max(1,Math.round(dmg*_ls3)); if(ARENA.hpP<s.hp){ ARENA.hpP=Math.min(s.hp,ARENA.hpP+hl); setHp('p',ARENA.hpP,s.hp); arenaHeal(hl); } }   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上) */
+  var _spA3=equipSpecials(); var _ls3=(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls+altarLsPct()+_spA3.vamp+_spA3.onKillHeal; if(_ls3>0){ var hl=Math.max(1,Math.round(dmg*_ls3)); if(ARENA.hpP<s.hp){ ARENA.hpP=Math.min(s.hp,ARENA.hpP+hl); setHp('p',ARENA.hpP,s.hp); arenaHeal(hl); } }   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上)+神坛噬血+异能噬血/嗜血(命中回复，同试炼 tlCharDmg 9096 _sp2.vamp+_sp2.onKillHeal) */
   if(o.traits){ for(var ti=0;ti<o.traits.length;ti++){ var tt=o.traits[ti];
     if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0&&ARENA.hpP>0){ ARENA.hpP-=rb; if(ARENA.hpP<0)ARENA.hpP=0; setHp('p',ARENA.hpP,s.hp); floatDmg('-'+fmtDmg(rb),'hero',false); if(ARENA.hpP<=0) return endFight('lose',o); } }   /* 反弹（减伤特性已并入 calcHit 终减） */
   } }
@@ -10018,10 +10033,10 @@ function wbAIDps(B){   /* AI打BOSS真实每秒伤害：与玩家wbCalcDmg完全
     var lvR=gap>=10?lvSuppress(gap):(gap<=-10?0.5:1);   /* 等级压制（同玩家 wbCalcDmg lvR） */
     var _tp2=roleVsFoeTier(B.tierIdx||0,5);   /* 阶位压制：AI vs 神级BOSS(固定5阶，同玩家 wbCalcDmg _tp2=roleVsFoeTier(charTierIdx(),5)） */
     var isCrit=Math.random()<Math.min(1,critRate(B.luck||0,Math.max(1,o.atk||1),false)+(B.wingEquip?0.10:0)+(B.bladeEquip?0.15:0));   /* 暴击率：AI六维幸运vs BOSS攻击 + 魔翼+10% + 神裁+15%（同玩家 wbCalcDmg） */
-    var _ig=(B.ig||0)+(_tp2.ig||0), _rl=B.tr||0, _add=(B.add||0)+((_tp2.m||1)-1);   /* 攻击特性=aiBuildState完整真实值（阶位/伊泰安/称号/徽章/图鉴武器/神坛/轮回天赋）+阶位压制（同玩家 _ig+_tp2.ig / _rl / _add+_tp2.m-1） */
+    var _ig=(B.ig||0)+(_tp2.ig||0), _rl=B.tr||0, _add=(B.add||0)+((_tp2.m||1)-1)+(B.bossDmg||0);   /* 攻击特性=aiBuildState完整真实值（阶位/伊泰安/称号/徽章/图鉴武器/神坛/轮回天赋/异能破虚）+阶位压制+异能猎尊（世界BOSS恒为Boss，同玩家 wbCalcDmg 对Boss增伤）（同玩家 _ig+_tp2.ig / _rl / _add+_tp2.m-1） */
     var _mFdr=0,_mmDef=0;
     if(o.traits){ for(var _tk=0;_tk<o.traits.length;_tk++){ var _tv=o.traits[_tk]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* BOSS特性：dmgred→终减(上限50%)；armor铁壁→主伤害减伤（同玩家 wbCalcDmg） */
-    var dmg=Math.max(1, Math.round(calcHit({atk:Math.round((B.atk||1)*lvR*(isCrit?(2*(B.critAltar||1)*(B.critBlade||1)):1)), realAtk:Math.round((B.atk||1)*lvR), ig:_ig, real:_rl, add:_add, attackElem:B.atkElem||null, atkElemPct:(B.atkElem?0.3:0)}, {def:o.def||0, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(o.defElem?0.3:0), defElemResist:(o.defElem?0.3:0), nativeElem:o.defElem||null, abs:0})));   /* 统一结算：主伤害(有效防御+等级压制+暴击→神坛会心×神裁暴伤，同玩家 wbCalcDmg 2*altarCritMul()*shencaiCritMul())+真伤→增伤→BOSS终减→吸收 */
+    var dmg=Math.max(1, Math.round(calcHit({atk:Math.round((B.atk||1)*lvR*(isCrit?(2*(B.critAltar||1)*(B.critBlade||1)*(B.critSp||1)):1)), realAtk:Math.round((B.atk||1)*lvR), ig:_ig, real:_rl, add:_add, attackElem:B.atkElem||null, atkElemPct:(B.atkElem?0.3:0)}, {def:o.def||0, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(o.defElem?0.3:0), defElemResist:(o.defElem?0.3:0), nativeElem:o.defElem||null, abs:0})));   /* 统一结算：主伤害(有效防御+等级压制+暴击→神坛会心×神裁暴伤×异能锋芒，同玩家 wbCalcDmg 2*altarCritMul()*shencaiCritMul()×(1+_sp.critDmg))+真伤→增伤→BOSS终减→吸收 */
     var gapMs=oppAtkGap(B);   /* AI攻速(基于真实agi，玩家同公式) */
     return Math.max(0, dmg/(gapMs/1000));
   }catch(e){ return 0; }
@@ -13044,6 +13059,14 @@ window.addEventListener('hashchange', function(){
 });   /* 省电：副本挂机切走降频+纯结算、回到副本页恢复；掉落/经验/金币照常，传说闪光特效保留 */
 function luckRoll(p){ return Math.random() < p * lotteryInnate() * tianYunX() * (1+altarDropBonus()); }   /* 传说级物品：掉落概率×先天运势×(1+探宝·福泽掉宝)；天运之主(1.8)再×2；掉宝满级概率×1.5 */
 function antiRoll(p){ var k=1/(1+(lotteryInnate()*tianYunX()-1)); return Math.random() < p*k; }   /* 非传说级物品：反向补偿（传说涨则非传说降；天运之主传说×2，非传说同步×1/2 保平衡） */
+function trialLegendDrop(){   /* 无尽试炼100层·传说奥格顿：全服永久仅20件名额（玩家与AI共用localStorage计数——无尽试炼每轮回通关100层即触发，谁先通过谁拿走，拿满20件后所有玩家再通过100层不再掉落；区别于神印牌/神之幻境的月度配额，本配额永不清零，与伊泰安同属"掉一件少一件"永久稀缺）；命中产出真实可穿戴传说奥格顿随机一件 */
+  var o=null; try{ o=JSON.parse(localStorage.getItem('shenqi_trial_legend')||'null'); }catch(e){}
+  if(!o||typeof o.dropped!=='number') o={dropped:0};
+  if(o.dropped>=20) return null;   /* 全服20件名额已拿满：之后所有玩家通过100层不再掉落传说奥格顿 */
+  o.dropped++; try{ localStorage.setItem('shenqi_trial_legend',JSON.stringify(o)); }catch(e){}
+  var ps=[ITEM_BLUEPRINTS.legendOgdenHelmet,ITEM_BLUEPRINTS.legendOgdenChest,ITEM_BLUEPRINTS.legendOgdenGloves,ITEM_BLUEPRINTS.legendOgdenLeggings,ITEM_BLUEPRINTS.legendOgdenBoots];
+  return mkLoot(ps[Math.floor(Math.random()*ps.length)]);
+}
 function phantomLegendDrop(){   /* 神之幻境传说奥格顿：0.000001%概率 + 每月全服仅1件（全服通用总量1，玩家与AI共用，谁先获取当月不再掉，下月刷新）；命中产出真实可穿戴传说奥格顿随机一件 */
   var o=null; try{ o=JSON.parse(localStorage.getItem('shenqi_phantom_legend')||'null'); }catch(e){}
   var now=new Date(), ym=now.getFullYear()*100+(now.getMonth()+1);
@@ -13680,6 +13703,13 @@ function renderRankStat(){   /* 排行榜统计表格：①顶尖型AI玩家(全
     if(_wh.length) _wh.forEach(function(o){ _h+='<span class="rank-stat-i"><b>'+o.n+'</b><em class="rank-stat-kf">氪金 '+fmtWan(o.kf)+'</em></span>'; });
     else _h+='<span class="rank-stat-i"><em>暂无神豪</em></span>';
     _h+='</div>';
+    /* 全服限量配额剩余：无尽试炼100层传说奥格顿20件永久名额 / 神之幻境当月传说奥格顿1件 / 神印牌当月2张——读各自localStorage配额字段(dropped)，永久型无月份键，月度型跨月自动回满额显示 */
+    var _qLeft=function(_k,_mx,_useYm){ var _o=null; try{ _o=JSON.parse(localStorage.getItem(_k)||'null'); }catch(e){} if(!_o) return _mx; if(_useYm){ var _now=new Date(), _ym=_now.getFullYear()*100+(_now.getMonth()+1); if(_o.ym!==_ym) return _mx; } return Math.max(0,_mx-(_o.dropped||0)); };
+    _h+='<div class="rank-stat-t">✦ 全服限量配额剩余</div><div class="rank-stat-row">';
+    _h+='<span class="rank-stat-i"><b>无尽试炼·传说奥格顿</b><em>剩余 '+_qLeft('shenqi_trial_legend',20,false)+'/20（永久）</em></span>';
+    _h+='<span class="rank-stat-i"><b>神之幻境·传说奥格顿</b><em>剩余 '+_qLeft('shenqi_phantom_legend',1,true)+'/1（本月）</em></span>';
+    _h+='<span class="rank-stat-i"><b>神印天神牌</b><em>剩余 '+_qLeft('shenqi_pirate_seal',2,true)+'/2（本月）</em></span>';
+    _h+='</div>';
     _el.innerHTML=_h;
   }catch(e){}
 }
@@ -13781,19 +13811,19 @@ function trAtk(){
   var __mS=(__lvd<=-10)?lvSuppress(-__lvd):(__lvd>=10?0.5:1);   /* 怪物攻防倍率：压制角色×lvs、被角色压制×0.5 */
   var _pa=TR.patk*__pS*(Date.now()<POTION_UNTIL?2:1)*(0.85+Math.random()*0.3);   /* 角色攻击（等级压制·药水·波动） */
   var __tp=roleVsFoeTier(charTierIdx(), TR.isBoss?TR.bossTier:-1);   /* 阶位压制 */
-  var _rt=roleTierAtk(); var _ta=titleAtk(); var _tm=tMedalAtk();   /* 角色阶位+称号+无尽徽章攻击特性 */
+  var _rt=roleTierAtk(); var _ta=titleAtk(); var _tm=tMedalAtk(); var _sp=equipSpecials();   /* 角色阶位+称号+无尽徽章攻击特性 + 异能汇总（破虚真伤/猎尊对Boss/锋芒暴伤，同试炼 tlCharDmg 8978） */
   var _atk2=_pa;   /* 属性攻击已由 calcHit 属性倍率结算（主伤害×元素倍率） */
   var _ig=_rt.ig+_ta.ig+_tm.ig+(ISET>=5?0.3:0)+(ARENA.killBoss>=1&&ARENA.medalOn?0.1:0)+(legendWing()?0.10:0)+(shencaiBlade()?0.15:0);   /* 角色无视防御：阶位+称号+徽章+伊泰安（只作用主伤害的有效防御） */
-  var _rl=wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk()+supremeMedalAtk()+altarTruePct();   /* 角色真实伤害% */
-  var _add=(OG>=5?0.1:0)+(__tp.m-1);   /* 增伤乘区：奥格顿5件+10% + 阶位压制 */
+  var _rl=wingRealPct()+_rt.tr+_ta.tr+_tm.tr+godMedalAtk()+supremeMedalAtk()+altarTruePct()+_sp.trueDmg;   /* 角色真实伤害%+异能破虚（同试炼 tlCharDmg 8980） */
+  var _add=(OG>=5?0.1:0)+(__tp.m-1)+(TR.isBoss?_sp.bossDmg:0);   /* 增伤乘区：奥格顿5件+10% + 阶位压制 + 异能猎尊(对Boss，同试炼 tlCharDmg 8981) */
   var weak=Math.random()<0.10;   /* 弱点攻击10% */
-  var _critMul=(isCrit&&weak)?(4*1.1*talentCritMul()*reincCritMul()*altarCritMul()):(isCrit?(2*talentCritMul()*reincCritMul()*altarCritMul()):(weak?2:1));   /* 暴击/弱点倍率（只作用主伤害） */
+  var _critMul=((isCrit&&weak)?(4*1.1*talentCritMul()*reincCritMul()*altarCritMul()):(isCrit?(2*talentCritMul()*reincCritMul()*altarCritMul()):(weak?2:1)))*(1+_sp.critDmg);   /* 暴击/弱点倍率（只作用主伤害）×异能锋芒（同试炼 tlCharDmg 8983） */
   var _mFdr=0,_mmDef=0; if(TR.traits){ for(var _tj=0;_tj<TR.traits.length;_tj++){ var _tv=TR.traits[_tj]; if(_tv.fx==='dmgred') _mFdr+=_tv.val; else if(_tv.fx==='armor') _mmDef+=_tv.val; } }   /* 承受者(怪物)：dmgred→最终伤害减免(作用合计,上限50%)；armor铁壁血盾→主伤害减伤(不影响真伤) */
   var dmg=Math.max(6, Math.round(calcHit({atk:_atk2*_critMul, realAtk:_atk2, ig:_ig+reincIgnore(), real:_rl+reincTrue(), add:_add, attackElem:elemKey(TR.attr), atkElemPct:(TR.attr&&TR.attr!=='无'?0.3:0)}, {def:s.def*__mS, fdr:Math.min(0.5,_mFdr), mdef:_mmDef, attrDefDR:(TR.defElem?0.3:0), defElemResist:(TR.defElem?0.3:0), nativeElem:TR.defElem||null, abs:0}))); dmg+=ascendSkyDmg(TR.maxHp);   /* 统一结算：主伤害(有效防御+暴击弱点)+真伤→增伤→怪物终减→吸收 */
   if(TALENT.sel==='crit' && !TR.isBoss){ if(isCrit){ TL_COM_D=Math.min(10,(TL_COM_D||0)+1); } else { TL_COM_D=0; } dmg=Math.round(dmg*(1+TL_COM_D*0.05)); }   /* 暴击流派·连击：副本同样叠层，非暴击清零（对Boss不叠） */
   if(!TR.isBoss || (TR.bossLevel||0)<80){ if(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0&&Math.random()<0.01){ dmg=TR.monHp; trLog('<b class="lg-boss">伊泰安项链触发秒杀！</b>'); } }   /* 伊泰安项链：1%概率秒杀任何小怪（无视等级），对boss无效 */
   var _ls2=(equipState['neck']&&String(equipState['neck'].name).indexOf('伊泰安')>=0?0.10:0)+titleAtk().ls; if(_ls2>0){ var hl=Math.max(1,Math.round(dmg*_ls2)); if(TR.hp<TR.maxHp) TR.hp=Math.min(TR.maxHp,TR.hp+hl); }
-  var _th=talentHeal(dmg)+reincHeal(dmg)+Math.round(dmg*altarLsPct()); if(_th>0&&TR.hp<TR.maxHp) TR.hp=Math.min(TR.maxHp,TR.hp+_th);   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上)；绿色飘字已去掉省电，功能照常 */
+  var _spL=equipSpecials(); var _th=talentHeal(dmg)+reincHeal(dmg)+Math.round(dmg*(altarLsPct()+_spL.vamp+_spL.onKillHeal)); if(_th>0&&TR.hp<TR.maxHp) TR.hp=Math.min(TR.maxHp,TR.hp+_th);   /* 攻击吸血：伊泰安10%+称号吸血30%(星钻及以上)+神坛噬血+异能噬血/嗜血(命中回复，同试炼 tlCharDmg 9096 _sp2.vamp+_sp2.onKillHeal)；绿色飘字已去掉省电，功能照常 */
   if(TR.traits){ for(var ti=0;ti<TR.traits.length;ti++){ var tt=TR.traits[ti];
     if(tt.fx==='reflect'){ var rb=Math.round(dmg*tt.val); if(rb>0){ TR.hp-=rb; if(TR.hp<0)TR.hp=0; trFloat(rb,false); renderChar(); if(TR.hp<=0){ TR.hp=0; renderChar(); startRevive(); return; } } }   /* Boss 反弹伤害（减伤特性已并入 calcHit 终减） */
   } }
@@ -14558,6 +14588,7 @@ function doReset(){
   try{ localStorage.removeItem('_ih18'); }catch(e){}   /* 初始化释放”天运之主”全服唯一占用：新号可重新随机到先天运势1.8（在重随机先天运势之前清空） */
   CHARACTER.innate=randomRollOrigin();   /* 初始化：先随机先天运势，再按运势分档生成角色属性（与”重新随机”按钮逻辑一致） */
   try{ localStorage.removeItem('shenqi_monthly_legend'); localStorage.removeItem('shenqi_monthly_seal'); }catch(e){}   /* 初始化重置服务器月度限量(传说武器/秘印掉落计数)：重开服归当月0 */
+  try{ localStorage.removeItem('shenqi_trial_legend'); localStorage.removeItem('shenqi_phantom_legend'); localStorage.removeItem('shenqi_pirate_seal'); }catch(e){}   /* 初始化重置服务器限量：无尽试炼100层传说奥格顿20件永久名额回满20（该配额无自动归零，不清理则开新服后名额残留旧服）、神之幻境传说武器月度1件/神印牌月度2张归当月0 */
   try{ localStorage.removeItem('shenqi_daily_pf'); }catch(e){}   /* 初始化重置每日神力碎片掉落统计 */
   itemIdCounter = 1;
   REBIRTH.count=0; REBIRTH.stones=0; REBIRTH.tp=0; REBIRTH.ascended=0; REBIRTH.essence=0; REBIRTH.reliquary=0; REBIRTH.seal=0; REBIRTH.frag=0; REBIRTH.core=0; REBIRTH.boxCount=0; REBIRTH.sealBoon=0;
@@ -14601,8 +14632,10 @@ function doReset(){
   toast('已恢复到初始状态');
 }
 
-loadGame();        /* 恢复本地存档（无存档则保持初始空状态） */
-serverStartInit(); ensureFieldRoster();   /* 恢复服务器开服时间+固定100名玩家 */
+loadGame();        /* 先恢复本地存档（无存档则保持初始空状态）：CHARACTER 就绪，供后续开服时间读取与渲染 */
+serverStartInit(); /* 开服时间：统一读取持久化字段 shenqi_server_start（初始化开新服时写入固定值，不随打开时间变化、不按玩家等级推算） */
+ensureFieldRoster();   /* 再恢复AI存档（加载/重建 FIELD_ROSTER） */
+recomputeIthLeft();   /* AI就绪后统一三端校正：ITH_LEFT=总量−玩家持有−AI持有−拍卖待售（公式与loadGame内14511一致；loadGame内那次校正因AI未加载会先偏大，随即被本行覆盖，同步执行无窗口，AI持有的伊泰安不再漏算→限量恒≤各部位上限，杜绝超发） */
 if(typeof setInterval==='function'&&!window.__aiHeartbeat){ window.__aiHeartbeat=true; setInterval(aiHeartbeat,60000); }   /* AI低频心跳：挂机页面持续发育（配合各入口打开时惰性补算） */
 syncItemsFromBlueprints();   /* 蓝图同步：旧物品按最新蓝图刷新属性（保留id/叠加/强化/宝石/洗炼） */
 renderEquip();
