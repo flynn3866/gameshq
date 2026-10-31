@@ -1057,6 +1057,14 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
 .au-row-fin .au-fin-total{flex:none;width:90px;display:flex;align-items:center;gap:4px;justify-content:flex-end;color:#ffd98a;font-size:12px;box-sizing:border-box;white-space:nowrap;overflow:hidden;}   /* 总价列固定90px(用户锁定口径)，overflow hidden 防止超大数值nowrap撑破舞台 */
 .au-row-fin .au-fin-total svg{width:12px;height:12px;flex:none;}   /* 货币图标固定12px，防止SVG无限撑大 */
 .au-row-fin .au-fin-type{flex:none;width:38px;text-align:center;padding:2px 0;border-radius:99px;font-size:11px;line-height:1.5;letter-spacing:1px;box-sizing:border-box;}
+.au-log-hint{color:#8fb4d8;font-size:12px;letter-spacing:1px;padding:2px 4px 8px;}
+.au-row-log{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:8px;box-sizing:border-box;}   /* 购买日志行：时间胶囊+文本，柔和半透明卡片 */
+.au-log-time{flex:none;padding:1px 8px;border-radius:99px;background:rgba(90,190,255,.15);color:#8fd0ff;font-size:11px;font-weight:700;letter-spacing:.5px;box-shadow:inset 0 0 0 1px rgba(143,208,255,.25);}
+.au-log-txt{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e8eef5;font-size:13px;}
+.au-log-txt .au-log-buyer{color:#fff;font-weight:700;}
+.au-log-txt b{color:#ffd98a;font-weight:700;}
+.au-log-txt i{font-style:normal;color:#9fd8ff;font-size:11px;}
+.au-log-txt em{font-style:normal;color:#b9ffd9;font-weight:600;}
 .au-row-fin .au-fin-type.sold{color:#4ade80;background:rgba(74,222,128,.12);border:1px solid rgba(74,222,128,.28);}   /* 售出-亮绿（收益到账） */
 .au-row-fin .au-fin-type.bought{color:#7cd8ff;background:rgba(80,170,240,.12);border:1px solid rgba(80,170,240,.28);}   /* 购入-蓝色（冷色中性，与售出绿区分） */
 .au-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:388px;text-align:center;color:#8a7a58;font-size:13px;line-height:1.9;}
@@ -4145,6 +4153,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
         <button class="au-tab on" data-t="search">搜索物品</button>
         <button class="au-tab" data-t="mine">我的竞拍</button>
         <button class="au-tab" data-t="fin">竞拍结束</button>
+        <button class="au-tab" data-t="log">交易日志</button>
       </div>
       <div class="au-tool" id="au-tool">
         <div class="au-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input id="au-search" placeholder="搜索物品名称..."><button class="au-searchbtn" id="au-searchbtn">搜索</button></div>
@@ -5608,9 +5617,7 @@ function closeSettings(){ var sf=$('#settings-float'); if(sf) sf.classList.remov
     var act=it.getAttribute('data-sf');
     if(act==='guide'){ closeSettings(); location.hash='#guide'; }
     if(act==='history'){ openHistory(); }
-    if(act==='refresh'){ var n=syncItemsFromBlueprints(); recalcCharacter(); renderEquip(); renderBag(); renderAttrs(); syncBagBar(); applyCharTier(); toast('已刷新 '+(n||0)+' 件旧物品为最新属性'); closeSettings(); }
-    else if(act==='reset'){ confirmDialog('确认初始化？<br>所有数据将回到初始状态（等级0、装备/背包/物品清空、非绑定金币100亿启动资金）', function(ok){ if(ok){ closeSettings(); doReset(); } }); }
-    else if(act==='calib'){ confirmDialog('校准AI开服时间？<br>将按你的角色当前等级，把100名AI玩家的开服时长对齐到与你同步（AI会重新按同开服天数发育）。', function(ok){ if(ok){ closeSettings(); aiCalibrateServer(); } }); }
+    if(act==='reset'){ confirmDialog('确认初始化？<br>所有数据将回到初始状态（等级0、装备/背包/物品清空、非绑定金币100亿启动资金）', function(ok){ if(ok){ closeSettings(); doReset(); } }); }
   }, false);
 })();
 /* ============ 点击式 Tooltip（手机：点击显示、点击其他处隐藏、防屏幕遮挡） ============ */
@@ -6006,9 +6013,7 @@ function deepUp(key){ var lv=DEEP.total||0, mk=deepCostMerit(lv), cc=deepCostCry
 var SERVER_START=0;   /* 服务器开服时间戳：点“初始化”起算 */
 var FIELD_ROSTER=null;   /* 100名固定AI玩家（持久化localStorage，一次开服内固定不重排） */
 var FIELD_NAMES=['剑荡八荒','御剑听雨','踏雪无痕','一念乾坤','玄天降世','紫霄剑主','沧海一粟','血洗苍穹','刀剑如梦','星辰坠落','孤傲剑魂','斩尽天下','疯魔乱世','笑傲风云','不败神话','万古长青','不朽传说','巅峰王者','冷月葬花','寒江孤影','青衫仗剑','白衣胜雪','赤焰焚天','幽冥主宰','天骄霸主','无双剑圣','风起云涌','龙啸九天','凤舞九霄','一怒屠城','血染江山','逆天改命','堕入凡尘','仙界第一','神话无敌','紫禁之巅','大梦一场','浮生若梦','云淡风轻','素手挽歌','倾国倾城','惊鸿一瞥','落花有意','流水无情','彼岸花开','三生三世','十里桃花','红尘客栈','南柯一梦','西域狂刀','北冥有鱼','沧澜剑仙','烈焰焚城','寒霜之子','雷电法王','狂战八方','圣光降临','暗夜使者','暮光之城','沙漠之狐','雪域苍狼','孤胆英雄','铁血丹心','侠骨柔情','剑气纵横','名动四方','独步天下','唯我独尊','盖世无双','英雄本色','王者归来','天之骄子','红尘剑客','逍遥散仙','镇魔天师','琴瑟和鸣','醉卧沙场','剑气如虹','御风而行','一念成魔','青灯古佛','牧野流星','守望星空','逐鹿中原','血战到底','破晓时分','黎明之剑','黄昏霸主','极昼之影','银河战舰','星际游侠','荒野镖客','绝地求生','天命所归','乾坤未定','龙战于野','其血玄黄','大道至简','洪荒之力','白泽灵主','青鸾仙子','紫微帝君','凌霄剑尊','太虚真人'];
-function aiServerDayByLv(lv){ var x; lv=lv||0; if(lv<=0) return 0.5; if(lv<=30) x=lv/150; else if(lv<=60) x=0.2+(lv-30)/30*0.13; else x=0.33+(lv-60)/20*0.67; return Math.max(0.5, x*(338000/1.3)/86400); }   /* 玩家等级→开服天数：AI与玩家同开服时长发育（普通投入基准≈3天满级80） */
-function aiCalibrateServer(){ var lv=(CHARACTER&&CHARACTER.info&&typeof CHARACTER.info.level==='number')?CHARACTER.info.level:0; var day=aiServerDayByLv(lv); SERVER_START=Date.now()-Math.round(day*86400000); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} try{ localStorage.removeItem('shenqi_field_roster'); }catch(e){} FIELD_ROSTER=null; ensureFieldRoster(); try{ if(typeof renderRank==='function') renderRank(); }catch(e){} try{ if(typeof renderBattle==='function') renderBattle(); }catch(e){} toast('已按角色 Lv.'+lv+' 校准AI开服：约 '+Math.round(day*10)/10+' 天前'); }
-function serverStartInit(){ if(!SERVER_START){ var r; try{ r=parseInt(localStorage.getItem('shenqi_server_start'),10); }catch(e){} SERVER_START=(r&&r>0)?r:Date.now(); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} } }   /* 开服时间统一读取持久化字段 shenqi_server_start：初始化开新服(14617)时写入固定值，此后每次打开一律读取该字段（不随打开时间变化、不按玩家等级倒推）；仅当服务器从未记录(首次启动/数据被清=真开服)时以当前时间作为开服时刻写入一次；等级倒推仅保留在 aiCalibrateServer 手动校准 */
+function serverStartInit(){ if(!SERVER_START){ var r; try{ r=parseInt(localStorage.getItem('shenqi_server_start'),10); }catch(e){} SERVER_START=(r&&r>0)?r:Date.now(); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} } }   /* 开服时间统一读取持久化字段 shenqi_server_start：初始化开新服时写入固定值，此后每次打开一律读取该字段（不随打开时间变化、不按玩家等级倒推）；仅当服务器从未记录(首次启动/数据被清=真开服)时以当前时间作为开服时刻写入一次 */
 function aiRollInnate(){  /* AI先天运势：与玩家rollInnate同一套分布（天运1.8全服唯一归玩家"谜团"独占，AI传说档落高级档） */
   var r=Math.random()*100, t;
   if(r<0.01){ t=1-Math.sqrt(1-Math.random()); return Math.round((1.20+t*0.59)*100)/100; }   /* 传说档0.01%→落高级档（不占天运1.8） */
@@ -6652,16 +6657,19 @@ function aiBuyGoldFromAuction(st,p){   /* 神豪/高氪强化缺金币→从拍�
     var _n=Number(e.n||1), _unit=e.price/_n;   /* 每亿金币氪金单价 */
     var _cap=aiGoldRateKf()*aiPaySense(p, st);   /* 买家接受上限：动态基准每亿价×敏感度(神豪2.2/高氪1.6/微氪0.85)，太贵不买 */
     if(_unit>_cap) continue;
-    st.kf-=e.price; aiAucProfit(st,'kf',-e.price); st.gold+=_n*100000000;   /* 扣氪金得金币(亿→原始金币)；买入支出→利润累计 */
+    st.kf-=e.price; aiAucProfit(st,'kf',-e.price); st.gold+=_n*100000000; try{ aucBuyLog(p.name,e); }catch(err){}   /* 扣氪金得金币(亿→原始金币)；买入支出→利润累计；购买日志（买家=AI，k=同条目id与卖家记录合并） */
     var _pn=(CHARACTER&&CHARACTER.info&&CHARACTER.info.name)||'谜团';
     if(e.seller===_pn){   /* 卖家=玩家：真实到账氪金+成交记录（同 aiAuction 内 _payPlayerSeller 口径，修复"玩家上架金币被AI买走不收款/无竞拍结束记录"） */
       try{ auctionPay('kf', -e.price); }catch(err){}
       try{ aucPlayerBook('kf', e.price); }catch(err){}
       try{ toast('你的 金币 '+fmtWan(_n*100000000)+' 已售出，获得 '+fmtWan(e.price)+' 氪金'); }catch(err){}
       try{ AUCTION.history.unshift({id:'S'+((AUCTION._id||0))+'x',item:{name:'金币',type:'currency'},seller:e.seller,ai:false,price:e.price,cur:'kf',n:_n,time:Date.now(),type:'sold'}); if(AUCTION.history.length>100) AUCTION.history.length=100; }catch(err){}
+      try{ if(typeof renderCurrency==='function') renderCurrency(); }catch(err){}   /* 修复玩家卖金币氪金不到账：到账后立即刷新界面（此前不刷新，界面仍显示旧氪金） */
+      try{ if(typeof saveGame==='function') saveGame(); }catch(err){}   /* 修复玩家卖金币氪金丢失：立即持久化CURRENCY.kf（此前只加内存不存盘，刷新/重开即回滚） */
+      try{ aucSellLog(_pn,e); }catch(err){}   /* 出售日志：玩家金币单被AI买走（真实成交，只保留当天） */
     } else {   /* 卖家=AI：照原逻辑给AI卖家收氪金 */
       var q=null; try{ if(FIELD_ROSTER) for(var k=0;k<FIELD_ROSTER.length;k++) if(FIELD_ROSTER[k].name===e.seller){ q=FIELD_ROSTER[k]; break; } }catch(err){}
-      if(q&&q.st){ q.st.kf=(q.st.kf||0)+e.price; aiAucProfit(q.st,'kf',e.price); }   /* 卖家(套现AI)收氪金；拍卖收入→利润累计 */
+      if(q&&q.st){ q.st.kf=(q.st.kf||0)+e.price; aiAucProfit(q.st,'kf',e.price); try{ aucSellLog(e.seller,e); }catch(err){} }   /* 卖家(套现AI)收氪金；拍卖收入→利润累计；出售日志（卖家=AI，k=同条目id与买家记录合并） */
     }
     AUCTION.list.splice(i,1); auctionSave();
     return;   /* 一次买一份（卖家差异化定价，各AI不同价） */
@@ -11399,10 +11407,36 @@ function renderAuction(){
   var kw=(AU_SEARCH||'').trim(), arr;
   if(AU_TAB==='mine'){ arr=AUCTION.list.filter(function(e){ return !e.ai && e.seller==='谜团'; }).slice().sort(function(a,b){ return (b.time||0)-(a.time||0); }); }
   else if(AU_TAB==='fin'){ arr=(AUCTION.history||[]).slice().sort(function(a,b){ return (b.time||0)-(a.time||0); }); }
+  else if(AU_TAB==='log'){ var _lgA=[]; try{ var _lrA=JSON.parse(localStorage.getItem('shenqi_auc_buylog')||'[]'); if(Array.isArray(_lrA)) _lgA=_lrA; }catch(err){} var _dA=new Date(); _dA.setHours(0,0,0,0); _lgA=_lgA.filter(function(x){ return x&&(x.t||0)>=_dA.getTime(); }); arr=_lgA; }   /* 购买日志：localStorage持久化，渲染时再按当天0点过滤（与写入时清理双保险，杜绝跨天残留） */
   else { arr=AUCTION.list.filter(function(e){ if(AU_CAT!=='all' && aucCat(e.item)!==AU_CAT) return false; if(kw && e.item && e.item.name && String(e.item.name).indexOf(kw)<0) return false; return true; }).slice().sort(function(a,b){ return (b.time||0)-(a.time||0); }); }
   var AU_PG_PER=8, pages=Math.max(1,Math.ceil(arr.length/AU_PG_PER));
   if(AU_PAGE.cur>pages) AU_PAGE.cur=pages;
   var cur=AU_PAGE.cur, page=arr.slice((cur-1)*AU_PG_PER, cur*AU_PG_PER);
+  if(AU_TAB==='log'){   /* 交易日志独立渲染：同key（同一笔成交）买卖记录合并为一条——「卖家 售出 物品 获得 X 货币 · 买家 买家名」，只显示当天 */
+    var _grp={};   /* 按交易key分组合并：s=出售记录 b=购买记录 t=时间 */
+    for(var _gi=0;_gi<arr.length;_gi++){ var _x=arr[_gi]; var _kk=_x.k?('k'+_x.k):('t'+(_x.t||0)); if(!_grp[_kk]) _grp[_kk]={s:null,b:null,t:_x.t||0}; if(_x.s) _grp[_kk].s=_x; else _grp[_kk].b=_x; if((_x.t||0)>_grp[_kk].t) _grp[_kk].t=_x.t; }
+    var _ks=Object.keys(_grp).sort(function(a,b){ return (_grp[b].t||0)-(_grp[a].t||0); });   /* 组按时间倒序 */
+    var _pg=Math.max(1,Math.ceil(_ks.length/AU_PG_PER));
+    if(AU_PAGE.cur>_pg) AU_PAGE.cur=_pg;
+    var _cur=AU_PAGE.cur, _page=_ks.slice((_cur-1)*AU_PG_PER, _cur*AU_PG_PER);
+    if(!_page.length){ ls.innerHTML='<div class="au-empty">今天还没有交易记录<br>你或 AI 的购买、出售成交后会实时记录到这里（只保留当天，跨天自动清空）</div>'; }
+    else {
+      var _lgHtml='<div class="au-log-hint">✦ 全服交易日志 · 今日 '+_ks.length+' 笔（每笔一条，跨天自动清空）</div>';
+      _lgHtml+=_page.map(function(_kk){
+        var _s=_grp[_kk].s, _b=_grp[_kk].b, _o=_s||_b;
+        var _dt=new Date(_o.t||0), _hm=('0'+_dt.getHours()).slice(-2)+':'+('0'+_dt.getMinutes()).slice(-2);
+        var _cN=(_o.c==='kf')?'氪金':'金币';
+        var _oI=(_o.i==='金币')?(fmtWan(Math.max(1,_o.n||1)*100000000)+'金币'):(_o.i||'物品');   /* 金币单：n=亿数→×1亿转原始金币再fmtWan（如10亿金币，不重复×N） */
+        var _buyMid=(_o.i==='金币')?('<em>'+_oI+'</em>'):('<em>'+_oI+'x'+Math.max(1,_o.n||1)+'</em>');   /* 普通物品：伊泰安项链x1；金币单：1000亿金币 */
+        var _line;
+        if(_b){ _line='<b class="au-log-buyer">'+(_b.b||'未知')+'</b> 花费 <b>'+fmtWan(_b.v||0)+'</b> <i>'+_cN+'</i>购买 '+_buyMid+( _s?(' - 卖家 <b class="au-log-buyer">'+(_s.b||'未知')+'</b>'):''); }   /* 买家主视角：买家 花费 X 货币购买 商品 - 卖家 卖家名 */
+        else if(_s){ _line='<b class="au-log-buyer">'+(_s.b||'未知')+'</b> 售出 '+_buyMid+' 获得 <b>'+fmtWan(_s.v||0)+'</b> <i>'+_cN+'</i>'; }   /* 仅出售记录兜底：卖家 售出 商品 获得 X 货币 */
+        return '<div class="au-row au-row-log"><span class="au-log-time">'+_hm+'</span><span class="au-log-txt">'+_line+'</span></div>';
+      }).join('');
+      ls.innerHTML=_lgHtml;
+    }
+    renderAuctionPager(_pg); return;
+  }
   var _hMid=(AU_TAB==='search')?'物品':((AU_TAB==='mine')?'已上架物品':'交易记录');
   var _th;
   if(AU_TAB==='fin'){ _th='<div class="au-th th4"><span class="au-th-left"><span class="au-th-ic"></span><span class="au-th-mid">物品</span></span><span class="au-th-q">数量</span><span class="au-th-r">总价</span><span class="au-th-t">类型</span></div>'; }
@@ -11590,6 +11624,26 @@ function _applyAucPick(it){   /* 选中物品回填到上架凹槽 + 下方显�
   sl.classList.add('has'); sl.innerHTML='<img src="'+it.img+'" alt="">';
   var nm=document.getElementById('au-sel-slot-name'); if(nm){ nm.textContent=it.name+(auctionQty(it)>1?' ×'+auctionQty(it):''); }
 }
+function _aucLogItemName(e){ if(!e) return '物品'; if(e.kind==='gold') return '金币'; if(e.kind==='seal') return '轮回秘印'; if(e.kind==='frag') return '太初神核碎片'; if(e.kind==='core') return '太初神核'; return (e.item&&e.item.name)||'物品'; }   /* 购买日志物品名（计数型挂单按kind取标准名） */
+function _aucLogTotal(e){ return (e.kind==='gold')?(e.price||0):((e.price||0)*(Number(e.n||1))); }   /* 购买日志总花费（金币挂单price已是总价；普通物品=单价×数量） */
+function aucBuyLog(buyer,e){   /* 全服购买日志：玩家+AI每次拍卖成交后记录（真实成交点调用），localStorage持久化，只保留当天数据（跨天自动清理）；k=拍卖条目id作交易key（买卖双方同key→渲染合并为一条） */
+  if(!e) return;
+  var _lg=[]; try{ var _r=JSON.parse(localStorage.getItem('shenqi_auc_buylog')||'[]'); if(Array.isArray(_r)) _lg=_r; }catch(err){}
+  var _d=new Date(); _d.setHours(0,0,0,0); var _cut=_d.getTime();   /* 当天0点：昨天及以前数据删除 */
+  _lg=_lg.filter(function(x){ return x&&(x.t||0)>=_cut; });
+  _lg.unshift({t:Date.now(),b:buyer,k:(e.id||''),i:_aucLogItemName(e),n:Math.max(1,e.n||1),v:_aucLogTotal(e),c:e.cur||'gold'});
+  if(_lg.length>200) _lg.length=200;
+  try{ localStorage.setItem('shenqi_auc_buylog',JSON.stringify(_lg)); }catch(err){}
+}
+function aucSellLog(seller,e){   /* 全服出售日志：玩家+AI上架物品被买走后记录（与购买日志同存储s:1标记，k=拍卖条目id作交易key与买家记录合并为一条）——修复"玩家出售金币/物品没进日志" */
+  if(!e) return;
+  var _lg=[]; try{ var _r=JSON.parse(localStorage.getItem('shenqi_auc_buylog')||'[]'); if(Array.isArray(_r)) _lg=_r; }catch(err){}
+  var _d=new Date(); _d.setHours(0,0,0,0); var _cut=_d.getTime();   /* 当天0点：昨天及以前数据删除 */
+  _lg=_lg.filter(function(x){ return x&&(x.t||0)>=_cut; });
+  _lg.unshift({t:Date.now(),b:seller,s:1,k:(e.id||''),i:_aucLogItemName(e),n:Math.max(1,e.n||1),v:_aucLogTotal(e),c:e.cur||'gold'});
+  if(_lg.length>200) _lg.length=200;
+  try{ localStorage.setItem('shenqi_auc_buylog',JSON.stringify(_lg)); }catch(err){}
+}
 function aucBuy(id){   /* 一口价购买：确认框显示"物品×数量+总花费" → 确认后扣买家货币(总价) → 物品入买家背包 → 卖家收总价 */
   var e=null; for(var i=0;i<AUCTION.list.length;i++) if(AUCTION.list[i].id===id){ e=AUCTION.list[i]; break; }
   if(!e){ toast('该物品已被拍下或下架'); renderAuction(); return; }
@@ -11613,13 +11667,14 @@ function aucBuy(id){   /* 一口价购买：确认框显示"物品×数量+总�
     else { var item=JSON.parse(JSON.stringify(e.item)); item.count=Math.max(1,item.count||1); ok2=addStackable(item); }
     if(!ok2){ auctionPay(e.cur,-total); toast(e.kind==='gold'?'金币入账失败':'背包已满，无法购买'); renderAuction(); return; }   /* 入账失败：退回货币 */
     /* 卖家收总价 */
-    if(e.ai){ var q=null; try{ if(FIELD_ROSTER) for(var k2=0;k2<FIELD_ROSTER.length;k2++) if(FIELD_ROSTER[k2].name===e.seller){ q=FIELD_ROSTER[k2]; break; } }catch(err){} if(q&&q.st){ if(e.cur==='kf'){ q.st.kf=(q.st.kf||0)+total; } else { q.st.gold=(q.st.gold||0)+total; } aiAucProfit(q.st,e.cur,total); } }   /* AI卖家按挂单货币收款：氪金挂单→卖家氪金账户，金币挂单→卖家金币账户；拍卖收入→利润累计（同AI买AI口径） */
+    if(e.ai){ var q=null; try{ if(FIELD_ROSTER) for(var k2=0;k2<FIELD_ROSTER.length;k2++) if(FIELD_ROSTER[k2].name===e.seller){ q=FIELD_ROSTER[k2]; break; } }catch(err){} if(q&&q.st){ if(e.cur==='kf'){ q.st.kf=(q.st.kf||0)+total; } else { q.st.gold=(q.st.gold||0)+total; } aiAucProfit(q.st,e.cur,total); } try{ aucSellLog(e.seller,e); }catch(err){} try{ if(typeof aiSaveField==='function') aiSaveField(true); }catch(err){} }   /* AI卖家按挂单货币收款：氪金挂单→卖家氪金账户，金币挂单→卖家金币账户；拍卖收入→利润累计（同AI买AI口径）+出售日志（AI卖家真实成交）+立即落盘AI存档（防止玩家购买后立即关闭导致AI收款回滚） */
     /* 竞拍结束归档：我购得的物品 → type:'bought'；我上架被买走 → type:'sold' */
     AUCTION.history.unshift({id:'B'+AUCTION._id+'x',item:e.item,seller:e.seller,ai:e.ai,price:e.price,cur:e.cur,n:e.n,time:Date.now(),type:'bought'});
     if(!e.ai && e.seller==='谜团'){ AUCTION.history[0].type='sold'; }
     if(AUCTION.history.length>100) AUCTION.history.length=100;
     /* 移除拍卖条目 */
     AUCTION.list.splice(k,1); recomputeIthLeft(); auctionSave(); saveGame();
+    try{ aucBuyLog('谜团',e); }catch(err){}   /* 购买日志：玩家成交记录（真实成交后，只保留当天） */
     renderAuction(); renderBag(); renderCurrency(); try{ if(e.kind==='seal'||e.kind==='frag'||e.kind==='core') renderRebirth(); }catch(err){}   /* 计数型材料入账后刷新轮回面板显示 */
     toast('购买成功：'+it.name+' ×'+n+'，共花费 '+fmtWan(total)+' '+aucCurName(e.cur));
   });
@@ -11683,6 +11738,7 @@ function aiAuction(st,p,now){
     if(!e||!e.ai) return; var _amt=total||((e.kind==='gold')?(e.price||0):((e.price||0)*(Number(e.n||1)))); if(_amt<=0) return;
     var q=null; try{ if(FIELD_ROSTER) for(var k2=0;k2<FIELD_ROSTER.length;k2++) if(FIELD_ROSTER[k2].name===e.seller){ q=FIELD_ROSTER[k2]; break; } }catch(err){}
     if(q&&q.st){ if(e.cur==='kf'){ q.st.kf=(q.st.kf||0)+_amt; } else { q.st.gold=(q.st.gold||0)+_amt; } aiAucProfit(q.st,e.cur,_amt); }   /* AI卖家拍卖收入→利润累计（真实成交，同玩家口径） */
+    try{ aucSellLog(e.seller,e); }catch(err){}   /* 出售日志：AI上架物品被AI买走（真实成交，只保留当天） */
   };
   try{
     function _payPlayerSeller(e){   /* AI买走玩家上架的货：给玩家卖家到账对应货币 + 弹出卖出提示（修复"玩家上架被买走不收款"） */
@@ -11695,6 +11751,8 @@ function aiAuction(st,p,now){
       try{ AUCTION.history.unshift({id:'S'+((AUCTION._id||0))+'x',item:e.item,seller:e.seller,ai:false,price:e.price,cur:e.cur,n:e.n,time:Date.now(),type:'sold'}); if(AUCTION.history.length>100) AUCTION.history.length=100; }catch(err){}   /* 卖出归档：我上架被AI买走 → 竞拍结束tab记录(含日期)，与玩家购入bought同链路 */
       try{ auctionSave(); }catch(err){}   /* 落盘history(卖出记录) */
       try{ if(typeof renderCurrency==='function') renderCurrency(); }catch(err){}
+      try{ if(typeof saveGame==='function') saveGame(); }catch(err){}   /* 修复玩家卖货收款丢失：立即持久化CURRENCY（此前只加内存不存盘，刷新/重开即回滚） */
+      try{ aucSellLog(_pn,e); }catch(err){}   /* 出售日志：玩家上架物品被AI买走（真实成交，只保留当天） */
     }
     if(!st||!p||((st.ws||0)>=99&&(st.core||0)>=1)) return;   /* 超脱·终局后不再频繁交易 */
     _aiAucTick=(_aiAucTick||0)+1; if(_aiAucTick%5!==0) return;   /* 每 5 个心跳（≈5分钟）做一次完整拍卖决策 */
@@ -11727,7 +11785,7 @@ function aiAuction(st,p,now){
         if(e.cur==='kf'){ if(_isIth){ var _irK=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0; var _askIthK=Math.min(50000,Math.max(10000,Math.round(10000*aiSellAsk(p, st)*1.6*(_irK<=2?5:(_irK<=5?3:1))))); if(e.price<=_mspK&&e.price<=Math.round(_askIthK*0.75)){ if(!_bestIthK||e.price<_bestIthK.price) _bestIthK=e; } } continue; }   /* 氪金单只收伊泰安（转手赚氪金差价）：氪金价≤转手氪金价×0.75(毛利≥25%盖双向手续费)——玩家急售氪金限量品是商人利润来源；转手锚点1万氪金±10%波动、稀缺(剩≤2×5翻5倍顶格5万、≤5×3、多×1锚点)——玩家急售氪金限量品是商人利润来源 */
         if(_isIth){ var _ir=(ITH_LEFT&&ITH_LEFT.yitaiNecklace)||0; var _askIth=Math.max(1,Math.round(_mv*aiSellAsk(p, st)*1.6*(_ir<=2?10:(_ir<=5?6:3)))); if(e.price<=_mspIth&&e.price<_askIth){ if(!_bestIth||e.price<_bestIth.price) _bestIth=e; } }   /* 伊泰安金币单：买入价<转手预期价即收（稀缺系数×3~×10：全服剩≤2→绝版冲刺价高愿收、剩多→正常，眼光毒辣）；货比三家取最低价 */
         else if(_isEq){ if(e.price<=_msp&&e.price<=Math.round(_mv*0.7)){ if(!_bestEq||e.price<_bestEq.price) _bestEq=e; } }   /* 装备捡漏≤70%估值 */
-        else { if(e.price<=_msp&&e.price<=Math.round(_mv*0.7)){ if(!_best||e.price<_best.price) _best=e; } }   /* 材料/宝石/杂物捡漏≤70%估值 */
+        else { if(e.kind==='seal'||e.kind==='frag'||e.kind==='core') continue; if(e.price<=_msp&&e.price<=Math.round(_mv*0.7)){ if(!_best||e.price<_best.price) _best=e; } }   /* 材料/宝石/杂物捡漏≤70%估值；计数型材料单(秘印/碎片/神核)不走商人囤货——材料是计数流转(上架扣计数/买入入计数)，商人转手挂出会丢kind导致买家入背包计数失效，排除；材料单由需求方(按需购买/玩家)直接买入入计数 */
       }
       var _flip=function(e2){   /* 转手：买入后立即高价重新上架（装备/伊泰安走此路径——倒买倒卖赚差价，物品从拍卖→(瞬时持有)→拍卖，不过手占用、总量守恒；买家=追求型AI/玩家，稀缺品永远有买家） */
         if(!e2) return;
@@ -11738,28 +11796,29 @@ function aiAuction(st,p,now){
         else _ask2=Math.max(1,Math.round(_mv2*aiSellAsk(p, st)*(aiIsMerchant(p)?1.6:1)));
         var _fee2=aucFee(_ask2);
         var _fee2G=kfFeeGold(_fee2);   /* 氪金单手续费折算金币（市场牌价） */
-        var _payOk=e2.cur==='kf'?((st.kf||0)>=e2.price&&(st.gold||0)>=_fee2G):((st.gold||0)>=e2.price+_fee2);   /* 货款+上架手续费：氪金单货款扣氪金、手续费全部扣金币（折算，同玩家规则），金币单扣金币 */
+        var _tot2=e2.price*Math.max(1,e2.n||1);   /* 货款总价=单价×数量（与卖家收款同口径，n>1不失衡） */
+        var _payOk=e2.cur==='kf'?((st.kf||0)>=_tot2&&(st.gold||0)>=_fee2G):((st.gold||0)>=_tot2+_fee2);   /* 货款+上架手续费：氪金单货款扣氪金、手续费全部扣金币（折算，同玩家规则），金币单扣金币 */
         if(!_payOk) return;
-        if(e2.cur==='kf'){ st.kf-=e2.price; aiAucProfit(st,'kf',-e2.price); st.gold-=_fee2G; aiAucProfit(st,'gold',-_fee2G); }
-        else { st.gold-=e2.price+_fee2; aiAucProfit(st,'gold',-(e2.price+_fee2)); }   /* 货款+上架手续费(买入支出+成本→利润累计) */
+        if(e2.cur==='kf'){ st.kf-=_tot2; aiAucProfit(st,'kf',-_tot2); st.gold-=_fee2G; aiAucProfit(st,'gold',-_fee2G); }
+        else { st.gold-=_tot2+_fee2; aiAucProfit(st,'gold',-(_tot2+_fee2)); }   /* 货款+上架手续费(买入支出+成本→利润累计) */
         var _copy2=JSON.parse(JSON.stringify(e2.item));
         for(var _mj2=0;_mj2<AUCTION.list.length;_mj2++) if(AUCTION.list[_mj2].id===e2.id){ AUCTION.list.splice(_mj2,1); break; }
         AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_copy2,price:_ask2,cur:e2.cur,n:Math.max(1,e2.n||1),time:Date.now()});
-        recomputeIthLeft(); auctionSave(); _payPlayerSeller(e2);
+        recomputeIthLeft(); auctionSave(); _payPlayerSeller(e2); _paySellerAI(e2); try{ aucBuyLog(p.name,e2); }catch(err){}   /* 商人转手买入日志（买家=AI，k=同条目id与卖家记录合并）——补_paySellerAI：AI上架货被商人买入时AI卖家收款（此前只给玩家卖家收款，AI卖家漏款） */
       };
       if(!_bestIth&&!_bestIthK){ st._wantIth='伊泰安'; }   /* 伊泰安没合适低买价→世界喊收(商人蹲货，限量品永远有买家) */
       _flip(_bestIth); _flip(_bestIthK); _flip(_bestEq);
-      if(_best&&(st.gold||0)>=_best.price){ st.gold-=_best.price; aiAucProfit(st,'gold',-_best.price); if(!st.bag) st.bag=[]; st.bag.push(JSON.parse(JSON.stringify(_best.item))); for(var _mj=0;_mj<AUCTION.list.length;_mj++) if(AUCTION.list[_mj].id===_best.id){ AUCTION.list.splice(_mj,1); break; } recomputeIthLeft(); auctionSave(); _payPlayerSeller(_best); }   /* 材料/杂物低价买进囤货（真实流转，非凭空），下次心跳高价上架；买入支出→利润累计 */
+      if(_best&&(st.gold||0)>=_best.price*Math.max(1,_best.n||1)){ st.gold-=_best.price*Math.max(1,_best.n||1); aiAucProfit(st,'gold',-_best.price*Math.max(1,_best.n||1)); if(!st.bag) st.bag=[]; st.bag.push(JSON.parse(JSON.stringify(_best.item))); for(var _mj=0;_mj<AUCTION.list.length;_mj++) if(AUCTION.list[_mj].id===_best.id){ AUCTION.list.splice(_mj,1); break; } recomputeIthLeft(); auctionSave(); _payPlayerSeller(_best); _paySellerAI(_best); try{ aucBuyLog(p.name,_best); }catch(err){} }   /* 材料/杂物低价买进囤货（真实流转，非凭空），下次心跳高价上架；买入支出→利润累计（总价=单价×数量，与卖家收款同口径）——补_paySellerAI：AI上架货被商人买入时AI卖家收款 */
       /* 商人全能交易闭环（3名商人同规则）：①神印囤货——低买(≤估值70%)入包，等99世需求高价出；②金币汇差——氪金低收玩家金币单→立即转手高价挂(吃价差)；③材料快周转出货——囤货按转手价主动挂出(不等缺钱)；④神印择时出货——全服已有超脱AI(需求存在)→机会挂高价；⑤没买到→世界喊收意向(16,645冷却控频) */
       var _bestSeal=null;
       for(var _ms2=0;_ms2<AUCTION.list.length;_ms2++){ var e5=AUCTION.list[_ms2]; if(!e5||e5.seller===p.name||!e5.item||e5.cur!=='gold'||!(e5.price>0)) continue; var _nm5=String(e5.item.name||''); if(_nm5.indexOf('神印')<0||_nm5.indexOf('碎片')>=0) continue; if(!aucTradable(e5.item)) continue; var _mvS=aiItemValue(e5.item); if(e5.price<=_mspIth&&e5.price<=Math.round(_mvS*0.7)){ if(!_bestSeal||e5.price<_bestSeal.price) _bestSeal=e5; } }
-      if(_bestSeal&&(st.gold||0)>=_bestSeal.price){ st.gold-=_bestSeal.price; aiAucProfit(st,'gold',-_bestSeal.price); if(!st.bag) st.bag=[]; st.bag.push(JSON.parse(JSON.stringify(_bestSeal.item))); for(var _mjS=0;_mjS<AUCTION.list.length;_mjS++) if(AUCTION.list[_mjS].id===_bestSeal.id){ AUCTION.list.splice(_mjS,1); break; } recomputeIthLeft(); auctionSave(); _payPlayerSeller(_bestSeal); }
+      if(_bestSeal&&(st.gold||0)>=_bestSeal.price*Math.max(1,_bestSeal.n||1)){ st.gold-=_bestSeal.price*Math.max(1,_bestSeal.n||1); aiAucProfit(st,'gold',-_bestSeal.price*Math.max(1,_bestSeal.n||1)); if(!st.bag) st.bag=[]; st.bag.push(JSON.parse(JSON.stringify(_bestSeal.item))); for(var _mjS=0;_mjS<AUCTION.list.length;_mjS++) if(AUCTION.list[_mjS].id===_bestSeal.id){ AUCTION.list.splice(_mjS,1); break; } recomputeIthLeft(); auctionSave(); _payPlayerSeller(_bestSeal); _paySellerAI(_bestSeal); try{ aucBuyLog(p.name,_bestSeal); }catch(err){} }   /* 商人神印囤货日志（总价=单价×数量，与卖家收款同口径）——补_paySellerAI：AI上架货被商人买入时AI卖家收款 */
       if(!_bestSeal){ st._wantItem='神印'; }   /* 神印没货/太贵→世界喊收(商人蹲货，冷却控频) */
       var _bestG=null;
       for(var _mg=0;_mg<AUCTION.list.length;_mg++){ var e6=AUCTION.list[_mg]; if(!e6||e6.seller===p.name||e6.kind!=='gold'||e6.cur!=='kf'||!(e6.price>0)||!(e6.n>0)) continue; var _perG=aiGoldRateKf()*aiSellAsk(p, st); if(e6.price<=Math.round(_perG*e6.n*0.75)&&(st.kf||0)>=e6.price&&(st.gold||0)>=Math.ceil(e6.n*100000000*0.02)){ if(!_bestG||e6.price<_bestG.price) _bestG=e6; } }
-      if(_bestG){ st.kf-=_bestG.price; aiAucProfit(st,'kf',-_bestG.price); var _gFee=Math.max(1,Math.ceil(_bestG.n*100000000*0.02)); st.gold-=_gFee; aiAucProfit(st,'gold',-_gFee); for(var _mjG=0;_mjG<AUCTION.list.length;_mjG++) if(AUCTION.list[_mjG].id===_bestG.id){ AUCTION.list.splice(_mjG,1); break; } AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,kind:'gold',item:{name:'金币',type:'currency'},price:Math.max(1,Math.round(_perG*_bestG.n)),cur:'kf',n:_bestG.n,time:Date.now()}); auctionSave(); _payPlayerSeller(_bestG); }   /* 金币汇差：氪金低价收玩家金币单(急售便宜)→转手按报价系数挂出(买家=神豪2.2×牌价/高氪1.6×牌价都接得住，不滞销)，真实流转不凭空；买入价≤转手价×0.75→毛利≥25%(盖过双向手续费) */
+      if(_bestG){ st.kf-=_bestG.price; aiAucProfit(st,'kf',-_bestG.price); st.gold+=(_bestG.n*100000000);   /* 买入金币单：收到原单托管金币（原卖家上架时已扣托管，成交时转给商人，守恒不凭空） */ var _gFee=Math.max(1,Math.ceil(_bestG.n*100000000*0.02)); st.gold-=_gFee; aiAucProfit(st,'gold',-_gFee); st.gold-=(_bestG.n*100000000);   /* 转手挂出新金币单：托管金币入拍卖行（买家买走时释放，守恒不凭空） */ for(var _mjG=0;_mjG<AUCTION.list.length;_mjG++) if(AUCTION.list[_mjG].id===_bestG.id){ AUCTION.list.splice(_mjG,1); break; } AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,kind:'gold',item:{name:'金币',type:'currency'},price:Math.max(1,Math.round(_perG*_bestG.n)),cur:'kf',n:_bestG.n,time:Date.now()}); auctionSave(); _payPlayerSeller(_bestG); _paySellerAI(_bestG); try{ aucBuyLog(p.name,_bestG); }catch(err){} }   /* 金币汇差：氪金低价收玩家金币单(急售便宜)→转手按报价系数挂出(买家=神豪2.2×牌价/高氪1.6×牌价都接得住，不滞销)，真实流转不凭空；买入价≤转手价×0.75→毛利≥25%(盖过双向手续费)——补_paySellerAI：AI上架金币单被商人买入时AI卖家收款；修复转手托管：买入收原单托管金币→转手再托管，原卖家上架扣的托管不凭空消失、新买家买走释放不凭空生成 */
       if(AUCTION.list.filter(function(x){return x.seller===p.name;}).length<3){
-        for(var _bo=st.bag.length-1;_bo>=0;_bo--){ var _bob=st.bag[_bo]; if(!_bob||!aucTradable(_bob)) continue; var _nmO=String(_bob.name||''); if(_nmO.indexOf('伊泰安')>=0||(_nmO.indexOf('神印')>=0&&_nmO.indexOf('碎片')<0)||itemQuality(_bob)==='purple') continue; var _askO=Math.max(1,Math.round(aiItemValue(_bob)*aiSellAsk(p, st)*1.6)); var _feeO=aucFee(_askO); if((st.gold||0)<_feeO) break; var _cntO=Math.max(1,_bob.count||1); var _nO=Math.min(_cntO,100); if(_nO>=_cntO){ st.bag.splice(_bo,1); } else { _bob.count=_cntO-_nO; } st.gold-=_feeO; aiAucProfit(st,'gold',-_feeO); var _cpO=JSON.parse(JSON.stringify(_bob)); _cpO.count=_nO; AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_cpO,price:_askO,cur:'gold',n:_nO,time:Date.now()}); auctionSave(); break; }   /* 材料快周转出货：囤货按转手价主动挂出(买入≤0.7估值→卖出1.36估值有利润即周转，不等缺钱)，1件/心跳；上架手续费→利润成本 */
+        for(var _bo=st.bag.length-1;_bo>=0;_bo--){ var _bob=st.bag[_bo]; if(!_bob||!aucTradable(_bob)) continue; var _nmO=String(_bob.name||''); if(_bob.type==='seal'||_bob.type==='frag'||_bob.type==='core') continue; if(_nmO.indexOf('伊泰安')>=0||(_nmO.indexOf('神印')>=0&&_nmO.indexOf('碎片')<0)||itemQuality(_bob)==='purple') continue; var _askO=Math.max(1,Math.round(aiItemValue(_bob)*aiSellAsk(p, st)*1.6)); var _feeO=aucFee(_askO); if((st.gold||0)<_feeO) break; var _cntO=Math.max(1,_bob.count||1); var _nO=Math.min(_cntO,100); if(_nO>=_cntO){ st.bag.splice(_bo,1); } else { _bob.count=_cntO-_nO; } st.gold-=_feeO; aiAucProfit(st,'gold',-_feeO); var _cpO=JSON.parse(JSON.stringify(_bob)); _cpO.count=_nO; AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_cpO,price:_askO,cur:'gold',n:_nO,time:Date.now()}); auctionSave(); break; }   /* 材料快周转出货：囤货按转手价主动挂出(买入≤0.7估值→卖出1.36估值有利润即周转，不等缺钱)，1件/心跳；上架手续费→利润成本；计数型材料物品(防异常入包)不走此通道挂出(会丢kind致买家计数失效) */
       }
       var _finN=0; for(var _fI=0;_fI<FIELD_ROSTER.length;_fI++){ var _fS=FIELD_ROSTER[_fI]; if(_fS&&_fS.st&&(_fS.st.ws||0)>=99) _finN++; }
       if(_finN>0&&Math.random()<0.4&&AUCTION.list.filter(function(x){return x.seller===p.name;}).length<3){
@@ -11829,8 +11888,8 @@ function aiAuction(st,p,now){
         }
       }
       if(best){ var _needG=best.price*Math.max(1,best.n||1); if((st.gold||0)<_needG&&(st.kf||0)>0&&p.pay>=2){ for(var _gk=0;_gk<3;_gk++){ if((st.gold||0)>=_needG) break; aiBuyGoldFromAuction(st,p); } } }   /* 神豪/高氪关键时刻：必抢品(必须品/限量/装备)在架但金币不够→疯狂收金币（氪金买金币挂单，一次最多3份）→金币买下——氪金账户关键时刻就要用上（先买金币再买物品，视当时自身情况定） */
-      if(best&&(st.gold||0)>=best.price*Math.max(1,best.n||1)){ var _still=false; for(var _sj=0;_sj<AUCTION.list.length;_sj++) if(AUCTION.list[_sj].id===best.id){ _still=true; break; } if(_still){ st.gold-=best.price*Math.max(1,best.n||1); aiAucProfit(st,'gold',-best.price*Math.max(1,best.n||1)); w.give(best); for(var j=0;j<AUCTION.list.length;j++) if(AUCTION.list[j].id===best.id){ AUCTION.list.splice(j,1); break; } recomputeIthLeft(); auctionSave(); _payPlayerSeller(best); _paySellerAI(best,best.price); } }   /* 收金币后二次确认best仍在架（防收金币期间被抢走→双花/凭空），在架才买 */
-      else if(bestK&&(st.kf||0)>=bestK.price*Math.max(1,bestK.n||1)){ st.kf-=bestK.price*Math.max(1,bestK.n||1); aiAucProfit(st,'kf',-bestK.price*Math.max(1,bestK.n||1)); w.give(bestK); for(var j2=0;j2<AUCTION.list.length;j2++) if(AUCTION.list[j2].id===bestK.id){ AUCTION.list.splice(j2,1); break; } recomputeIthLeft(); auctionSave(); _payPlayerSeller(bestK); _paySellerAI(bestK,bestK.price); }   /* 氪金购买：扣氪金得限量品（总价=单价×数量），卖家(玩家/AI)收氪金，总量守恒 */
+      if(best&&(st.gold||0)>=best.price*Math.max(1,best.n||1)){ var _still=false; for(var _sj=0;_sj<AUCTION.list.length;_sj++) if(AUCTION.list[_sj].id===best.id){ _still=true; break; } if(_still){ st.gold-=best.price*Math.max(1,best.n||1); aiAucProfit(st,'gold',-best.price*Math.max(1,best.n||1)); w.give(best); for(var j=0;j<AUCTION.list.length;j++) if(AUCTION.list[j].id===best.id){ AUCTION.list.splice(j,1); break; } recomputeIthLeft(); auctionSave(); _payPlayerSeller(best); _paySellerAI(best); try{ aucBuyLog(p.name,best); }catch(err){} } }   /* 收金币后二次确认best仍在架（防收金币期间被抢走→双花/凭空），在架才买；AI卖家收款内部自算总价=单价×数量（与买家扣款同口径，n>1不失衡） */
+      else if(bestK&&(st.kf||0)>=bestK.price*Math.max(1,bestK.n||1)){ st.kf-=bestK.price*Math.max(1,bestK.n||1); aiAucProfit(st,'kf',-bestK.price*Math.max(1,bestK.n||1)); w.give(bestK); for(var j2=0;j2<AUCTION.list.length;j2++) if(AUCTION.list[j2].id===bestK.id){ AUCTION.list.splice(j2,1); break; } recomputeIthLeft(); auctionSave(); _payPlayerSeller(bestK); _paySellerAI(bestK); try{ aucBuyLog(p.name,bestK); }catch(err){} }   /* 氪金购买：扣氪金得限量品（总价=单价×数量），卖家(玩家/AI)收氪金，总量守恒 */
       if(!((best&&(st.gold||0)>=best.price*Math.max(1,best.n||1))||(bestK&&(st.kf||0)>=bestK.price*Math.max(1,bestK.n||1)))){ var _wnm=((best&&best.item&&best.item.name)||(bestK&&bestK.item&&bestK.item.name)||''); if(w.ith){ st._wantIth=_wnm||'伊泰安'; } else if(_wnm){ st._wantItem=_wnm; } }   /* 想买没买到（超预算/没货/钱不够）→记录求购意向，供世界聊天喊求购（真实需求，不凭空） */
     }
     /* ---------- 战力滚雪球：战力未满时，买拍卖中比当前穿戴更好的武器/防具（真实入背包，aiAutoEquip自动换） ---------- */
@@ -11848,10 +11907,10 @@ function aiAuction(st,p,now){
         if(!(e3.price>0&&e3.price<=spendable&&e3.price<=cap2)){ if(!st._wantGear) st._wantGear=e3.item.name; continue; }   /* 想买但太贵/超预算→记录求购意向（世界聊天喊收） */
         var cur=st.equip[_slotMap[et]]||null;
         if(cur&&aiItemScore(e3.item)<=aiItemScore(cur)) continue;   /* 比当前穿戴好才买 */
-        if((st.gold||0)>=e3.price){
-          st.gold-=e3.price; aiAucProfit(st,'gold',-e3.price); st.bag.push(e3.item);   /* 真实购买：拍卖物品从list移除入AI背包（真实流转，非凭空）；买入支出→利润累计 */
+        if((st.gold||0)>=e3.price*Math.max(1,e3.n||1)){
+          st.gold-=e3.price*Math.max(1,e3.n||1); aiAucProfit(st,'gold',-e3.price*Math.max(1,e3.n||1)); st.bag.push(e3.item);   /* 真实购买：拍卖物品从list移除入AI背包（真实流转，非凭空）；买入支出→利润累计（总价=单价×数量，与卖家收款同口径） */
           for(var j3=0;j3<AUCTION.list.length;j3++) if(AUCTION.list[j3].id===e3.id){ AUCTION.list.splice(j3,1); break; }
-          auctionSave(); aiAutoEquip(st,p); _payPlayerSeller(e3); _paySellerAI(e3,e3.price);
+          auctionSave(); aiAutoEquip(st,p); _payPlayerSeller(e3); _paySellerAI(e3); try{ aucBuyLog(p.name,e3); }catch(err){}
           break;   /* 每次决策买一件升级装备 */
         }
       }
@@ -11861,11 +11920,14 @@ function aiAuction(st,p,now){
       var cand=AUCTION.list.filter(function(x){ return x.cur==='gold'&&x.seller!==p.name&&x.price>0&&x.price<=spendable*0.4&&x.price<=Math.round(aiItemValue(x.item)*aiPaySense(p, st)); });
       if(cand.length){
         var e2=cand[Math.floor(Math.random()*cand.length)];
-        if((st.gold||0)>=e2.price){
-          st.gold-=e2.price; aiAucProfit(st,'gold',-e2.price);   /* 淘货买入支出→利润累计 */
-          if(e2.item&&String(e2.item.name||'').indexOf('伊泰安')>=0){ if(!st.bag) st.bag=[]; st.bag.push(e2.item); }   /* 囤货买到伊泰安：真实物品入背包（非st.ith计数） */
+        if((st.gold||0)>=e2.price*Math.max(1,e2.n||1)){
+          st.gold-=e2.price*Math.max(1,e2.n||1); aiAucProfit(st,'gold',-e2.price*Math.max(1,e2.n||1));   /* 淘货买入支出→利润累计（总价=单价×数量，与卖家收款同口径） */
+          var _nIn=Math.max(1,e2.n||1);
+          if(e2.kind==='seal'||e2.kind==='frag'||e2.kind==='core'){ st[e2.kind]=(st[e2.kind]||0)+_nIn; }   /* 材料计数挂单：真实计数入账（同按需购买give口径），不凭空 */
+          else if(e2.item&&String(e2.item.name||'').indexOf('伊泰安')>=0){ if(!st.bag) st.bag=[]; st.bag.push(e2.item); }   /* 囤货买到伊泰安：真实物品入背包（非st.ith计数） */
+          else if(e2.item){ if(!st.bag) st.bag=[]; st.bag.push(e2.item); }   /* 其他物品：真实入背包（修复：原代码只入伊泰安，买装备/杂物时钱扣了货没拿→钱凭空消失；钱货对等） */
           for(var j=0;j<AUCTION.list.length;j++) if(AUCTION.list[j].id===e2.id){ AUCTION.list.splice(j,1); break; }
-          recomputeIthLeft(); auctionSave(); _payPlayerSeller(e2); _paySellerAI(e2,e2.price);
+          recomputeIthLeft(); auctionSave(); _payPlayerSeller(e2); _paySellerAI(e2); try{ aucBuyLog(p.name,e2); }catch(err){}   /* 兜底金币囤货日志 */
         }
       }
     }
@@ -13664,7 +13726,8 @@ function renderRank(){
   var tm=({pw:['全服战力榜','巅峰对决 · 谁主沉浮'],ws:['全服轮回榜','转世修行 · 历劫无量'],wEnh:['全服武器强化榜','神兵淬炼 · 锋芒毕露'],aEnh:['全服防具强化榜','重甲加身 · 固若金汤'],gold:['全服金币榜','富甲一方 · 坐拥金山'],limit:['全服限量榜','稀世珍藏 · 凤毛麟角'],arena:['全服竞技积分榜','战功累计 · 问鼎巅峰'],trial:['全服无尽试炼榜','登塔问鼎 · 一览众山小'],profit:['全服拍卖利润榜','低买高卖 · 财源广进']})[RANK_TAB]||['全服战力榜','巅峰对决 · 谁主沉浮'];
   if(rt) rt.innerHTML='<div class="rt-main"><span class="rt-line"></span>'+tm[0]+'<span class="rt-line"></span></div><div class="rt-sub">'+tm[1]+'</div>';
   var rows='<div class="lb-row lb-head"><span class="lb-rank">#</span><span class="lb-n">名号</span><span class="lb-v">'+head+'</span></div>';
-  function _payTg(p){ if(!p) return ''; if(aiIsMerchant(p)) return '<span class="lb-pay" style="background:linear-gradient(135deg,#2ECC71,#0E6655);color:#eafff5">商人</span>'; var _v=p.pay||0;   /* 商人=独立标签（id97~99，翡翠绿渐变，区别于充值档位；其余按充值档位） */
+  function _payTg(p){ if(!p) return ''; if(p.top){ var _tt={first:'第一',perfect:'收藏',rush:'轮回'}[p.top]||p.top; return '<span class="lb-pay" style="background:linear-gradient(135deg,#FF9D00,#8B0000);color:#fff">'+_tt+'</span>'; }   /* 顶尖型优先显示定位标签（全服第一→第一/完美收藏→收藏/极速轮回→轮回，橙金→深红渐变=顶尖王座），替代充值档位（神豪/高氪）；顶尖身份优先于消费档位 */
+    if(aiIsMerchant(p)) return '<span class="lb-pay" style="background:linear-gradient(135deg,#2ECC71,#0E6655);color:#eafff5">商人</span>'; var _v=p.pay||0;   /* 商人=独立标签（id97~99，翡翠绿渐变，区别于充值档位；其余按充值档位） */
     if(_v>=3) return '<span class="lb-pay god" style="background:linear-gradient(135deg,#FF5AD8,#A02A82);color:#fff">神豪</span>';
     if(_v>=2) return '<span class="lb-pay" style="background:linear-gradient(135deg,#FFD700,#B8860B);color:#2a1a00">高氪</span>';
     if(_v>=1) return '<span class="lb-pay" style="background:linear-gradient(135deg,#52C6DA,#1E5F73);color:#eaf7ff">微氪</span>';
@@ -13685,18 +13748,21 @@ function renderRank(){
   var hint=document.getElementById('rank-hint'); if(hint) hint.textContent='全服 '+head+'榜 · 100 名固定玩家 + 你 · 实时 · 随服务器发育演化';
   renderRankStat();   /* 榜单下方统计表格：顶尖型AI玩家 / 顶尖商人 / 神豪类玩家（含剩余氪金） */
 }
-function renderRankStat(){   /* 排行榜统计表格：①顶尖型AI玩家(全服第一/完美收藏/极速轮回，含当前阶段蓄力/全力) ②顶尖商人(3%商人全员，含拍卖利润) ③神豪类玩家(pay≥3，含当前剩余氪金)——数据全部来自FIELD_ROSTER真实st字段(p.top/aiIsMerchant/st.kf)，无凭空；由60秒interval与renderRank共同刷新 */
+function renderRankStat(){   /* 排行榜统计表格：①顶尖型AI玩家(全服第一/完美收藏/极速轮回，含当前阶段蓄力/全力) ②顶尖商人(3%商人全员，含拍卖利润) ③神豪类玩家(pay≥3排除商人，含当前剩余氪金)——数据全部来自FIELD_ROSTER真实st字段(p.top/aiIsMerchant/st.kf)，无凭空；由60秒interval与renderRank共同刷新 */
   try{
     serverStartInit(); ensureFieldRoster();
+    var _listEl=document.getElementById('rank-list');   /* 与拍卖利润榜同源：优先复用榜单快照(list.__arr)，使"顶尖商人·拍卖利润"与"拍卖利润榜"数值来自同一时刻同一存档，杜绝两个区块采样不同步导致的对不上；无快照(榜单未渲染过)时回退实时计算 */
+    var _src=(_listEl&&_listEl.__arr&&_listEl.__arr.length)?_listEl.__arr:FIELD_ROSTER;
     var _top=[], _mch=[], _wh=[];   /* _top: 顶尖型按类收集（first全服第一/perfect完美收藏/rush极速轮回，各至多3名），下方渲染时分三类显示 */
     var _topSeen={first:0,perfect:0,rush:0};   /* 顶尖型防御：每类(全服第一/完美收藏/极速轮回)各取最多3名，即使旧档/历史残留多标也只显示9人 */
-    FIELD_ROSTER.forEach(function(p){
-      if(!p||!p.st) return;
+    for(var _qi=0;_qi<_src.length;_qi++){
+      var _qe=_src[_qi], p=_qe&&_qe.p?_qe.p:_qe;   /* 榜单快照元素含p引用（n/pw/…/profit/merchant/p），FIELD_ROSTER元素即玩家记录 */
+      if(!p||!p.st) continue;
       var _fin=!!(p.st.ascended||((p.st.ws||0)>=99&&(p.st.core||0)>=1));   /* 超脱=全力冲刺期（装备永久保留），否则蓄力期——同aiTopMod阶段感知 */
       if(p.top&&!p.st._offline&&_topSeen[p.top]<3){ _topSeen[p.top]++; _top.push({tg:p.top, n:p.name.split('（')[0], ph:_fin?'全力冲刺':'蓄力期'}); }   /* 只列在线顶尖型且每类至多3名 */
-      if(aiIsMerchant(p)){ _mch.push({n:p.name.split('（')[0], pf:aiAucProfitTotal(p.st)}); }
-      if((p.pay||0)>=3){ _wh.push({n:p.name.split('（')[0], kf:(p.st.kf||0)}); }
-    });
+      if(aiIsMerchant(p)){ _mch.push({n:p.name.split('（')[0], pf:(_qe&&_qe.profit!=null)?_qe.profit:aiAucProfitTotal(p.st)}); }   /* 商人拍卖利润取榜单快照profit（与拍卖利润榜同源同刻，口径一致）；无快照回退实时计算 */
+      if((p.pay||0)>=3&&!aiIsMerchant(p)){ _wh.push({n:p.name.split('（')[0], kf:(p.st.kf||0)}); }   /* 神豪类玩家：排除商人（商人固定显示在"顶尖商人"区块，不因pay档位混入神豪/高氪列表） */
+    }
     var _el=document.getElementById('rank-stat'); if(!_el) return;
     var _h='';
     _h+='<div class="rank-stat-t">✦ 顶尖AI玩家</div>';
@@ -14634,7 +14700,7 @@ function doReset(){
   AUTO_SELL_NAMES={}; try{ localStorage.removeItem('shenqi_asn'); }catch(e){}   /* 初始化重置自动出售名单：全部关闭 */
   MUT={crystal:3, on:false, tier:0, aff:[], up:{1:0,2:0,3:0}, exP:0}; if(typeof renderTreasure==='function') renderTreasure();   /* 初始化重置异变秘境：关闭词缀，清异变结晶/词缀/强化等级与结晶兑换次数 */
   BATTLE={merit:0,crystal:0,opps:[],fight:false}; DEEP={total:0,shen:0,wang:0,diyu:0,tian:0}; if(typeof renderBattle==='function') renderBattle();   /* 初始化重置域外战场与神格本元深化 */
-  AUCTION.list=[]; AUCTION.history=[]; AUCTION._id=1; AUCTION.profitGold=0; AUCTION.profitKf=0; AUCTION.costG=0; AUCTION.costK=0; AUCTION.incG=0; AUCTION.incK=0; try{ localStorage.removeItem('shenqi_auction'); }catch(e){} AU_PAGE={cur:1}; RANK_TAB='pw';   /* 初始化重置拍卖场（空盘/空买卖历史/成本收入利润全归零）与排行榜视图（回战力榜）；AI拍卖随AI重建一并归零 */
+  AUCTION.list=[]; AUCTION.history=[]; AUCTION._id=1; AUCTION.profitGold=0; AUCTION.profitKf=0; AUCTION.costG=0; AUCTION.costK=0; AUCTION.incG=0; AUCTION.incK=0; try{ localStorage.removeItem('shenqi_auction'); }catch(e){} AU_PAGE={cur:1}; RANK_TAB='pw'; try{ localStorage.removeItem('shenqi_auc_buylog'); }catch(e){}   /* 初始化重置拍卖场（空盘/空买卖历史/成本收入利润全归零）与排行榜视图（回战力榜）；AI拍卖随AI重建一并归零；初始化重置交易日志（购买+出售记录全清，开新服日志从空开始） */
   SERVER_START=Date.now(); try{ localStorage.setItem('shenqi_server_start',String(SERVER_START)); }catch(e){} try{ localStorage.removeItem('shenqi_field_roster'); }catch(e){} FIELD_ROSTER=null; ensureFieldRoster();   /* 初始化=开新服：记录开服时间+重建100名固定玩家 */
   for(var _ai0=0;_ai0<FIELD_ROSTER.length;_ai0++){ var _ap0=FIELD_ROSTER[_ai0]; _ap0.st=null; try{ initAiState(_ap0,60); }catch(e){} _ap0.st.gods={main:null,sub1:null}; _ap0.st.effSec=0; _ap0.st.lv=0; }   /* 初始化=AI与玩家同步全清：立即为每名AI建立全新初始状态，且等级归0(与玩家0级一致，不继承每级成长加成→初始战力同玩家一个量级)，无金币/无阶位/无强化/无天神/无特性/无伊泰安；塔币/竞技积分/战力由新战力实时派生归零。天神牌子由 aiGodAcquire 从副本/世界boss真实掉落获得(与玩家同源，获得才拥有)，杜绝后台凭空生成 */
   try{ aiSaveField(); }catch(e){}   /* 立即落盘全新AI初始存档 */
@@ -14685,8 +14751,6 @@ bindEvents();
   <div class="sf-title">设置</div>
   <div class="sf-item" data-sf="guide"><span class="sf-name">玩法指南</span><span class="sf-go">玩法 · 主线 · 阶段 · 速达攻略</span></div>
   <div class="sf-item" data-sf="history"><span class="sf-name">成长履历</span><span class="sf-go">角色数据变化事件记录</span></div>
-  <div class="sf-item" data-sf="refresh"><span class="sf-name">刷新旧物品</span><span class="sf-go">按最新蓝图更新背包/装备属性</span></div>
-  <div class="sf-item" data-sf="calib"><span class="sf-name">校准AI开服</span><span class="sf-go">按角色等级对齐AI开服时长</span></div>
   <div class="sf-item" data-sf="reset"><span class="sf-name">初始化</span><span class="sf-go">回到初始状态</span></div>
 </div>
 </body>
