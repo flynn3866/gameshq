@@ -6024,14 +6024,19 @@ function buildFieldRoster(){ var out=[], used={}, names=FIELD_NAMES.slice();
     else if(_er<0.70) effort=+(0.63+Math.random()*0.12).toFixed(2);    /* 勤勉 60%：每天在线15~18h（在线比0.63~0.75，最高18h/天，≈7天满级） */
     else effort=+(0.42+Math.random()*0.08).toFixed(2);                 /* 中等 30%：每天在线10~12h（在线比0.42~0.50，最高12h/天，≈9~12天满级） */
     var pr=Math.random(), pay;
-    if(pr>0.95) pay=3;        /* 神豪 5% */
-    else if(pr>0.75) pay=2;   /* 高氪 20% */
-    else if(pr>0.01) pay=1;   /* 微氪 ~74%（基本都充值，极少0元） */
-    else pay=0;               /* 白嫖 ~1% */
+    if(pr>0.90) pay=3;        /* 神豪 10% */
+    else if(pr>0.70) pay=2;   /* 高氪 20% */
+    else if(pr>0.02) pay=1;   /* 微氪 68%（基本都充值，极少0元） */
+    else pay=0;               /* 白嫖 2% */
     if(pay===3){ innate=Math.round((1.30+Math.random()*0.49)*100)/100; }   /* 神豪：先天运势保底提至1.30~1.79（天运1.8仍归玩家独占），绝不出现<1；后续luck按新运势提升 */
     var luck=(function(_i){ return +Math.max(0,Math.min(0.6,_i>=1.4?(0.40+Math.random()*0.20):(_i>=1.15?(0.25+Math.random()*0.20):(Math.random()*0.25)))).toFixed(2); })(innate);   /* 奇遇：与玩家同一套公式（基础挂机奇遇概率+先天运势档位影响品质，见tryTriggerAdventure运势分档），运势越高奇遇越好、越能滚雪球 */
     out.push({id:i,_v:2,name:pick(),innate:innate,effort:effort,pay:pay,luck:luck});
   }
+  /* 神豪保底8人：随机10%期望≈10人，若不足8人则从高氪→微氪→白嫖依次提升补齐（占比仍按10%掷骰，仅设下限不设上限）；提升者同步享受神豪运势保底1.30~1.79与对应奇遇（同6031-6032公式） */
+  var _whN=0, _wx; for(_wx=0;_wx<out.length;_wx++){ if(out[_wx].pay===3) _whN++; }
+  var _whUp=function(_p){ _p.pay=3; _p.innate=Math.round((1.30+Math.random()*0.49)*100)/100; _p.luck=+(function(_i){ return Math.max(0,Math.min(0.6,_i>=1.4?(0.40+Math.random()*0.20):(_i>=1.15?(0.25+Math.random()*0.20):(Math.random()*0.25)))); })(_p.innate).toFixed(2); };
+  for(_wx=0;_wx<out.length&&_whN<8;_wx++){ if(out[_wx].pay===2){ _whUp(out[_wx]); _whN++; } }
+  for(_wx=0;_wx<out.length&&_whN<8;_wx++){ if(out[_wx].pay!==3){ _whUp(out[_wx]); _whN++; } }
   return ensureTopAIs(out); }
 function ensureTopAIs(r){   /* 顶尖型AI标记（强制收敛为恰好9名，杜绝历史残留多标）：全服第一目标型×3(神豪，top:'first'，以全服最强战力为唯一目标：抢限量/神坛拉满/强化冲20/战神必拿)、完美收藏型×3(高氪，top:'perfect'，追求面板完美/套装集齐，为缺件愿出高价)、极速复利轮回型×3(高氪，top:'rush'，以最快逼近99世超脱为目标：秘印/神坛优先，装备不被轮回清空的投入克制)。先清空全部旧top（旧档可能残留历史版本多标）再按定位各标3名——顶尖AI玩家恒为9人，不重置AI其他任何状态 */
   if(!r||!r.length) return r;
