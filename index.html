@@ -5655,20 +5655,20 @@ function buildTooltip(item){
     if (isA){ var enhAbs=armorEnhAbs(item.enhanceLevel||0);
       if((item.damageAbsorption||0)+enhAbs>0) h+='<div class="tt-o">伤害 吸收 +'+fmtWan(enhAbs+(item.damageAbsorption||0))+'</div>'; }   /* 伤害吸收固定值（强化+装备）显示 */
     h += '<div class="tt-gap"></div>';
-    if (isW){ if(item.physicalAttack!==undefined){var _el0=item.enhanceLevel||0;var _enhAtk=(String(item.name).indexOf('传说 魔翼')>=0||String(item.name).indexOf('传说 神裁之刃')>=0)?((WEAPON_ENH_ATK[_el0]||0)*1000000):(String(item.name).indexOf('史诗 魔翼')>=0?((WEAPON_ENH_ATK[_el0]||0)*100):weaponEnhAtk(_el0));h+='<div class="tt-y">攻击力 '+fmtWan(item.physicalAttack+_enhAtk)+'</div>';} h+='<div class="tt-w">攻击速度一般</div>'; if(String(item.name).indexOf('传说 魔翼')>=0){ var _wr=Math.min(0.30,0.05+0.0125*(item.enhanceLevel||0)); h+='<div class="tt-purple">真实伤害 +'+Math.round(_wr*100)+'%</div>'; } if(String(item.name).indexOf('传说 神裁之刃')>=0){ h+='<div class="tt-purple">暴击率 +15% · 暴击伤害 +50%</div>'; } }   /* 仅传说级魔翼真实伤害（强0=5%→强20=30%）、神裁之刃暴击特性；史诗不显示 */
+    if (isW){ if(item.physicalAttack!==undefined){var _el0=item.enhanceLevel||0;var _enhAtk=(String(item.name).indexOf('传说 魔翼')>=0||String(item.name).indexOf('传说 神裁之刃')>=0)?((WEAPON_ENH_ATK[_el0]||0)*1000000):(String(item.name).indexOf('史诗 魔翼')>=0?((WEAPON_ENH_ATK[_el0]||0)*100):weaponEnhAtk(_el0));h+='<div class="tt-y">攻击力 '+fmtWan(item.physicalAttack+_enhAtk+(item.gemBonus?item.gemBonus.物理攻击||0:0))+'</div>';} h+='<div class="tt-w">攻击速度一般</div>'; if(String(item.name).indexOf('传说 魔翼')>=0){ var _wr=Math.min(0.30,0.05+0.0125*(item.enhanceLevel||0)); h+='<div class="tt-purple">真实伤害 +'+Math.round(_wr*100)+'%</div>'; } if(String(item.name).indexOf('传说 神裁之刃')>=0){ h+='<div class="tt-purple">暴击率 +15% · 暴击伤害 +50%</div>'; } }   /* 仅传说级魔翼真实伤害（强0=5%→强20=30%）、神裁之刃暴击特性；史诗不显示；凹槽宝石物理攻击合并进攻击力主体值 */
     if (isA){ var alv=item.enhanceLevel||0;
       if(alv>=15) h+='<div class="tt-purple">抗暴率 +3%</div>';
       if(alv>=18) h+='<div class="tt-purple">暴击伤害减免 +3%</div>';
       if(alv>=20) h+='<div class="tt-purple">最终伤害减免 +3%</div>';
-      if(item.defense!==undefined) h+='<div class="tt-w">防御力 '+fmtWan(item.defense)+'</div>'; if(item.resistance!==undefined) h+='<div class="tt-w">抵抗力 '+fmtWan(item.resistance)+'</div>'; }
+      if(item.defense!==undefined) h+='<div class="tt-w">防御力 '+fmtWan(item.defense+(item.gemBonus?item.gemBonus.防御||0:0))+'</div>'; if(item.resistance!==undefined) h+='<div class="tt-w">抵抗力 '+fmtWan(item.resistance+(item.gemBonus?item.gemBonus.抵抗力||0:0))+'</div>'; }
     var gemAttr=(item.gemAttributes&&item.gemAttributes.additionalAttribute)||'无';
     if (gemAttr!=='无' && (isW||item.type==='chest')) h+='<div class="tt-y">'+gemAttr+' I</div>';
-    if (item.maxHp||(item.washAttrs&&item.washAttrs.生命>0)){ var rfhp=(item.washAttrs&&item.washAttrs.生命>0)?' <span class="tt-rf">+ '+fmtWan(item.washAttrs.生命)+'</span>':''; h+='<div class="tt-y">最大生命值 + '+fmtWan(item.maxHp||0)+rfhp+'</div>'; }
-    if (item.maxVitality||(item.washAttrs&&item.washAttrs.活力>0)){ var rfv=(item.washAttrs&&item.washAttrs.活力>0)?' <span class="tt-rf">+ '+fmtWan(item.washAttrs.活力)+'</span>':''; h+='<div class="tt-y">最大活力值 + '+fmtWan(item.maxVitality||0)+rfv+'</div>'; }
+    if (item.maxHp||(item.washAttrs&&item.washAttrs.生命>0)){ var rfhp=(item.washAttrs&&item.washAttrs.生命>0)?' <span class="tt-rf">+ '+fmtWan(item.washAttrs.生命)+'</span>':''; h+='<div class="tt-y">最大生命值 + '+fmtWan((item.maxHp||0)+(item.gemBonus?item.gemBonus.生命||0:0))+rfhp+'</div>'; }
+    if (item.maxVitality||(item.washAttrs&&item.washAttrs.活力>0)){ var rfv=(item.washAttrs&&item.washAttrs.活力>0)?' <span class="tt-rf">+ '+fmtWan(item.washAttrs.活力)+'</span>':''; h+='<div class="tt-y">最大活力值 + '+fmtWan((item.maxVitality||0)+(item.gemBonus?item.gemBonus.活力||0:0))+rfv+'</div>'; }
     ['力量','敏捷','体质','智力','精神','幸运'].forEach(function(n){
       var key={'力量':'strength','敏捷':'agility','体质':'constitution','智力':'intelligence','精神':'spirit','幸运':'luck'}[n];
       var rf=(item.washAttrs&&item.washAttrs[n]>0)?' <span class="tt-rf">+ '+fmtWan(item.washAttrs[n])+'</span>':'';
-      if (item[key]||rf) h+='<div class="tt-y">'+n+' + '+fmtWan(item[key]||0)+rf+'</div>';
+      if (item[key]||rf||(item.gemBonus&&item.gemBonus[n]>0)) h+='<div class="tt-y">'+n+' + '+fmtWan((item[key]||0)+(item.gemBonus?item.gemBonus[n]||0:0))+rf+'</div>';
     });
     if (isA && item.gemBonus&&item.gemBonus.伤害吸收) h+='<div class="tt-y">伤害吸收 + '+fmtWan(item.gemBonus.伤害吸收)+'</div>';
     if (!isJ) h+='<div class="tt-y">锻造值 230/230</div>';
