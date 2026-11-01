@@ -10127,8 +10127,9 @@ function wbMakeAI(){
 function wbEnsure(){
   var d=fmtDay(new Date()), sl=wbSlotIdx();
   if(WBOSS._waitNext){   /* 初始化(开新服)后：世界BOSS不立即刷新，严格等下一个每日8点定时刷新点（新服首只BOSS在首个8点刷出），期间无BOSS、AI不磨血、伤害榜0——不凭空、不立即 */
-    var _nw=new Date(); var _t8=new Date(_nw.getFullYear(),_nw.getMonth(),_nw.getDate(),8,0,0,0);
-    if(_nw.getTime()>=_t8.getTime()) _t8.setDate(_t8.getDate()+1);   /* 已过今日8点→等明日8点 */
+    var _base=new Date(WBOSS.startTime||WBOSS.lastVisit||Date.now());   /* 首个8点锚定「初始化时刻」(doReset已写startTime=lastVisit=初始化时刻并随存档恢复)而非当前时刻：昨天初始化→今天8点即首个刷新点；旧逻辑按当前时刻会把首个8点错误推迟到明天 */
+    var _t8=new Date(_base.getFullYear(),_base.getMonth(),_base.getDate(),8,0,0,0);
+    if(_base.getTime()>=_t8.getTime()) _t8.setDate(_t8.getDate()+1);   /* 初始化时刻已过当日8点→等次日8点 */
     if(Date.now()<_t8.getTime()){ WBOSS.boss=null; return; }   /* 未到首个8点：保持无BOSS等待，不重建 */
     WBOSS._waitNext=false;   /* 到达8点刷新点：开始当日正常轮 */
   }
