@@ -10450,7 +10450,8 @@ function wbLootClose(){ var el=document.getElementById('wb-loot-mask'); if(el&&e
 function wbRankList(){
   var all=[]; WBOSS.ai.forEach(function(a){ all.push({n:a.n,dmg:a.dmg,me:false,hp:a.hp||0,hp0:a.hp0||1,dead:!!a.dead}); });
   var _nm=CHARACTER.info&&CHARACTER.info.name?CHARACTER.info.name:'谜团';
-  all.push({n:_nm+'（你）',dmg:WBOSS.my,me:true,hp:(WB_SESSION&&WB_SESSION.myHp)||0,hp0:(WB_SESSION&&WB_SESSION.myHp)||1,dead:false});
+  var _meHp0=1; try{ var _as=arenaStat(); if(_as&&_as.hp>0) _meHp0=_as.hp; }catch(e){}   /* 玩家满血基准=实时最大血量(arenaStat().hp，纯计算无副作用)：血条=当前血量/最大血量；旧代码hp0误用当前血量myHp导致恒满 */
+  all.push({n:_nm+'（你）',dmg:WBOSS.my,me:true,hp:(WB_SESSION&&WB_SESSION.myHp)||0,hp0:_meHp0,dead:false});
   all.sort(function(a,b){ return b.dmg-a.dmg; });
   return all;
 }
@@ -13871,7 +13872,7 @@ function renderRank(){
   var arr=[];
   FIELD_ROSTER.forEach(function(p){ var b=aiBuild(p,sec); arr.push({n:p.name.split('（')[0], pw:b.pw, tier:b.tier, lv:b.lv, rr:aiArenaRank(b), ws:(p.st.ws||0), wEnh:(p.st.enh&&p.st.enh.lv)||0, aEnh:aiMaxArmorEnh(p.st), gold:(p.st.gold||0), limit:aiIthTotal(p.st), ascore:(p.st.arenaTotal!=null)?p.st.arenaTotal:Math.max(p.st.arenaMax||0,p.st.arenaScore||0), ascLeft:(p.st.arenaScore||0), trial:(p.st.trialLv||0), profit:aiAucProfitTotal(p.st), altar:altarTotal(b.alt), merchant:aiIsMerchant(p), online:!(p.st&&p.st._offline), p:p}); });
   aiSaveField(true);   /* renderRank批量核算100名AI后强制原子落盘(去重版2s窗口已合并序列化，此处立即写锚点防重复核算)，耗电优化第2/3项 */
-  arr.push({n:'你', pw:rolePower(), tier:charTierName(), lv:CHARACTER.info.level, rr:arenaRank(), ws:REBIRTH.count, wEnh:(equipState['weapon']?equipState['weapon'].enhanceLevel||0:0), aEnh:maxArmorEnh(), gold:(CURRENCY&&CURRENCY.gold)||0, limit:ithHeldCount('yitaiNecklace')+ithHeldCount('yitaiRing')+ithHeldCount('yitaiBracelet'), ascore:(ARENA.totalScore||0), ascLeft:(ARENA.score||0), trial:(T.best||0), profit:(AUCTION.profitGold||0)+(AUCTION.profitKf||0)*aiGoldRateKf()*100000000, altar:altarTotal(ALTAR), me:true});   /* 玩家拍卖利润：金币利润+氪金利润×当前市场牌价折算金币口径（与AI同口径）；神坛总灌注=10线等级和 */
+  arr.push({n:((CHARACTER&&CHARACTER.info&&CHARACTER.info.name)||'谜团')+'（你）', pw:rolePower(), tier:charTierName(), lv:CHARACTER.info.level, rr:arenaRank(), ws:REBIRTH.count, wEnh:(equipState['weapon']?equipState['weapon'].enhanceLevel||0:0), aEnh:maxArmorEnh(), gold:(CURRENCY&&CURRENCY.gold)||0, limit:ithHeldCount('yitaiNecklace')+ithHeldCount('yitaiRing')+ithHeldCount('yitaiBracelet'), ascore:(ARENA.totalScore||0), ascLeft:(ARENA.score||0), trial:(T.best||0), profit:(AUCTION.profitGold||0)+(AUCTION.profitKf||0)*aiGoldRateKf()*100000000, altar:altarTotal(ALTAR), me:true});   /* 玩家名字显示"谜团（你）"（与世界BOSS伤害榜同格式：先名后（你））；玩家拍卖利润：金币利润+氪金利润×当前市场牌价折算金币口径（与AI同口径）；神坛总灌注=10线等级和 */
   var tabs=document.getElementById('rank-tabs');
   if(tabs&&!tabs.__b){ tabs.__b=true; tabs.addEventListener('click',function(e){ var tb=e.target.closest('.rank-tab'); if(tb){ RANK_TAB=tb.getAttribute('data-t'); renderRank(); } }); }
   if(tabs){ Array.prototype.forEach.call(tabs.querySelectorAll('.rank-tab'),function(b){ b.classList.toggle('on',b.getAttribute('data-t')===RANK_TAB); }); }
