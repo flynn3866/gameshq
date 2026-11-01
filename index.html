@@ -4275,7 +4275,7 @@ var ITEM_BLUEPRINTS = {
   enhBless:{ name:"强化祝福卷轴", type:"enh_bless", img:"logos/属性卷轴.png", count:999, maxStack:999, quality:"blue" },   /* 世界BOSS重宝：强化时提升成功率/冲击满级 */
   enhGuard:{ name:"安全护符", type:"enh_guard", img:"logos/安全护符.png", count:1, maxStack:8000, price:10000000000, quality:"green", description:"强化失败时消耗1个，不掉落强化等级（成功不消耗）" },
   enhBlessFull:{ name:"强化祝福卷轴（完整）", type:"enh_bless", img:"logos/属性卷轴.png", count:999, maxStack:999, quality:"purple" },   /* 世界BOSS榜首重宝：强化成功率材料（与强化祝福卷轴同使用逻辑，品红档） */
-  inheritPill:{ name:"远古传承丹", type:"inherit_pill", img:"logos/神圣药水.png", count:99, maxStack:99, quality:"gold" },   /* 世界BOSS重宝：永久全属性小幅提升（上限100颗） */
+  inheritPill:{ name:"远古传承丹", type:"inherit_pill", img:"logos/神圣药水.png", count:99, maxStack:99, quality:"gold" },   /* 世界BOSS重宝：永久全属性+5000万/颗（无使用上限，真实获得可无限使用；可上拍卖交易，锚价=凭证半价2氪金） */
   /* --- 坐骑 --- */
   mount: {
     name:"坐骑", type:"mount", img:"logos/坐骑.png",
@@ -7234,10 +7234,10 @@ function renderBattle(){ var hn=document.getElementById('bf-hero-name'); if(hn){
 function mountBattle(){ if(!BATTLE.opps.length) mkFieldOpps(); var rr=document.getElementById('bf-reroll'); if(rr&&!rr.__b){ rr.__b=true; rr.addEventListener('click',function(){ mkFieldOpps(); renderBattle(); toast('已刷新战场对手'); }); } renderBattle(); }
 function roleTierAtk(){ var i=charTierIdx(), _asc=isAscended(), ig=0,tr=0,dk=''; if(_asc){ ig=0.30;tr=0.30;dk='tian'; } else if(i>=5){ ig=0.20;tr=0.20;dk='diyu'; } else if(i>=4){ ig=0.08;tr=0.08;dk='wang'; } else if(i>=3){ ig=0.05;dk='shen'; } var db=deepBonus(DEEP.total||0)/100; return {ig:ig+db, tr:(dk==='shen'?0:tr+db)}; }   /* 角色阶位攻击特性+神格本元深化（真神5%、神王8%+真伤8%、大帝20%+真伤20%、超脱30%+真伤30%，叠加深化递减加成） */
 function roleTierTraits(){ var _asc=isAscended(), i=charTierIdx(), out=[]; if((CHARACTER.innate||1)>=1.8) out.unshift({n:'天运之主', p:'全服唯一', d:'全属性+100%（含生命/活力）；提升传说级物品掉落概率'});   /* 天运之主：先天命格根基，置顶于神格本元栏 */
-  if(_asc){ out.push({n:'天道共鸣', p:'超脱·轮回主宰', d:'无视防御 +30%'+_dbTxt(DEEP.total||0)+'、真实伤害 +30%'+_dbTxt(DEEP.total||0)+'；攻击附带生命上限 3% 的真实伤害'}); }
-  else if(i>=5){ out.push({n:'帝御山河', p:'大帝', d:'无视防御 +20%'+_dbTxt(DEEP.total||0)+'、真实伤害 +20%'+_dbTxt(DEEP.total||0)}); }
-  else if(i>=4){ out.push({n:'王者威压', p:'神王', d:'无视防御 +8%'+_dbTxt(DEEP.total||0)+'、真实伤害 +8%'+_dbTxt(DEEP.total||0)}); }
-  else if(i>=3){ out.push({n:'神性初显', p:'真神', d:'无视防御 +5%'+_dbTxt(DEEP.total||0)}); }
+  if(_asc){ out.push({n:'天道共鸣', p:'超脱·轮回主宰', d:'Lv.'+(DEEP.total||0)+' · 无视防御 +30%'+_dbTxt(DEEP.total||0)+'<br>真实伤害 +30%'+_dbTxt(DEEP.total||0)+'；攻击附带生命上限 3% 的真实伤害'}); }
+  else if(i>=5){ out.push({n:'帝御山河', p:'大帝', d:'Lv.'+(DEEP.total||0)+' · 无视防御 +20%'+_dbTxt(DEEP.total||0)+'<br>真实伤害 +20%'+_dbTxt(DEEP.total||0)}); }
+  else if(i>=4){ out.push({n:'王者威压', p:'神王', d:'Lv.'+(DEEP.total||0)+' · 无视防御 +8%'+_dbTxt(DEEP.total||0)+'<br>真实伤害 +8%'+_dbTxt(DEEP.total||0)}); }
+  else if(i>=3){ out.push({n:'神性初显', p:'真神', d:'Lv.'+(DEEP.total||0)+' · 无视防御 +5%'+_dbTxt(DEEP.total||0)}); }
   return out; }   /* 本命特性：角色自身固有，随成长一直存在，不随轮回/换装备丢失；战斗数值由 roleTierAtk 累加 */
 function ascendSkyDmg(maxHp){ return isAscended()?Math.round(maxHp*0.03):0; }   /* 超脱·天道共鸣：攻击附带生命上限 3% 真实伤害 */
 function titleAtk(){ if(!ARENA.titleOn) return {ig:0,tr:0,ls:0}; var t=arenaTitle(); if(!t) return {ig:0,tr:0,ls:0}; return {ig:t.ig,tr:t.tr,ls:t.ls}; }   /* 称号攻击特性累加：星钻吸血30%、王者无视防御5%、战神无视防御10%+真实伤害10%（戴上生效） */
@@ -7585,7 +7585,7 @@ function useGemBox(p,i){ var it=bag[p][i]; if(!it) return;
   bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null;
   saveGame(); renderBag(); toast('获得 <b style="color:#E05A3A">'+m.name+'</b>');
 }
-function useInheritPill(p,i){ var it=bag[p][i]; if(!it) return; var used=INHERIT_USED||0; if(used>=100){ toast('远古传承丹已达使用上限（100颗）'); return; } confirmDialog('使用 远古传承丹 ×1？<br>永久全属性 +5000万<br><span style="color:#7EE8C2">已使用 '+used+' / 100 颗</span>', function(ok){ if(!ok) return; bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; INHERIT_USED=used+1; addPerm(50000000,0,'远古传承丹'); saveGame(); renderBag(); toast('<b style="color:#FFD75E">永久全属性 +5000万</b>'); }); }
+function useInheritPill(p,i){ var it=bag[p][i]; if(!it) return; var used=INHERIT_USED||0; confirmDialog('使用 远古传承丹 ×1？<br>永久全属性 +5000万<br><span style="color:#7EE8C2">已使用 '+used+' 颗 · 永久全属性无使用上限</span>', function(ok){ if(!ok) return; bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; INHERIT_USED=used+1; addPerm(50000000,0,'远古传承丹'); saveGame(); renderBag(); toast('<b style="color:#FFD75E">永久全属性 +5000万</b>'); }); }
 function useEnhBless(p,i){ var it=bag[p][i]; if(!it) return; confirmDialog('使用 '+it.name+' ×1？<br>获得 1 次强化祝福（下次强化成功率大幅提升）<br><span style="color:#7EE8C2">当前祝福 '+ENH.bless+' 次</span>', function(ok){ if(!ok) return; bag[p][i].count--; if(bag[p][i].count<=0) bag[p][i]=null; ENH.bless=(ENH.bless||0)+1; saveGame(); renderBag(); toast('强化祝福 +1 · 当前 '+ENH.bless+' 次'); }); }
 function wbDrop4(k,n,arr){ var _bp=ITEM_BLUEPRINTS[k]; if(!_bp) return; var _m=mkLoot(_bp); _m.count=n; addStackable(_m); if(arr) arr.push({n:_m.name,ic:'<img src="'+_m.img+'">',c:n,rare:true}); }   /* 重宝入账：addStackable入背包 + 记入战利品列表（arr=wbGrantLoot的loot） */
 function doEnhance(){
@@ -10532,10 +10532,13 @@ function wbRenderReward(){
   if(!WBOSS.killed && WBOSS.bossHp>0){ el.textContent='未讨伐'; el.disabled=true; el.style.opacity='.5'; if(go) go.style.display=''; }   /* 讨伐中：可出战 */
   else { el.textContent='查看收获'; el.disabled=false; el.style.opacity=''; if(go) go.style.display='none'; if(st) st.style.display='none'; }   /* 击杀后：隐藏出战/停止，只能查看收获 */
 }
-function wbClaim(){   /* 击杀后查看战利品弹框（奖励已即时入账，无需再发）：未击杀/无记录时提示 */
+function wbClaim(){   /* 击杀后查看战利品弹框（奖励已即时入账，无需再发）：未击杀/无记录时提示；手动重开不受"已确认"标记拦截 */
   if(!WBOSS.killed){ toast('BOSS尚未被讨伐'); return; }
-  if(!WBOSS.loot || WBOSS.loot.boss!==(WBOSS.boss&&WBOSS.boss.n)){ try{ wbGrantLoot(); }catch(e){ try{ console.error('wbClaim regrant',e); }catch(_){} } }   /* loot缺失或与当前BOSS不符(旧轮残留)：按当前玩家实时伤害重算结算，覆盖旧快照 */
+  var _regen = (!WBOSS.loot || WBOSS.loot.boss!==(WBOSS.boss&&WBOSS.boss.n));
+  if(_regen){ try{ wbGrantLoot(); }catch(e){ try{ console.error('wbClaim regrant',e); }catch(_){} } }   /* loot缺失或与当前BOSS不符(旧轮残留)：按当前玩家实时伤害重算结算，覆盖旧快照（新快照未确认，wbGrantLoot 会自动弹框） */
   if(!WBOSS.loot){ toast('暂无战利品记录'); return; }
+  if(_regen) return;   /* 刚重算生成：wbGrantLoot 已自动弹框，不重复弹 */
+  if(WBOSS.loot._seen){ WBOSS.loot._seen=false; }   /* 手动重开：解除"已确认"一次性标记（wbLootClose 关闭时再标记并落盘，自动弹仍保持一次性） */
   wbShowLoot();
 }
 function wbLegendDrop(){
@@ -11804,7 +11807,8 @@ function aiRarityPrice(it){   /* 珍稀度估值：无属性/材料类物品的"
   if(n.indexOf('本源结晶')>=0) return 1000000000000;               /* 1兆：超脱材料+永久属性 */
   if(n.indexOf('神印')>=0) return 500000000000;                    /* 5000亿：天神核心牌子/碎片 */
   if(n.indexOf('寂灭之息')>=0) return 1000000000000;               /* 1兆：全属性永久传说药水 */
-  if(n.indexOf('神格本源')>=0||n.indexOf('远古传承丹')>=0) return 300000000000;  /* 3000亿：世界boss重宝 */
+  if(n.indexOf('神格本源')>=0) return 300000000000;   /* 3000亿：神格本源（世界boss重宝，稀缺不上市） */
+  if(n.indexOf('远古传承丹')>=0) return Math.max(1,Math.round(voucherGoldPrice()*0.5));   /* 远古传承丹：=凭证半价（+5000万/颗=1亿×0.5），2氪金×当前牌价，随金币通胀自动上涨；上架/购买价由 aiVoucherTrade 统一管理 */
   if(n.indexOf('传说精粹')>=0) return 200000000000;                /* 2000亿：传说熔铸成长资源 */
   if(n.indexOf('祝福宝石箱')>=0) return 200000000000;              /* 2000亿 */
   if(n.indexOf('完整')>=0&&n.indexOf('属性卷轴')>=0) return 100000000000;  /* 1000亿 */
@@ -11847,14 +11851,20 @@ function aiListSurplusRare(st,p){   /* 富余传说上架（独立于"缺钱"，
   for(var j=0;j<bag.length;j++){ var g=bag[j]; if(!g) continue; var _isG6=(g.type==='stat_gem'&&(g.level||0)>=6)||(String(g.name||'').indexOf('混沌')>=0); if(!_isG6) continue; var _keepG=_csh?0:2; var _same=0; for(var k=0;k<bag.length;k++){ var g2=bag[k]; if(g2&&String(g2.name||'')===String(g.name||'')) _same+=Math.max(1,g2.count||1); } if(_same<=_keepG) continue; var _isCh=String(g.name||'').indexOf('混沌')>=0; var mv=_isCh?aiRarityPrice(g):aiItemValue(g); var _u=Math.max(1,Math.round(mv*aiSellAsk(p,st)*(String(g.name||'').indexOf('专注')>=0?1.5:1))); if(_isCh){ _u=Math.max(100000000000,Math.min(200000000000,_u)); } else { _u=Math.max(10000000,Math.min(50000000,_u)); } if(!best||_u>best.u) best={i:j,g:g,u:_u}; }   /* 取单价最高的一类先上架（同现有背包上架逻辑逐条） */
   if(best){ var _cnt=Math.max(1,best.g.count||1); var _n2=Math.min(Math.max(1,_cnt-(_csh?0:2)),10); var _tot2=best.u*_n2, _fee2=aucFee(_tot2); if((st.gold||0)>=_fee2){ if(_n2>=_cnt){ bag.splice(best.i,1); } else { best.g.count=_cnt-_n2; } st.gold-=_fee2; aiAucProfit(st,'gold',-_fee2); var _copy2=JSON.parse(JSON.stringify(best.g)); _copy2.count=_n2; AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_copy2,price:best.u,cur:'gold',n:_n2,time:Date.now()}); auctionSave(); } }
 }
-function aiVoucherTrade(st,p){   /* AI凭证交易决策（独立段，不破坏aiAuction内部结构）：赚钱型(商人/套现微氪/白嫖)=背包凭证按市场价上架100%变现；追求型(神豪/高氪)=按日配额买券即买即用(永久属性)，氪金预算≤20%给99世后装备/限量品留钱，防所有氪金砸属性 */
+function aiUseInherit(st,it){   /* AI使用传承丹：消耗1颗→永久全属性+5000万（同玩家 useInheritPill，一次性消耗品；永久属性不被轮回清空） */
+  if(!st||!it) return false;
+  for(var i=st.bag.length-1;i>=0;i--){ var b=st.bag[i]; if(b&&String(b.name||'')===String(it.name||'')){ if((b.count||1)>1) b.count--; else st.bag.splice(i,1); aiAddPerm(st,50000000); return true; } }
+  return false;
+}
+function aiVoucherTrade(st,p){   /* AI属性凭证/传承丹交易决策（独立段，不破坏aiAuction内部结构）：赚钱型(商人/套现微氪/白嫖)=背包凭证/传承丹按市场价上架100%变现；追求型(神豪/高氪)=先自用背包已有传承丹，再按日配额买券/丹即买即用(永久属性)，氪金预算≤20%给99世后装备/限量品留钱，防所有氪金砸属性 */
   if(!st||!p||!AUCTION||!AUCTION.list) return;
   var _paySeller=function(e,total){ if(!e) return; var _amt=total||((e.kind==='gold')?(e.price||0):((e.price||0)*(Number(e.n||1)))); if(_amt<=0) return; var q=null; try{ if(FIELD_ROSTER) for(var k2=0;k2<FIELD_ROSTER.length;k2++) if(FIELD_ROSTER[k2].name===e.seller){ q=FIELD_ROSTER[k2]; break; } }catch(err){} if(q&&q.st){ if(e.cur==='kf'){ q.st.kf=(q.st.kf||0)+_amt; } else { q.st.gold=(q.st.gold||0)+_amt; } aiAucProfit(q.st,e.cur,_amt); } try{ aucSellLog(e.seller,e); }catch(err){} };   /* AI卖家收款（同aiAuction内部口径，真实成交） */
   var _payPlayer=function(e){ if(!e) return; var _pn=(CHARACTER&&CHARACTER.info&&CHARACTER.info.name)||'谜团'; if(!e.seller||e.seller!==_pn) return; var _amt=(e.kind==='gold')?(e.price||0):((e.price||0)*(Number(e.n||1))); if(_amt<=0) return; try{ auctionPay(e.cur||'gold',-_amt); }catch(err){} try{ aucPlayerBook(e.cur,_amt); }catch(err){} try{ AUCTION.history.unshift({id:'S'+((AUCTION._id||0))+'x',item:e.item,seller:e.seller,ai:false,price:e.price,cur:e.cur,n:e.n,time:Date.now(),type:'sold'}); if(AUCTION.history.length>100) AUCTION.history.length=100; }catch(err){} try{ auctionSave(); }catch(err){} try{ if(typeof renderCurrency==='function') renderCurrency(); }catch(err){} try{ if(typeof saveGame==='function') saveGame(); }catch(err){} try{ aucSellLog(_pn,e); }catch(err){} };   /* 玩家卖家收款（同aiAuction内部口径：AI买走玩家上架的券→玩家到账+日志+归档） */
   if((aiIsMerchant(p)||aiIsCasher(p,st))&&AUCTION.list.filter(function(x){return x.seller===p.name;}).length<3){
-    for(var _bv=st.bag.length-1;_bv>=0;_bv--){ var _vb=st.bag[_bv]; if(!_vb||(_vb.type!=='voucher_arena'&&_vb.type!=='voucher_tower')) continue;
-      var _vN=Math.min(Math.max(1,_vb.count||1),10);   /* 单笔≤10券（同6级宝石单笔≤10规则，防灌单砸盘） */
-      var _vAsk=Math.max(1,Math.round(voucherGoldPrice()*wbVoucherPremium())); var _vFee=aucFee(_vAsk*_vN);   /* 上架价=锚价×当前抢手溢价(开服×1.5→后期×1.1)：永久全属性开服练级刚需可溢价卖，后期随属性饱和回落但仍保值，不吃低于锚价的亏 */
+    for(var _bv=st.bag.length-1;_bv>=0;_bv--){ var _vb=st.bag[_bv]; if(!_vb||(_vb.type!=='voucher_arena'&&_vb.type!=='voucher_tower'&&_vb.type!=='inherit_pill')) continue;
+      var _vIsP=_vb.type==='inherit_pill';
+      var _vN=Math.min(Math.max(1,_vb.count||1),10);   /* 单笔≤10（券/丹同规则，防灌单砸盘） */
+      var _vAsk=Math.max(1,Math.round(voucherGoldPrice()*(_vIsP?0.5:1)*wbVoucherPremium())); var _vFee=aucFee(_vAsk*_vN);   /* 上架价=锚价(券4氪金/丹2氪金)×当前抢手溢价(开服×1.5→后期×1.1)：永久全属性开服练级刚需可溢价卖，后期随属性饱和回落但仍保值，不吃低于锚价的亏 */
       if((st.gold||0)<_vFee) break;
       if(_vN>=(_vb.count||1)){ st.bag.splice(_bv,1); } else { _vb.count=(_vb.count||1)-_vN; }
       st.gold-=_vFee; aiAucProfit(st,'gold',-_vFee);
@@ -11863,19 +11873,23 @@ function aiVoucherTrade(st,p){   /* AI凭证交易决策（独立段，不破坏
     }
   }
   if(!(aiIsMerchant(p)||aiIsCasher(p,st))){
+    for(var _uhI=st.bag.length-1;_uhI>=0;_uhI--){ var _uhB=st.bag[_uhI]; if(!_uhB||_uhB.type!=='inherit_pill') continue; var _uhC=Math.max(1,_uhB.count||1); st.bag.splice(_uhI,1); for(var _uhK=0;_uhK<_uhC;_uhK++){ aiAddPerm(st,50000000); } }   /* 追求型背包已有传承丹：即用即加（同玩家 useInheritPill，+5000万永久全属性/颗，不囤不卖） */
     var _vd=String(new Date().getMonth()+1)+'/'+new Date().getDate();
     if(st._vDate!==_vd){ st._vDate=_vd; st._vBought=0; }
     if((st._vBought||0)<VOUCHER_DAY_LIMIT){
       var _vCapGold=Math.max(0,(st.gold||0))*0.25; var _vCapKf=(st.kf||0)*0.2;   /* 预算：金币25% / 氪金20%（神豪留80%氪金给99世后装备/限量品，防全部氪金砸属性） */
       var _bestV=null;
-      for(var _vi=0;_vi<AUCTION.list.length;_vi++){ var _ve=AUCTION.list[_vi]; if(!_ve||_ve.seller===p.name||!_ve.item||!_ve.price) continue; var _vt=_ve.item.type||''; if(_vt!=='voucher_arena'&&_vt!=='voucher_tower') continue;
-        var _unit=(_ve.cur==='kf')?(_ve.price||0):(_ve.price||0);   /* 券单按单价×数量（普通物品单，price=单价；氪金/金币同构） */
-        var _limitP=(_ve.cur==='kf')?(VOUCHER_KF*wbVoucherPremium()):(voucherGoldPrice()*wbVoucherPremium());   /* 接受度=锚价×当前抢手溢价(开服4氪金×1.5=6氪金/券→后期×1.1=4.4；金币同系数)：永久全属性前期愿溢价收(刚需+可炒)，后期属性饱和回落但仍保值，下限≈锚价不深跌 */
+      for(var _vi=0;_vi<AUCTION.list.length;_vi++){ var _ve=AUCTION.list[_vi]; if(!_ve||_ve.seller===p.name||!_ve.item||!_ve.price) continue; var _vt=_ve.item.type||''; if(_vt!=='voucher_arena'&&_vt!=='voucher_tower'&&_vt!=='inherit_pill') continue;
+        var _isP2=_vt==='inherit_pill';
+        var _unit=(_ve.cur==='kf')?(_ve.price||0):(_ve.price||0);   /* 单按单价×数量（普通物品单，price=单价；氪金/金币同构） */
+        var _limitP=(_ve.cur==='kf')?(VOUCHER_KF*(_isP2?0.5:1)*wbVoucherPremium()):(voucherGoldPrice()*(_isP2?0.5:1)*wbVoucherPremium());   /* 接受度=锚价×当前抢手溢价（券4氪金/丹2氪金，开服×1.5→后期×1.1）：永久全属性前期愿溢价收(刚需+可炒)，后期属性饱和回落但仍保值，下限≈锚价不深跌 */
         if(_unit<=_limitP){ if(!_bestV||_unit<_bestV._u) _bestV={e:_ve,_u:_unit}; }
       }
       if(_bestV){
-        var _ve2=_bestV.e, _dayLeft=VOUCHER_DAY_LIMIT-(st._vBought||0);
-        if(_dayLeft>0&&Math.max(1,_ve2.n||1)<=_dayLeft){   /* 整单购买（单笔=挂单数量，配额不足→跳过等下一心跳，避免部分购买砍单导致卖家收款/日志金额错乱） */
+        var _ve2=_bestV.e, _isP3=(_ve2.item&&_ve2.item.type==='inherit_pill');
+        var _unitN=Math.max(1,_ve2.n||1)*((_isP3)?0.5:1);   /* 配额按属性单位累计：券=1单位(1亿)、丹=0.5单位(5000万)，日限100单位=100亿属性（凭证+传承丹共用预算，防全部氪金砸属性） */
+        var _dayLeft=VOUCHER_DAY_LIMIT-(st._vBought||0);
+        if(_dayLeft>0&&_unitN<=_dayLeft){   /* 整单购买（单笔=挂单数量，配额不足→跳过等下一心跳，避免部分购买砍单导致卖家收款/日志金额错乱） */
           var _want=Math.max(1,_ve2.n||1);
           var _totV=_ve2.price*_want;
           var _payOK=(_ve2.cur==='kf')?((st.kf||0)>=_totV&&_totV<=_vCapKf):((st.gold||0)>=_totV&&_totV<=_vCapGold);
@@ -11883,8 +11897,8 @@ function aiVoucherTrade(st,p){   /* AI凭证交易决策（独立段，不破坏
             if(_ve2.cur==='kf'){ st.kf-=_totV; aiAucProfit(st,'kf',-_totV); } else { st.gold-=_totV; aiAucProfit(st,'gold',-_totV); }
             for(var _mjV=0;_mjV<AUCTION.list.length;_mjV++) if(AUCTION.list[_mjV].id===_ve2.id){ AUCTION.list.splice(_mjV,1); break; }
             _payPlayer(_ve2); _paySeller(_ve2); try{ aucBuyLog(p.name,_ve2); }catch(err){}
-            st._vBought=(st._vBought||0)+_want;
-            var _vuse=0; while(_vuse<_want){ var _cpV2=JSON.parse(JSON.stringify(_ve2.item)); _cpV2.count=1; if(!st.bag) st.bag=[]; st.bag.push(_cpV2); if(!aiUseVoucher(st,_cpV2)) break; _vuse++; }   /* 券入包即用（一次性兑换媒介→永久属性入perm，不囤券跨轮回） */
+            st._vBought=(st._vBought||0)+_unitN;
+            var _vuse=0; while(_vuse<_want){ var _cpV2=JSON.parse(JSON.stringify(_ve2.item)); _cpV2.count=1; if(!st.bag) st.bag=[]; st.bag.push(_cpV2); var _usedOK=_isP3?aiUseInherit(st,_cpV2):aiUseVoucher(st,_cpV2); if(!_usedOK) break; _vuse++; }   /* 券/丹入包即用（一次性兑换媒介→永久属性入perm，不囤跨轮回） */
             auctionSave();
           }
         }
@@ -11988,7 +12002,7 @@ function aiAuction(st,p,now){
       }
       if(_bestG){ st.kf-=_bestG.price; aiAucProfit(st,'kf',-_bestG.price); st.gold+=(_bestG.n*100000000);   /* 买入金币单：收到原单托管金币（原卖家上架时已扣托管，成交时转给商人，守恒不凭空） */ var _gFee=Math.max(1,Math.ceil(_bestG.n*100000000*0.02)); st.gold-=_gFee; aiAucProfit(st,'gold',-_gFee); st.gold-=(_bestG.n*100000000);   /* 转手挂出新金币单：托管金币入拍卖行（买家买走时释放，守恒不凭空） */ for(var _mjG=0;_mjG<AUCTION.list.length;_mjG++) if(AUCTION.list[_mjG].id===_bestG.id){ AUCTION.list.splice(_mjG,1); break; } AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,kind:'gold',item:{name:'金币',type:'currency'},price:Math.max(1,Math.round(_perG*_bestG.n)),cur:'kf',n:_bestG.n,time:Date.now()}); auctionSave(); _payPlayerSeller(_bestG); _paySellerAI(_bestG); try{ aucBuyLog(p.name,_bestG); }catch(err){} }   /* 金币汇差：氪金低价收玩家金币单(急售便宜)→转手按报价系数挂出(买家=神豪2.2×牌价/高氪1.6×牌价都接得住，不滞销)，真实流转不凭空；买入价≤转手价×0.75→毛利≥25%(盖过双向手续费)——补_paySellerAI：AI上架金币单被商人买入时AI卖家收款；修复转手托管：买入收原单托管金币→转手再托管，原卖家上架扣的托管不凭空消失、新买家买走释放不凭空生成 */
       if(AUCTION.list.filter(function(x){return x.seller===p.name;}).length<3){
-        for(var _bo=st.bag.length-1;_bo>=0;_bo--){ var _bob=st.bag[_bo]; if(!_bob||!aucTradable(_bob)) continue; var _nmO=String(_bob.name||''); if(_bob.type==='seal'||_bob.type==='frag'||_bob.type==='core') continue; if(_bob.type==='voucher_arena'||_bob.type==='voucher_tower') continue; if(_nmO.indexOf('伊泰安')>=0||(_nmO.indexOf('神印')>=0&&_nmO.indexOf('碎片')<0)||itemQuality(_bob)==='purple') continue; var _askO=Math.max(1,Math.round(aiItemValue(_bob)*aiSellAsk(p, st)*1.6)); var _feeO=aucFee(_askO); if((st.gold||0)<_feeO) break; var _cntO=Math.max(1,_bob.count||1); var _nO=Math.min(_cntO,100); if(_nO>=_cntO){ st.bag.splice(_bo,1); } else { _bob.count=_cntO-_nO; } st.gold-=_feeO; aiAucProfit(st,'gold',-_feeO); var _cpO=JSON.parse(JSON.stringify(_bob)); _cpO.count=_nO; AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_cpO,price:_askO,cur:'gold',n:_nO,time:Date.now()}); auctionSave(); break; }   /* 材料快周转出货：囤货按转手价主动挂出(买入≤0.7估值→卖出1.36估值有利润即周转，不等缺钱)，1件/心跳；上架手续费→利润成本；计数型材料物品(防异常入包)不走此通道挂出(会丢kind致买家计数失效) */
+        for(var _bo=st.bag.length-1;_bo>=0;_bo--){ var _bob=st.bag[_bo]; if(!_bob||!aucTradable(_bob)) continue; var _nmO=String(_bob.name||''); if(_bob.type==='seal'||_bob.type==='frag'||_bob.type==='core') continue; if(_bob.type==='voucher_arena'||_bob.type==='voucher_tower'||_bob.type==='inherit_pill'||_bob.type==='god_origin') continue;   /* 凭证/传承丹/神格本源：走 aiVoucherTrade 与保留策略统一管理，不走通用估值上架 */ if(_nmO.indexOf('伊泰安')>=0||(_nmO.indexOf('神印')>=0&&_nmO.indexOf('碎片')<0)||itemQuality(_bob)==='purple') continue; var _askO=Math.max(1,Math.round(aiItemValue(_bob)*aiSellAsk(p, st)*1.6)); var _feeO=aucFee(_askO); if((st.gold||0)<_feeO) break; var _cntO=Math.max(1,_bob.count||1); var _nO=Math.min(_cntO,100); if(_nO>=_cntO){ st.bag.splice(_bo,1); } else { _bob.count=_cntO-_nO; } st.gold-=_feeO; aiAucProfit(st,'gold',-_feeO); var _cpO=JSON.parse(JSON.stringify(_bob)); _cpO.count=_nO; AUCTION.list.unshift({id:'A'+(AUCTION._id++),seller:p.name,ai:true,item:_cpO,price:_askO,cur:'gold',n:_nO,time:Date.now()}); auctionSave(); break; }   /* 材料快周转出货：囤货按转手价主动挂出(买入≤0.7估值→卖出1.36估值有利润即周转，不等缺钱)，1件/心跳；上架手续费→利润成本；计数型材料物品(防异常入包)不走此通道挂出(会丢kind致买家计数失效) */
       }
       var _finN=0; for(var _fI=0;_fI<FIELD_ROSTER.length;_fI++){ var _fS=FIELD_ROSTER[_fI]; if(_fS&&_fS.st&&(_fS.st.ws||0)>=99) _finN++; }
       if(_finN>0&&Math.random()<0.4&&AUCTION.list.filter(function(x){return x.seller===p.name;}).length<3){
@@ -14736,7 +14750,7 @@ function saveGame(){
       ith:ITH_LEFT, jiMie:SJD_LEFT, quick:QUICK, elemSlot:ELEM_SLOT, innate:CHARACTER.innate, origin:CHARACTER.origin,
       collected:COLLECT, collectDone:COLLECT_DONE, xianji:XIANJI, xianjiDone:XIANJI_DONE, rebirth:REBIRTH, altar:ALTAR, wboss:WBOSS, daily:DAILY, lastActive:Date.now(), offlineHang:TR.auto, luck:LUCK, mutate:MUT, store:store, battle:BATTLE, deep:DEEP, enhBless:ENH.bless||0, inheritUsed:INHERIT_USED||0
     }));
-  }catch(e){}
+  }catch(e){ try{ console.error('saveGame failed',e); }catch(_){} }   /* 存档写入异常不阻断游戏，但留痕便于排查"刷新后数值回退"（如localStorage空间满） */
 }
 /* 恢复存档并重建物品共享引用（背包/装备/天神可能引用同一物品对象） */
 function loadGame(){
