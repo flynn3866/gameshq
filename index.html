@@ -11407,6 +11407,7 @@ var VOUCHER_IMG='logos/凭证金券.png';   /* 凭证金券图标（背包/拍�
 function voucherMeta(t){ return t==='voucher_arena'?{name:'竞技积分券',val:4000,src:'竞技积分'}:{name:'塔币凭证',val:4500,src:'塔币'}; }
 function voucherItem(t,n){ var m=voucherMeta(t); return {name:m.name,type:t,img:VOUCHER_IMG,val:m.val,src:m.src,count:Math.max(1,n||1),maxStack:999,desc:'使用：永久全属性 +'+fmtWan(VOUCHER_ATTR)+'（'+m.src+' '+fmtWan(m.val)+' 铸造 · 可交易）'}; }
 function voucherGoldPrice(){ return Math.max(1,Math.round(VOUCHER_KF*100000000/aiGoldRateKf())); }   /* 1券金币标价=4氪金×当前牌价（1氪金=X/100亿金币→4×100000000/aiGoldRateKf()金币；开服≈3.2亿→后期≈40亿，随金币通胀自动上涨） */
+function wbVoucherPremium(){ var _d=Math.max(0,Math.floor((Date.now()-SERVER_START)/86400000)); return 1.5-0.4*Math.min(1,_d/360); }   /* 凭证抢手溢价系数：开服=1.5（上浮上限+50%）→360天线性回落至1.1（+10%）封底——永久全属性/轮回不清空/买到即用：开服练级刚需、可溢价可炒作，后期属性饱和回归正常但永久价值使然不深度贬值；AI上架价与买家接受度共用此系数（同向波动→市场恒有交集不积压） */
 function castVoucher(t,n){   /* 玩家铸造：消耗竞技积分/塔币→凭证入背包（肝的果实货币化，不凭空生成；与AI同规则） */
   var m=voucherMeta(t); n=Math.max(1,Math.floor(n||1));
   var bal=(t==='voucher_arena')?((ARENA&&ARENA.score)||0):((typeof CT!=='undefined'&&CT&&CT.coins)||0);
@@ -11852,7 +11853,7 @@ function aiVoucherTrade(st,p){   /* AI凭证交易决策（独立段，不破坏
   if((aiIsMerchant(p)||aiIsCasher(p,st))&&AUCTION.list.filter(function(x){return x.seller===p.name;}).length<3){
     for(var _bv=st.bag.length-1;_bv>=0;_bv--){ var _vb=st.bag[_bv]; if(!_vb||(_vb.type!=='voucher_arena'&&_vb.type!=='voucher_tower')) continue;
       var _vN=Math.min(Math.max(1,_vb.count||1),10);   /* 单笔≤10券（同6级宝石单笔≤10规则，防灌单砸盘） */
-      var _vAsk=voucherGoldPrice(); var _vFee=aucFee(_vAsk*_vN);
+      var _vAsk=Math.max(1,Math.round(voucherGoldPrice()*wbVoucherPremium())); var _vFee=aucFee(_vAsk*_vN);   /* 上架价=锚价×当前抢手溢价(开服×1.5→后期×1.1)：永久全属性开服练级刚需可溢价卖，后期随属性饱和回落但仍保值，不吃低于锚价的亏 */
       if((st.gold||0)<_vFee) break;
       if(_vN>=(_vb.count||1)){ st.bag.splice(_bv,1); } else { _vb.count=(_vb.count||1)-_vN; }
       st.gold-=_vFee; aiAucProfit(st,'gold',-_vFee);
@@ -11868,7 +11869,7 @@ function aiVoucherTrade(st,p){   /* AI凭证交易决策（独立段，不破坏
       var _bestV=null;
       for(var _vi=0;_vi<AUCTION.list.length;_vi++){ var _ve=AUCTION.list[_vi]; if(!_ve||_ve.seller===p.name||!_ve.item||!_ve.price) continue; var _vt=_ve.item.type||''; if(_vt!=='voucher_arena'&&_vt!=='voucher_tower') continue;
         var _unit=(_ve.cur==='kf')?(_ve.price||0):(_ve.price||0);   /* 券单按单价×数量（普通物品单，price=单价；氪金/金币同构） */
-        var _limitP=(_ve.cur==='kf')?(VOUCHER_KF*1.05):(voucherGoldPrice()*1.05);   /* 接受度：锚价4氪金/券±5%；金币按牌价折算 */
+        var _limitP=(_ve.cur==='kf')?(VOUCHER_KF*wbVoucherPremium()):(voucherGoldPrice()*wbVoucherPremium());   /* 接受度=锚价×当前抢手溢价(开服4氪金×1.5=6氪金/券→后期×1.1=4.4；金币同系数)：永久全属性前期愿溢价收(刚需+可炒)，后期属性饱和回落但仍保值，下限≈锚价不深跌 */
         if(_unit<=_limitP){ if(!_bestV||_unit<_bestV._u) _bestV={e:_ve,_u:_unit}; }
       }
       if(_bestV){
