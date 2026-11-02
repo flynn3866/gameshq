@@ -567,7 +567,7 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
   box-shadow:0 2px 8px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.55);}
 
 /* 确认框 */
-.confirm-mask{position:fixed;inset:0;background:rgba(8,7,6,.55);z-index:120;display:flex;align-items:center;justify-content:center;}
+.confirm-mask{position:fixed;inset:0;background:rgba(8,7,6,.55);z-index:2147483050;display:flex;align-items:center;justify-content:center;}   /* 确认框恒在所有业务浮层之上（tooltip 130/拍卖130/商店2147483000），低于全局恒顶面板2147483647 */
 .confirm-box{
   width:min(82%,300px);background:linear-gradient(180deg,#26211c,#191512);
   border:1px solid #6D6354;border-radius:8px;padding:18px 16px;
@@ -12073,6 +12073,7 @@ function aiUseVoucher(st,it){   /* AI使用券：消耗1券→永久全属性+1�
   return false;
 }
 function useVoucherByType(t){   /* 玩家使用凭证：背包消耗1券→永久全属性+1亿（同AI aiUseVoucher，一次性兑换媒介；永久属性不被轮回清空） */
+  hideTooltip();   /* 发起使用即收起物品浮层，避免浮层(130)遮挡确认框(2147483050) */
   var found=-1, pIdx=-1, iIdx=-1;
   for(var p=0;p<BAG_NUM&&found<0;p++) for(var i=0;i<BAG_SLOTS;i++){ var s=bag[p][i]; if(s&&s.type===t){ found=1; pIdx=p; iIdx=i; break; } }
   if(found<0){ toast('背包里没有该凭证'); return; }
