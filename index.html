@@ -1342,7 +1342,7 @@ button:not(:disabled):active{filter:brightness(1.12) contrast(.96);}
   opacity:0;pointer-events:none;transition:opacity .15s;backdrop-filter:blur(5px);
   max-height:70vh;overflow-y:auto;
 }
-#tooltip.show{opacity:1;}
+#tooltip.show{opacity:1;pointer-events:auto;}   /* 显示时恢复可交互（否则tooltip内按钮(属性凭证"使用×1")点击全部穿透失效） */
 .tt-name{font-size:16px;color:rgb(255,255,255);font-weight:normal;}   /* 普通品质名=白 */
 .tt-equipped{display:inline-block;vertical-align:middle;color:#6CE88A;font-size:11px;font-weight:600;margin-left:6px;text-shadow:0 0 6px rgba(108,232,138,.5);}   /* 已装备标记：绿色 */
 .tt-y{color:rgb(244,243,1);font-weight:normal;}
