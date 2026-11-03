@@ -6589,7 +6589,7 @@ function aiEnsureAdvance(p){   /* 惰性核算：lastUpdate→now 一次性补�
   if((p.st.ws||0)>=99&&(p.st.core||0)>=1&&!p.st.ascended){ p.st.core-=1; p.st.ascended=1; p.st.essence=(p.st.essence||0)+50; }   /* 超脱觉醒（同玩家ascend）：99世圆满+持有太初神核→消耗神核×1+本源结晶+50+永久标记（此后装备/天神不再被轮回清空）——AI与玩家同规则，杜绝AI白拿超脱不吃核的不对称 */
   var now=Date.now(), last=p.st.lastUpdate||SERVER_START;
   var secDelta=Math.max(0,(now-last)/1000);
-  if(secDelta>0) aiAdvance(p,secDelta);
+  if(secDelta>0){ try{ recomputeIthLeft(); }catch(e){} aiAdvance(p,secDelta); }   /* 伊泰安发放前活校验：任何AI推进(惰性补算)先按真实三端持有(玩家+AI+拍卖)校正余量，杜绝缓存/未校正余量超发 */
   p.st.lastUpdate=now;
   aiSaveField();   /* 持久化 st+lastUpdate：刷新/多入口增量补算，不重复全量 */
 }
@@ -6643,6 +6643,7 @@ function aiPriority(st,p){   /* 状态感知决策层：结合每个AI自身情�
 }
 function aiIthDrop(st,p,onlineSec){   /* AI雕俱星座挂机掉伊泰安项链：与玩家完全一致——仅在雕俱星座(副本0)挂机/打怪才有机会触发，且同前提(总量ITH_LEFT>0)、同消耗总量/发全服公告；仅掉落间隔与概率按用户指定下调(玩家每20秒0.5% → AI每60秒0.005%)。允许多件（与玩家一致，不限已拥有），掉落到全服总量掉完为止。掉落后生成真实伊泰安项链物品入背包，由aiAutoEquip穿戴到首饰槽（与玩家获得同链路，杜绝凭空） */
   if(!st.bag) st.bag=[];
+  try{ recomputeIthLeft(); }catch(e){}   /* 发放前活校验：余量=总量−实时三端持有(玩家+AI+拍卖)，杜绝任何时序下用缓存/未校正余量超发 */
   if(ITH_LEFT.yitaiNecklace<=0) return;   /* 项链总量已掉完：不再掉落 */
   if(aiBestDungeonFor(st,p)!==0) return;   /* 与玩家一致：仅在雕俱星座(副本0)挂机/打怪才有机会掉落，刷其他副本不触发 */
   if(Math.abs(((DUNGEONS[0]&&DUNGEONS[0].monLv)||1)-(st.lv||1))>20) return;   /* 等级差>20(双向)无收益：伊泰安项链也是收益，与玩家副本20级门控同规则——AI等级与雕俱星座怪(1级)差>20则不掉，杜绝高等级靠兜底副本0误判在雕俱 */
@@ -6659,6 +6660,7 @@ function aiIthDrop(st,p,onlineSec){   /* AI雕俱星座挂机掉伊泰安项链�
 function aiOpenLegendBox(st,p){   /* AI世界boss击杀后按名次领的传说宝箱开箱：与玩家useLegendBox同规则——1%伊泰安随机部位(按各部位总量ITH_LEFT，总量0则该部位不参与/概率归0落回传说)，99%传说魔翼/神裁之刃/传说奥格顿任意部位随机一件入真实背包(st.bag)；命中伊泰安生成真实物品入包(后续aiAutoEquip穿到5首饰槽)并扣总量发全服公告 */
   if(!st.bag) st.bag=[];
   if(Math.random()<(0.01*(1+Math.min(0.5,aiAltarLines(st,p).drop*0.05)))){   /* 1%伊泰安随机部位；×黄金神坛·福泽传说掉宝权重(同玩家luckRoll) */
+    try{ recomputeIthLeft(); }catch(e){}   /* 发放前活校验 */
     var _yp=['yitaiNecklace','yitaiRing','yitaiBracelet'].filter(function(k){ return (ITH_LEFT[k]||0)>0; });
     if(_yp.length){
       var _yk=_yp[Math.floor(Math.random()*_yp.length)];
@@ -7234,7 +7236,7 @@ function aiSaveField(force){   /* 落盘去重+原子：批量核算(心跳/rend
     else{ if(__aiSaveTimer) return; __aiSaveTimer=setTimeout(function(){ __aiSaveTimer=null; __aiSavePending=0; try{ localStorage.setItem('shenqi_field_roster',JSON.stringify(FIELD_ROSTER)); }catch(e){} },2000); }
   }catch(e){}
 }
-function aiHeartbeat(){ ensureFieldRoster(); for(var i=0;i<FIELD_ROSTER.length;i++){ var _p=FIELD_ROSTER[i]; aiEnsureAdvance(_p); if(_p.st&&_p.st._offline) continue;   /* 已下线AI：停止拍卖交易（真实玩家下线=不在游戏，不交易） */ if(typeof aiAuction==='function' && AUCTION && AUCTION.list){ try{ aiAuction(_p.st,_p,Date.now()); }catch(e){} } try{ if(typeof aiGodDecompBag==='function') aiGodDecompBag(_p.st,_p,true); }catch(e){} } aiSaveField(true); try{ aiArenaTick(); }catch(e){} try{ if(location.hash.indexOf('#home')>=0 && typeof renderLimitHome==='function') renderLimitHome(); }catch(e){} try{ if(typeof aiChatTick==='function') aiChatTick(); }catch(e){} }   /* 低频心跳：挂机页面持续发育（配合打开时惰性补算）；停在主页时同步刷新限量神装剩余（AI掉落伊泰安后主页实时更新）；AI 参与拍卖（真实资源上架/购买）；拍卖后背包多余天神牌兜底拆解成升级材料（先给卖牌机会，卖不掉/不卖才拆，同玩家拆解数量）；AI 世界发言+私聊议价；AI 之间真实竞技对战（限频结算，同玩家规则） */
+function aiHeartbeat(){ ensureFieldRoster(); try{ recomputeIthLeft(); }catch(e){}   /* 心跳前总量校正：AI推进永不使用未校正ITH_LEFT（伊泰安余量=总量−玩家−AI−拍卖实时三端持有） */ for(var i=0;i<FIELD_ROSTER.length;i++){ var _p=FIELD_ROSTER[i]; aiEnsureAdvance(_p); if(_p.st&&_p.st._offline) continue;   /* 已下线AI：停止拍卖交易（真实玩家下线=不在游戏，不交易） */ if(typeof aiAuction==='function' && AUCTION && AUCTION.list){ try{ aiAuction(_p.st,_p,Date.now()); }catch(e){} } try{ if(typeof aiGodDecompBag==='function') aiGodDecompBag(_p.st,_p,true); }catch(e){} } aiSaveField(true); try{ aiArenaTick(); }catch(e){} try{ if(location.hash.indexOf('#home')>=0 && typeof renderLimitHome==='function') renderLimitHome(); }catch(e){} try{ if(typeof aiChatTick==='function') aiChatTick(); }catch(e){} }   /* 低频心跳：挂机页面持续发育（配合打开时惰性补算）；停在主页时同步刷新限量神装剩余（AI掉落伊泰安后主页实时更新）；AI 参与拍卖（真实资源上架/购买）；拍卖后背包多余天神牌兜底拆解成升级材料（先给卖牌机会，卖不掉/不卖才拆，同玩家拆解数量）；AI 世界发言+私聊议价；AI 之间真实竞技对战（限频结算，同玩家规则） */
 function aiBuild(p,sec){
   serverStartInit(); aiEnsureAdvance(p);   /* 惰性补算到当前，再读存档确定性构建 */
   var st=p.st, B=aiBuildState(st,p);
@@ -10705,7 +10707,7 @@ function checkRankUp(){
 function stopArenaFight(){ if(ARENA.timer){ clearInterval(ARENA.timer); ARENA.timer=null; } ARENA.fight=false; renderOppList(); }
 
 /* ===== 世界BOSS榜：全服共享超厚血条 · 分时段讨伐 · 伤害排名 ===== */
-var WBOSS={day:'',slot:-1,mul:1,boss:null,bossMax:1,bossHp:1,my:0,ai:[],lastVisit:0,startTime:0,killed:false,reward:{got:false},coins:0,totalKill:0,totalDmg:0,bestDmg:0,timeBase:0,smiteTs:0,revive:null,loot:null,_waitNext:true};   /* loot=击杀战利品记录(即时入账后展示，持久化，击杀后至下次刷新可重查) */   /* timeBase=服务器开刷时间戳(天数成长)；startTime=本轮8点开刷固定锚点，AI磨血据此单调累加；smiteTs=BOSS上次集火AI时间戳；revive=玩家被杀后自动复活定时器；_waitNext=等待每日8点定时刷新标记：全局默认true（全新玩家/初始化后都严格等下一个8点才刷BOSS，不立即刷新），doReset重置置true、读档恢复、到达8点置false开始当日正常轮 */
+var WBOSS={day:'',slot:-1,mul:1,boss:null,bossMax:1,bossHp:1,my:0,ai:[],lastVisit:0,startTime:0,_lastAdv:0,killed:false,reward:{got:false},coins:0,totalKill:0,totalDmg:0,bestDmg:0,timeBase:0,smiteTs:0,revive:null,loot:null,_waitNext:true};   /* loot=击杀战利品记录(即时入账后展示，持久化，击杀后至下次刷新可重查) */   /* timeBase=服务器开刷时间戳(天数成长)；startTime=本轮8点开刷固定锚点，AI磨血据此单调累加；smiteTs=BOSS上次集火AI时间戳；revive=玩家被杀后自动复活定时器；_waitNext=等待每日8点定时刷新标记：全局默认true（全新玩家/初始化后都严格等下一个8点才刷BOSS，不立即刷新），doReset重置置true、读档恢复、到达8点置false开始当日正常轮 */
 var WB_SESSION=null;
 var WB_REFRESH=null;   /* 世界BOSS页血条动态刷新定时器（3秒，仅页面停留时运行） */
 var WB_AI_FIXED=[{n:'剑尊·破天',dps:0.0000120,hit:0.92},{n:'血刀·修罗',dps:0.0000090,hit:0.90},{n:'风神·无痕',dps:0.0000060,hit:0.88},{n:'星陨·落',dps:0.0000045,hit:0.88},{n:'霜华·冷',dps:0.0000030,hit:0.86},{n:'雷帝·狂',dps:0.0000023,hit:0.86},{n:'焚天·焰',dps:0.0000016,hit:0.84},{n:'幽影·匿',dps:0.0000013,hit:0.84},{n:'苍狼·啸',dps:0.0000010,hit:0.82},{n:'月蚀·冥',dps:0.00000085,hit:0.82},{n:'云麾·苍',dps:0.00000070,hit:0.80},{n:'渊帝·影',dps:0.00000055,hit:0.80}];   /* 世界BOSS固定参战玩家梯队：dps=每秒占共享血比例(攻击区间)，hit=命中率(模拟MISS)，无输出上限，按各自dps×BOSS存活时长持续磨血直至被杀 */
@@ -10773,8 +10775,8 @@ function wbEnsure(){
 }
 function wbAdvanceAI(){
   if(!WBOSS.boss || WBOSS.killed) return;
-  var now=Date.now(), base=WBOSS.startTime||WBOSS.lastVisit||now;   /* 固定锚点：本轮8点开刷时刻，AI从8点持续磨血、不随tick/切页重置 */
-  var elSec=Math.max(0,(now-base)/1000);   /* BOSS存活时长(秒)：从开刷到当前/被杀 */
+  var now=Date.now(), base=WBOSS._lastAdv||WBOSS.startTime||WBOSS.lastVisit||now;   /* 增量锚点：上次结算时刻——在线期间逐次累加磨血（与旧8点锚等价），离线恢复时由loadGame重锚=打开时刻→离线时长不补偿AI磨血；旧档无_lastAdv回退8点锚 */
+  var elSec=Math.max(0,(now-base)/1000);   /* 距上次结算的时长(秒)：在线运行期间持续磨血，重开后从打开时刻起算 */
   var incTotal=0;
   WBOSS.ai.forEach(function(a){
     var _ap0=null; try{ if(FIELD_ROSTER) for(var _wq=0;_wq<FIELD_ROSTER.length;_wq++) if(FIELD_ROSTER[_wq].name===a.n){ _ap0=FIELD_ROSTER[_wq]; break; } }catch(e){}
@@ -10787,6 +10789,7 @@ function wbAdvanceAI(){
   if(incTotal>0){ WBOSS.bossHp=Math.max(0, WBOSS.bossHp-incTotal); }
   if(WBOSS.bossHp<=0 && !WBOSS.killed && !WBOSS._settled){ WBOSS.killed=true; WBOSS._settled=true; try{ wbStop(); wbOnKill(); }catch(e){} }   /* AI自身即可磨死BOSS：血量归零即被杀，排名定格并结算战利品弹框；_settled标记该轮已结算并持久化，刷新/重进不再重复结算弹框 */
   wbBossSmiteAI(now);   /* BOSS集火当前伤害榜第一的活人：玩家是榜一则由出战反击处理，否则打榜一AI */
+  WBOSS._lastAdv=now;   /* 结算锚点推进：下次按本次间隔增量，墙钟长时间流逝只补运行期间（关闭=世界暂停） */
 }
 function wbBossSmiteAI(now){   /* BOSS只集火当前伤害榜第一的活人：玩家非榜一/未参与/被击杀时，转打榜一活AI（AI受击=玩家受击同规则：完整防御/终减/吸收+保底真伤/无视+MISS判定） */
   if(!WBOSS.boss || WBOSS.killed) return;
@@ -11648,6 +11651,7 @@ function doReincarnate(){
     stopTrialAuto(); T.started=false; T.layer=1; T.best=0;
     CHARACTER.info.level=0; TR.level=0; TR.exp=0; TR.reqExp=1000000;
     ARENA.score=0; ARENA.maxScore=0; ARENA.win=0; ARENA.lose=0; ARENA.streak=0; ARENA._rank=0; ARENA.killBoss=0; ARENA.killGod=0; ARENA.killSupreme=0; TLM.s50={got:0,on:true}; TLM.s100={got:0,on:true}; TLM.s150={got:0,on:true}; ITH_LEFT={yitaiNecklace:ITH_MAX.yitaiNecklace,yitaiRing:ITH_MAX.yitaiRing,yitaiBracelet:ITH_MAX.yitaiBracelet}; ARENA.lastDaily='';   /* 轮回后竞技段位一并还原（清历史最高积分maxScore；段位按max(score,maxScore)锚定，不清则积分清零段位仍留在原档） */
+    try{ recomputeIthLeft(); }catch(e){}   /* 轮回后按真实三端持有校正伊泰安余量：玩家已清包回池、AI持有未清——满量重置后立即校正，杜绝轮回后短暂超发窗口 */
     POTION_UNTIL=0; SUN_UNTIL=0; MEGA_SUN_UNTIL=0;
     ELEM_SLOT={atk:[null,null,null,null],def:[null,null,null,null]};
     QUICK=[null,null,null,null];
@@ -13041,17 +13045,17 @@ function aiReplyChat(nm,text){
   var rep=(aiStyle(p, p.st||{}).gearLove>=0.6)?['战力才是硬道理，装备好一切都好说。','刚刷完副本，材料又攒了一堆。']:['金币攒着最实在，够用就好。','今天材料行情不错，多卖点。'];
   chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:rep[Math.floor(Math.random()*rep.length)],time:Date.now()});
 }
-var LOTTERY=[   /* 玄鉴神藏：稀缺资源池（去空奖，整体价值上移；传说档 prob<0.01 触发彩带/稀有判定）18扇区：概率总和=1.0；神力碎片6项数量递增(10/30/60/100/150/300)概率递减(9.84/8.84/7.84/6.84/6.74/5.74%)=45.84%，神印碎片3%、完整卷轴3%，本源/传说精粹各1%，全属性+5万0.8%(传说档)，其余主档6.48% */
+var LOTTERY=[   /* 玄鉴神藏：稀缺资源池（去空奖，整体价值上移；传说档 prob<0.01 触发彩带/稀有判定）18扇区：概率总和=1.0；竞技积分+100万1%(品红紫，原神力碎片×10扇区按用户要求替换，让出的8.84%并入金币5亿)、神力碎片5项数量递增(30/60/100/150/300)概率递减(8.84/7.84/6.84/6.74/5.74%)=36%，金币5亿15.32%(吸收差额8.84%保总和)，神印碎片3%、完整卷轴3%，本源/传说精粹各1%，全属性+5万0.8%(传说档)，其余主档6.48% */
   {label:'镶嵌之锤 Lv7 ×2',short:'镶嵌锤Lv7',prob:0.0648,color:'#e8b54a',_xj:'镶嵌之锤 Lv7',apply:function(){var h=mkLoot(ITEM_BLUEPRINTS.hammers[0]); h.count=2; h.maxStack=255; lotteryGive(h,false,this); }},
   {label:'神力结晶 ×1',short:'神力结晶',prob:0.0648,color:'#FF9A4A',_xj:'神力结晶',apply:function(){ var b=mkLoot(ITEM_BLUEPRINTS.godCrystal); b.count=1; lotteryGive(b,false,this); }},
-  {label:'神力碎片 ×10',short:'碎片×10',prob:0.0984,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=10; this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
+  {label:'竞技积分+100万',short:'积分+100万',prob:0.01,color:'#d44fe0',_xj:'竞技积分',apply:function(){ARENA.score+=1000000;}},   /* 用户指定：原神力碎片×10扇区改为竞技积分+100万（加到竞技积分当前余额，可用于积分商店兑换永久属性），概率1%(0.01)，扇区颜色=传说品红紫#d44fe0 */
   {label:'神力碎片 ×30',short:'碎片×30',prob:0.0884,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=30; this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
   {label:'神力碎片 ×60',short:'碎片×60',prob:0.0784,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=60; this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
   {label:'神力碎片 ×100',short:'碎片×100',prob:0.0684,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=100; this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
   {label:'神印碎片 ×2',short:'神印碎片',prob:0.0300,color:'#9a5bd0',_xj:'神印碎片',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.sealFragment); g.count=2; lotteryGive(g,false,this); }},
   {label:'神符碎片 ×2',short:'神符碎片',prob:0.0648,color:'#e2b04f',_xj:'神符碎片',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=2; lotteryGive(g,false,this); }},
   {label:'混沌神石 ×2',short:'混沌',prob:0.0648,color:'#c8b0d0',_xj:'混沌神石',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=2; g.maxStack=255; lotteryGive(g,false,this); }},
-  {label:'金币 5亿',short:'5亿金币',prob:0.0648,color:'#f2c51e',apply:function(){CURRENCY.gold+=Math.round(500000000*altarGoldMult());}},
+  {label:'金币 5亿',short:'5亿金币',prob:0.1532,color:'#f2c51e',apply:function(){CURRENCY.gold+=Math.round(500000000*altarGoldMult());}},   /* 用户指定：吸收竞技积分扇区(原神力碎片×10)让出的8.84%差额，概率6.48%→15.32%，保持18扇区概率总和=1.0 */
   {label:'本源结晶 ×1',short:'本源结晶',prob:0.0100,color:'#9f6bff',_xj:'本源结晶',apply:function(){REBIRTH.essence+=1; toast('获得 本源结晶 +1');}},
   {label:'传说精粹 ×2',short:'传说精粹',prob:0.0100,color:'#e702e7',_xj:'传说精粹',apply:function(){addStackable(mkLegendEssence(2));}},
   {label:'全属性 +200',short:'全属性+200',prob:0.0648,color:'#4f7da0',_xj:'全属性+200',apply:function(){addPerm(200,0,'玄鉴神藏');}},
@@ -13099,6 +13103,7 @@ function lotteryRarePool(){   /* 保底稀有奖池：含全属性+500、传说�
   var _jk='shenqi_jackpot_1e8', _jackN=10; try{ _jackN=parseInt(localStorage.getItem(_jk)||'10',10); if(isNaN(_jackN)||_jackN<0) _jackN=0; }catch(e){}
   if(_jackN>0){ pool.push({label:'全属性+1亿（含生命活力）',w:0.05,_lg:true,_xj:'全属性+1亿',apply:function(){ addPerm(100000000,100000000,'抽奖·天选之刻'); _jackN--; try{ localStorage.setItem(_jk,String(Math.max(0,_jackN))); }catch(e){} toast('天选之刻！全属性+1亿！（全服剩余 '+_jackN+' 份）'); }}); }   /* 全服仅10份、全奖最稀有大奖，抽完即永久移除 */
   pool=pool.concat([
+    {label:'全属性+1000亿',w:0.01,_lg:true,_xj:'全属性+1000亿',apply:function(){addPerm(100000000000,100000000000,'抽奖·天选之刻');toast('天选之刻！全属性+1000亿！');}},   /* 至尊大奖：权重最低(0.01<全服限量1亿大奖0.05)，传说级受运势加成/计入保底；六维与生命活力各+1000亿(1e11)，与全属性+1亿口径一致、不设限量 */
     {label:'寂灭之息药剂',w:0.12,_lg:true,_xj:'寂灭之息药剂',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.jiMiePotion); g.count=1; lotteryGive(g,false,this);}},   /* 最珍稀：寂灭之息药剂（BOSS即死） */
     {label:'全属性+100万',w:0.3,_lg:true,_xj:'全属性+100万',apply:function(){addPerm(1000000,0,'抽奖');}},   /* 次珍稀：全属性+100万 */
     {label:'金币+100亿',w:0.5,_lg:true,apply:function(){CURRENCY.gold+=10000000000;}},   /* 次珍稀：100亿金币 */
@@ -13915,6 +13920,7 @@ function triggerLegendFX(){
 }
 var ITH_TIMER=null;
 function ithDropNeck(src){
+  try{ recomputeIthLeft(); }catch(e){}   /* 发放前活校验：余量=总量−实时三端持有(玩家+AI+拍卖) */
   if(ITH_LEFT.yitaiNecklace<=0) return;
   var yin=mkLoot(ITEM_BLUEPRINTS.yitaiNecklace);
   if(!addStackable(yin)){ toast('背包已满，伊泰安项链未掉落'); return; }   /* 修复：入包失败则回退——不扣限量、不记日志/统计，避免'掉落了却没进包' */
@@ -15450,7 +15456,7 @@ function loadGame(){
   if(s.xianji) XIANJI=s.xianji;
   if(s.xianjiDone) XIANJI_DONE=s.xianjiDone;
   if(s.altar){ ALTAR.atk=s.altar.atk||0; ALTAR.def=s.altar.def||0; ALTAR.hp=s.altar.hp||0; ALTAR.gold=s.altar.gold||0; ALTAR.crit=s.altar.crit||0; ALTAR.true=s.altar.true||0; ALTAR.hit=s.altar.hit||0; ALTAR.fdr=s.altar.fdr||0; ALTAR.ls=s.altar.ls||0; ALTAR.drop=s.altar.drop||0; ALTAR.sac=s.altar.sac||0; }
-  if(s.wboss){ WBOSS.coins=s.wboss.coins||0; WBOSS.totalKill=s.wboss.totalKill||0; WBOSS.totalDmg=s.wboss.totalDmg||0; WBOSS.bestDmg=s.wboss.bestDmg||0; WBOSS.day=s.wboss.day||''; WBOSS.slot=(typeof s.wboss.slot==='number')?s.wboss.slot:-1; WBOSS.boss=s.wboss.boss||null; WBOSS.bossMax=s.wboss.bossMax||1; WBOSS.bossHp=(typeof s.wboss.bossHp==='number')?s.wboss.bossHp:(s.wboss.bossMax||1); WBOSS.my=s.wboss.my||0; WBOSS.ai=(s.wboss.ai||[]).map(function(a){ return {n:a.n,dmg:a.dmg||0,dps:a.dps,hit:a.hit,hp:a.hp||0,hp0:a.hp0||0,dead:!!a.dead,deadAt:a.deadAt||0}; }); if(WBOSS.boss){ for(var _qi=0;_qi<WBOSS.ai.length;_qi++){ if(!WBOSS.ai[_qi].hp0){ WBOSS.ai[_qi].hp=WBOSS.ai[_qi].hp0=Math.round((WBOSS.boss.atk||1)*(50+Math.random()*50)); } } } WBOSS.killed=!!s.wboss.killed; WBOSS.reward=s.wboss.reward||{got:false}; WBOSS.timeBase=s.wboss.timeBase||0; WBOSS.startTime=s.wboss.startTime||0; WBOSS.lastVisit=s.wboss.lastVisit||0; WBOSS.smiteTs=s.wboss.smiteTs||0; WBOSS.loot=s.wboss.loot||null; WBOSS._settled=!!s.wboss._settled; WBOSS._waitNext=!!s.wboss._waitNext; if(!WBOSS.startTime&&WBOSS.day){ WBOSS.day=''; } }   /* 旧档缺磨血锚点：置空day触发下轮wbEnsure重建，避免AI冻结(伤害不增/血量不减)；_waitNext读档恢复（初始化后未到8点刷新页面→仍等待下一个8点，不立即刷新；旧存档无此字段→false进入正常轮不受影响） */
+  if(s.wboss){ WBOSS.coins=s.wboss.coins||0; WBOSS.totalKill=s.wboss.totalKill||0; WBOSS.totalDmg=s.wboss.totalDmg||0; WBOSS.bestDmg=s.wboss.bestDmg||0; WBOSS.day=s.wboss.day||''; WBOSS.slot=(typeof s.wboss.slot==='number')?s.wboss.slot:-1; WBOSS.boss=s.wboss.boss||null; WBOSS.bossMax=s.wboss.bossMax||1; WBOSS.bossHp=(typeof s.wboss.bossHp==='number')?s.wboss.bossHp:(s.wboss.bossMax||1); WBOSS.my=s.wboss.my||0; WBOSS.ai=(s.wboss.ai||[]).map(function(a){ return {n:a.n,dmg:a.dmg||0,dps:a.dps,hit:a.hit,hp:a.hp||0,hp0:a.hp0||0,dead:!!a.dead,deadAt:a.deadAt||0}; }); if(WBOSS.boss){ for(var _qi=0;_qi<WBOSS.ai.length;_qi++){ if(!WBOSS.ai[_qi].hp0){ WBOSS.ai[_qi].hp=WBOSS.ai[_qi].hp0=Math.round((WBOSS.boss.atk||1)*(50+Math.random()*50)); } } } WBOSS.killed=!!s.wboss.killed; WBOSS.reward=s.wboss.reward||{got:false}; WBOSS.timeBase=s.wboss.timeBase||0; WBOSS.startTime=s.wboss.startTime||0; WBOSS.lastVisit=s.wboss.lastVisit||0; WBOSS.smiteTs=s.wboss.smiteTs||0; WBOSS.loot=s.wboss.loot||null; WBOSS._settled=!!s.wboss._settled; WBOSS._waitNext=!!s.wboss._waitNext; if(!WBOSS.startTime&&WBOSS.day){ WBOSS.day=''; } WBOSS._lastAdv=Date.now(); if(WBOSS.ai){ for(var _aiD9=0;_aiD9<WBOSS.ai.length;_aiD9++){ WBOSS.ai[_aiD9].dmg=0; } } WBOSS.smiteTs=Date.now(); }   /* 世界暂停语义：重开=离线期间世界冻结——磨血锚重置为打开时刻、AI累计伤害清零(打开后从0重新磨，玩家伤害WBOSS.my保留)、BOSS集火时间戳重置，离线时长一律不补偿AI行为 */   /* 旧档缺磨血锚点：置空day触发下轮wbEnsure重建，避免AI冻结(伤害不增/血量不减)；_waitNext读档恢复（初始化后未到8点刷新页面→仍等待下一个8点，不立即刷新；旧存档无此字段→false进入正常轮不受影响） */
   if(s.tower){ try{ CT.layer=Math.max(1,+s.tower.layer||1); CT.best=+s.tower.best||0; CT.coins=+s.tower.coins||0; CT.got=s.tower.got||{}; CT.firstFree=(s.tower.firstFree===undefined?true:!!s.tower.firstFree); towerSave(); }catch(e){} } else { try{ towerLoad(); }catch(e){} }   /* 挑战塔并入主存档：新档读主存档tower字段并同步回独立键shenqi_tower（双写保持兼容）；旧档主存档无tower字段→回退读旧独立键，不丢档 */
   if(s.mutate){ MUT.crystal=(s.mutate.crystal!=null)?Math.floor(s.mutate.crystal):3; MUT.on=!!s.mutate.on; MUT.tier=s.mutate.tier||0; MUT.aff=(s.mutate.aff||[]).slice(); MUT.up=(s.mutate.up||{1:0,2:0,3:0}); MUT.exP=(s.mutate.exP||0); }
   if(s.daily && s.daily.date){ DAILY=s.daily; }
