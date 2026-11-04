@@ -6223,7 +6223,7 @@ function aiExpPerKill(monLv,d){ /* 每怪经验·纯版（同玩家offExpPerKill
   var dm={1:10,2:10,3:5,4:5,5:5}[d]; if(dm) e=Math.round(e*dm);   /* 副本小怪经验乘区：水龙/深渊×10、王座/奥利森/沙漠×5（同玩家trGainExp） */
   return e; }
 function aiBestExp(lv){ var bestD=0,bestE=0; for(var i=0;i<DUNGEONS.length;i++){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)>20)continue; if(DUNGEONS[i].mode==='pirate'&&!pirateOpenNow())continue; if(isPhantomDungeon(i)&&lv<75)continue; var e=aiExpPerKill(ml,i); if(e>bestE){ bestE=e; bestD=i; } } return {d:bestD,exp:bestE}; }   /* 副本推进：战力够就能刷≤自身±20级怪(等级差>20无收益)，自动选经验最优；海盗岛仅开放时段可刷 */
-function aiExpMult(st){ var m=1, _n=Date.now(); if(st.sunUntil&&_n<st.sunUntil) m*=2; if(st.megaSunUntil&&_n<st.megaSunUntil) m*=5; return Math.round(m*100*(1+((st.ws||0)*0.50)+(((st.talents||{}).exp||0)*0.25)+(((st.relic||{}).codex||0)*0.20)))/100; }   /* AI经验加成：太阳药水×2/×5（AI自购真实生效12h）+轮回经验加成（玩家reincExpMult同式：每世+50%·天赋悟道+25%·本源法典+20%），无则1不凭空 */
+function aiExpMult(st){ var m=1, _n=Date.now(); if(st.sunUntil&&_n<st.sunUntil) m*=5; if(st.megaSunUntil&&_n<st.megaSunUntil) m*=5; return Math.round(m*100*(1+((st.ws||0)*0.50)+(((st.talents||{}).exp||0)*0.25)+(((st.relic||{}).codex||0)*0.20)))/100; }   /* AI经验加成：太阳药水×5（用户指定：翻倍×2→×5，AI自购真实生效12h）/超级大太阳×5 +轮回经验加成（玩家reincExpMult同式：每世+50%·天赋悟道+25%·本源法典+20%），无则1不凭空 */
 function aiFarmExp(st,p,onlineSec){   /* AI真实经验制（与玩家100%同规则）：AI在可刷副本按真实战力击杀小怪 → 每怪经验(玩家同公式aiExpPerKill)×等级差(trExpScale玩家同款)×太阳/轮回加成 → 返回本步获得经验；打不动/等级差>20/神幻未解锁→0，杜绝凭空升级 */
   var d=aiBestDungeonFor(st,p), dg=DUNGEONS[d]||DUNGEONS[0], el=dg.monLv||1, lv=st.lv||1;
   if(Math.abs(el-lv)>20) return 0;
@@ -6730,10 +6730,10 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
   aiGuardTaskDrop(st,p);   /* 每日"安全护符任务"：AI 击杀海盗岛满1000领10安全护符入真实背包（06:00重置，与玩家同口径） */
   aiBuyHeal(st,p);   /* 战力不足且金币充裕时买全能药水备战（真实购买） */
   }
-  /* AI购买小太阳（升级期打怪经验翻倍12h，同玩家：系统商店100万/瓶真实购买）：未满80级+当前无生效+金币充裕→按定位概率购买（神豪/高氪高概率、平民低概率，模拟真人升级期买经验药水）；超级大太阳系统商店无售→不买（不凭空） */
+  /* AI购买小太阳（升级期打怪经验×5 持续12h，同玩家：系统商店100万/瓶真实购买）：未满80级+当前无生效+金币充裕→按定位概率购买（神豪/高氪高概率、平民低概率，模拟真人升级期买经验药水）；超级大太阳系统商店无售→不买（不凭空） */
   if((st.lv||0)<80 && (!st.sunUntil||Date.now()>=st.sunUntil) && (st.gold||0)>=3000000){
     var _sunP=(p.pay>=3?0.45:(p.pay>=2?0.28:(p.pay>=1?0.12:0.05)));
-    if(Math.random()<_sunP&&(st.gold||0)>=1000000){ st.gold-=1000000; st.sunUntil=Date.now()+12*60*60*1000; gLog('购买','AI 购买了 小太阳（打怪经验翻倍12h）'); }
+    if(Math.random()<_sunP&&(st.gold||0)>=1000000){ st.gold-=1000000; st.sunUntil=Date.now()+12*60*60*1000; gLog('购买','AI 购买了 小太阳（打怪经验×5 持续12h）'); }
   }
   aiUseHeal(st,p);   /* 战斗受重伤时消耗全能药水回满（真实消耗，与玩家同物） */
   var _final = !!(st&&(st.ascended||((st.ws||0)>=99&&(st.core||0)>=1)));   /* 最终阶位(超脱)：不再轮回，装备/天神不再被清空（消耗核标记后core可为0仍超脱，同玩家ascended） */
@@ -10317,7 +10317,7 @@ function renderAchievement(){
     {c:'等级压制',rows:['等级差≥10级触发：等级高一方攻防×10，每多5级再翻倍'],note:'差距越大压制越强'},
     {c:'阶位压制',rows:['高阶对低阶：无视防御 10% + 伤害 +10%','低阶对高阶：攻击 -10%']},
     {c:'神圣药水',rows:['攻击与防御翻倍、攻速翻倍'],note:'持续 12 小时'},
-    {c:'太阳',rows:['打怪获得经验翻倍'],note:'持续 12 小时'},
+    {c:'太阳',rows:['打怪获得经验 ×5'],note:'持续 12 小时'},   /* 用户指定：小太阳打怪经验由翻倍×2 调整为 ×5 */
     {c:'超级大太阳',rows:['打怪获得经验 ×5'],note:'持续 12 小时'}
   ];
   var fel=document.getElementById('ach-effects');
@@ -11516,7 +11516,7 @@ function gdTips(){
    ['战力优先堆','装备<b>强化+20</b>、镶嵌宝石、天神<b>5重5星</b>——这三项是战力大头，优先做。'],
    ['副本全刷','8个副本按等级全通，每副本掉专属宝物，<b>图鉴集齐</b>拿永久属性奖励(最高全属性+100亿)。'],
    ['早点轮回','转生永久全属性+30%，<b>越早轮回复利越厚</b>；条件到了立刻转，别拖。'],
-   ['药水拉满','<b>神圣药水</b>(攻防翻倍)、<b>太阳</b>(经验×2)/<b>超级大太阳</b>(经验×5)，12小时全程。'],
+   ['药水拉满','<b>神圣药水</b>(攻防翻倍)、<b>太阳</b>(经验×5)/<b>超级大太阳</b>(经验×5)，12小时全程。'],   /* 太阳×5（用户指定调整） */
    ['黄金神坛','<b>灌注</b>攻/守/生/敛财/会心/真伤/命定/御天/噬血/福泽十线永久成长，多余金币砸这里。'],
    ['最终冲刺','99世+战力百万亿即可<b>超脱·轮回主宰</b>：永久全属性+1000%，配太初本源、轮回尽头。']
   ].map(function(g,i){ return '<div class="gd-tip"><span class="gd-tip-n">'+(i+1)+'</span><div class="gd-tip-d">'+g[0]+' · '+g[1]+'</div></div>'; }).join('');
@@ -13808,7 +13808,7 @@ function trGainExp(monLv, af, isBoss){
   if(isBoss) exp*=60;   /* Boss 经验显著奖励：该副本小怪 60 倍（击杀耗时×DPS 校准） */
   if(TR.isElite) exp=Math.round(exp*3);   /* 精英经验：战力×3 → 经验×3 */
   if(!isBoss){ var _dm={1:10,2:10,3:5,4:5,5:5}[TR.dungeon]; if(_dm) exp=Math.round(exp*_dm); }   /* 水龙/深渊×10、王座/奥利森/沙漠×5（小怪专属，Boss不乘） */
-  if(Date.now()<SUN_UNTIL) exp*=2;   /* 太阳：打怪经验翻倍 */
+  if(Date.now()<SUN_UNTIL) exp*=5;   /* 太阳：打怪经验×5（用户指定：原翻倍×2 调整为×5） */
   if(Date.now()<MEGA_SUN_UNTIL) exp*=5;   /* 超级大太阳：打怪经验5倍 */
   exp=Math.round(exp*reincExpMult()*rglMul('exp',0.30));   /* 轮回经验加成 × 局内肉鸽「悟道」 */
   TR.exp+=exp;
@@ -14848,7 +14848,7 @@ function renderBuff(){
   }
   if(Date.now()<SUN_UNTIL){
     var sleft=Math.max(0,Math.ceil((SUN_UNTIL-Date.now())/1000));
-    h+='<div class="tr-buff" title="太阳：打怪经验翻倍"><img src="logos/太阳.png"><span class="tm">'+sleft+'s</span></div>';
+    h+='<div class="tr-buff" title="太阳：打怪经验×5"><img src="logos/太阳.png"><span class="tm">'+sleft+'s</span></div>';
   }
   if(Date.now()<MEGA_SUN_UNTIL){
     var mleft=Math.max(0,Math.ceil((MEGA_SUN_UNTIL-Date.now())/1000));
@@ -15120,7 +15120,7 @@ document.addEventListener('visibilitychange', function(){
 /* ============ 本地存档（localStorage）：初始化后的所有操作都会保存，刷新恢复，仅点“初始化”回到原始 ============ */
 var SAVE_KEY='shenqi_save_v1';
 var POTION_UNTIL=0;   /* 神圣药水生效截止时间戳（0=未生效） */
-var SUN_UNTIL=0;   /* 太阳生效截止时间戳：打怪经验翻倍12小时（0=未生效） */
+var SUN_UNTIL=0;   /* 太阳生效截止时间戳：打怪经验×5 持续12小时（0=未生效） */
 var MEGA_SUN_UNTIL=0;   /* 超级大太阳生效截止时间戳：打怪经验5倍12小时（0=未生效） */
 setInterval(function(){ if(window.location.hash==='#treasure' && Date.now()<POTION_UNTIL) renderBuff(); },2000);   /* 性能优化：药水倒计时1s->2s刷新，返回页面会经renderChar刷新，功能不变 */
 var QUICK=[null,null,null,null];   /* 战斗快捷道具栏（存药水name，最多4格），随存档保存 */
@@ -15265,7 +15265,7 @@ function doPotionAction(it, tab, idx, noConfirm){
     return;
   }
   if(it.type==='sun_potion'){
-    var isMega=!!it.mega, nm=isMega?'超级大太阳':'太阳', multi=isMega?5:2, hours=isMega?12:12;
+    var isMega=!!it.mega, nm=isMega?'超级大太阳':'太阳', multi=5, hours=isMega?12:12;   /* 太阳/超级大太阳统一打怪经验×5（用户指定：太阳原×2调整为×5，与超级大太阳同倍率） */
     function _run(){ it.count=(it.count||1)-1; if(it.count<=0){ bag[tab][idx]=null; }
       if(isMega) MEGA_SUN_UNTIL=Date.now()+12*60*60*1000; else SUN_UNTIL=Date.now()+12*60*60*1000;
       renderBag(); renderQuick(); saveGame(); toast(nm+'生效！打怪经验×'+multi+'，持续'+hours+'小时'); }
