@@ -12520,14 +12520,14 @@ function aiVoucherTrade(st,p){   /* AI属性凭证/传承丹交易决策（独�
     if((st._vBought||0)<VOUCHER_DAY_LIMIT){
       var _rush=((st.ws||0)<99)&&(((p.pay||0)>=3)||(p.top==='first'||p.top==='perfect'||p.top==='rush'));   /* 轮回前升级期（未超脱ws<99）的神豪/顶尖型疯抢：永久全属性不被轮回清空，打怪升级/轮回速度刚需——开服属性低打怪受阻最刚需，见券就抢；超脱(ws99)后属性已厚、装备永久，退出升级期不疯抢 */
       var _vCapGold=Math.max(0,(st.gold||0))*(_rush?0.4:0.25); var _vCapKf=(st.kf||0)*(_rush?0.5:0.2);   /* 预算：升级期金币40%/氪金50%（神豪/顶尖愿意为永久属性加速多投入，仍留一半氪金给99世后装备/限量品）；平时金币25%/氪金20% */
-      var _bestV=null;
+      var _bestV=null; var _pnB=(CHARACTER&&CHARACTER.info&&CHARACTER.info.name)||'谜团';   /* 真人玩家名（卖家=谜团）：玩家挂单优先——AI先抢真人供给（玩家上架即秒抢），AI内部单其次，同类间取最低价 */
       for(var _vi=0;_vi<AUCTION.list.length;_vi++){ var _ve=AUCTION.list[_vi]; if(!_ve||_ve.seller===p.name||!_ve.item||!_ve.price) continue; var _vt=_ve.item.type||''; if(_vt!=='voucher_arena'&&_vt!=='voucher_tower'&&_vt!=='inherit_pill') continue;
         var _isP2=_vt==='inherit_pill';
         var _unit=(_ve.cur==='kf')?(_ve.price||0):(_ve.price||0);   /* 单按单价×数量（普通物品单，price=单价；氪金/金币同构） */
         var _limitP=(_ve.cur==='kf')?(VOUCHER_KF*(_isP2?0.5:1)*wbVoucherPremium()):(voucherGoldPrice()*(_isP2?0.5:1)*wbVoucherPremium());   /* 接受度=锚价×当前抢手溢价（券4氪金/丹2氪金，开服×1.5→后期×1.1）：永久全属性前期愿溢价收(刚需+可炒)，后期属性饱和回落但仍保值，下限≈锚价不深跌 */
         var _rushP=(_ve.cur==='kf')?(50*(_isP2?0.5:1)):(50*100000000/aiGoldRateKf()*(_isP2?0.5:1));   /* 神豪/顶尖升级期疯抢上限：单券≤50氪金（用户指定，锚价4氪金≈上限12.5倍=见券就抢）；金币单按当前牌价折算(1氪金=1亿/牌价→50氪金=50亿/牌价)；丹半价25氪金 */
         var _capP=_rush?Math.max(_limitP,_rushP):_limitP;   /* 疯抢=接受度拉满到50氪金，正常锚价更划算时自然按锚价收，两线上限取高 */
-        if(_unit<=_capP){ if(!_bestV||_unit<_bestV._u) _bestV={e:_ve,_u:_unit}; }
+        if(_unit<=_capP){ var _isPlB=(_ve.seller===_pnB); if(!_bestV||(_isPlB&&!_bestV._pl)||(_isPlB===_bestV._pl&&_unit<_bestV._u)) _bestV={e:_ve,_u:_unit,_pl:_isPlB}; }   /* 可接受价内：玩家(真人)挂单优先于AI单（玩家一上架即被抢，修复"玩家卖券滞销"）；同类间取最低单价 */
       }
       if(_bestV){
         var _ve2=_bestV.e, _isP3=(_ve2.item&&_ve2.item.type==='inherit_pill');
