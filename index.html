@@ -6220,7 +6220,7 @@ function aiExpPerKill(monLv,d){ /* 每怪经验·纯版（同玩家offExpPerKill
   else { e=Math.round((10000+(monLv-50)/10*40000)*1.9); }
   e=Math.round(e*Math.pow(1.1,Math.min(6,d))*(isPhantomDungeon(d)?2:1)*(DUNGEONS[d].mode==='level'?40:1));
   if(d!==0) e*=10;
-  var dm={1:10,2:10,3:5,4:5,5:5}[d]; if(dm) e=Math.round(e*dm);   /* 副本小怪经验乘区：水龙/深渊×10、王座/奥利森/沙漠×5（同玩家trGainExp） */
+  var dm={1:50,2:10,3:5,4:5,5:5}[d]; if(dm) e=Math.round(e*dm);   /* 副本小怪经验乘区：水龙×50（用户指定：现数字×5，原×10再×5）、深渊×10、王座/奥利森/沙漠×5（同玩家trGainExp） */
   return e; }
 function aiBestExp(lv){ var bestD=0,bestE=0; for(var i=0;i<DUNGEONS.length;i++){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)>20)continue; if(DUNGEONS[i].mode==='pirate'&&!pirateOpenNow())continue; if(isPhantomDungeon(i)&&lv<75)continue; var e=aiExpPerKill(ml,i); if(e>bestE){ bestE=e; bestD=i; } } return {d:bestD,exp:bestE}; }   /* 副本推进：战力够就能刷≤自身±20级怪(等级差>20无收益)，自动选经验最优；海盗岛仅开放时段可刷 */
 function aiExpMult(st){ var m=1, _n=Date.now(); if(st.sunUntil&&_n<st.sunUntil) m*=5; if(st.megaSunUntil&&_n<st.megaSunUntil) m*=5; return Math.round(m*100*(1+((st.ws||0)*0.50)+(((st.talents||{}).exp||0)*0.25)+(((st.relic||{}).codex||0)*0.20)))/100; }   /* AI经验加成：太阳药水×5（用户指定：翻倍×2→×5，AI自购真实生效12h）/超级大太阳×5 +轮回经验加成（玩家reincExpMult同式：每世+50%·天赋悟道+25%·本源法典+20%），无则1不凭空 */
@@ -13810,7 +13810,7 @@ function trGainExp(monLv, af, isBoss){
   if(!isBoss && TR.dungeon!==0) exp*=10;   /* 小怪经验×10（Boss 不乘；雕俱星座特例保留每怪5点，不×10） */
   if(isBoss) exp*=60;   /* Boss 经验显著奖励：该副本小怪 60 倍（击杀耗时×DPS 校准） */
   if(TR.isElite) exp=Math.round(exp*3);   /* 精英经验：战力×3 → 经验×3 */
-  if(!isBoss){ var _dm={1:10,2:10,3:5,4:5,5:5}[TR.dungeon]; if(_dm) exp=Math.round(exp*_dm); }   /* 水龙/深渊×10、王座/奥利森/沙漠×5（小怪专属，Boss不乘） */
+  if(!isBoss){ var _dm={1:50,2:10,3:5,4:5,5:5}[TR.dungeon]; if(_dm) exp=Math.round(exp*_dm); }   /* 水龙×50（用户指定：现数字×5，原副本层×10再×5）、深渊×10、王座/奥利森/沙漠×5（小怪专属，Boss不乘） */
   if(Date.now()<SUN_UNTIL) exp*=5;   /* 太阳：打怪经验×5（用户指定：原翻倍×2 调整为×5） */
   if(Date.now()<MEGA_SUN_UNTIL) exp*=5;   /* 超级大太阳：打怪经验5倍 */
   exp=Math.round(exp*reincExpMult()*rglMul('exp',0.30));   /* 轮回经验加成 × 局内肉鸽「悟道」 */
