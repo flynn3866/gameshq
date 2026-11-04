@@ -13048,17 +13048,17 @@ function aiReplyChat(nm,text){
   var rep=(aiStyle(p, p.st||{}).gearLove>=0.6)?['战力才是硬道理，装备好一切都好说。','刚刷完副本，材料又攒了一堆。']:['金币攒着最实在，够用就好。','今天材料行情不错，多卖点。'];
   chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:rep[Math.floor(Math.random()*rep.length)],time:Date.now()});
 }
-var LOTTERY=[   /* 玄鉴神藏：稀缺资源池（去空奖，整体价值上移；传说档 prob<0.01 触发彩带/稀有判定）18扇区：概率总和=1.0；竞技积分+100万1%(品红紫，原神力碎片×10扇区按用户要求替换，让出的8.84%并入金币5亿)、神力碎片5项数量递增(30/60/100/150/300)概率递减(8.84/7.84/6.84/6.74/5.74%)=36%，金币5亿15.32%(吸收差额8.84%保总和)，神印碎片3%、完整卷轴3%，本源/传说精粹各1%，全属性+5万0.8%(传说档)，其余主档6.48% */
+var LOTTERY=[   /* 玄鉴神藏：稀缺资源池（去空奖，整体价值上移；传说档 prob<0.01 触发彩带/稀有判定）18扇区：概率总和=1.0；竞技积分+100万1%(品红紫，原神力碎片×10扇区按用户要求替换，让出的8.84%并入金币5亿)、100极金币1%(品红紫#e702e7，原神力碎片×60扇区替换，让出的6.84%并入金币5亿)、神力碎片4项(30/100/150/300)概率(8.84/6.84/6.74/5.74%)=29.16%，金币5亿22.16%(累计吸收8.84%+6.84%差额保总和)，神印碎片3%、完整卷轴3%，本源/传说精粹各1%，全属性+5万0.8%(传说档)，其余主档6.48% */
   {label:'镶嵌之锤 Lv7 ×2',short:'镶嵌锤Lv7',prob:0.0648,color:'#e8b54a',_xj:'镶嵌之锤 Lv7',apply:function(){var h=mkLoot(ITEM_BLUEPRINTS.hammers[0]); h.count=2; h.maxStack=255; lotteryGive(h,false,this); }},
   {label:'神力结晶 ×1',short:'神力结晶',prob:0.0648,color:'#FF9A4A',_xj:'神力结晶',apply:function(){ var b=mkLoot(ITEM_BLUEPRINTS.godCrystal); b.count=1; lotteryGive(b,false,this); }},
   {label:'竞技积分+100万',short:'积分+100万',prob:0.01,color:'#d44fe0',_xj:'竞技积分',apply:function(){ARENA.score+=1000000; ARENA.maxScore=Math.max(ARENA.maxScore||0,ARENA.score); ARENA.totalScore=(ARENA.totalScore||0)+1000000;}},   /* 用户指定：原神力碎片×10扇区改为竞技积分+100万，概率1%(0.01)，扇区颜色=传说品红紫#d44fe0；三字段同步（同玩家竞技结算L10670口径）：score当前余额/maxScore历史最高/totalScore累计总分——段位/称号/进度按totalScore锚定（arenaRank L10386），抽奖积分同样升段 */
   {label:'神力碎片 ×30',short:'碎片×30',prob:0.0884,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=30; this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
-  {label:'神力碎片 ×60',short:'碎片×60',prob:0.0784,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=60; this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
+  {label:'金币 100极',short:'100极',prob:0.01,color:'#e702e7',apply:function(){CURRENCY.gold+=Math.round(1e50*altarGoldMult());}},   /* 用户指定：原神力碎片×60扇区改为100极金币大奖，概率1%(0.01)，扇区颜色=传说精粹同款品红紫#e702e7；让出的6.84%并入金币5亿保总和=1.0 */
   {label:'神力碎片 ×100',short:'碎片×100',prob:0.0684,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=100; this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
   {label:'神印碎片 ×2',short:'神印碎片',prob:0.0300,color:'#9a5bd0',_xj:'神印碎片',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.sealFragment); g.count=2; lotteryGive(g,false,this); }},
   {label:'神符碎片 ×2',short:'神符碎片',prob:0.0648,color:'#e2b04f',_xj:'神符碎片',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=2; lotteryGive(g,false,this); }},
   {label:'混沌神石 ×2',short:'混沌',prob:0.0648,color:'#c8b0d0',_xj:'混沌神石',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=2; g.maxStack=255; lotteryGive(g,false,this); }},
-  {label:'金币 5亿',short:'5亿金币',prob:0.1532,color:'#f2c51e',apply:function(){CURRENCY.gold+=Math.round(500000000*altarGoldMult());}},   /* 用户指定：吸收竞技积分扇区(原神力碎片×10)让出的8.84%差额，概率6.48%→15.32%，保持18扇区概率总和=1.0 */
+  {label:'金币 5亿',short:'5亿金币',prob:0.2216,color:'#f2c51e',apply:function(){CURRENCY.gold+=Math.round(500000000*altarGoldMult());}},   /* 用户指定：吸收竞技积分扇区(原神力碎片×10)让出的8.84%与100极金币扇区(原神力碎片×60)让出的6.84%差额，概率15.32%→22.16%，保持18扇区概率总和=1.0 */
   {label:'本源结晶 ×1',short:'本源结晶',prob:0.0100,color:'#9f6bff',_xj:'本源结晶',apply:function(){REBIRTH.essence+=1; toast('获得 本源结晶 +1');}},
   {label:'传说精粹 ×2',short:'传说精粹',prob:0.0100,color:'#e702e7',_xj:'传说精粹',apply:function(){addStackable(mkLegendEssence(2));}},
   {label:'全属性 +200',short:'全属性+200',prob:0.0648,color:'#4f7da0',_xj:'全属性+200',apply:function(){addPerm(200,0,'玄鉴神藏');}},
