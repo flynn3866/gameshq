@@ -3240,11 +3240,11 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 .bf-camp-ring{position:absolute;width:56px;height:56px;border-radius:50%;border:1.5px dashed rgba(255,215,94,.4);box-shadow:inset 0 0 26px rgba(255,215,94,.12);pointer-events:none;z-index:1;}
 .bf-camp-ring.me{left:calc(8% - 28px);top:calc(8% - 28px);border-color:rgba(141,255,190,.55);box-shadow:inset 0 0 26px rgba(141,255,190,.16),0 0 10px rgba(141,255,190,.22);}
 .bf-camp-ring.en{right:calc(8% - 28px);bottom:calc(8% - 28px);}
-.bf-me-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffd1f5,#d44fe0 55%,#7a0c5c);border:2px solid rgba(255,255,255,.6);box-shadow:0 0 14px rgba(230,80,240,.95);z-index:3;transition:left .1s linear,top .1s linear,opacity .4s;pointer-events:none;}
+.bf-me-dot{position:absolute;width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffd1f5,#d44fe0 55%,#7a0c5c);border:2px solid rgba(255,255,255,.6);box-shadow:0 0 14px rgba(230,80,240,.95);z-index:3;transition:left .15s linear,top .15s linear,opacity .4s;will-change:left,top;pointer-events:none;}
 .bf-me-dot.dead{opacity:0;}
 .bf-dot-lb{position:absolute;left:50%;top:-15px;transform:translateX(-50%);font-size:9px;letter-spacing:1px;white-space:nowrap;text-shadow:0 1px 3px #000;}
 .bf-me-dot .bf-dot-lb{color:#e06bf0;}
-.bf-enemy-dot{position:absolute;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffc0b4,#e8432c 60%,#8f1a0c);border:1px solid rgba(255,255,255,.4);box-shadow:0 0 10px rgba(255,80,50,.9);z-index:2;transition:left .1s linear,top .1s linear,opacity .4s;pointer-events:none;}
+.bf-enemy-dot{position:absolute;width:11px;height:11px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffc0b4,#e8432c 60%,#8f1a0c);border:1px solid rgba(255,255,255,.4);box-shadow:0 0 10px rgba(255,80,50,.9);z-index:2;transition:left .15s linear,top .15s linear,opacity .4s;will-change:left,top;pointer-events:none;}
 .bf-enemy-dot.ally{background:radial-gradient(circle at 35% 35%,#c6ffdf,#1fd684 60%,#0c7a44);box-shadow:0 0 8px rgba(50,230,150,.85);}   /* 友军：同阵营真实玩家，绿点 */
 .bf-enemy-dot.ally .bf-dot-lb{color:#8dffbe;font-size:7px;}
 .bf-enemy-dot.dead{opacity:0;}
@@ -3253,7 +3253,10 @@ html.hb-compact, body.hb-compact{overflow-y:hidden;}   /* 主页：html+body 外
 .bf-enemy-dot .bf-dot-lb{color:#ffd9a8;font-size:7px;top:-14px;}   /* 普通驻军名字：小字号，避免互相遮挡 */
 .bf-enemy-dot.big .bf-dot-lb{font-size:10px;top:-16px;}   /* 统帅名字保持可读 */
 /* 战况条（实时血条：>50%青 / 20~50%黄 / <20%红，0.6s平滑收缩） */
-.bf-vs{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:0 0 8px;border-radius:10px;background:rgba(0,0,0,.38);border:1px solid rgba(214,178,110,.22);}
+.bf-vs{display:flex;flex-direction:column;gap:6px;padding:8px 10px;margin:0 0 8px;border-radius:10px;background:rgba(0,0,0,.38);border:1px solid rgba(214,178,110,.22);}
+.bf-vs-row{display:flex;align-items:center;gap:8px;width:100%;}
+.bf-vs-row.opp{border-top:1px dashed rgba(214,178,110,.14);padding-top:6px;}
+.bf-vs-row.opp .bf-vs-bar i{background:linear-gradient(90deg,#7a1f18,#FF5A5A);}
 .bf-vs-n{flex:0 0 auto;font-size:11.5px;color:#e9dcb6;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;}
 .bf-vs-bar{flex:1;height:10px;border-radius:5px;background:rgba(0,0,0,.6);overflow:hidden;box-shadow:inset 0 1px 3px rgba(0,0,0,.85);}
 .bf-vs-bar i{display:block;height:100%;width:100%;border-radius:5px;background:linear-gradient(90deg,#1dbf8c,#52C6DA);transition:width .6s ease,background .3s ease;}
@@ -3707,7 +3710,7 @@ body.show-daily .stage{max-width:460px;display:flex;flex-direction:column;justif
       <div id="bf-camp"></div>
       <div id="bf-field" style="display:none">
         <div class="bf-map" id="bf-map"><i class="bf-map-vline"></i><i class="bf-camp-ring me"></i><i class="bf-camp-ring en"></i><i class="bf-tower" id="bf-tower"></i><i class="bf-tower-t" id="bf-tower-t"></i><div class="bf-me-dot" id="bf-me-dot"><span class="bf-dot-lb">我</span></div><div id="bf-udots"></div></div>
-        <div class="bf-vs" id="bf-vs"><div class="bf-vs-n" id="bf-vs-n">战场游荡中…</div><div class="bf-vs-bar lev-hi" id="bf-vs-bar"><i id="bf-vs-i"></i></div><div class="bf-vs-pct" id="bf-vs-pct">100%</div></div>
+        <div class="bf-vs" id="bf-vs"><div class="bf-vs-row" id="bf-vs-row-me"><div class="bf-vs-n" id="bf-vs-n">你 · 血</div><div class="bf-vs-bar lev-hi" id="bf-vs-bar"><i id="bf-vs-i"></i></div><div class="bf-vs-pct" id="bf-vs-pct">100%</div></div><div class="bf-vs-row opp" id="bf-vs-row-opp" style="display:none"><div class="bf-vs-n" id="bf-vs-on">对手 · 血</div><div class="bf-vs-bar" id="bf-vs-obar"><i id="bf-vs-oi"></i></div><div class="bf-vs-pct" id="bf-vs-opct">--</div></div></div>
         <div id="bf-cmdr-card"></div>
         <div class="bf-sec-tit">战场见闻<i>随机遭遇 · 实时战报</i></div>
         <div class="bf-feed" id="bf-feed"></div>
@@ -6364,8 +6367,8 @@ function aiFarmAttr(st,p,onlineSec){   /* 刷副本永久全属性：遍历能�
     var mut=aiMutExpect(aiInvest(p),i,r0,st.effSec/86400);   /* 异变(封顶后) */
     var perBoss=base, hp=bh.hp, cur=cb;
     if(mut>base){ var _bd=Math.max(1,Math.min(10,1+Math.log10(mut/Math.max(1,base)))); var mHp=bh.hp*_bd; var cb2=aiCanKillMon(st,p,i,bt,{hp:mHp,atk:bh.atk,def:bh.def,agi:bh.agi,lv:bh.lv},B); if(cb2.canKill){ perBoss=base+mut; hp=mHp; cur=cb2; } }   /* 异变boss按奖励翻倍变硬，能击杀(玩家公式)才开异变拿奖励 */
-    var minC=isPhantomDungeon(i)?2000:(bt>=4?600:150);   /* 保底最低击杀周期：神之幻境≈33min/只、中阶≈10min/只、低阶≈2.5min/只（顶尖碾压也至少保底，封顶10亿→顶尖碾压刷神幻≈436亿/天→~23天大帝，中阶1亿→普通中后期≈69天大帝） */
-    var cycle=Math.round(Math.max(minC, cur.killSec));   /* 击杀周期=玩家公式击杀时间（保底minC） */
+    /* 真实击杀周期：原「保底最低击杀周期」(神幻2000s/中阶600s/低阶150s)已移除——一律按玩家同公式的真实击杀时间算效率，不再人为封顶33分钟/只；战力够就快、战力不够就慢，完全按真实数据推进 */
+    var cycle=Math.round(Math.max(1, cur.killSec+1));   /* 击杀周期=玩家真实公式击杀时间+1秒刷新（同玩家击杀后1s刷下一只的节奏） */
     var gain=perBoss/cycle;
     if(gain>bg){ bg=gain; best={d:i,bt:bt,hp:hp,cycle:cycle,perBoss:perBoss,ratio:cur.dps/Math.max(1,hp)}; }
   }
@@ -6373,7 +6376,7 @@ function aiFarmAttr(st,p,onlineSec){   /* 刷副本永久全属性：遍历能�
   var bosses=onlineSec/best.cycle;
   return Math.max(0,Math.round(bosses*best.perBoss));
 }
-function aiBestDungeonFor(st,p){ if((st.lv||1)<=21&&ITH_LEFT&&ITH_LEFT.yitaiNecklace>0&&aiIthTotal(st)<5) return 0;   /* 限量伊泰安项链窗口期：0~21级(雕俱1级怪等级差≤20门控)且项链总量未耗尽且未集满5件 → 全服所有玩家(含商人/白嫖玩家)一律优先泡雕俱星座——绝版限量品收益投入比最高(自用或倒卖都稳赚不愁卖)，人人先抢，正常人都这么选；掉完(总量0)/集满5件/超窗口后再按自身定位正常练级 */ var lv=st.lv||1; for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)<=20&&DUNGEONS[i].mode!=='level'&&!(isPhantomDungeon(i)&&lv<75)&&!(DUNGEONS[i].mode==='pirate'&&!pirateOpenNow()))return i; } return 0; }   /* 副本推进：只刷等级差≤20(双向)，神之幻境需≥75级；海盗岛仅在每日20:00-23:00开放时段可刷（与玩家同规则） */
+function aiBestDungeonFor(st,p){   /* 已含「升级·经验」副本(狄奥多雷斯 monLv80 ×40经验)：原代码排除 mode=level 使AI在60~80段经验只有玩家的1/12.7，玩家冲级必刷该副本——同规则下补齐 */ if((st.lv||1)<=21&&ITH_LEFT&&ITH_LEFT.yitaiNecklace>0&&aiIthTotal(st)<5) return 0;   /* 限量伊泰安项链窗口期：0~21级(雕俱1级怪等级差≤20门控)且项链总量未耗尽且未集满5件 → 全服所有玩家(含商人/白嫖玩家)一律优先泡雕俱星座——绝版限量品收益投入比最高(自用或倒卖都稳赚不愁卖)，人人先抢，正常人都这么选；掉完(总量0)/集满5件/超窗口后再按自身定位正常练级 */ var lv=st.lv||1; for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)<=20&&!(isPhantomDungeon(i)&&lv<75)&&!(DUNGEONS[i].mode==='pirate'&&!pirateOpenNow()))return i; } return 0; }   /* 副本推进：只刷等级差≤20(双向)，神之幻境需≥75级；海盗岛仅在每日20:00-23:00开放时段可刷（与玩家同规则） */
 function aiFarmGold(st,p,onlineSec){   /* 刷副本金币：随副本档位×在线（神豪/高奇遇收益更高）。强化逐级化后AI金币需支撑强化/天神/秘印/购买，副本掉金大幅提升（系统生产，不凭空） */
   var d=aiBestDungeonFor(st,p), base=(DUNGEONS[d]&&DUNGEONS[d].monLv)||1;
   return Math.round(onlineSec*base*3*(1+p.pay*1.2+p.luck*0.5)*aiGoldMult(st,p));   /* 刷本产金：强化逐级化后AI金币支撑强化/天神/秘印/交易，副本掉金提升（系统生产，不凭空）；神豪刷本效率高(顶尖)+luck高奇遇好→滚雪球；×黄金神坛·敛财（+0.5%/级，同玩家altarGoldMult） */
@@ -6685,6 +6688,7 @@ function ithAnnounce(name, who, left){   /* 伊泰安限量掉落全服公告：
   try{ if(typeof showServerNotice==='function') showServerNotice(txt); else if(typeof toast==='function') toast(txt); }catch(e){}
 }
 function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知决策→神坛/强化/天神+奇遇+真实轮回 → 重算战力/阶位（一切按当前真实数据推进，无硬编码天数/世次） */
+  if(st._inField){ if(typeof BATTLE!=='undefined'&&BATTLE&&BATTLE.inField){ st._battle='bfield'; return; } else { st._inField=0; } }   /* 域外战场参战中：暂停后台发育（与世界BOSS参战同一互斥规则，一个时间只能在一个战斗场景）；玩家已撤离/关客户端则自动清标记，防AI永久停摆 */
   /* 每日在线时长限制（玩家类型已定义：极肝最高22h/天、勤勉最高18h/天、中等最高12h/天——effort即每日在线比例，2026-10-29收紧上限）：当日真实在线秒(_odSec按ds累计)达到每日上限(全局封顶22h)后强制下线——停止一切活动(升级/挂机/爬塔/竞技/打boss/交易/聊天)，完全模拟真实玩家下线；跨天00:00自动重新上线，上线后按当前最新状态继续最优决策推进（真实玩家不会补昨天没玩的，当日额度当日用） */
   var _dayKey=new Date().toDateString();
   if(st._od!==_dayKey){ st._od=_dayKey; st._odSec=0; }   /* 跨天重置当日在线计时，AI自动重新上线 */
@@ -6698,13 +6702,18 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
   }
   _aiRptEnsure(st);
   /* 战斗场景互斥（同玩家规则：副本挂机/竞技决斗/爬塔·试炼/世界BOSS 一个时间只能在一个战斗场景，没有分身）——每心跳三选一：塔能推进且随机命中→爬塔/试炼（永久属性不被轮回清空=最高价值投资，追求型更积极）；竞技冷却到且随机命中→竞技场（追求型更肝冲称号/积分榜）；否则→副本挂机（经验/金币/掉落/伊泰安） */
+  var _finalNow=!!(st.ascended||(((st.ws||0)>=99)&&(st.core||0)>=1));   /* 真正超脱(含消耗神核标记后core=0的ascended)；ws=99但缺神核不算超脱 */
+  var _rushAsc=!_finalNow;   /* 未超脱(含99世缺核)→全力冲级；已超脱→转金币/积分/装备策略 */
   var _B0=aiBuildState(st,p);
-  var _canTower=!!(aiTowerCanKill(st,p,_B0,tlMonStatsAt((st.towerLv||0)+1))||aiTowerCanKill(st,p,_B0,tlMonStatsAt((st.trialLv||0)+1)));
+  var _canTower=_rushAsc?false:!!(aiTowerCanKill(st,p,_B0,tlMonStatsAt((st.towerLv||0)+1))||aiTowerCanKill(st,p,_B0,tlMonStatsAt((st.trialLv||0)+1)));   /* 未超脱跳过爬塔判定(省算力+不占用冲级时间) */
   var _arenaDue=((st._arenaNext||0)<=Date.now());
   var _stlB3=aiStyle(p,st), _tmB3=aiTopMod(p,st);
   var _gear3=(p.pay>=3)||((p.pay>=2)&&_stlB3.gearLove>=0.7)||((p.pay||0)<2&&_stlB3.gearLove>=0.85)||(_tmB3&&!!_tmB3.gearOn);
   var _cash3=aiIsCasher(p,st)||aiIsMerchant(p);
-  var _towerP=_cash3?0.25:(_gear3?0.6:0.4), _arenaP=_cash3?0.05:(_gear3?0.3:0.15);
+  var _enhLvN=(st.enh&&st.enh.lv)||0;
+  var _gearNeed=_finalNow&&(_enhLvN<20);   /* 超脱后仍在打造装备(强化未满20)→缺金币/材料/掉落，副本刷本权重拉高 */
+  var _towerP=_rushAsc?0:(_finalNow?(_cash3?(_gearNeed?0.15:0.2):(_gearNeed?0.25:0.3)):(_cash3?0.25:(_gear3?0.6:0.4)));
+  var _arenaP=_rushAsc?0:(_finalNow?(_cash3?0.05:(_gearNeed?(_gear3?0.18:0.12):(_gear3?0.35:0.2))):(_cash3?0.05:(_gear3?0.3:0.15)));   /* 未超脱→塔/竞技归零100%冲级；超脱后按缺口分配：装备未成型→副本刷金币/掉落/材料为主(约60%)；装备成型→竞技刷积分/称号+爬塔塔币；商人/套现型以刷本产金+卖货为主 */
   var _bR3=Math.random(), _battle='farm';
   if(_canTower&&_bR3<_towerP) _battle='tower';
   else if(_arenaDue&&_bR3<(_towerP+_arenaP)) _battle='arena';
@@ -6732,7 +6741,7 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
   }
   /* AI购买小太阳（升级期打怪经验×5 持续12h，同玩家：系统商店100万/瓶真实购买）：未满80级+当前无生效+金币充裕→按定位概率购买（神豪/高氪高概率、平民低概率，模拟真人升级期买经验药水）；超级大太阳系统商店无售→不买（不凭空） */
   if((st.lv||0)<80 && (!st.sunUntil||Date.now()>=st.sunUntil) && (st.gold||0)>=3000000){
-    var _sunP=(p.pay>=3?0.45:(p.pay>=2?0.28:(p.pay>=1?0.12:0.05)));
+    var _sunP=_rushAsc?1:(p.pay>=3?0.45:(p.pay>=2?0.28:(p.pay>=1?0.12:0.05)));   /* 冲级期：金币够就必买小太阳(×5经验12h，系统商店真实扣费100万，不凭空) */
     if(Math.random()<_sunP&&(st.gold||0)>=1000000){ st.gold-=1000000; st.sunUntil=Date.now()+12*60*60*1000; gLog('购买','AI 购买了 小太阳（打怪经验×5 持续12h）'); }
   }
   aiUseHeal(st,p);   /* 战斗受重伤时消耗全能药水回满（真实消耗，与玩家同物） */
@@ -7343,12 +7352,12 @@ var BFF=null;   /* 域外战场 · 讨伐战斗动画状态 */
 function fieldFight(idx){ var o=BATTLE.opps[idx]; if(!o) return; if(BFF){ toast('战斗进行中'); return; } stopTreasure(); stopTrialAuto(); stopTowerAuto(); wbStop(); openFight(o); }
 function openFight(o, opts){ var my=rolePower(), _myAtk=(CHARACTER.combat[1]&&parseInt(CHARACTER.combat[1].v,10))||my;   opts=opts||{};
   if(BFF){ return; }
-  var myHp=Math.round(_myAtk*5);
-  var oHp0=Math.round(o.atk*5);
+  var myHp=Math.max(1,Math.round((arenaStat().hp)||1));
+  var oHp0=Math.max(1,Math.round((o.hp||o.atk*5)));
   if(opts.cmdr&&o.hp0) oHp0=Math.round(o.hp0);
   if(opts.weak&&!opts.cmdr) oHp0=Math.round(oHp0*0.25);   /* 落单残敌：仅剩四分之一血 */
   var oHp=opts.cmdr?Math.min(oHp0,Math.max(1,Math.round(o.hp||oHp0))):oHp0;
-  BFF={o:o,myHp0:myHp,oHp0:oHp0,myHp:myHp,oHp:oHp,myGap:charAtkSpeed(),oGap:oppAtkGap(o),myAtkAcc:0,oAtkAcc:0,tick:0,MAX:12,timer:null,win:null,opts:opts};   /* PvP战斗血=各自攻击×5（攻防血配比还原现实PK：几回合分胜负）·非回合制：按双方攻速各自累积攻击进度，攻速快打得多、秒杀时对方来不及出手 */
+  BFF={o:o,myHp0:myHp,oHp0:oHp0,myHp:myHp,oHp:oHp,myGap:charAtkSpeed(),oGap:oppAtkGap(o),myAtkAcc:0,oAtkAcc:0,tick:0,MAX:12,timer:null,win:null,opts:opts};   /* 血量与副本/世界BOSS同口径：玩家=面板生命、AI对手=真实生命(aiBuildState.hp=原算+战力×100) ·非回合制：按双方攻速各自累积攻击进度，攻速快打得多、秒杀时对方来不及出手 */
   if(opts.auto){ bfSim(BFF); finishFight(); return; }   /* 战场模式：静默快速结算（与战斗窗同一套伤害公式），结果直写战场见闻，不弹窗不打断 */
   var over=document.getElementById('bf-fight-over'); if(!over) return;
   var _tt=document.getElementById('bf-fight-t'); if(_tt) _tt.textContent=opts.cmdr?'域外战场 · 统帅之战':'域外战场 · 遭遇战';
@@ -7367,15 +7376,15 @@ function bfSim(B){   /* 战场静默结算：与 fightStep 同一套伤害/攻�
     B.myAtkAcc=(B.myAtkAcc||0)+fr; B.oAtkAcc=(B.oAtkAcc||0)+fr;
     while(B.oHp>0&&B.myAtkAcc>=B.myGap){
       B.myAtkAcc-=B.myGap;
-      if(Math.random()>hitRate(HIT_P2M,_aC.atk,_aO.atk,_lvC,B.o.lv,null,altarHitBonus(),0)) continue;
-      var d1=Math.max(1,calcHit(_aC,_dO))+ascendSkyDmg(B.oHp0,_aC.atk); B.oHp-=d1;
+      var _r1=bfDmgMe(B.o); if(_r1.d<=0) continue;
+      var d1=_r1.d; B.oHp-=d1;
       if(B.oHp<=0){ B.win=true; break; }
     }
     if(B.win!=null) break;
     while(B.myHp>0&&B.oAtkAcc>=B.oGap){
       B.oAtkAcc-=B.oGap;
-      if(Math.random()>hitRate(HIT_M2P,_aO.atk,_aC.atk,B.o.lv,_lvC,null,0,0)) continue;
-      var d2=Math.max(1,calcHit(_aO,_dC))+ascendSkyDmg(B.myHp0,_aO.atk); B.myHp-=d2;
+      var _r2=bfDmgOpp(B.o,B.myHp0); if(_r2.d<=0) continue;
+      var d2=_r2.d; B.myHp-=d2;
       if(B.myHp<=0){ B.win=false; break; }
     }
     if(B.win!=null) break;
@@ -7383,7 +7392,7 @@ function bfSim(B){   /* 战场静默结算：与 fightStep 同一套伤害/攻�
   if(B.win==null){ B.win=(B.myHp/B.myHp0)>=(B.oHp/B.oHp0); B.timeUp=true; }
   B.tick=_g;
 }
-function fightStep(){ if(!BFF) return; var B=BFF; B.tick++; if(B.tick>48&&B.win==null){ B.win=(B.myHp/B.myHp0)>=(B.oHp/B.oHp0); B.timeUp=true; finishFight(); return; }   /* 战场僵持保护：约25秒未分胜负按剩余血比判定（统帅血厚时单场不会无限拖） */ var log=document.getElementById('ff-log'); var _aC=bfCharAtk(), _dO=bfOppDef(B.o), _aO=bfOppAtk(B.o), _dC=bfCharDef(); var _lvC=Math.min(80,CHARACTER.info.level||80); var fr=520; B.myAtkAcc=(B.myAtkAcc||0)+fr; B.oAtkAcc=(B.oAtkAcc||0)+fr; while(B.oHp>0&&B.myAtkAcc>=B.myGap){ B.myAtkAcc-=B.myGap; if(Math.random()>hitRate(HIT_P2M,_aC.atk,_aO.atk,_lvC,B.o.lv,null,altarHitBonus(),0)){ log.innerHTML+='<div><span class="dmg-m">你的攻击</span> <i style="color:#8b8272">被闪避</i></div>'; } else { var d1=Math.max(1,calcHit(_aC,_dO))+ascendSkyDmg(B.oHp0, _aC.atk); B.oHp-=d1; log.innerHTML+='<div><span class="dmg-m">你的攻击</span> 造成 <b>'+fmtWan(dispVal(d1))+'</b> 伤害</div>'; } if(B.oHp<=0){ B.win=true; break; } } while(B.myHp>0&&B.oAtkAcc>=B.oGap){ B.oAtkAcc-=B.oGap; if(Math.random()>hitRate(HIT_M2P,_aO.atk,_aC.atk,B.o.lv,_lvC,null,0,0)){ log.innerHTML+='<div><span class="dmg-o">对手反击</span> <i style="color:#8b8272">被你闪避</i></div>'; } else { var d2=Math.max(1,calcHit(_aO,_dC))+ascendSkyDmg(B.myHp0, _aO.atk); B.myHp-=d2; log.innerHTML+='<div><span class="dmg-o">对手反击</span> 造成 <b>'+fmtWan(dispVal(d2))+'</b> 伤害</div>'; } if(B.myHp<=0){ B.win=false; break; } } log.scrollTop=log.scrollHeight; var myPct=Math.max(0,B.myHp/B.myHp0*100), oPct=Math.max(0,B.oHp/B.oHp0*100); document.getElementById('ff-hp-my').style.width=myPct+'%'; document.getElementById('ff-hp-opp').style.width=oPct+'%'; setHpNum('my',B.myHp); setHpNum('opp',B.oHp); if(B.win!=null){ finishFight(); } }
+function fightStep(){ if(!BFF) return; var B=BFF; B.tick++; if(B.tick>48&&B.win==null){ B.win=(B.myHp/B.myHp0)>=(B.oHp/B.oHp0); B.timeUp=true; finishFight(); return; }   /* 战场僵持保护：约25秒未分胜负按剩余血比判定（统帅血厚时单场不会无限拖） */ var log=document.getElementById('ff-log'); var _aC=bfCharAtk(), _dO=bfOppDef(B.o), _aO=bfOppAtk(B.o), _dC=bfCharDef(); var _lvC=Math.min(80,CHARACTER.info.level||80); var fr=520; B.myAtkAcc=(B.myAtkAcc||0)+fr; B.oAtkAcc=(B.oAtkAcc||0)+fr; while(B.oHp>0&&B.myAtkAcc>=B.myGap){ B.myAtkAcc-=B.myGap; var _r1=bfDmgMe(B.o); if(_r1.d<=0){ log.innerHTML+='<div><span class="dmg-m">你的攻击</span> <i style="color:#8b8272">被闪避</i></div>'; } else { var d1=_r1.d; B.oHp-=d1; log.innerHTML+='<div><span class="dmg-m">你的攻击</span> 造成 <b>'+fmtWan(dispVal(d1))+'</b> 伤害</div>'; } if(B.oHp<=0){ B.win=true; break; } } while(B.myHp>0&&B.oAtkAcc>=B.oGap){ B.oAtkAcc-=B.oGap; var _r2=bfDmgOpp(B.o,B.myHp0); if(_r2.d<=0){ log.innerHTML+='<div><span class="dmg-o">对手反击</span> <i style="color:#8b8272">被你闪避</i></div>'; } else { var d2=_r2.d; B.myHp-=d2; log.innerHTML+='<div><span class="dmg-o">对手反击</span> 造成 <b>'+fmtWan(dispVal(d2))+'</b> 伤害</div>'; } if(B.myHp<=0){ B.win=false; break; } } log.scrollTop=log.scrollHeight; var myPct=Math.max(0,B.myHp/B.myHp0*100), oPct=Math.max(0,B.oHp/B.oHp0*100); document.getElementById('ff-hp-my').style.width=myPct+'%'; document.getElementById('ff-hp-opp').style.width=oPct+'%'; setHpNum('my',B.myHp); setHpNum('opp',B.oHp); if(B.win!=null){ finishFight(); } }
 function finishFight(){
   if(!BFF) return; var B=BFF, my=rolePower(); clearInterval(B.timer);
   var _opts=B.opts||{}, merit=0, cr=0, gold=0, win=!!B.win, _crCh=0.4;
@@ -7441,21 +7450,24 @@ var BF_FACTIONS=[{n:'赤焰军',c:'#FF6B5A',d:'战功获取 +10%'},{n:'苍海军
 var BF_CMDRS=['焚天·炎烬','噬灭·渊牙','湮星·破军','镇狱·无妄','寂渊·苍冥'];
 var BF_POOL=null, BF_POOL_T=0, BF_DELEG=0, BF_BAN_T=null;
 function bfSaveCopy(){ return {merit:BATTLE.merit||0,crystal:BATTLE.crystal||0,towerSlot:(BATTLE.tower&&BATTLE.tower.killedSlot)||0}; }   /* 战场存档消毒副本：只持久化跨场累计（战功/神格结晶）；阵营/击杀/连杀/统帅为本场状态——撤离即清、重进重选，不跨场保留；不含DOM/运行态（_grp/_q/_tmr/inField），避免循环引用炸档 */
-function bfEnemyPool(){   /* 战场敌方玩家池：服务器在线真实玩家（原域外对手同一批），按玩家战力带筛选保证遭遇可战，3秒缓存省算力 */
+var BF_RUSH_FIELD_P=0.15;   /* 未超脱AI的域外参战意愿：冲级期域外对它是零收益(只产战功/神格结晶，未超脱用不上)，按自身最优应全力刷本；15% 表示"偶尔也去混一把"，85% 不出现在战场。已超脱AI=100%参战（域外产战功/结晶/塔主金币，是真收益）。改 0 即未超脱彻底不进域外 */
+function bfEnemyPool(){   /* 战场敌方玩家池：在线真实玩家入池（同世界BOSS真参战口径——不按战力/等级筛人、不兜底凑数）；只按AI自己的域外参战意愿过滤：未超脱主力冲级很少来、已超脱常驻 */
   var now=Math.floor(Date.now()/1000);
   if(BF_POOL&&now-BF_POOL_T<3) return BF_POOL;
   serverStartInit(); ensureFieldRoster();
   var sec=Math.max(60,Math.floor((Date.now()-SERVER_START)/1000));
   var on=FIELD_ROSTER.filter(function(x){ return !(x.st&&x.st._offline); });
-  if(!on.length) on=FIELD_ROSTER.slice();
-  var my=rolePower(), lv=CHARACTER.info.level||80, out=[];
-  for(var i=0;i<on.length;i++){ var b=aiBuild(on[i],sec); if(b.pw>=my*0.35&&b.pw<=my*2.2&&Math.abs(b.lv-lv)<=40) out.push(b); }
-  if(out.length<3){ out=[]; for(var j=0;j<on.length;j++) out.push(aiBuild(on[j],sec)); }
+  /* 全服都下线时不兜底拉人：真实环境就是空场（战场无人在打），不再用离线档凑人头 */
+  var out=[];
+  for(var i=0;i<on.length;i++){ var _ist=on[i].st||{}; var _ifin=!!(_ist.ascended||(((_ist.ws||0)>=99)&&(_ist.core||0)>=1));   /* 与 aiAdvanceStep 同款判定：真正超脱(含已消耗神核的 ascended)；99世缺核不算 */
+    if(!_ifin&&Math.random()>=BF_RUSH_FIELD_P) continue;   /* 未超脱：全力冲级，85% 不在战场（域外对它零收益且参战会暂停后台发育=净亏时间） */
+    var b=aiBuild(on[i],sec); b.stRef=on[i].st; b.p=on[i]; if(!(b.stRef.bfFaction>=0)) b.stRef.bfFaction=Math.random()<0.5?0:1; /* AI 自己的阵营立场：首次定边后固定（同玩家选了边不随对手换） */ out.push(b); }   /* 在线且愿意来的入池：战力0.35~2.2倍、等级差≤40 这两道"只为好打"的筛选已删（真实环境强者就是强者）；未超脱按 BF_RUSH_FIELD_P 概率出现 */
+  /* 不再"筛不出3人就全量兜底"——兜底等于把所有人当同强度假人 */
   BF_POOL=out; BF_POOL_T=now; return out;
 }
 function bfDraw(n){   /* 随机抽n个不重复敌方玩家；12%概率全抽强敌（战力1.5倍以上）制造"强敌压境"的惊喜与压迫 */
   var pool=bfEnemyPool();
-  if(Math.random()<0.12){ var st=pool.filter(function(b){ return b.pw>=(rolePower()*1.5); }); if(st.length>=2) pool=st; }
+  /* 真实随机：删掉"12%概率专抽1.5倍强敌"的人为偏向，遇到谁全凭当时在线名单 */
   var arr=pool.slice();
   for(var i=arr.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=arr[i]; arr[i]=arr[j]; arr[j]=t; }
   return arr.slice(0,Math.min(n,arr.length));
@@ -7485,12 +7497,12 @@ function bfEncounter(n,weak){   /* 随机遭遇：n人（weak=落单残敌仅1/4
   var mm=document.getElementById('bf-map'); if(mm){ mm.classList.add('fight'); setTimeout(function(){ if(mm) mm.classList.remove('fight'); },900); }
   bfDequeue();
 }
-function bfAdventure(){   /* 战场机缘：游荡时的即时惊喜小奖励（即时弹出不延迟） */
+function bfAdventure(){   /* 战场机缘：游荡时的即时惊喜（战功/神格结晶；金币只由中央塔主1垓分配，机缘不再产金币） */
   var r=Math.random(), merit=0, cr=0, gold=0, txt='';
   if(r<0.5){ merit=2000+Math.floor(Math.random()*6000); txt='缴获敌方军需车残骸 · 战功 <b style="color:#FFD75E">+'+fmtWan(merit)+'</b>'; }
-  else if(r<0.8){ gold=Math.round((20+Math.random()*60)*1e12); txt='搜刮敌方辎重 · 金币 <b style="color:#FFE9A8">+'+fmtWan(gold)+'</b>'; }
+  else if(r<0.8){ cr=2; txt='缴获敌方神格残片 · 神格结晶 <b style="color:#7EE8C2">+2</b>'; }
   else { cr=1; txt='缴获敌方神格残片 · 神格结晶 <b style="color:#7EE8C2">+1</b>'; }
-  BATTLE.merit+=merit; BATTLE.crystal+=cr; if(gold){ CURRENCY.gold+=gold; try{ renderCurrency(); }catch(e){} }
+  BATTLE.merit+=merit; BATTLE.crystal+=cr;
   saveGame();
   bfLog('adv','🎁 战场机缘 · '+txt);
   renderBattle();
@@ -7519,7 +7531,7 @@ function bfSpawnCmdr(){   /* 统帅降临：金光横幅+红金大点从敌方�
   if(BATTLE.cmdr) return;
   var c=bfMakeCmdr(); BATTLE.cmdr=c;
   var cx=BATTLE.faction===0?92:8, cy=BATTLE.faction===0?92:8;
-  BATTLE._units.push({uid:'cmdr',boss:true,name:c.name,tier:c.tier,typeC:c.typeC,pw:c.pw,atk:c.atk,def:c.def,agi:c.agi,lv:c.level,ig:c.ig,tr:c.tr,add:0,atkElem:c.atkElem,fdr:0,armorAbs:0,hp:c.hp,hp0:c.hp0,x:cx,y:cy,cx:cx,cy:cy,sp:0.7,st:'walk',wayX:null,wayY:null,target:null,atkAcc:0,respawn:0});
+  BATTLE._units.push({uid:'cmdr',boss:true,name:c.name,tier:c.tier,typeC:c.typeC,pw:c.pw,atk:c.atk,def:c.def,agi:c.agi,lv:c.level,ig:c.ig,tr:c.tr,add:0,atkElem:c.atkElem,fdr:0,armorAbs:0,hp:c.hp,hp0:c.hp0,x:cx,y:cy,cx:cx,cy:cy,sp:1.4,st:'walk',wayX:null,wayY:null,target:null,atkAcc:0,respawn:0});
   bfBanner('敌方神级统帅 · '+c.name.replace('神级统帅·','')+' 降临战场','血 '+fmtWan(c.hp)+' · 攻 '+fmtWan(c.atk)+' · 超脱级威胁<br>击杀可得：战功 1万起 · 金币 1000~3000兆 · 神格结晶 +2','#FFD75E');
   bfLog('enc','⚠ <b style="color:#FFD75E">敌方神级统帅 '+c.name.replace('神级统帅·','')+' 现身战场</b>');
   BATTLE._logEvt=true; renderBattle();
@@ -7553,25 +7565,36 @@ function bfTowerSpawn(){   /* 神级塔主降临：驻守中央塔(50,50)，血=
   bfLog('enc','⚠ <b style="color:#C9A0FF">神级塔主 '+name.replace('神级塔主·','')+' 降临中央塔</b> · 全战场争夺开始');
   BATTLE._logEvt=true; renderBattle();
 }
-function bfTowerReward(){   /* 塔主讨伐结算：伤害前10名分配2000神力碎片，伤害第一另得金币2000~4000兆 */
+function bfTowerReward(){   /* 塔主讨伐结算：固定总池 1 垓(1e20) 金币 + 前10名神力碎片(合计2000)；金币分配=第1名40%/第2名30%/第3名10%（前三名 4:3:1 共80%），剩余20%由第4~10名平分；玩家与AI同一张伤害榜、同一套比例 */
   var dmg=BATTLE.tower.dmg||{}, rows=[];
   if(BATTLE._me&&(dmg.me||0)>0) rows.push({uid:'me',n:'你',d:dmg.me});
   for(var _i=0;_i<BATTLE._units.length;_i++){ var _u=BATTLE._units[_i]; if(_u.uid==='tower') continue; if((dmg[_u.uid]||0)>0) rows.push({uid:_u.uid,n:_u.name,d:dmg[_u.uid]||0}); }
   rows.sort(function(a,b){ return b.d-a.d; });
   if(!rows.length){ bfLog('loot','神级塔主被讨伐 · 无人上榜'); return {rank:0,frag:0,gold:0}; }
+  var POOL=1e20;                                      /* 1 垓 = 10^20，每次塔主固定掉落总量 */
+  var _n=Math.min(10,rows.length), headN=Math.min(3,_n);
+  var headTotal=(_n<=3)?1.0:0.8;                       /* 上榜不足3人：整池由头部按4:3:1归一化分完，不出现"第2名反超第1名" */
+  var _w=[4,3,1], _ws=0, _wi;
+  for(_wi=0;_wi<headN;_wi++) _ws+=_w[_wi];
   var gold=0, myRank=0, myFrag=0, ft=[500,400,300,200,200,80,80,80,80,80], r;
-  for(r=0;r<rows.length&&r<10;r++){ var row=rows[r], f=ft[r];
-    if(row.uid==='me'){ myRank=r+1; myFrag=f;
-      if(r===0){ gold=Math.round((2000+Math.random()*2000)*1e12); CURRENCY.gold+=gold; try{ renderCurrency(); }catch(e){} }
+  var _paid=0, _tailN2=_n-headN;
+  for(r=0;r<_n;r++){ var row=rows[r], f=ft[r], _goldTxt='';
+    var share=(r<headN)?(headTotal*_w[r]/_ws):((1.0-headTotal)/Math.max(1,_tailN2));   /* 头部4:3:1（不足3人按在场人数归一化）；4名以后平分20% */
+    var g=(r===_n-1)?Math.max(0,POOL-_paid):Math.round(POOL*share);   /* 末位取余数，保证每次恰好分完1垓 */
+    _paid+=g;
+    if(g>0) _goldTxt=' · 金币 +'+fmtWan(g);
+    if(row.uid==='me'){ myRank=r+1; myFrag=f; gold=g;
+      if(g>0){ CURRENCY.gold+=g; try{ renderCurrency(); }catch(e){} }
       var m=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); m.count=f; addStackable(m); }
-    bfLog('loot','🏆 <b style="color:#C9A0FF">塔主讨伐</b> 第'+(r+1)+'名 '+row.n+' · 神力碎片 +'+f+(r===0?' · 金币 +'+fmtWan(gold):'')); }
+    else { var _au=bfUnitById(row.uid), _as=_au?_au.stRef:null; if(_as){ _as.stones=(_as.stones||0)+f; if(g>0) _as.gold=(_as.gold||0)+g; } }   /* 真实结算：AI按同一张榜拿碎片+同一套比例分金币 */
+    bfLog('loot','🏆 <b style="color:#C9A0FF">塔主讨伐</b> 第'+(r+1)+'名 '+row.n+' · 神力碎片 +'+f+_goldTxt); }
   BATTLE.tower.killedSlot=bfTowerSlot();
-  if(myRank){ bfBanner('神级塔主已被讨伐','你排名第 '+myRank+' · 神力碎片 +'+myFrag+(myRank===1?(' · 金币 +'+fmtWan(gold)):'')+'<br>下一只塔主将于整点刷新','#C9A0FF');
-    if(myRank===1) toast('🏆 讨伐神级塔主：神力碎片 +'+myFrag+' · 金币 +'+fmtWan(gold));
+  if(myRank){ bfBanner('神级塔主已被讨伐','你排名第 '+myRank+' · 神力碎片 +'+myFrag+(gold>0?(' · 金币 +'+fmtWan(gold)):'')+'<br>下一只塔主将于整点刷新','#C9A0FF');
+    if(gold>0) toast('🏆 讨伐神级塔主：神力碎片 +'+myFrag+' · 金币 +'+fmtWan(gold));
     else toast('讨伐神级塔主：你排名第 '+myRank+' · 神力碎片 +'+myFrag); }
   return {rank:myRank,frag:myFrag,gold:gold};
 }
-function bfTick(){   /* 战场心跳（每0.2秒）：真实玩家沙盘推演——营地起步→慢速推进→10米感知→冲杀→逃跑→击杀/营地复活；守卫圈惩罚闯入者 */
+function bfTick(){   /* 战场心跳（每0.1秒 / setInterval 100ms）：真实玩家沙盘推演——营地起步→慢速推进→10米感知→冲杀→逃跑→击杀/营地复活；守卫圈惩罚闯入者 */
   if(!BATTLE.inField) return;
   bfTowerRefresh();
   if(location.hash.indexOf('#battle')<0){ bfLeave(true); return; }
@@ -7608,9 +7631,9 @@ function bfSimStep(){   /* 沙盘推演一帧（0.2s）：营地守卫圈→慢�
   else {
     if(bfDist(me,{x:eCx,y:eCy})<8){ bfOnDeath(null,true); }   /* 靠近/闯入敌方营地守卫圈（半径8）：被守卫当场击杀 */
     else {
-      if(me.st==='walk') bfMove(me,0.8*BATTLE._dt/1000);   /* 约2分28秒从本方营地走到敌方营地 */
+      if(me.st==='walk') bfMove(me,1.6*BATTLE._dt/1000);   /* 速度翻倍：约1分14秒从本方营地走到敌方营地 */
       else if(me.st==='chase'){ t=bfUnitById(me.target); if(!t||t.st==='dead'){ me.st='walk'; me.target=null; }
-        else { bfMove(me,0.85*BATTLE._dt/1000,t.x,t.y); if(bfDist(me,t)<=3){ me.st='fight'; bfMapFight(true); } } }
+        else { bfMove(me,1.7*BATTLE._dt/1000,t.x,t.y); if(bfDist(me,t)<=3){ me.st='fight'; bfMapFight(true); } } }
       else if(me.st==='fight'){ t=bfUnitById(me.target); if(!t||t.st==='dead'){ me.st='walk'; me.target=null; bfMapFight(false); }
         else { if(bfDist(me,t)>6){ me.st='chase'; } else bfFightStep(me,t); } }
       if(me.target==null&&me.st!=='dead'){ var near=bfNearestEnemy(me,10); if(near){ me.st='chase'; me.target=near.uid; bfLogEncounter(near); } }
@@ -7622,15 +7645,15 @@ function bfSimStep(){   /* 沙盘推演一帧（0.2s）：营地守卫圈→慢�
       u.atkAcc=(u.atkAcc||0)+1000*BATTLE._dt/1000;
       if(u.atkAcc>=2500){ u.atkAcc-=2500;
         var _kd=[];
-        for(var _j=0;_j<units.length;_j++){ var _t=units[_j]; if(_t.tower||_t.st==='dead'||_t.st==='esc') continue; if(bfDist(u,_t)<=3.5){ _t.hp=0; _t.st='dead'; _t.respawn=Date.now()+10000; _t.target=null; _t.atkAcc=0; _kd.push(_t.name); } }
-        if(BATTLE._me.st!=='dead'&&bfDist(u,BATTLE._me)<=3.5){ var _d2=bfDmgOpp(u,BATTLE._me.hp0); if(_d2>0){ BATTLE._me.hp-=_d2; if(BATTLE._me.hp<=0){ BATTLE._me.hp=0; bfOnDeath(u); } } }
+        for(var _j=0;_j<units.length;_j++){ var _t=units[_j]; if(_t.tower||_t.st==='dead'||_t.st==='esc') continue; if(bfDist(u,_t)<=3.5){ _t.hp=0; _t.st='dead'; _t.respawn=Date.now()+10000; _t.target=null; _t.atkAcc=0; if(_t.stRef) _t.stRef.bfDeath=(_t.stRef.bfDeath||0)+1; _kd.push(_t.name); } }
+        if(BATTLE._me.st!=='dead'&&bfDist(u,BATTLE._me)<=3.5){ var _d2=bfDmgOpp(u,BATTLE._me.hp0); if(_d2.d>0){ BATTLE._me.hp-=_d2.d; if(BATTLE._me.hp<=0){ BATTLE._me.hp=0; bfOnDeath(u); } } }
         if(_kd.length) bfLog('dead','☠ <b style="color:#C9A0FF">神级塔主</b> 神威降世 · <b style="color:#FF5A5A">'+_kd.join('、')+'</b> 被塔主镇杀（回营地复活）');
       }
       continue;
     }
     if(u.st==='dead'){ if(now>=u.respawn){ u.st='walk'; u.x=u.cx; u.y=u.cy; u.hp=u.hp0; u.wayX=null; u.target=null; u.atkAcc=0; bfLog('revive','✨ <b style="color:#FF5A5A">'+u.name+'</b> 在'+(u.ally?'本方':'敌方')+'营地复活，走出营地重返战场'); BATTLE._logEvt=true; } continue; }
     if(u.boss&&BATTLE.cmdr){ BATTLE.cmdr.hp=u.hp; BATTLE.cmdr.hp0=u.hp0; }
-    if(!u.ally&&!u.boss&&u.st!=='esc'&&bfDist(u,{x:myCx,y:myCy})<8){ u.st='dead'; u.respawn=now+10000; u.target=null; u.atkAcc=0; bfLog('kill','🛡 敌方 <b style="color:#FF6B5A">'+u.name+'</b> 闯入我方营地守卫圈，被<b style="color:#8dffbe">我方营地守卫</b>当场击杀'); BATTLE._logEvt=true; continue; }   /* 敌方营地守卫保护我方复活点 */
+    if(!u.ally&&!u.boss&&u.st!=='esc'&&bfDist(u,{x:myCx,y:myCy})<8){ u.st='dead'; u.respawn=now+10000; u.target=null; u.atkAcc=0; if(u.stRef) u.stRef.bfDeath=(u.stRef.bfDeath||0)+1; bfLog('kill','🛡 敌方 <b style="color:#FF6B5A">'+u.name+'</b> 闯入我方营地守卫圈，被<b style="color:#8dffbe">我方营地守卫</b>当场击杀'); BATTLE._logEvt=true; continue; }   /* 敌方营地守卫保护我方复活点 */
     if(me.st==='dead'){ u.st='walk'; u.target=null; continue; }
     if(u.st==='flee'){ bfMove(u,u.sp*1.15*BATTLE._dt/1000,u.cx,u.cy); if(bfDist(u,{x:u.cx,y:u.cy})<4){ u.st='esc'; u.escAt=now; } continue; }
     if(u.st==='esc'){ if(now-u.escAt>6000){ u.st='walk'; u.hp=u.hp0; u.wayX=null; } continue; }
@@ -7649,9 +7672,10 @@ function bfSimStep(){   /* 沙盘推演一帧（0.2s）：营地守卫圈→慢�
   if(BATTLE.tower&&BATTLE.tower.boss&&BATTLE.tower.boss.hp>0&&units.length<16){
     if(!BATTLE._influx||now-BATTLE._influx>22000){ BATTLE._influx=now;
       var _pf=bfEnemyPool(); if(_pf.length){
-        var _bi=Math.floor(Math.random()*_pf.length), _bn=_pf[_bi], _bal=Math.random()<0.4;
+        var _bi=Math.floor(Math.random()*_pf.length), _bn=_pf[_bi], _bal=(_bn.stRef&&_bn.stRef.bfFaction===BATTLE.faction);   /* 涌入者站哪边由它自己的立场决定，不再随机判友军 */
         var _bx=_bal?myCx:eCx, _by=_bal?myCy:eCy;
-        units.push({uid:'in'+(BATTLE._aiN++),boss:false,ally:_bal,name:_bn.name,tier:_bn.tier,typeC:_bn.typeC,pw:_bn.pw,atk:_bn.atk,def:_bn.def,agi:_bn.agi,lv:_bn.lv,ig:_bn.ig,tr:_bn.tr,add:_bn.add,atkElem:_bn.atkElem,fdr:_bn.fdr,armorAbs:_bn.armorAbs,hp:Math.max(1,_bn.atk*5),hp0:Math.max(1,_bn.atk*5),x:_bx,y:_by,cx:_bx,cy:_by,sp:0.66+Math.random()*0.12,st:'walk',wayX:null,wayY:null,target:null,atkAcc:0,respawn:0,mood:'roam'});
+        units.push({uid:'in'+(BATTLE._aiN++),stRef:_bn.stRef,boss:false,ally:_bal,name:_bn.name,tier:_bn.tier,typeC:_bn.typeC,pw:_bn.pw,atk:_bn.atk,def:_bn.def,agi:_bn.agi,lv:_bn.lv,ig:_bn.ig,tr:_bn.tr,add:_bn.add,atkElem:_bn.atkElem,fdr:_bn.fdr,armorAbs:_bn.armorAbs,hp:Math.max(1,_bn.hp||_bn.atk*5),hp0:Math.max(1,_bn.hp0||_bn.atk*5),luck:_bn.luck,critMult:_bn.critMult,critAltar:_bn.critAltar,critBlade:_bn.critBlade,tierIdx:_bn.tierIdx,asc:_bn.asc,hitBonus:_bn.hitBonus,critDR:_bn.critDR,wingEquip:_bn.wingEquip,bladeEquip:_bn.bladeEquip,x:_bx,y:_by,cx:_bx,cy:_by,sp:1.32+Math.random()*0.24,st:'walk',wayX:null,wayY:null,target:null,atkAcc:0,respawn:0,mood:'roam'});
+        if(_bn.stRef) _bn.stRef._inField=1;   /* 中途涌入者同样标记参战（暂停后台发育，同入场单位） */
         bfLog('info','⚔ <b style="color:#FFD75E">闻讯赶来的玩家</b> '+String(_bn.name).replace(/[（(].*$/,'')+' 冲入战场抢塔主 · 金币争夺战');
         BATTLE._logEvt=true;
       }
@@ -7666,20 +7690,45 @@ function bfLogEncounter(near){   /* 遭遇即时弹出：单人或一团敌方�
   if(near.boss) bfLog('enc', near.tower ? '⚔ <b style="color:#C9A0FF">神级塔主 '+near.name.replace('神级塔主·','')+' 与你短兵相接</b>' : '⚠ <b style="color:#FFD75E">敌方神级统帅 '+near.name.replace('神级统帅·','')+' 与你短兵相接</b>');
   bfMapFight(true); BATTLE._logEvt=true;
 }
-function bfDmgMe(def){   /* 我方一击伤害（0=未命中） */
-  var _aC=bfCharAtk(), _dO=bfOppDef(def), _lvC=Math.min(80,CHARACTER.info.level||80);
-  if(Math.random()>hitRate(HIT_P2M,_aC.atk,def.atk,_lvC,def.lv||80,null,altarHitBonus(),0)) return 0;
-  return Math.max(1,calcHit(_aC,_dO))+ascendSkyDmg(def.hp0||1,_aC.atk);
+function bfDmgMe(def){   /* 我方一击伤害：与副本 trAtk / 世界BOSS wbCalcDmg 完全同规则——等级压制双侧(攻方pS×攻、守方mS×防)+暴击(轮回天赋暴击率/暴伤+神坛会心+异能锋芒+目标暴击减免)+10%弱点攻击(与暴击叠乘 4×1.1)+阶位压制+OG增伤+属性攻击+天道共鸣；玩家打怪必中(无miss)，与副本一致 */
+  recalcCharacter();
+  var _aC=bfCharAtk(), _sp=equipSpecials();
+  var _lvC=CHARACTER.info.level||1;
+  var gap=_lvC-(def.lv||1);
+  var lvR=gap>=10?lvSuppress(gap):(gap<=-10?0.5:1);          /* 攻方倍率 pS：压制对方×lvs；被对方压制×0.5 */
+  var _mS=(gap<=-10?lvSuppress(-gap):(gap>=10?0.5:1));       /* 守方倍率 mS：对方被我压制→其防御×0.5；对方压制我→其防御×lvs */
+  var isCrit=Math.random()<Math.min(1,critRate(charLuck(),def.atk||1,false)+(legendWing()?0.10:0)+(shencaiBlade()?0.15:0)+talentCritRate()+reincCritRate());   /* 同 trAtk：天赋暴击+轮回暴击率 */
+  var weak=Math.random()<0.10;                               /* 弱点攻击10%（同 trAtk） */
+  var _ft=(def.tierIdx!=null)?def.tierIdx:foeTierOf(def), _tp2=roleVsFoeTier(charTierIdx(),_ft);
+  var _dO=bfOppDef(def); _dO.def=Math.round((_dO.def||0)*_mS);
+  var _critMul=((isCrit&&weak)?(4*1.1*talentCritMul()*reincCritMul()*altarCritMul()):(isCrit?(2*talentCritMul()*reincCritMul()*altarCritMul()):(weak?2:1)))*(1+_sp.critDmg)*(1-(def.critDR||0));   /* 同 trAtk 暴击/弱点倍率 + 目标暴击伤害减免(等价 playerCritDmgRed) */
+  var d=Math.max(1,Math.round(calcHit({atk:Math.round(_aC.atk*lvR*_critMul), realAtk:Math.round(_aC.atk*lvR), ig:_aC.ig+_tp2.ig, real:_aC.real+(_sp.trueDmg||0), add:_aC.add+(_tp2.m-1), attackElem:_aC.attackElem, atkElemPct:_aC.atkElemPct},_dO)));
+  d+=ascendSkyDmg(def.hp0||1,_aC.atk);
+  return {d:d,crit:isCrit};
 }
-function bfDmgOpp(u,myHp0){   /* 敌方一击伤害（0=未命中） */
-  var _aO=bfOppAtk(u), _dC=bfCharDef(), _lvC=Math.min(80,CHARACTER.info.level||80);
-  if(Math.random()>hitRate(HIT_M2P,_aO.atk,bfCharAtk().atk,u.lv||80,_lvC,null,0,0)) return 0;
-  return Math.max(1,calcHit(_aO,_dC))+ascendSkyDmg(myHp0,_aO.atk);
+function bfDmgOpp(u,myHp0){   /* 敌方一击伤害：boss(统帅/塔主)=世界BOSS打玩家同规则(敏捷闪避/无暴击/特性真伤)；AI玩家=与副本 trAtk 完全对称(等级压制双侧+暴击含目标暴击减免+10%弱点+阶位压制+属性攻击+超脱天道共鸣)、闪避走 trMissRate(副本怪打角色同款) */
+  var _lvC=CHARACTER.info.level||1;
+  if(u.boss){   /* 神级统帅/塔主：对齐世界BOSS攻击玩家 */
+    if(Math.random()>hitRate(HIT_M2P,u.atk,charAgi(),u.lv||80,_lvC,null)) return {d:0,crit:false};
+    return {d:Math.max(1,Math.round(calcHit(bfOppAtk(u),bfCharDef()))),crit:false};
+  }
+  var _aO=bfOppAtk(u), _dC=bfCharDef();
+  var gap=(u.lv||1)-_lvC, lvR=gap>=10?lvSuppress(gap):(gap<=-10?0.5:1);   /* 对手(攻方)pS */
+  var _pS2=(gap>=10?0.5:(gap<=-10?lvSuppress(-gap):1));                   /* 我(守方)mS：被对手压制→我防×0.5；我压制对手→我防×lvs */
+  _dC.def=Math.round((_dC.def||0)*_pS2);
+  var _tp2=roleVsFoeTier(u.tierIdx||0,charTierIdx());
+  var isCrit=Math.random()<Math.min(1,critRate(u.luck||0,Math.max(1,bfCharAtk().atk),false)+(u.wingEquip?0.10:0)+(u.bladeEquip?0.15:0));
+  var weak=Math.random()<0.10;
+  if(Math.random()<trMissRate(_lvC-(u.lv||1))) return {d:0,crit:false};   /* 闪避=副本怪打角色同款(等级差主导) */
+  var _critMul=((isCrit&&weak)?(4*1.1*(u.critMult||1)):(isCrit?(2*(u.critMult||1)):(weak?2:1)))*(1-playerCritDmgRed());
+  var d=Math.max(1,Math.round(calcHit({atk:Math.round(_aO.atk*lvR*_critMul), realAtk:Math.round(_aO.atk*lvR), ig:_aO.ig+_tp2.ig, real:_aO.real, add:_aO.add+(_tp2.m-1), attackElem:_aO.attackElem, atkElemPct:_aO.atkElemPct},_dC)));
+  if(u.asc) d+=ascendSkyDmg(myHp0,_aO.atk);
+  return {d:d,crit:isCrit};
 }
 function bfFightStep(me,t){   /* 我方攻击当前目标（攻速累积）：命中→伤害→击杀；残血触发敌方逃跑 */
   if(t.st==='dead'||me.st==='dead') return;
   me.atkAcc=(me.atkAcc||0)+1000*BATTLE._dt/1000; var gap=charAtkSpeed(), hit=0;
-  while(t.hp>0&&me.atkAcc>=gap){ me.atkAcc-=gap; var d=bfDmgMe(t); if(d>0){ t.hp-=d; hit+=d; if(t.tower&&BATTLE.tower) BATTLE.tower.dmg.me=(BATTLE.tower.dmg.me||0)+d; if(t.hp<=0){ t.hp=0; bfOnKill(t); return; } } }
+  while(t.hp>0&&me.atkAcc>=gap){ me.atkAcc-=gap; var _r=bfDmgMe(t); if(_r.d>0){ var d=_r.d; t.hp-=d; hit+=d; if(t.tower&&BATTLE.tower) BATTLE.tower.dmg.me=(BATTLE.tower.dmg.me||0)+d; if(t.hp<=0){ t.hp=0; bfOnKill(t); return; } } }
   BATTLE._lastHit=hit;
   if(t.st==='flee') me.st='chase';
   else if(!t.boss&&t.hp/t.hp0<0.25&&t.st==='fight'){ t.st='flee'; t.target=null; bfLog('flee','🏃 <b style="color:#FFC857">'+t.name+'</b> 不敌想逃，你追击而上'); BATTLE._logEvt=true; }
@@ -7690,28 +7739,25 @@ function bfEnemyAtk(u){   /* 敌方攻击我方（攻速累积）：命中→伤
   while(me.hp>0&&u.atkAcc>=gap){ u.atkAcc-=gap; var d=bfDmgOpp(u,me.hp0); if(d>0){ me.hp-=d; hit+=d; if(me.hp<=0){ me.hp=0; bfOnDeath(u); return; } } }
   BATTLE._lastGot=hit;
 }
-function bfReward(u){   /* 击杀奖励（与旧结算同公式）：赤焰战功+10%、苍海结晶掉率+10% */
-  var my=rolePower(), merit=Math.round(50+(u.pw/Math.max(1,my))*300), cr=0, gold=0;
+function bfReward(u){   /* 击杀奖励：战功+神格结晶（赤焰战功+10%、苍海结晶+10%）；域外金币唯一来源=中央塔主1垓分配，击杀AI不产金币、也不从AI存档掠夺金币 */
+  var my=rolePower(), merit=Math.round(50+(u.pw/Math.max(1,my))*300), cr=0;
   if(BATTLE.faction===0) merit=Math.round(merit*1.1);
   var _crCh=0.4; if(BATTLE.faction===1) _crCh*=1.1;
   if(Math.random()<_crCh) cr=1;
-  if(Math.random()<0.3){ gold=Math.round((Math.random()*4+1)*1e9); CURRENCY.gold+=gold; try{ renderCurrency(); }catch(e){} }
   BATTLE.merit+=merit; BATTLE.crystal+=cr;
-  return {merit:merit,cr:cr,gold:gold};
+  return {merit:merit,cr:cr,gold:0};
 }
-function bfCmdrReward(u){   /* 统帅击杀：金币1000~3000兆+战功1万起+神格结晶2（赤焰战功+10%） */
+function bfCmdrReward(u){   /* 统帅击杀：战功1万起+神格结晶2（赤焰战功+10%）；金币0——域外金币只由中央塔主掉落并按1垓名次分配 */
   var my=rolePower(), merit=Math.max(10000,Math.round(50+(u.pw/Math.max(1,my))*300));
   if(BATTLE.faction===0) merit=Math.round(merit*1.1);
-  var gold=Math.round((1000+Math.random()*2000)*1e12);
-  CURRENCY.gold+=gold; try{ renderCurrency(); }catch(e){}
   BATTLE.merit+=merit; BATTLE.crystal+=2;
-  return {merit:merit,cr:2,gold:gold};
+  return {merit:merit,cr:2,gold:0};
 }
 function bfStreakLv(){ var s=BATTLE.streak||0; if(s>=15) return '👑 战场主宰 · 15 连斩'; if(s>=10) return '☠ 战场杀神 · 10 连斩'; if(s>=5) return '🔥 势不可挡 · 5 连斩'; if(s>=3) return '⚡ 三连斩！'; return null; }
 function bfOnKill(u){   /* 击杀：奖励入账+连杀阶梯+敌方红点消失回营地复活（复活后重新走出） */
   bfMapFight(false);
   var r, _ext='', _ms;
-  if(u.tower){   /* 神级塔主被讨伐：排名结算（前10分2000神力碎片，伤害第一2000~4000兆金币） */
+  if(u.tower){   /* 神级塔主被讨伐：排名结算（前10分2000神力碎片；金币固定1垓按名次分配：前三4:3:1=80%，其后平分20%） */
     var _tr=bfTowerReward();
     BATTLE.kills++; BATTLE.streak++; if(BATTLE.streak>BATTLE.bestStreak) BATTLE.bestStreak=BATTLE.streak;
     BATTLE.tower.boss=null; bfRemoveUnit('tower'); BATTLE._logEvt=true; saveGame(); renderBattle();
@@ -7720,15 +7766,15 @@ function bfOnKill(u){   /* 击杀：奖励入账+连杀阶梯+敌方红点消失
     return;
   }
   if(u.boss){ BATTLE.cmdr=null; r=bfCmdrReward(u); BATTLE.kills++; BATTLE.streak++; if(BATTLE.streak>BATTLE.bestStreak) BATTLE.bestStreak=BATTLE.streak;
-    bfBanner(u.name.replace('神级统帅·','')+' 已被你亲手讨伐','战功 +'+fmtWan(r.merit)+' · 金币 +'+fmtWan(r.gold)+' · 神格结晶 +2','#FFD75E');
-    bfLog('kill','☠ 讨伐 <b style="color:#FFD75E">'+u.name+'</b> · 战功 +'+fmtWan(r.merit)+' · 金币 +'+fmtWan(r.gold)+' · 神格结晶 +2');
+    bfBanner(u.name.replace('神级统帅·','')+' 已被你亲手讨伐','战功 +'+fmtWan(r.merit)+' · 神格结晶 +2'+(r.gold?(' · 金币 +'+fmtWan(r.gold)):''),'#FFD75E');
+    bfLog('kill','☠ 讨伐 <b style="color:#FFD75E">'+u.name+'</b> · 战功 +'+fmtWan(r.merit)+' · 神格结晶 +2'+(r.gold?(' · 金币 +'+fmtWan(r.gold)):''));
     BATTLE._cmdrNext=BATTLE.kills+10+Math.floor(Math.random()*7);
   } else { r=bfReward(u); BATTLE.kills++; BATTLE.streak++; if(BATTLE.streak>BATTLE.bestStreak) BATTLE.bestStreak=BATTLE.streak;
     if(r.merit) _ext+='战功 +'+fmtWan(r.merit); if(r.cr) _ext+=' · 神格结晶 +'+r.cr; if(r.gold) _ext+=' · 金币 +'+fmtWan(r.gold);
     bfLog('kill','☠ 击杀 <b style="color:#7EE8C2">'+u.name+'</b> <span style="color:#9d9682">战力 '+fmtWan(dispVal(u.pw||0))+'</span>'+( _ext?(' · '+_ext):''));
     _ms=bfStreakLv(); if(_ms) bfLog('streak',''+_ms+'');
   }
-  u.st='dead'; u.respawn=Date.now()+10000; u.target=null;
+  u.st='dead'; u.respawn=Date.now()+10000; u.target=null; if(u.stRef) u.stRef.bfDeath=(u.stRef.bfDeath||0)+1;
   var me=BATTLE._me; me.target=null; me.st='walk'; me.atkAcc=0;
   if(!BATTLE.cmdr&&BATTLE.kills>=BATTLE._cmdrNext) bfSpawnCmdr();   /* 累计击杀达标：敌方神级统帅现身 */
   BATTLE._logEvt=true;
@@ -7739,6 +7785,7 @@ function bfOnDeath(u, byGuard){   /* 我方阵亡：连杀清零，6秒疗伤后
   BATTLE.streak=0; BATTLE._revive=Date.now()+10000;
   me.hp=0; me.st='dead'; me.target=null; me.atkAcc=0;
   bfMapFight(false);
+  if(u&&u.stRef) u.stRef.bfKill=(u.stRef.bfKill||0)+1;   /* 玩家阵亡只记战绩：域外不掉金币（金币唯一来源=塔主1垓分配） */
   if(byGuard) bfLog('dead','🛡 <b style="color:#FF5A5A">你闯入敌方营地守卫圈</b>，被敌方营地守卫当场击杀 · 连杀中断');
   else bfLog('dead','✝ <b style="color:#FF5A5A">你被击倒</b>'+(u?' <span style="color:#9d9682">· 被 '+u.name+' 击杀</span>':'')+' · 连杀中断');
   BATTLE._logEvt=true;
@@ -7758,7 +7805,7 @@ function bfLog(cls, html){   /* 战场见闻行统一入口：带时间戳，新
   feed.insertBefore(el,feed.firstChild);
   while(feed.children.length>60) feed.removeChild(feed.lastChild);
 }
-function bfRhythm(){   /* 日志节奏（0.2s/帧）：战斗战况2秒/游荡5秒/阵亡倒计时3秒/事件即时 */
+function bfRhythm(){   /* 日志节奏（0.1s/帧，20 帧=2 秒）：战斗战况2秒/游荡5秒/阵亡倒计时3秒/事件即时 */
   var me=BATTLE._me; if(!me) return;
   BATTLE._rh=(BATTLE._rh||0)+1; var rh=BATTLE._rh, now=Date.now();
   if(me.st==='dead'){ if(rh%30===0){ var _left=Math.max(0,Math.ceil((BATTLE._revive-now)/1000)); bfLog('info','✝ 阵亡倒计时 · <b style="color:#FF5A5A">'+_left+'s</b> 后从营地复活'); } return; }
@@ -7790,18 +7837,25 @@ function bfRenderMap(){   /* 沙盘渲染：真实实体坐标摆点（我方绿
       var _m2=('0'+Math.floor(_tl/60)).slice(-2), _s2=('0'+Math.floor(_tl%60)).slice(-2); _tt.textContent='下一只 '+_m2+':'+_s2; } }
   bfRenderVs();
 }
-function bfRenderVs(){   /* 战况条：交战显示目标血条（>50青/20-50黄/<20红，0.6s平滑），游荡显示我方状态 */
+function bfRenderVs(){   /* 战况条：第一行永远只显示你自己的血（阵亡也只变灰变红，不换内容）；第二行单独显示你当前正在打的那个对手的血，没有对手时整行隐藏 */
+  var me=BATTLE._me; if(!me) return;
   var n=document.getElementById('bf-vs-n'), b=document.getElementById('bf-vs-bar'), p=document.getElementById('bf-vs-pct'), i=document.getElementById('bf-vs-i');
   if(!n||!b||!p||!i) return;
-  var me=BATTLE._me; if(!me) return;
-  var pct, cls, txt;
-  if(me.st==='dead'){ txt='✝ 阵亡 · 疗伤中'; pct=0; cls='lev-low'; }
-  else if(me.st==='fight'||me.st==='chase'){ var t=bfUnitById(me.target); if(t&&t.st!=='dead'){ pct=t.hp/t.hp0*100; cls=bfLev(pct); txt='⚔ '+(t.st==='flee'?'追击 ':'')+(t.boss?(t.tower?'塔主 · ':'统帅 · '):'')+t.name; } else { pct=me.hp/me.hp0*100; cls=bfLev(pct); txt='战场游荡中…'; } }
-  else { pct=me.hp/me.hp0*100; cls='lev-hi'; txt='战场游荡中… · 我方 HP'; }
-  p.textContent=Math.round(pct)+'%';
-  i.style.width=Math.max(0,Math.min(100,pct))+'%';
-  b.className='bf-vs-bar '+cls;
-  n.innerHTML=txt;
+  var mp=Math.max(0,Math.min(100,(me.hp||0)/Math.max(1,me.hp0||1)*100));
+  p.textContent=Math.round(mp)+'%';
+  i.style.width=mp+'%';
+  b.className='bf-vs-bar '+(me.st==='dead'?'lev-low':bfLev(mp));
+  n.textContent='你 · 血'+(me.st==='dead'?'（阵亡 · 疗伤中）':'');
+  var row=document.getElementById('bf-vs-row-opp'), oi=document.getElementById('bf-vs-oi'), op=document.getElementById('bf-vs-opct'), on=document.getElementById('bf-vs-on');
+  if(!row||!oi||!op||!on) return;
+  var t=(me.st==='fight'||me.st==='chase')?bfUnitById(me.target):null;
+  if(t&&t.st!=='dead'){
+    row.style.display='';
+    var tp=Math.max(0,Math.min(100,(t.hp||0)/Math.max(1,t.hp0||1)*100));
+    op.textContent=Math.round(tp)+'%';
+    oi.style.width=tp+'%';
+    on.textContent=(t.boss?(t.tower?'塔主 · ':'统帅 · '):'对手 · ')+String(t.name).replace(/[（(].*$/,'')+(t.st==='flee'?'（逃跑中）':'');
+  } else { row.style.display='none'; op.textContent='--'; oi.style.width='0%'; }
 }
 function bfScatterPos(cx,cy,now){   /* 战场驻军初始状态：模拟他们各自在玩——有的复活倒计时、有的半路行军、有的场内游荡、有的塔区蹲守，而非随我同时从营地走出 */
   var r=Math.random(), px, py, st='walk', respawn=0;
@@ -7814,29 +7868,34 @@ function bfScatterPos(cx,cy,now){   /* 战场驻军初始状态：模拟他们�
 function bfEnter(){   /* 进入战场：以当前阵营从本方营地起步，真实在线玩家沙盘游荡开始 */
   if(BATTLE.faction<0){ toast('请先选择阵营'); return; }
   stopTreasure(); stopTrialAuto(); stopTowerAuto(); wbStop();
-  BATTLE.inField=true; BATTLE._revive=0; BATTLE._q=[]; BATTLE._grp=null; BATTLE._rh=0; BATTLE._lastWalk=null; BATTLE._mapFight=false; BATTLE._uEls={}; BATTLE._lastT=Date.now(); BATTLE._aiN=0; BATTLE._influx=0;
+  BATTLE.inField=true; BATTLE._revive=0; BATTLE._q=[]; BATTLE._grp=null; BATTLE._rh=0; BATTLE._lastWalk=null; BATTLE._mapFight=false; var _uw=document.getElementById('bf-udots'); if(_uw) _uw.innerHTML=''; BATTLE._uEls={};   /* 进场先清空沙盘点位DOM，避免上一场的红绿点残留叠加 */ BATTLE._lastT=Date.now(); BATTLE._aiN=0; BATTLE._influx=0;
   if(!BATTLE.tower){ BATTLE.tower={slot:-1,killedSlot:0,boss:null,dmg:{}}; } BATTLE.tower.dmg={};   /* 塔对象：slot=小时槽/killedSlot=最近讨伐槽（跨场保留）/boss=塔主实体 */
   if(BATTLE.cmdr&&BATTLE.cmdr.day!==wbSlotIdx()) BATTLE.cmdr=null;   /* 世界BOSS换轮（新的8点档）：旧统帅退场 */
   BATTLE._cmdrNext=8+Math.floor(Math.random()*5);   /* 累计击杀8~12个后，敌方神级统帅现身 */
   var myCx=BATTLE.faction===0?8:92, myCy=BATTLE.faction===0?8:92;
-  var _myAtk=bfCharAtk().atk;
-  BATTLE._me={x:myCx,y:myCy,cx:myCx,cy:myCy,hp0:Math.max(1,_myAtk*5),hp:Math.max(1,_myAtk*5),st:'walk',wayX:null,wayY:null,target:null,atkAcc:0};
+  recalcCharacter(); var _hpMax=Math.max(1,parseInt((CHARACTER.combat[0]||{}).v||1)); var _myAtk=bfCharAtk().atk;   /* 真实生命上限：与副本 trSyncChar 同源（combat[0] 生命值，recalc 后取值），不再借竞技口径函数 */
+  BATTLE._me={x:myCx,y:myCy,cx:myCx,cy:myCy,hp0:_hpMax,hp:_hpMax,st:'walk',wayX:null,wayY:null,target:null,atkAcc:0};
   /* 战场驻军：真实在线玩家（敌我双方各自在玩）——初始散布：复活倒计时/半路行军/场内游荡/塔区蹲守，红点=敌方、绿点=友军，而非随我同时从营地走出 */
   BATTLE._units=[];
-  var pool=bfEnemyPool(), n=Math.min(8,Math.max(4,pool.length)), sel=bfDraw(n);
+  var pool=bfEnemyPool(), _foes=[], _mates=[];
+  for(var _pi=0;_pi<pool.length;_pi++){ var _pb=pool[_pi]; if(_pb.stRef&&_pb.stRef.bfFaction===BATTLE.faction) _mates.push(_pb); else _foes.push(_pb); }   /* 敌我按 AI 自己的阵营立场分：同阵营才是绿点友军 */
+  function _bfPick(arr,k){ var c=arr.slice(); for(var _si=c.length-1;_si>0;_si--){ var _sj=Math.floor(Math.random()*(_si+1)); var _st2=c[_si]; c[_si]=c[_sj]; c[_sj]=_st2; } return c.slice(0,k); }
+  var n=Math.min(8,_foes.length), sel=_bfPick(_foes,n);   /* 真实人数：对立阵营在线几个就几个，不凑"至少4人" */
   var eCx=BATTLE.faction===0?92:8, eCy=BATTLE.faction===0?92:8, _now=Date.now();
   for(var i=0;i<sel.length;i++){ var b=sel[i], s=bfScatterPos(eCx,eCy,_now);
-    BATTLE._units.push({uid:'e'+i,boss:false,ally:false,name:b.name,tier:b.tier,typeC:b.typeC,pw:b.pw,atk:b.atk,def:b.def,agi:b.agi,lv:b.lv,ig:b.ig,tr:b.tr,add:b.add,atkElem:b.atkElem,fdr:b.fdr,armorAbs:b.armorAbs,hp:Math.max(1,b.atk*5),hp0:Math.max(1,b.atk*5),x:s.x,y:s.y,cx:eCx,cy:eCy,sp:0.66+Math.random()*0.12,st:s.st,wayX:null,wayY:null,target:null,atkAcc:0,respawn:s.respawn,mood:Math.random()<0.4?'roam':(Math.random()<0.5?'patrol':'rest')});
+    BATTLE._units.push({uid:'e'+i,stRef:b.stRef,boss:false,ally:false,name:b.name,tier:b.tier,typeC:b.typeC,pw:b.pw,atk:b.atk,def:b.def,agi:b.agi,lv:b.lv,ig:b.ig,tr:b.tr,add:b.add,atkElem:b.atkElem,fdr:b.fdr,armorAbs:b.armorAbs,hp:Math.max(1,b.hp||b.atk*5),hp0:Math.max(1,b.hp0||b.atk*5),luck:b.luck,critMult:b.critMult,critAltar:b.critAltar,critBlade:b.critBlade,tierIdx:b.tierIdx,asc:b.asc,hitBonus:b.hitBonus,critDR:b.critDR,wingEquip:b.wingEquip,bladeEquip:b.bladeEquip,x:s.x,y:s.y,cx:eCx,cy:eCy,sp:1.32+Math.random()*0.24,st:s.st,wayX:null,wayY:null,target:null,atkAcc:0,respawn:s.respawn,mood:Math.random()<0.4?'roam':(Math.random()<0.5?'patrol':'rest')});
   }
   /* 友军（同阵营真实玩家）：绿点，并肩作战不互相接战；同样各自在玩散布战场 */
-  var rest=pool.slice();
-  for(var _p=0;_p<sel.length;_p++){ var _ix=rest.indexOf(sel[_p]); if(_ix>=0) rest.splice(_ix,1); }
-  var nA=Math.min(4,Math.max(2,rest.length));
+  var rest=_mates.slice();   /* 友军只来自与玩家同阵营的 AI（不再从池子随机抽人顶绿点） */
+  /* 敌方取自 _foes、友军取自 _mates，两边天然不重叠，无需再去重 */
+  var nA=Math.min(4,rest.length);   /* 同阵营友军按真实人数，不凑"至少2人" */
   for(var _q=rest.length-1;_q>0;_q--){ var _j=Math.floor(Math.random()*(_q+1)); var _t2=rest[_q]; rest[_q]=rest[_j]; rest[_j]=_t2; }
   for(var k=0;k<nA;k++){ var ba=rest[k], sa=bfScatterPos(myCx,myCy,_now);
-    BATTLE._units.push({uid:'a'+k,boss:false,ally:true,name:ba.name,tier:ba.tier,typeC:ba.typeC,pw:ba.pw,atk:ba.atk,def:ba.def,agi:ba.agi,lv:ba.lv,ig:ba.ig,tr:ba.tr,add:ba.add,atkElem:ba.atkElem,fdr:ba.fdr,armorAbs:ba.armorAbs,hp:Math.max(1,ba.atk*5),hp0:Math.max(1,ba.atk*5),x:sa.x,y:sa.y,cx:myCx,cy:myCy,sp:0.66+Math.random()*0.12,st:sa.st,wayX:null,wayY:null,target:null,atkAcc:0,respawn:sa.respawn,mood:Math.random()<0.4?'roam':(Math.random()<0.5?'patrol':'rest')});
+    BATTLE._units.push({uid:'a'+k,stRef:ba.stRef,boss:false,ally:true,name:ba.name,tier:ba.tier,typeC:ba.typeC,pw:ba.pw,atk:ba.atk,def:ba.def,agi:ba.agi,lv:ba.lv,ig:ba.ig,tr:ba.tr,add:ba.add,atkElem:ba.atkElem,fdr:ba.fdr,armorAbs:ba.armorAbs,hp:Math.max(1,ba.hp||ba.atk*5),hp0:Math.max(1,ba.hp0||ba.atk*5),luck:ba.luck,critMult:ba.critMult,critAltar:ba.critAltar,critBlade:ba.critBlade,tierIdx:ba.tierIdx,asc:ba.asc,hitBonus:ba.hitBonus,critDR:ba.critDR,wingEquip:ba.wingEquip,bladeEquip:ba.bladeEquip,x:sa.x,y:sa.y,cx:myCx,cy:myCy,sp:1.32+Math.random()*0.24,st:sa.st,wayX:null,wayY:null,target:null,atkAcc:0,respawn:sa.respawn,mood:Math.random()<0.4?'roam':(Math.random()<0.5?'patrol':'rest')});
   }
+  for(var _mk=0;_mk<BATTLE._units.length;_mk++){ var _mu=BATTLE._units[_mk]; if(_mu.stRef) _mu.stRef._inField=1; }   /* 真参战标记：这些AI此刻在域外战场里真实参战 → 暂停后台发育（同世界BOSS参战暂停） */
   var feed=document.getElementById('bf-feed'); if(feed) feed.innerHTML='';
+  if(!BATTLE._units.length) bfLog('info','当前战场无在线玩家参战（线上人数为 0，不补假人）');
   bfLog('info','<b style="color:#8dffbe">你已进入战场 · 从'+(BF_FACTIONS[BATTLE.faction]||{}).n+'营地出发</b>');
   if(!BATTLE._tmr) BATTLE._tmr=setInterval(bfTick,100);
   bfTowerRefresh();
@@ -7852,7 +7911,7 @@ function bfLeave(silent){   /* 撤离战场：停心跳、关战斗，本场结�
     var over=document.getElementById('bf-fight-over'); if(over) over.classList.remove('on');
     if(BFF){ clearInterval(BFF.timer); BFF=null; }
   }
-  BATTLE.faction=-1; BATTLE.kills=0; BATTLE.streak=0; BATTLE.bestStreak=0; BATTLE.cmdr=null; BATTLE._me=null; BATTLE._units=[]; BATTLE._uEls={}; BATTLE._mapFight=false; BATTLE._rh=0; BATTLE._lastWalk=null; BATTLE._aiN=0; BATTLE._influx=0; saveGame();
+  BATTLE.faction=-1; BATTLE.kills=0; BATTLE.streak=0; BATTLE.bestStreak=0; BATTLE.cmdr=null; for(var _bl=0;_bl<BATTLE._units.length;_bl++){ var _bu=BATTLE._units[_bl]; if(_bu.stRef) _bu.stRef._inField=0; } BATTLE._me=null; BATTLE._units=[]; var _uw2=document.getElementById('bf-udots'); if(_uw2) _uw2.innerHTML=''; BATTLE._uEls={}; BATTLE._mapFight=false; BATTLE._rh=0; BATTLE._lastWalk=null; BATTLE._aiN=0; BATTLE._influx=0; saveGame();
   renderBattle(); if(!silent) toast('已撤离战场');
 }
 function bfPick(fi){ if(BATTLE.inField){ toast('战场中不可更换，请先撤离'); return; } BATTLE.faction=fi; saveGame(); renderBattle(); toast('已加入 '+(BF_FACTIONS[fi]?BF_FACTIONS[fi].n:'')+' 阵营'); }
@@ -12518,14 +12577,15 @@ function aiVoucherTrade(st,p){   /* AI属性凭证/传承丹交易决策（独�
     var _vd=String(new Date().getMonth()+1)+'/'+new Date().getDate();
     if(st._vDate!==_vd){ st._vDate=_vd; st._vBought=0; }
     if((st._vBought||0)<VOUCHER_DAY_LIMIT){
-      var _rush=((st.ws||0)<99)&&(((p.pay||0)>=3)||(p.top==='first'||p.top==='perfect'||p.top==='rush'));   /* 轮回前升级期（未超脱ws<99）的神豪/顶尖型疯抢：永久全属性不被轮回清空，打怪升级/轮回速度刚需——开服属性低打怪受阻最刚需，见券就抢；超脱(ws99)后属性已厚、装备永久，退出升级期不疯抢 */
-      var _vCapGold=Math.max(0,(st.gold||0))*(_rush?0.4:0.25); var _vCapKf=(st.kf||0)*(_rush?0.5:0.2);   /* 预算：升级期金币40%/氪金50%（神豪/顶尖愿意为永久属性加速多投入，仍留一半氪金给99世后装备/限量品）；平时金币25%/氪金20% */
+      var _rushStrong=((p.pay||0)>=3)||(p.top==='first'||p.top==='perfect'||p.top==='rush');   /* 抢券强度分档：神豪/顶尖=上限50氪金 */
+      var _rush=((st.ws||0)<99)&&!st.ascended;   /* 未超脱(冲级期)：所有AI都把属性券当刚需抢——1券=永久全属性+1亿，六维直接决定大帝门槛；超脱后退出疯抢(商人/套现型已在外层排除，他们走铸券卖出) */
+      var _vCapGold=Math.max(0,(st.gold||0))*(_rush?(_rushStrong?0.4:0.2):0.25); var _vCapKf=(st.kf||0)*(_rush?(_rushStrong?0.5:0.2):0.2);   /* 预算：冲级期神豪/顶尖金币40%氪金50%、普通未超脱金币20%氪金20%；平时金币25%氪金20% */
       var _bestV=null; var _pnB=(CHARACTER&&CHARACTER.info&&CHARACTER.info.name)||'谜团';   /* 真人玩家名（卖家=谜团）：玩家挂单优先——AI先抢真人供给（玩家上架即秒抢），AI内部单其次，同类间取最低价 */
       for(var _vi=0;_vi<AUCTION.list.length;_vi++){ var _ve=AUCTION.list[_vi]; if(!_ve||_ve.seller===p.name||!_ve.item||!_ve.price) continue; var _vt=_ve.item.type||''; if(_vt!=='voucher_arena'&&_vt!=='voucher_tower'&&_vt!=='inherit_pill') continue;
         var _isP2=_vt==='inherit_pill';
         var _unit=(_ve.cur==='kf')?(_ve.price||0):(_ve.price||0);   /* 单按单价×数量（普通物品单，price=单价；氪金/金币同构） */
         var _limitP=(_ve.cur==='kf')?(VOUCHER_KF*(_isP2?0.5:1)*wbVoucherPremium()):(voucherGoldPrice()*(_isP2?0.5:1)*wbVoucherPremium());   /* 接受度=锚价×当前抢手溢价（券4氪金/丹2氪金，开服×1.5→后期×1.1）：永久全属性前期愿溢价收(刚需+可炒)，后期属性饱和回落但仍保值，下限≈锚价不深跌 */
-        var _rushP=(_ve.cur==='kf')?(50*(_isP2?0.5:1)):(50*100000000/aiGoldRateKf()*(_isP2?0.5:1));   /* 神豪/顶尖升级期疯抢上限：单券≤50氪金（用户指定，锚价4氪金≈上限12.5倍=见券就抢）；金币单按当前牌价折算(1氪金=1亿/牌价→50氪金=50亿/牌价)；丹半价25氪金 */
+        var _rushP=(_ve.cur==='kf')?((_rushStrong?50:15)*(_isP2?0.5:1)):((_rushStrong?50:15)*100000000/aiGoldRateKf()*(_isP2?0.5:1));   /* 冲级期抢价上限：神豪/顶尖≤50氪金(见券就抢)，普通未超脱≤15氪金(约锚价3.7倍)；金币单按当前牌价折算；丹半价 */
         var _capP=_rush?Math.max(_limitP,_rushP):_limitP;   /* 疯抢=接受度拉满到50氪金，正常锚价更划算时自然按锚价收，两线上限取高 */
         if(_unit<=_capP){ var _isPlB=(_ve.seller===_pnB); if(!_bestV||(_isPlB&&!_bestV._pl)||(_isPlB===_bestV._pl&&_unit<_bestV._u)) _bestV={e:_ve,_u:_unit,_pl:_isPlB}; }   /* 可接受价内：玩家(真人)挂单优先于AI单（玩家一上架即被抢，修复"玩家卖券滞销"）；同类间取最低单价 */
       }
