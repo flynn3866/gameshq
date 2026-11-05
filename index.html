@@ -6227,17 +6227,22 @@ function aiExpPerKill(monLv,d){ /* 每怪经验·纯版（同玩家offExpPerKill
   return e; }
 function aiBestExp(lv){ var bestD=0,bestE=0; for(var i=0;i<DUNGEONS.length;i++){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)>20)continue; if(DUNGEONS[i].mode==='pirate'&&!pirateOpenNow())continue; if(isPhantomDungeon(i)&&lv<75)continue; var e=aiExpPerKill(ml,i); if(e>bestE){ bestE=e; bestD=i; } } return {d:bestD,exp:bestE}; }   /* 副本推进：战力够就能刷≤自身±20级怪(等级差>20无收益)，自动选经验最优；海盗岛仅开放时段可刷 */
 function aiExpMult(st){ var m=1, _n=Date.now(); if(st.sunUntil&&_n<st.sunUntil) m*=5; if(st.megaSunUntil&&_n<st.megaSunUntil) m*=5; return Math.round(m*100*(1+((st.ws||0)*0.50)+(((st.talents||{}).exp||0)*0.25)+(((st.relic||{}).codex||0)*0.20)))/100; }   /* AI经验加成：太阳药水×5（用户指定：翻倍×2→×5，AI自购真实生效12h）/超级大太阳×5 +轮回经验加成（玩家reincExpMult同式：每世+50%·天赋悟道+25%·本源法典+20%），无则1不凭空 */
+function aiMonStatsOf(d){   /* 副本普通小怪数值（玩家 trMonStats 同款，monAtkCoef 取期望0.12确定性代表）——aiFarmExp(升级)与aiFarmAttr(BOSS间隔折算)共用同一份，杜绝两处公式漂移 */
+  var dg=DUNGEONS[d]||DUNGEONS[0], el=dg.monLv||1;
+  var diff=Math.pow(1.1,Math.min(6,d))*(isPhantomDungeon(d)?2:1);
+  var mhp, atk, dfn;
+  if(d===0){ mhp=300; atk=Math.round((Math.round((65+(el+9)*1.5)*100)/100)*(0.35)); dfn=4; }   /* 雕俱星座特例：玩家trMonStats小怪血300/攻16~40取0.35代表/防4 */
+  else { var ba=Math.round((65+(el+9)*1.5)*100), bl=Math.round((153+(el-1)*100+(el+9)*5.3)*100), bd=Math.round((30+(el+9))*100); mhp=Math.max(40,Math.round(bl*5*diff)); atk=Math.max(3,Math.round(ba*0.12*(el>=45?2:1)*diff)); dfn=Math.max(5,Math.round(bd*0.3*diff)); }
+  return {hp:mhp,atk:atk,def:dfn,agi:1,lv:el};
+}
 function aiFarmExp(st,p,onlineSec){   /* AI真实经验制（与玩家100%同规则）：AI在可刷副本按真实战力击杀小怪 → 每怪经验(玩家同公式aiExpPerKill)×等级差(trExpScale玩家同款)×太阳/轮回加成 → 返回本步获得经验；打不动/等级差>20/神幻未解锁→0，杜绝凭空升级 */
   var d=aiBestDungeonFor(st,p), dg=DUNGEONS[d]||DUNGEONS[0], el=dg.monLv||1, lv=st.lv||1;
   if(Math.abs(el-lv)>20) return 0;
   if(isPhantomDungeon(d)&&lv<75) return 0;
   if(dg.mode==='pirate'&&!pirateOpenNow()) return 0;
-  var diff=Math.pow(1.1,Math.min(6,d))*(isPhantomDungeon(d)?2:1);
-  var mhp, atk, dfn;
-  if(d===0){ mhp=300; atk=Math.round((Math.round((65+(el+9)*1.5)*100)/100)*(0.35)); dfn=4; }   /* 雕俱星座特例：玩家trMonStats小怪血300/攻16~40取0.35代表/防4 */
-  else { var ba=Math.round((65+(el+9)*1.5)*100), bl=Math.round((153+(el-1)*100+(el+9)*5.3)*100), bd=Math.round((30+(el+9))*100); mhp=Math.max(40,Math.round(bl*5*diff)); atk=Math.max(3,Math.round(ba*0.12*(el>=45?2:1)*diff)); dfn=Math.max(5,Math.round(bd*0.3*diff)); }   /* 玩家trMonStats小怪血量/攻/防同款（monAtkCoef取期望0.12，确定性代表不随机） */
   var B=aiBuildState(st,p);
-  var c=aiCanKillMon(st,p,d,-1,{hp:mhp,atk:atk,def:dfn,agi:1,lv:el},B);
+  var ms=aiMonStatsOf(d);
+  var c=aiCanKillMon(st,p,d,-1,{hp:ms.hp,atk:ms.atk,def:ms.def,agi:1,lv:ms.lv},B);
   if(!c.canKill||c.dps<=0) return 0;   /* 打不动/破不了防→无击杀无经验（与玩家同） */
   var cycle=Math.max(1.0,c.killSec+1.0);   /* 小怪击杀周期=真实dps击杀耗时+击杀后1秒刷新（同玩家：击杀后setTimeout 1s刷下一只，秒杀也最多1只/秒——不再0.25s/只虚快4倍，修复AI升级比玩家快的问题） */
   var kills=Math.max(0,onlineSec/cycle);
@@ -6368,7 +6373,11 @@ function aiFarmAttr(st,p,onlineSec){   /* 刷副本永久全属性：遍历能�
     var perBoss=base, hp=bh.hp, cur=cb;
     if(mut>base){ var _bd=Math.max(1,Math.min(10,1+Math.log10(mut/Math.max(1,base)))); var mHp=bh.hp*_bd; var cb2=aiCanKillMon(st,p,i,bt,{hp:mHp,atk:bh.atk,def:bh.def,agi:bh.agi,lv:bh.lv},B); if(cb2.canKill){ perBoss=base+mut; hp=mHp; cur=cb2; } }   /* 异变boss按奖励翻倍变硬，能击杀(玩家公式)才开异变拿奖励 */
     /* 真实击杀周期：原「保底最低击杀周期」(神幻2000s/中阶600s/低阶150s)已移除——一律按玩家同公式的真实击杀时间算效率，不再人为封顶33分钟/只；战力够就快、战力不够就慢，完全按真实数据推进 */
-    var cycle=Math.round(Math.max(1, cur.killSec+1));   /* 击杀周期=玩家真实公式击杀时间+1秒刷新（同玩家击杀后1s刷下一只的节奏） */
+    /* 玩家同款BOSS出现节奏（此前缺失：AI把BOSS当小怪连刷，属性增速比玩家快十几倍到数百倍）：刷完一只BOSS后 killToBoss=100~200只(均值150.5)、每清一只42%概率出BOSS(trSpawnMon) → 期望150.5/0.42≈358只小怪；神之幻境另有 trPhantomTimer 每10分钟强制一只首领 → 两条来源取更快的 */
+    var ms2=aiMonStatsOf(i), mc=aiCanKillMon(st,p,i,-1,{hp:ms2.hp,atk:ms2.atk,def:ms2.def,agi:1,lv:ms2.lv},B);
+    var monCycle=Math.max(1.0, (mc&&mc.canKill)?(mc.killSec+1.0):1e9);   /* 小怪击杀周期（同玩家1秒刷新节奏）；小怪都打不动=这副本刷不了 */
+    var bossGap=Math.round(150.5/0.42)*monCycle; if(isPhantomDungeon(i)) bossGap=Math.min(bossGap,6000/10);   /* 358只小怪 × 小怪周期；神幻10分钟定时首领 */
+    var cycle=Math.round(Math.max(1, cur.killSec+1)) + bossGap;   /* 总周期=小怪段+本只BOSS击杀（BOSS不再无间隔连刷） */
     var gain=perBoss/cycle;
     if(gain>bg){ bg=gain; best={d:i,bt:bt,hp:hp,cycle:cycle,perBoss:perBoss,ratio:cur.dps/Math.max(1,hp)}; }
   }
