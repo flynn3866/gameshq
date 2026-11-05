@@ -6376,7 +6376,23 @@ function aiFarmAttr(st,p,onlineSec){   /* 刷副本永久全属性：遍历能�
   var bosses=onlineSec/best.cycle;
   return Math.max(0,Math.round(bosses*best.perBoss));
 }
-function aiBestDungeonFor(st,p){   /* 已含「升级·经验」副本(狄奥多雷斯 monLv80 ×40经验)：原代码排除 mode=level 使AI在60~80段经验只有玩家的1/12.7，玩家冲级必刷该副本——同规则下补齐 */ if((st.lv||1)<=21&&ITH_LEFT&&ITH_LEFT.yitaiNecklace>0&&aiIthTotal(st)<5) return 0;   /* 限量伊泰安项链窗口期：0~21级(雕俱1级怪等级差≤20门控)且项链总量未耗尽且未集满5件 → 全服所有玩家(含商人/白嫖玩家)一律优先泡雕俱星座——绝版限量品收益投入比最高(自用或倒卖都稳赚不愁卖)，人人先抢，正常人都这么选；掉完(总量0)/集满5件/超窗口后再按自身定位正常练级 */ var lv=st.lv||1; for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)<=20&&!(isPhantomDungeon(i)&&lv<75)&&!(DUNGEONS[i].mode==='pirate'&&!pirateOpenNow()))return i; } return 0; }   /* 副本推进：只刷等级差≤20(双向)，神之幻境需≥75级；海盗岛仅在每日20:00-23:00开放时段可刷（与玩家同规则） */
+function aiBestDungeonFor(st,p){   /* 已含「升级·经验」副本(狄奥多雷斯 monLv80 ×40经验)：原代码排除 mode=level 使AI在60~80段经验只有玩家的1/12.7，玩家冲级必刷该副本——同规则下补齐 */ if((st.lv||1)<=21&&ITH_LEFT&&ITH_LEFT.yitaiNecklace>0&&aiIthTotal(st)<5) return 0;
+  var lv=st.lv||1;
+  /* 未超脱(全力冲级)：按「每怪经验最大」挑副本，不再按索引顺序从上往下取第一个能刷的——
+     原逻辑 75~79 级先命中 海盗岛(索引8)/神之幻境(索引7)，每怪仅 438万/848万经验；
+     狄奥多雷斯(索引6) 每怪 1.75亿(mode=level ×40)，白亏 20~40 倍，单世 95% 时间耗在这 5 级。
+     超脱后仍走原索引顺序(优先高价值掉落副本，经验不再重要) */
+  if(!(st.ascended||((st.ws||0)>=99&&(st.core||0)>=1))){
+    var _bd=-1,_be=0;
+    for(var _k=0;_k<DUNGEONS.length;_k++){ var _ml=DUNGEONS[_k].monLv;
+      if(Math.abs(_ml-lv)>20) continue;
+      if(isPhantomDungeon(_k)&&lv<75) continue;
+      if(DUNGEONS[_k].mode==='pirate'&&!pirateOpenNow()) continue;
+      var _e2=aiExpPerKill(_ml,_k); if(_e2>_be){ _be=_e2; _bd=_k; }
+    }
+    if(_bd>=0) return _bd;
+  }
+  for(var i=DUNGEONS.length-1;i>=0;i--){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)<=20&&!(isPhantomDungeon(i)&&lv<75)&&!(DUNGEONS[i].mode==='pirate'&&!pirateOpenNow()))return i; } return 0; }   /* 副本推进：只刷等级差≤20(双向)，神之幻境需≥75级；海盗岛仅在每日20:00~23:00开放时段可刷（与玩家同规则） */
 function aiFarmGold(st,p,onlineSec){   /* 刷副本金币：随副本档位×在线（神豪/高奇遇收益更高）。强化逐级化后AI金币需支撑强化/天神/秘印/购买，副本掉金大幅提升（系统生产，不凭空） */
   var d=aiBestDungeonFor(st,p), base=(DUNGEONS[d]&&DUNGEONS[d].monLv)||1;
   return Math.round(onlineSec*base*3*(1+p.pay*1.2+p.luck*0.5)*aiGoldMult(st,p));   /* 刷本产金：强化逐级化后AI金币支撑强化/天神/秘印/交易，副本掉金提升（系统生产，不凭空）；神豪刷本效率高(顶尖)+luck高奇遇好→滚雪球；×黄金神坛·敛财（+0.5%/级，同玩家altarGoldMult） */
@@ -6768,7 +6784,7 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
   _B=aiBuildState(st,p);   /* 爬塔获得永久属性后重算，轮回判断用最新战力 */
   /* 真实轮回（玩家同款）：达大帝阶位+重修回80级(满级)+持有轮回秘印→自动轮回（后台模拟真人点轮回转生）。重修下限防"ws高→reincMult撑大帝→秒轮回"指数爆；ws越高reincMult越强→重修刷本越快→越修越快但每世至少重修时间(不硬编码世次) */
   st.seal=st.seal||0;
-  if((st.ws||0)<99 && _B.tierIdx>=5 && (st.lv||1)>=80){
+  if((st.ws||0)<99 && _B.tierIdx>=5 && (st.lv||1)>=80 && (_B.pw||0)>=REB_POWER_NEED){   /* 与玩家 rebirthReady 完全同款四道门：Lv80(第1世修满) + 大帝阶位(六维最大项≥1兆，CHAR_TIERS[5].m=1e12) + 战力≥1万亿(REB_POWER_NEED) + 轮回秘印×1；光到80级绝不轮回 */
     /* 秘印来源：世界boss掉落(前十名)或从持有者处用金币购买（非前十）。印不足→先从持有者处买1枚（秘印从持有者=世界boss掉落持有者转移，金币买家→卖家，杜绝凭空生成），买不起则本世不轮回（普通玩家轮回慢，顶尖抢boss快） */
     if(st.seal<1 && (st.gold||0)>=aiSealPrice(st,p)){ /* 秘印从拍卖行真实购买（用户铁律：所有交易必须走拍卖行，禁止私下直接转移）：持有者(世界boss掉落所得)已按需上架多余秘印(见 aiAuction 秘印/神核供给段)，缺印AI由 aiAuction 按需购买段从拍卖行扫货真实买入，卖家真实收款、总量守恒不凭空 */ }
     if(st.seal>=1){
