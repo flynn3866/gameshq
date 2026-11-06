@@ -4388,7 +4388,7 @@ var ITEM_BLUEPRINTS = {
   holyPotion: { name:"神圣药水", type:"potion", img:"logos/神圣药水.png", count:1, maxStack:99 },
   jiMiePotion: { name:"寂灭之息药剂", type:"potion", img:"logos/神圣药水.png", count:1, maxStack:99 },   /* 传说药水：BOSS即死（可堆叠，上限99） */
   sunPotion: { name:"太阳", type:"sun_potion", img:"logos/太阳.png", count:1, maxStack:99 },
-  megaSunPotion: { name:"超级大太阳", type:"sun_potion", img:"logos/太阳.png", count:1, maxStack:99, mega:true },
+  megaSunPotion: { name:"超级大太阳", type:"sun_potion", img:"logos/太阳.png", count:1, maxStack:99, mega:true },   /* 超级大太阳：打怪经验×100 持续12h（与太阳×5叠加=×500）；系统商店 100极金币(1e50) 出售——玩家/AI 都必须金币够才能买，不足不买、不凭空、不赊账 */
   potionFullHeal: { name:"全能药水", type:"potion", img:"logos/全能药水.png", count:100, maxStack:1000, price:10000000000, fullHeal:true, description:"使用后立刻恢复角色 100% 血量" },
   /* --- 洗炼卷轴 --- */
   refineScroll:    { name:"属性卷轴",       type:"normal_scroll", img:"logos/属性卷轴.png",       count:255, maxStack:255 },   /* 仅用于洗炼 */
@@ -6226,7 +6226,7 @@ function aiExpPerKill(monLv,d){ /* 每怪经验·纯版（同玩家offExpPerKill
   var dm={1:50,2:10,3:5,4:5,5:5}[d]; if(dm) e=Math.round(e*dm);   /* 副本小怪经验乘区：水龙×50（用户指定：现数字×5，原×10再×5）、深渊×10、王座/奥利森/沙漠×5（同玩家trGainExp） */
   return e; }
 function aiBestExp(lv){ var bestD=0,bestE=0; for(var i=0;i<DUNGEONS.length;i++){ var ml=DUNGEONS[i].monLv; if(Math.abs(ml-lv)>20)continue; if(DUNGEONS[i].mode==='pirate'&&!pirateOpenNow())continue; if(isPhantomDungeon(i)&&lv<75)continue; var e=aiExpPerKill(ml,i); if(e>bestE){ bestE=e; bestD=i; } } return {d:bestD,exp:bestE}; }   /* 副本推进：战力够就能刷≤自身±20级怪(等级差>20无收益)，自动选经验最优；海盗岛仅开放时段可刷 */
-function aiExpMult(st){ var m=1, _n=Date.now(); if(st.sunUntil&&_n<st.sunUntil) m*=5; if(st.megaSunUntil&&_n<st.megaSunUntil) m*=5; return Math.round(m*100*(1+((st.ws||0)*0.50)+(((st.talents||{}).exp||0)*0.25)+(((st.relic||{}).codex||0)*0.20)))/100; }   /* AI经验加成：太阳药水×5（用户指定：翻倍×2→×5，AI自购真实生效12h）/超级大太阳×5 +轮回经验加成（玩家reincExpMult同式：每世+50%·天赋悟道+25%·本源法典+20%），无则1不凭空 */
+function aiExpMult(st){ var m=1, _n=Date.now(); if(st.sunUntil&&_n<st.sunUntil) m*=5; if(st.megaSunUntil&&_n<st.megaSunUntil) m*=100; return Math.round(m*100*(1+((st.ws||0)*0.50)+(((st.relic||{}).codex||0)*0.20)))/100; }   /* AI经验加成：太阳药水×5/超级大太阳×100 +轮回经验加成（玩家reincExpMult同式：每世+50%·本源法典+20%；「悟道」已按用户要求改为固定伤害吸收，不再加经验），无则1不凭空 */
 function aiMonStatsOf(d){   /* 副本普通小怪数值（玩家 trMonStats 同款，monAtkCoef 取期望0.12确定性代表）——aiFarmExp(升级)与aiFarmAttr(BOSS间隔折算)共用同一份，杜绝两处公式漂移 */
   var dg=DUNGEONS[d]||DUNGEONS[0], el=dg.monLv||1;
   var diff=Math.pow(1.1,Math.min(6,d))*(isPhantomDungeon(d)?2:1);
@@ -6445,21 +6445,21 @@ function initAiState(p,sec){   /* 首次：静态发育初始化（perm从0，�
          iset:gearPct>=0.9?5:(gearPct>=0.7?3:0), og:gearPct>=0.85?5:(gearPct>=0.65?3:(gearPct>=0.5?2:0))},
     gold:0, kf:p.pay>=3?500000000:(p.pay>=2?10000000:(p.pay>=1?Math.round(100000+Math.random()*900000):0)), _seller:(p.pay>=2?0:(Math.random()<0.4?1:0)),   /* 氪金(模拟现实充值，系统无法直接花)：神豪5亿/高氪1000万/微氪0~100万/白嫖0（2026-10-29初始氪金×10：5000万→5亿/100万→1000万/0~10万→0~100万）；只能向其他AI按100氪金=10亿金币购买（金币靠刷本生产，不能凭空）。_seller=愿售金者：神豪/高氪只买不卖(充值买金币)，微氪/白嫖中40%愿卖金币换氪金(模拟真实玩家变现) */
     tierIdx:0, lastUpdate:SERVER_START,
-    talents:{all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0}, relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0}, tp:0, stones:0,
+    talents:{all:0,exp:0,absorb:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0}, relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0}, tp:0, stones:0,
     gods:{main:null,sub1:null}, godPower:0, godCrystal:0, godRune:0, godSeal:0, _godTaskDay:'', towerLv:0, trialLv:0, towerCoins:0, towerGot:{}, arenaScore:0, arenaMax:0, arenaTotal:0, arenaWin:0, arenaLose:0, arenaStreak:0, aucCostG:0, aucCostK:0, aucIncG:0, aucIncK:0}; }   /* AI天神神级数据+升级材料(神力碎片/结晶/破重碎片)：初始无天神（与玩家一致，绝不凭空生成），天神牌子由 aiGodAcquire 从副本/世界boss/挑战塔等真实掉落获得（与玩家同源），拥有才能上阵、才可用材料升级；AI竞技字段显式初始化到原始状态：当前积分/历史最高/累计总分/胜负/连胜全0（段位由总分派生=0、徽章由trialLv=0派生=无——同玩家doReset开新服全清）；开服后由 aiArenaTick 首次对战时按「实力段位门槛分」惰性拉起始积分（实力段位由真实战力确定性派生→映射到积分门槛，非凭空）；aucCostG/aucCostK=拍卖总成本(买入+手续费)、aucIncG/aucIncK=拍卖总收入(卖出成交额，金币/氪金分币种)——初始0，与玩家AUCTION同口径 */
-function _aiRptEnsure(st){ st.talents=st.talents||{all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0}; st.relic=st.relic||{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0}; st.tp=st.tp||0; st.stones=st.stones||0; st.bag=st.bag||[]; st.equip=st.equip||{}; if(!st.altar){ st.altar={investGold:0}; } else if(typeof st.altar.investGold==='undefined'){ var _l0=st.altar.lv||0, _ig0=0; for(var _i0=0;_i0<_l0;_i0++) _ig0+=Math.round(ALTAR_BASE.atk*Math.pow(1.6,_i0)); st.altar.investGold=_ig0; } }   /* 旧存档兜底：补天赋/法器字段 + 真实背包bag/穿戴equip + 神坛10线迁移(旧{lv,investGold}→补齐investGold，10线等级由aiAltarLines按investGold确定性分配，不丢玩家神坛投入)；AI竞技字段由 aiArenaTick 首次对战时按实力段位门槛初始化（不在此补，保持undefined→aiArenaRank回退实力段位，旧档不凭空拉低段位） */
-function aiSpendRpt(st){   /* 后台自动点天赋/炼化法器（模拟真人）：规则与玩家 rbAddTalent/rbUpRelic 完全一致——天赋仅真伤/破甲/铁壁有上限(其余无上限，受轮回点tp每世+1天然限制)；法器需轮回世次解锁(眼1/法典2/战旗3/护符4/结界5/本源99)、无Lv上限(成本递增自然限制)、成本=(Lv+1)×100魂石 */
+function _aiRptEnsure(st){ st.talents=st.talents||{all:0,exp:0,absorb:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0}; if(typeof st.talents.absorb!=='number') st.talents.absorb=0;   /* 旧档补 absorb，防 undefined++ 变 NaN */ st.relic=st.relic||{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0}; st.tp=st.tp||0; st.stones=st.stones||0; st.bag=st.bag||[]; st.equip=st.equip||{}; if(!st.altar){ st.altar={investGold:0}; } else if(typeof st.altar.investGold==='undefined'){ var _l0=st.altar.lv||0, _ig0=0; for(var _i0=0;_i0<_l0;_i0++) _ig0+=Math.round(ALTAR_BASE.atk*Math.pow(1.6,_i0)); st.altar.investGold=_ig0; } }   /* 旧存档兜底：补天赋/法器字段 + 真实背包bag/穿戴equip + 神坛10线迁移(旧{lv,investGold}→补齐investGold，10线等级由aiAltarLines按investGold确定性分配，不丢玩家神坛投入)；AI竞技字段由 aiArenaTick 首次对战时按实力段位门槛初始化（不在此补，保持undefined→aiArenaRank回退实力段位，旧档不凭空拉低段位） */
+function aiSpendRpt(st){   /* 后台自动点天赋/炼化法器（模拟真人）：规则与玩家 rbAddTalent/rbUpRelic 完全一致——天赋全部无上限(用户指定，原真伤25/破甲10/铁壁10 三档已移除，仅受轮回点tp天然限制)；法器需轮回世次解锁(眼1/法典2/战旗3/护符4/结界5/本源99)、无Lv上限(成本递增自然限制)、成本=(Lv+1)×100魂石 */
   _aiRptEnsure(st); var tl=st.talents, rl=st.relic, ws=st.ws||0;
-  var tcap={true:25,ignore:10,fdr:10};   /* 同玩家 rbAddTalent tcap */
+  /* 用户指定：所有天赋无升级上限（原真伤25/破甲10/铁壁10 三档与 1e9 隐性上限全部移除，同玩家 rbAddTalent） */
   while((st.tp||0)>0){ var s=false;
-    if(tl.all<(1e9)){ tl.all++; st.tp--; s=true; }   /* 鸿蒙：无上限(全属性优先，战力最大) */
-    else if((tl.true||0)<tcap.true){ tl.true++; st.tp--; s=true; }
-    else if((tl.ignore||0)<tcap.ignore){ tl.ignore++; st.tp--; s=true; }
-    else if((tl.fdr||0)<tcap.fdr){ tl.fdr++; st.tp--; s=true; }
-    else if(tl.crit<(1e9)){ tl.crit++; st.tp--; s=true; }
-    else if(tl.gold<(1e9)){ tl.gold++; st.tp--; s=true; }
-    else if(tl.lifesteal<(1e9)){ tl.lifesteal++; st.tp--; s=true; }
-    else if(tl.exp<(1e9)){ tl.exp++; st.tp--; s=true; }
+    if((st.tp||0)>=RB_T_KPT){ tl.absorb=(tl.absorb||0)+1; st.tp-=RB_T_KPT; s=true; }   /* 御伤：同玩家 1000 点/级，够才升（免秒收益最高，优先）；不够则落到下面的 1 点级 */
+    else if(tl.all<Infinity){ tl.all++; st.tp--; s=true; }   /* 鸿蒙：全属性(战力增益最大) */
+    else if((tl.true||0)<Infinity){ tl.true++; st.tp--; s=true; }
+    else if((tl.ignore||0)<Infinity){ tl.ignore++; st.tp--; s=true; }
+    else if((tl.fdr||0)<Infinity){ tl.fdr++; st.tp--; s=true; }
+    else if(tl.crit<Infinity){ tl.crit++; st.tp--; s=true; }
+    else if(tl.gold<Infinity){ tl.gold++; st.tp--; s=true; }
+    else if(tl.lifesteal<Infinity){ tl.lifesteal++; st.tp--; s=true; }
     else break; }
   var _req={eye:1,codex:2,banner:3,amulet:4,realm:5,end:99};   /* 同玩家 RB_RELICS.req 解锁世次 */
   var _order=['eye','realm','codex','banner','amulet','end'];   /* 优先全属性·本源(战力最大) */
@@ -6768,6 +6768,11 @@ function aiAdvanceStep(st,p,ds){   /* 单步：刷副本+金币→状态感知�
   if((st.lv||0)<80 && (!st.sunUntil||Date.now()>=st.sunUntil) && (st.gold||0)>=3000000){
     var _sunP=_rushAsc?1:(p.pay>=3?0.45:(p.pay>=2?0.28:(p.pay>=1?0.12:0.05)));   /* 冲级期：金币够就必买小太阳(×5经验12h，系统商店真实扣费100万，不凭空) */
     if(Math.random()<_sunP&&(st.gold||0)>=1000000){ st.gold-=1000000; st.sunUntil=Date.now()+12*60*60*1000; gLog('购买','AI 购买了 小太阳（打怪经验×5 持续12h）'); }
+  }
+  /* AI购买超级大太阳（打怪经验×100 持续12h，同玩家：系统商店 100极金币 真实扣费）：与玩家完全同规则——金币不足1分不买(不凭空/不赊账)，冲级期金币够就必买；生效中不重复买 */
+  if(_rushAsc && (st.gold||0)>=1e50 && (!st.megaSunUntil||Date.now()>=st.megaSunUntil)){
+    st.gold-=1e50; st.megaSunUntil=Date.now()+12*60*60*1000;
+    gLog('购买','AI 购买了 超级大太阳（打怪经验×100 持续12h，真实扣费 100极金币）');
   }
   aiUseHeal(st,p);   /* 战斗受重伤时消耗全能药水回满（真实消耗，与玩家同物） */
   var _final = !!(st&&(st.ascended||((st.ws||0)>=99&&(st.core||0)>=1)));   /* 最终阶位(超脱)：不再轮回，装备/天神不再被清空（消耗核标记后core可为0仍超脱，同玩家ascended） */
@@ -7228,14 +7233,14 @@ function aiBuildState(st,p){   /* 玩家同口径：六维(含perm)→攻防血�
   var agi=Math.max(10, Math.round(A.敏捷)), pw=battlePower(Math.round(patk),Math.round(pdef),Math.round(hp),agi);   /* 敏捷=六维敏捷(同玩家battlePower/攻速口径)：避免固定250导致AI攻速51秒/次、战力低估 */
   var hp2=hp+Math.round(pw*100);   /* 防秒杀（玩家同款：生命=原算+战力×100） */
   var asc=!!(st.ascended||((st.ws>=99 && (st.core||0)>=1))); var tierIdx=asc?6:ti;   /* 超脱·轮回主宰=99世圆满+太初神核×1(与世界boss遗物匣碎片合成，玩家同规则，超脱消耗核后由ascended标记保持阶位)；AI神核来自世界boss前十开匣或金币购买，杜绝凭空生成 */
-  var fdr=Math.min(0.9, Math.min(0.5,(alt.fdr||0)*0.005+Math.min(0.3,((st.talents||{}).fdr||0)*0.03))+(aiWornIth(st)>=5?0.30:0)+(og>=5?0.10:0)+aiEnh20Fdr(st)+aiGemFdr(st));   /* 神坛·御天(封顶50%)+轮回天赋·御守(封顶30%)+伊泰安5件+30%+奥格顿5件+10%+防具强化+20每件+3%+6级专注宝石每颗+0.3%(全同玩家fd口径)，整体封顶90% */
+  var fdr=Math.min(0.9, Math.min(0.5,(alt.fdr||0)*0.005+(((st.talents||{}).fdr||0)*0.03))+(aiWornIth(st)>=5?0.30:0)+(og>=5?0.10:0)+aiEnh20Fdr(st)+aiGemFdr(st));   /* 神坛·御天(封顶50%)+轮回天赋·铁壁(3%/级无上限)+伊泰安5件+30%+奥格顿5件+10%+防具强化+20每件+3%+6级专注宝石每颗+0.3%(全同玩家fd口径)，整体封顶90% */
   var ig=0,tr=0,add=0;
   var ithN=aiWornIth(st);   /* AI穿戴中的伊泰安件数（真实穿在5首饰槽+武器防具，同玩家ISET数equipState口径，获得才有，杜绝凭空） */
   if(tierIdx>=6){ ig+=0.30;tr+=0.30; } else if(tierIdx>=5){ ig+=0.20;tr+=0.20; } else if(tierIdx>=4){ ig+=0.08;tr+=0.08; } else if(tierIdx>=3){ ig+=0.05; }   /* 阶位攻击特性：超脱30%+真伤30%/大帝20%+20%/神王8%+8%/真神5%（同玩家 roleTierAtk：修复原缺超脱10%） */
   if(ithN>=5)ig+=0.30;   /* 伊泰安5件：无视防御30%（实际持有才触发，同玩家） */
   tr+=(alt.true||0)*0.005;   /* 黄金神坛·破妄：真实伤害+0.5%/级（同玩家altarTruePct，无阶位门槛、无上限） */
   add+=(og>=5?0.10:0);   /* 传说奥格顿5件增伤：真实穿戴件数（og=aiEquipBonus真实件数，同玩家 OG>=5；修复原误用练度字段en.og） */
-  var _tl=st.talents||{}; ig+=Math.min(0.3,_tl.ignore*0.03); tr+=Math.min(0.5,_tl.true*0.02);   /* 轮回天赋·无视防御(3%/级封顶30%)·真伤(2%/级封顶50%)：同玩家 reincIgnore/reincTrue */
+  var _tl=st.talents||{}; ig+=_tl.ignore*0.03; tr+=_tl.true*0.02;   /* 轮回天赋·无视防御(3%/级)·真伤(2%/级)：同玩家 reincIgnore/reincTrue，均无上限（原封顶30%/50%已移除） */
   /* AI 称号/无尽徽章（同玩家 titleAtk+tMedalAtk：称号按真实竞技历史最高积分锚定、徽章按真实无尽试炼通关层数解锁，全部真实数据可溯源，杜绝凭空；与 aiBuild 展示口径一致） */
   var _as=(st.arenaTotal!=null)?st.arenaTotal:Math.max((st.arenaMax||0),(st.arenaScore||0));   /* 竞技累计总分（同玩家 ARENA.totalScore：历史获得积分总和只增不减；旧档无总分→以历史最高积分为兜底；未打过竞技=0→无称号） */
   if(_as>=ARENA_RANKS[6].min){ ig+=0.10; tr+=0.10; } else if(_as>=ARENA_RANKS[5].min){ ig+=0.05; }   /* 称号：战神 无视10%+真伤10%/荣耀王者 无视5%；璀璨星钻无攻击特性（吸血见 _titleLs）——同玩家 arenaTitle 按历史最高积分锚定 */
@@ -7261,7 +7266,7 @@ function aiBuildState(st,p){   /* 玩家同口径：六维(含perm)→攻防血�
   tr+=_spA.trueDmg;   /* 异能·破虚：真实伤害%（同玩家 trAtk/tlCharDmg _rl+_sp.trueDmg） */
   lsTotal+=_spA.vamp+_spA.onKillHeal;   /* 异能·噬血(吸血)/嗜血(命中回复)：均按造成伤害回复，等效并入攻击吸血（同玩家 trAtk 9096 _sp2.vamp+_sp2.onKillHeal 都加） */
   var _critSp=1+_spA.critDmg;   /* 异能·锋芒：暴击伤害乘区（同玩家 暴击倍率×(1+_sp.critDmg)，只作用主伤害） */
-  return {pw:pw,atk:Math.round(patk),def:Math.round(pdef),hp:Math.round(hp2),hp0:Math.round(hp),agi:agi,tierIdx:tierIdx,asc:asc,fdr:fdr,tr:tr,ig:ig,add:add,atkElem:(ithN>=3&&p.id%2===0)?'fire':(ithN>=3?'wind':null),A:A,armorAbs:aiArmorAbs(st),alt:alt,critMult:_critAltar*_critReinc*_critBlade*_critSp,critAltar:_critAltar,critReinc:_critReinc,critBlade:_critBlade,critSp:_critSp,bossDmg:_spA.bossDmg,atkSpd:_spA.atkSpd,hitBonus:Math.min(0.5,(alt.hit||0)*0.005),lsPct:Math.min(0.1,(alt.ls||0)*0.005),lsTotal:lsTotal,dropBonus:Math.min(0.5,(alt.drop||0)*0.05),goldMult:1+(alt.gold||0)*0.005+_spA.goldMul,luck:A['幸运']||0,wingEquip:_wingEq,bladeEquip:_bladeEq};   /* 神坛10线效果（会心/命定/噬血/福泽/敛财）随战力返回，供aiCanKillMon战斗与掉落复用（同玩家公式）；atkElem属性攻击也按实际伊泰安持有件数；armorAbs=防具强化伤害吸收；critMult=神坛会心×轮回会心×神裁×异能锋芒（完整倍率），critAltar/critReinc/critBlade/critSp=分量供各场景按玩家同组合调用（副本2×神坛×轮回×锋芒；塔/竞技/世界BOSS 2×神坛×神裁×锋芒）；bossDmg=异能·猎尊对Boss增伤（打怪结算处按是否Boss附加，同玩家T.isBoss）；atkSpd=异能·疾攻；lsTotal=真实穿戴/称号/神坛/轮回/异能嗜血吸血合计；luck=AI六维幸运（同玩家charLuck）；wing/bladeEquip=真实穿戴传说魔翼/神裁之刃（同玩家legendWing/shencaiBlade） */
+  return {pw:pw,atk:Math.round(patk),def:Math.round(pdef),hp:Math.round(hp2),hp0:Math.round(hp),agi:agi,tierIdx:tierIdx,asc:asc,fdr:fdr,tr:tr,ig:ig,add:add,atkElem:(ithN>=3&&p.id%2===0)?'fire':(ithN>=3?'wind':null),A:A,armorAbs:aiArmorAbs(st)+(_tl.absorb||0)*100000000,   /* +轮回天赋·御伤(+1亿/级)：同玩家 TR.absorb 口径，沿 armorAbs 进 calcHit 固定吸收 */alt:alt,critMult:_critAltar*_critReinc*_critBlade*_critSp,critAltar:_critAltar,critReinc:_critReinc,critBlade:_critBlade,critSp:_critSp,bossDmg:_spA.bossDmg,atkSpd:_spA.atkSpd,hitBonus:Math.min(0.5,(alt.hit||0)*0.005),lsPct:Math.min(0.1,(alt.ls||0)*0.005),lsTotal:lsTotal,dropBonus:Math.min(0.5,(alt.drop||0)*0.05),goldMult:1+(alt.gold||0)*0.005+_spA.goldMul,luck:A['幸运']||0,wingEquip:_wingEq,bladeEquip:_bladeEq};   /* 神坛10线效果（会心/命定/噬血/福泽/敛财）随战力返回，供aiCanKillMon战斗与掉落复用（同玩家公式）；atkElem属性攻击也按实际伊泰安持有件数；armorAbs=防具强化伤害吸收；critMult=神坛会心×轮回会心×神裁×异能锋芒（完整倍率），critAltar/critReinc/critBlade/critSp=分量供各场景按玩家同组合调用（副本2×神坛×轮回×锋芒；塔/竞技/世界BOSS 2×神坛×神裁×锋芒）；bossDmg=异能·猎尊对Boss增伤（打怪结算处按是否Boss附加，同玩家T.isBoss）；atkSpd=异能·疾攻；lsTotal=真实穿戴/称号/神坛/轮回/异能嗜血吸血合计；luck=AI六维幸运（同玩家charLuck）；wing/bladeEquip=真实穿戴传说魔翼/神裁之刃（同玩家legendWing/shencaiBlade） */
 }
 var __aiSavePending=0,__aiSaveTimer=null;
 function aiSaveField(force){   /* 落盘去重+原子：批量核算(心跳/renderRank 各100次)在2s窗口内合并为1次实际写，大幅降序列化次数；force=true 立即写(批次核算末尾原子落盘，消除重复核算窗口——AI惰性补算依赖落盘锚点防重) */
@@ -9247,7 +9252,7 @@ function roleTraits(){
   if(TLM.s150.got&&TLM.s150.on) il.push('执掌乾坤徽章+20%');
   if(ISET>=5) il.push('伊泰安首饰5件+30%');
   if(reincIgnore()>0) il.push('轮回天赋·无视防御+'+pct(reincIgnore()));
-  var ig=Math.min(0.9,_ta.ig+_tm.ig+(ARENA.medalOn&&ARENA.killBoss>=1?0.10:0)+(ISET>=5?0.30:0)+reincIgnore());   /* 本命特性(阶位固有)已在「本命特性」栏，此处只列附加来源 */
+  var ig=Math.min(1,_ta.ig+_tm.ig+(ARENA.medalOn&&ARENA.killBoss>=1?0.10:0)+(ISET>=5?0.30:0)+reincIgnore());   /* 本命特性(阶位固有)已在「本命特性」栏，此处只列附加来源；无视防御物理上限=100%(防御归零)，天赋本身无上限 */
   if(ig>0) out.push({n:'无视防御',d:'攻击无视目标一定比例的防御('+pct(ig)+')。提供：'+jn(il),p:pct(ig)});
   /* 真实伤害 */
   var tl=[];
@@ -9382,7 +9387,7 @@ function sysBuyPrice(it){
   if(it.name==='全能药水') return 10000000000;   /* 全能药水 100亿 */
   if(it.name==='伊泰安项链') return 1000000;   /* 伊泰安项链 100万 */
   if(it.name==='太阳') return 1000000;   /* 太阳 100万 */
-  if(it.name==='超级大太阳') return 20000000;   /* 超级大太阳 2000万 */
+  if(it.name==='超级大太阳') return 1e50;   /* 超级大太阳：100极金币（1极=1e48，100极=1e50）——超级物品定价，金币不足买不了 */
   var t=it.type;
   if(t==='mount') return 100000000000;          /* 坐骑 1000亿 */
   if(t==='full_scroll'||t==='god_seal_material'||it.name.indexOf('混沌')>=0) return 100000000;   /* 完整卷轴/神印碎片/混沌 1亿 */
@@ -9408,6 +9413,7 @@ function isShopExcluded(it){
 /* 系统商店白名单：仅以下物品可出售——小太阳/坐骑/普通·稀有奥格顿/所有5级石头(含5级专注)/海伦宝石/镶嵌锤/拆卸锤；其余一律不出现在系统商店 */
 function isShopAllowed(it){
   if(String(it.name)==='太阳') return true;   /* 小太阳（太阳经验药水） */
+  if(String(it.name)==='超级大太阳') return true;   /* 超级大太阳：超级经验物品（100极金币，玩家/AI 金币不足均无法购买） */
   if(String(it.name)==='全能药水') return true;   /* 全能药水：回满血（100亿/瓶，100一组） */
   if(it.type==='mount') return true;   /* 坐骑 */
   if(String(it.name).indexOf('普通 奥格顿')===0||String(it.name).indexOf('稀有 奥格顿')===0) return true;   /* 普通/稀有奥格顿 */
@@ -10402,7 +10408,7 @@ function renderAchievement(){
     {c:'阶位压制',rows:['高阶对低阶：无视防御 10% + 伤害 +10%','低阶对高阶：攻击 -10%']},
     {c:'神圣药水',rows:['攻击与防御翻倍、攻速翻倍'],note:'持续 12 小时'},
     {c:'太阳',rows:['打怪获得经验 ×5'],note:'持续 12 小时'},   /* 用户指定：小太阳打怪经验由翻倍×2 调整为 ×5 */
-    {c:'超级大太阳',rows:['打怪获得经验 ×5'],note:'持续 12 小时'}
+    {c:'超级大太阳',rows:['打怪获得经验 ×100'],note:'持续 12 小时 · 系统商店 100 极金币'}
   ];
   var fel=document.getElementById('ach-effects');
   if(fel){ var fh='';
@@ -11600,18 +11606,18 @@ function gdTips(){
    ['战力优先堆','装备<b>强化+20</b>、镶嵌宝石、天神<b>5重5星</b>——这三项是战力大头，优先做。'],
    ['副本全刷','8个副本按等级全通，每副本掉专属宝物，<b>图鉴集齐</b>拿永久属性奖励(最高全属性+100亿)。'],
    ['早点轮回','转生永久全属性+30%，<b>越早轮回复利越厚</b>；条件到了立刻转，别拖。'],
-   ['药水拉满','<b>神圣药水</b>(攻防翻倍)、<b>太阳</b>(经验×5)/<b>超级大太阳</b>(经验×5)，12小时全程。'],   /* 太阳×5（用户指定调整） */
+   ['药水拉满','<b>神圣药水</b>(攻防翻倍)、<b>太阳</b>(经验×5)/<b>超级大太阳</b>(经验×100)，12小时全程。'],   /* 太阳×5（用户指定调整） */
    ['黄金神坛','<b>灌注</b>攻/守/生/敛财/会心/真伤/命定/御天/噬血/福泽十线永久成长，多余金币砸这里。'],
    ['最终冲刺','99世+战力百万亿即可<b>超脱·轮回主宰</b>：永久全属性+1000%，配太初本源、轮回尽头。']
   ].map(function(g,i){ return '<div class="gd-tip"><span class="gd-tip-n">'+(i+1)+'</span><div class="gd-tip-d">'+g[0]+' · '+g[1]+'</div></div>'; }).join('');
 }
 function mountGuide(){ var bk=document.getElementById('guide-back'); if(bk&&!bk.__b){ bk.__b=true; bk.addEventListener('click',function(){ location.hash='#home'; }); } renderGuide(); }
 /* ===== 轮回·转生系统 ===== */
-var REBIRTH={count:0,stones:0,tp:0,ascended:0,essence:0,talents:{all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0},relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0},reliquary:0,seal:0,frag:0,core:0,boxCount:0,sealBoon:0};   /* reliquary太古遗物匣/seal轮回秘印/frag太初神核碎片/core太初神核/boxCount开箱保底计数/sealBoon秘印炼化次数(每次20枚→+1%永久) */
+var REBIRTH={count:0,stones:0,tp:0,ascended:0,essence:0,talents:{all:0,exp:0,absorb:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0},relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0},reliquary:0,seal:0,frag:0,core:0,boxCount:0,sealBoon:0};   /* reliquary太古遗物匣/seal轮回秘印/frag太初神核碎片/core太初神核/boxCount开箱保底计数/sealBoon秘印炼化次数(每次20枚→+1%永久) */
 var REB_POWER_NEED=1000000000000;   /* 转生战力门槛：1万亿 */
 var RB_TALENTS=[
   {k:'all',n:'鸿蒙',ic:'∞',d:'全属性 +5%/级',c:'#b47aff'},
-  {k:'exp',n:'悟道',ic:'悟',d:'经验 +25%/级',c:'#52C6DA'},
+  {k:'absorb',n:'御伤',ic:'盾',d:'固定伤害吸收 +1亿/级（1000点/级）',c:'#9AD8FF'},   /* 用户指定：原「悟道(经验+25%/级)」改为固定伤害吸收——走 calcHit 最后一步 total-abs，是唯一能把伤害结果归零的通道（同专注宝石），无上限 */
   {k:'gold',n:'聚财',ic:'财',d:'金币 +20%/级',c:'#F2C96B'},
   {k:'crit',n:'破势',ic:'刃',d:'暴击率+2% · 暴伤+30%/级',c:'#FF5AD8'},
   {k:'lifesteal',n:'饮血',ic:'血',d:'吸血 +2%/级',c:'#39FF66'},
@@ -11627,16 +11633,18 @@ var RB_RELICS=[
   {k:'realm',n:'轮回结界',ic:'界',req:5,d:'吸血 +1%/级',c:'#39FF66'},
   {k:'end',n:'太初本源',ic:'源',req:99,d:'全属性+2%/级 · 按其他法器总等级+1%',c:'#FFD75E'}
 ];
-function _rb(){ return (typeof REBIRTH!=='undefined'&&REBIRTH)?REBIRTH:{count:0,stones:0,tp:0,ascended:0,essence:0,talents:{all:0,exp:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0},relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0}}; }
+function _rb(){ return (typeof REBIRTH!=='undefined'&&REBIRTH)?REBIRTH:{count:0,stones:0,tp:0,ascended:0,essence:0,talents:{all:0,exp:0,absorb:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0},relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0}}; }
 function reincMult(){ var r=_rb(); var other=(r.relic.eye||0)+(r.relic.codex||0)+(r.relic.amulet||0)+(r.relic.realm||0)+(r.relic.banner||0); return 1+r.count*0.30+r.talents.all*0.05+r.relic.eye*0.10+(r.ascended?(10.1):0)+(r.relic.end||0)*0.02+other*0.01+(r.sealBoon||0)*0.01; }   /* 超脱大礼包+1000%·称号+10%·太初本源+2%/级·按其他法器总等级+1%·秘印炼化+1%/次(独立永久战力) */
-function reincExpMult(){ var r=_rb(); return 1+r.count*0.50+r.talents.exp*0.25+r.relic.codex*0.20; }
+var RB_T_KPT=1000;   /* 御伤（固定伤害吸收）每级消耗的轮回天赋点（用户指定：1000 点一次） */
+function reincExpMult(){ var r=_rb(); return 1+r.count*0.50+r.relic.codex*0.20; }   /* 用户指定：删除原「悟道 talents.exp*0.25」经验加成，该项已改为固定伤害吸收 */
+function reincAbsorb(){ var r=_rb(); return (r.talents.absorb||0)*100000000; }   /* 御伤：固定伤害吸收 +1亿/级，无上限（用户指定）；注入 TR.absorb 走 calcHit 的 total-abs 归零通道，与专注宝石同源 */
 function reincGoldMult(){ var r=_rb(); return 1+r.talents.gold*0.20+r.relic.banner*0.15; }
 function reincCritRate(){ var r=_rb(); return r.talents.crit*0.02+r.relic.amulet*0.02; }
 function reincCritMul(){ var r=_rb(); return 1+r.talents.crit*0.30; }
 function reincHeal(dmg){ var r=_rb(); return dmg*(r.talents.lifesteal*0.02+r.relic.realm*0.01); }
-function reincTrue(){ var r=_rb(); return Math.min(0.5, r.talents.true*0.02); }
-function reincIgnore(){ var r=_rb(); return Math.min(0.3, r.talents.ignore*0.03); }
-function reincFdr(){ var r=_rb(); return Math.min(0.3, r.talents.fdr*0.03); }
+function reincTrue(){ var r=_rb(); return r.talents.true*0.02; }   /* 真伤：2%/级线性无限（用户指定去上限，原封顶50%已移除） */
+function reincIgnore(){ var r=_rb(); return r.talents.ignore*0.03; }   /* 破甲：3%/级线性无限（原封顶30%已移除）；calcHit 内 eDef=Math.max(def×(1-ig),0)，超100%后防御自然归零、不会负防 */
+function reincFdr(){ var r=_rb(); return r.talents.fdr*0.03; }   /* 铁壁：3%/级线性无限（原封顶30%已移除）；各场景最终减伤仍有既有 90% 总钳兜底，不会出现负伤害/无敌 */
 function rebirthReady(){ return charTierIdx()>=CHAR_TIERS.length-1 && rolePower()>=REB_POWER_NEED; }
 var REB_ASCEND_NEED=100000000000000;   /* 超脱门槛：99世圆满 + 战力≥100万亿 */
 var ALTAR={atk:0,def:0,hp:0,gold:0,crit:0,true:0,hit:0,fdr:0,ls:0,drop:0,sac:0};
@@ -11749,17 +11757,19 @@ function doReincarnate(){
 function rbAddTalent(k){
   var it=null; for(var i=0;i<RB_TALENTS.length;i++) if(RB_TALENTS[i].k===k){ it=RB_TALENTS[i]; break; }
   if(!it) return;
-  var tcap=({true:25,ignore:10,fdr:10})[k]||Infinity; if((REBIRTH.talents[k]||0)>=tcap){ toast('「'+it.n+'」已达上限'); return; }
-  if(REBIRTH.tp<1){ toast('天赋点不足（每轮回 +1 点）'); return; }
-  REBIRTH.tp--; REBIRTH.talents[k]++; RB_LAST_TALENT=k; recalcCharacter(); renderRebirth(); saveGame();
-  toast('已点「'+it.n+'」');
+  /* 用户指定：所有轮回天赋取消升级上限，可无限升级（原 true25 / ignore10 / fdr10 三档硬上限已移除） */
+  var tcost=(it.k==='absorb')?RB_T_KPT:1;   /* 御伤 1000 点/级，其余 1 点/级 */
+  if(typeof REBIRTH.talents[k]!=='number') REBIRTH.talents[k]=0;   /* 旧存档缺该字段时补 0，防 undefined++ 变 NaN */
+  if(REBIRTH.tp<tcost){ toast((it.k==='absorb')?('轮回点不足：升「'+it.n+'」需 '+tcost+' 点，当前 '+REBIRTH.tp+' 点'):'天赋点不足（每轮回 +1 点）'); return; }
+  REBIRTH.tp-=tcost; REBIRTH.talents[k]++; RB_LAST_TALENT=k; recalcCharacter(); renderRebirth(); saveGame();
+  toast('已点「'+it.n+'」'+(tcost>1?('（消耗 '+tcost+' 点）'):''));
 }
 function rbWash(){
   confirmDialog('重洗全部天赋并返还天赋点？<br>花费 100 魂石', function(ok){
     if(!ok) return;
     if(REBIRTH.stones<100){ toast('魂石不足'); return; }
     REBIRTH.stones-=100; var sum=0;
-    for(var k in REBIRTH.talents) sum+=REBIRTH.talents[k];
+    for(var k in REBIRTH.talents) sum+=(k==='absorb'?REBIRTH.talents[k]*RB_T_KPT:REBIRTH.talents[k]);   /* 御伤按每级 1000 点退还，避免重洗损失 99.9% 点数 */
     for(var k2 in REBIRTH.talents) REBIRTH.talents[k2]=0;
     REBIRTH.tp+=sum; recalcCharacter(); renderRebirth(); saveGame(); toast('天赋已重洗');
   });
@@ -11810,8 +11820,8 @@ function renderRebirth(){
   var v=document.getElementById('rb-cond-v'); if(v)v.textContent=fmtWan(rolePower())+' / 1万亿';
   var f=document.getElementById('rb-cond-fill'); if(f){ var pct=Math.max(0,Math.min(100,rolePower()/REB_POWER_NEED*100)); f.style.width=pct.toFixed(1)+'%'; }
   var tt=document.getElementById('rb-talents'); if(tt){ var h='';
-    for(var i=0;i<RB_TALENTS.length;i++){ var it=RB_TALENTS[i], lv=REBIRTH.talents[it.k]||0, tcap=({true:25,ignore:10,fdr:10})[it.k]||Infinity, tfull=lv>=tcap;
-      h+='<div class="rb-t-item'+(lv>0?' lv':'')+(RB_LAST_TALENT===it.k?' hot':'')+(tfull?' capped':'')+'"><div class="rb-t-name"><span class="rb-t-ic" style="color:'+it.c+';border:1px solid '+it.c+'">'+it.ic+'</span>'+it.n+'<span class="rb-t-lv">Lv.'+lv+'</span></div><div class="rb-t-d">'+it.d+'</div>'+(tfull?'<span class="rb-t-cap">已达上限</span>':'<button class="rb-t-add'+(REBIRTH.tp>0?'':' dis')+'" data-k="'+it.k+'">+</button>')+'</div>';
+    for(var i=0;i<RB_TALENTS.length;i++){ var it=RB_TALENTS[i], lv=REBIRTH.talents[it.k]||0, tfull=false;   /* 天赋已无升级上限：不再渲染「已达上限」、+ 按钮永不置灰 */
+      h+='<div class="rb-t-item'+(lv>0?' lv':'')+(RB_LAST_TALENT===it.k?' hot':'')+(tfull?' capped':'')+'"><div class="rb-t-name"><span class="rb-t-ic" style="color:'+it.c+';border:1px solid '+it.c+'">'+it.ic+'</span>'+it.n+'<span class="rb-t-lv">Lv.'+lv+'</span></div><div class="rb-t-d">'+it.d+'</div>'+('<button class="rb-t-add'+((REBIRTH.tp>=(it.k==='absorb'?RB_T_KPT:1))?'':' dis')+'" data-k="'+it.k+'">+</button>')+'</div>';
     }
     tt.innerHTML=h;
   }
@@ -13133,7 +13143,7 @@ function aiReplyChat(nm,text){
   var rep=(aiStyle(p, p.st||{}).gearLove>=0.6)?['战力才是硬道理，装备好一切都好说。','刚刷完副本，材料又攒了一堆。']:['金币攒着最实在，够用就好。','今天材料行情不错，多卖点。'];
   chatPrivPush({from:nm,to:chatPlayerName(),ai:true,text:rep[Math.floor(Math.random()*rep.length)],time:Date.now()});
 }
-var LOTTERY=[   /* 玄鉴神藏：稀缺资源池（去空奖，整体价值上移；传说档 prob<0.01 触发彩带/稀有判定）18扇区：概率总和=1.0；竞技积分+100万1%(品红紫，原神力碎片×10扇区按用户要求替换，让出的8.84%并入金币5亿)、100极金币1%(品红紫#e702e7，原神力碎片×60扇区替换，让出的6.84%并入金币5亿)、神力碎片4项(30/100/150/300)概率(8.84/6.84/6.74/5.74%)=29.16%，金币5亿22.16%(累计吸收8.84%+6.84%差额保总和)，神印碎片3%、完整卷轴3%，本源/传说精粹各1%，全属性+5万0.8%(传说档)，其余主档6.48% */
+var LOTTERY=[   /* 玄鉴神藏：稀缺资源池（去空奖，整体价值上移；传说档 prob<0.01 触发彩带/稀有判定）18扇区：概率总和=1.0；竞技积分+100万1%(品红紫，原神力碎片×10扇区按用户要求替换，让出的8.84%并入金币5亿)、100极金币1%(品红紫#e702e7，原神力碎片×60扇区替换，让出的6.84%并入金币5亿)、神力碎片4项(30/100/150/300)概率(8.84/6.84/6.74/5.74%)=29.16%，金币5亿22.16%(累计吸收8.84%+6.84%差额保总和)，神印碎片3%、完整卷轴3%，本源/传说精粹各1%，全属性+5万0.8%(传说档)，其余主档6.48%；本次改奖：全属性+200→全属性+1000亿(1e11·只加六维)、末位神力结晶×1→轮回天赋+1万点(REBIRTH.tp)、神符碎片×2→轮回魂石+100万(REBIRTH.stones)；概率/扇区数/总和均不变(18扇=1.0)，图鉴 xz_mat·xz_perm 同步换键 */
   {label:'镶嵌之锤 Lv7 ×2',short:'镶嵌锤Lv7',prob:0.0648,color:'#e8b54a',_xj:'镶嵌之锤 Lv7',apply:function(){var h=mkLoot(ITEM_BLUEPRINTS.hammers[0]); h.count=2; h.maxStack=255; lotteryGive(h,false,this); }},
   {label:'神力结晶 ×1',short:'神力结晶',prob:0.0648,color:'#FF9A4A',_xj:'神力结晶',apply:function(){ var b=mkLoot(ITEM_BLUEPRINTS.godCrystal); b.count=1; lotteryGive(b,false,this); }},
   {label:'竞技积分+100万',short:'积分+100万',prob:0.01,color:'#d44fe0',_xj:'竞技积分',apply:function(){ARENA.score+=1000000; ARENA.maxScore=Math.max(ARENA.maxScore||0,ARENA.score); ARENA.totalScore=(ARENA.totalScore||0)+1000000;}},   /* 用户指定：原神力碎片×10扇区改为竞技积分+100万，概率1%(0.01)，扇区颜色=传说品红紫#d44fe0；三字段同步（同玩家竞技结算L10670口径）：score当前余额/maxScore历史最高/totalScore累计总分——段位/称号/进度按totalScore锚定（arenaRank L10386），抽奖积分同样升段 */
@@ -13141,17 +13151,17 @@ var LOTTERY=[   /* 玄鉴神藏：稀缺资源池（去空奖，整体价值上�
   {label:'金币 100极',short:'100极金币',prob:0.01,color:'#e702e7',apply:function(){CURRENCY.gold+=Math.round(1e50*altarGoldMult());}},   /* 用户指定：原神力碎片×60扇区改为100极金币大奖，概率1%(0.01)，扇区颜色=传说精粹同款品红紫#e702e7，轮盘扇区文字=100极金币（用户指定改字）；让出的6.84%并入金币5亿保总和=1.0 */
   {label:'神力碎片 ×100',short:'碎片×100',prob:0.0684,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=100; this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
   {label:'神印碎片 ×2',short:'神印碎片',prob:0.0300,color:'#9a5bd0',_xj:'神印碎片',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.sealFragment); g.count=2; lotteryGive(g,false,this); }},
-  {label:'神符碎片 ×2',short:'神符碎片',prob:0.0648,color:'#e2b04f',_xj:'神符碎片',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.runeFragment); g.count=2; lotteryGive(g,false,this); }},
+  {label:'轮回魂石 +100万',short:'魂石+100万',prob:0.0648,color:'#7CF7C8',_xj:'轮回魂石',apply:function(){REBIRTH.stones+=1000000; if(typeof renderRebirth==='function') renderRebirth(); toast('获得 轮回魂石 +100万（可点天赋/炼化法器）');}},   /* 用户指定：原神符碎片×2扇区改为轮回魂石+100万，概率不变；直写 REBIRTH.stones（真实货币字段，同赛季商店/轮回炼化扣费同源），不经 lotteryGive 故不触发自动出售、扇区不会被追加「· 自动出售」 */
   {label:'混沌神石 ×2',short:'混沌',prob:0.0648,color:'#c8b0d0',_xj:'混沌神石',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.statGems[ITEM_BLUEPRINTS.statGems.length-1]); g.count=2; g.maxStack=255; lotteryGive(g,false,this); }},
   {label:'金币 5亿',short:'5亿金币',prob:0.2216,color:'#f2c51e',apply:function(){CURRENCY.gold+=Math.round(500000000*altarGoldMult());}},   /* 用户指定：吸收竞技积分扇区(原神力碎片×10)让出的8.84%与100极金币扇区(原神力碎片×60)让出的6.84%差额，概率15.32%→22.16%，保持18扇区概率总和=1.0 */
   {label:'本源结晶 ×1',short:'本源结晶',prob:0.0100,color:'#9f6bff',_xj:'本源结晶',apply:function(){REBIRTH.essence+=1; toast('获得 本源结晶 +1');}},
   {label:'传说精粹 ×2',short:'传说精粹',prob:0.0100,color:'#e702e7',_xj:'传说精粹',apply:function(){addStackable(mkLegendEssence(2));}},
-  {label:'全属性 +200',short:'全属性+200',prob:0.0648,color:'#4f7da0',_xj:'全属性+200',apply:function(){addPerm(200,0,'玄鉴神藏');}},
+  {label:'全属性 +1000亿',short:'全属性千亿',prob:0.0648,color:'#4f7da0',_xj:'全属性+1000亿',apply:function(){addPerm(100000000000,0,'玄鉴神藏');}},   /* 用户指定：原+200改为+1000亿(1e11)；与+5万同口径只加六维、hp 传0不加生命（另一池至尊奖「全属性+1000亿」含生命，属天选之刻限量档，两者文案不同池） */
   {label:'完整属性卷轴 ×1',short:'完整卷轴',prob:0.0300,color:'#e0d0a0',_xj:'完整属性卷轴',apply:function(){var g=mkLoot(ITEM_BLUEPRINTS.refineScrollFull); g.count=1; lotteryGive(g,false,this); }},
   {label:'全属性 +5万',short:'全属性+5万',prob:0.0080,color:'#a04fd4',_xj:'全属性+5万',apply:function(){addPerm(50000,0,'玄鉴神藏');}},   /* 传说档：prob<0.01（0.8%，触发彩带/保底判定） */
   {label:'神力碎片 ×150',short:'碎片×150',prob:0.0674,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=150; this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
   {label:'神力碎片 ×300',short:'碎片×300',prob:0.0574,color:'#6fa8dc',_xj:'神力碎片',apply:function(){var n=300; this._n=n; var g=mkLoot(ITEM_BLUEPRINTS.godPowerFragment); g.count=n; lotteryGive(g,false,this); }},
-  {label:'神力结晶 ×1',short:'神力结晶',prob:0.0648,color:'#FF9A4A',_xj:'神力结晶',apply:function(){ var b=mkLoot(ITEM_BLUEPRINTS.godCrystal); b.count=1; lotteryGive(b,false,this); }}
+  {label:'轮回天赋 +1万点',short:'天赋+1万点',prob:0.0648,color:'#B07CFF',_xj:'轮回天赋+1万点',apply:function(){REBIRTH.tp+=10000; if(typeof renderRebirth==='function') renderRebirth(); toast('获得 轮回天赋 +1万点（可分配天赋点）');}}   /* 用户指定：两个神力结晶×1 中末位改为轮回天赋+1万点；REBIRTH.tp=可分配天赋点（rbAddTalent 每点 1 级、单键上限 true25/ignore10/fdr10，crit/lifesteal 无上限），保守留首位神力结晶不动 */
 ];
 function lotteryInnate(){ var _i=(typeof CHARACTER!=='undefined'&&CHARACTER&&CHARACTER.innate)? CHARACTER.innate:1; return Math.min(1.8,_i); }   /* 先天运势系数（0.9~1.8）· 黄金神坛运势灌注 */
 function tianYunX(){ try{ return lotteryInnate()>=1.8?2:1; }catch(e){ return 1; } }   /* 天运之主(先天运势=1.8)专属加倍：乘运势处再×2；其余运势=1，保持原逻辑 */
@@ -13271,9 +13281,9 @@ var COLLECT_SETS=[
 /* ============ 玄鉴神藏图鉴（抽奖专属·点亮稀缺资源） ============ */
 var XIANJI={}, XIANJI_DONE={}, _xjToastLast=0;
 var XIANJI_SETS=[
-  {k:'xz_mat', n:'神藏·材料', items:['镶嵌之锤 Lv7','混沌神石','完整属性卷轴','神力碎片','神印碎片','神符碎片'], r:{all:1000000,hp:1000000}, desc:'全属性 +100万 · 生命活力 +100万'},
+  {k:'xz_mat', n:'神藏·材料', items:['镶嵌之锤 Lv7','混沌神石','完整属性卷轴','神力碎片','神印碎片','轮回魂石'], r:{all:1000000,hp:1000000}, desc:'全属性 +100万 · 生命活力 +100万'},
   {k:'xz_growth', n:'神藏·成长至宝', items:['本源结晶','传说精粹'], r:{all:3000000,hp:3000000}, desc:'全属性 +300万 · 生命活力 +300万'},
-  {k:'xz_perm', n:'神藏·永久属性', items:['全属性+200','全属性+5万','全属性+100万','全属性+1亿'], r:{all:50000000,hp:50000000}, desc:'全属性 +5000万 · 生命活力 +5000万'},
+  {k:'xz_perm', n:'神藏·永久属性', items:['全属性+1000亿','全属性+5万','全属性+100万','全属性+1亿'], r:{all:50000000,hp:50000000}, desc:'全属性 +5000万 · 生命活力 +5000万'},
   {k:'xz_rare', n:'神藏·稀珍', items:['传说武器','寂灭之息药剂'], r:{all:100000000,hp:100000000}, desc:'全属性 +1亿 · 生命活力 +1亿'}
 ];
 function unlockXianji(name){
@@ -13733,7 +13743,7 @@ function trSyncChar(){
   var ab=0, abp=0; for(var k in equipState){ var e=equipState[k]; if(!e) continue;
     if(isArmorType(e.type)){ ab+=armorEnhAbs(e.enhanceLevel||0); ab+=(e.damageAbsorption||0); }   /* 强化吸收固定值 + 装备固定吸收 */
     ab+=(e.gemBonus&&e.gemBonus.伤害吸收)||0; }   /* 加专注宝石吸收（累加所有装备） */
-  TR.absorb=ab; TR.absorbPct=Math.min(0.9, abp);   /* 伤害吸收固定值累加；abp=0（已改固定值） */
+  TR.absorb=ab+(typeof reincAbsorb==='function'?reincAbsorb():0); TR.absorbPct=Math.min(0.9, abp);   /* 防具强化/装备/宝石固定吸收 + 轮回天赋·御伤(+1亿/级)；先加装备再补天赋，重算不会重复叠加 */
   if(TR.maxHp>0 && hp>TR.maxHp) TR.hp+=hp-TR.maxHp;   /* 生命上限提升时血量同步提升（穿戴更强装备后进入刷新） */
   if(TR.hp>hp) TR.hp=hp;
   if(TR.hp<=0) TR.hp=hp;
@@ -13897,7 +13907,7 @@ function trGainExp(monLv, af, isBoss){
   if(TR.isElite) exp=Math.round(exp*3);   /* 精英经验：战力×3 → 经验×3 */
   if(!isBoss){ var _dm={1:50,2:10,3:5,4:5,5:5}[TR.dungeon]; if(_dm) exp=Math.round(exp*_dm); }   /* 水龙×50（用户指定：现数字×5，原副本层×10再×5）、深渊×10、王座/奥利森/沙漠×5（小怪专属，Boss不乘） */
   if(Date.now()<SUN_UNTIL) exp*=5;   /* 太阳：打怪经验×5（用户指定：原翻倍×2 调整为×5） */
-  if(Date.now()<MEGA_SUN_UNTIL) exp*=5;   /* 超级大太阳：打怪经验5倍 */
+  if(Date.now()<MEGA_SUN_UNTIL) exp*=100;   /* 超级大太阳：打怪经验×100（超级物品，系统商店100极金币购买；与太阳×5叠加=×500） */
   exp=Math.round(exp*reincExpMult()*rglMul('exp',0.30));   /* 轮回经验加成 × 局内肉鸽「悟道」 */
   TR.exp+=exp;
   if(!TR.suppressLog) trLog('获得经验 <b class="lg-gold">+'+fmtWan(exp)+'</b>');   /* 显示本次获取经验（单位显示） */
@@ -15209,7 +15219,7 @@ document.addEventListener('visibilitychange', function(){
 var SAVE_KEY='shenqi_save_v1';
 var POTION_UNTIL=0;   /* 神圣药水生效截止时间戳（0=未生效） */
 var SUN_UNTIL=0;   /* 太阳生效截止时间戳：打怪经验×5 持续12小时（0=未生效） */
-var MEGA_SUN_UNTIL=0;   /* 超级大太阳生效截止时间戳：打怪经验5倍12小时（0=未生效） */
+var MEGA_SUN_UNTIL=0;   /* 超级大太阳生效截止时间戳：打怪经验×100 持续12小时（0=未生效）；来自系统商店 100极金币 购买 */
 setInterval(function(){ if(window.location.hash==='#treasure' && Date.now()<POTION_UNTIL) renderBuff(); },2000);   /* 性能优化：药水倒计时1s->2s刷新，返回页面会经renderChar刷新，功能不变 */
 var QUICK=[null,null,null,null];   /* 战斗快捷道具栏（存药水name，最多4格），随存档保存 */
 /* ===== 属性装备栏：攻/防各4个预设凹槽（水火风土），点击凹槽一键切换穿戴 ===== */
@@ -15353,7 +15363,7 @@ function doPotionAction(it, tab, idx, noConfirm){
     return;
   }
   if(it.type==='sun_potion'){
-    var isMega=!!it.mega, nm=isMega?'超级大太阳':'太阳', multi=5, hours=isMega?12:12;   /* 太阳/超级大太阳统一打怪经验×5（用户指定：太阳原×2调整为×5，与超级大太阳同倍率） */
+    var isMega=!!it.mega, nm=isMega?'超级大太阳':'太阳', multi=isMega?100:5, hours=12;   /* 太阳×5 / 超级大太阳×100（用户指定：超级物品）；两者可叠加=×500 */
     function _run(){ it.count=(it.count||1)-1; if(it.count<=0){ bag[tab][idx]=null; }
       if(isMega) MEGA_SUN_UNTIL=Date.now()+12*60*60*1000; else SUN_UNTIL=Date.now()+12*60*60*1000;
       renderBag(); renderQuick(); saveGame(); toast(nm+'生效！打怪经验×'+multi+'，持续'+hours+'小时'); }
