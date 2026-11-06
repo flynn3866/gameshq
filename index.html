@@ -11636,6 +11636,7 @@ var RB_RELICS=[
 function _rb(){ return (typeof REBIRTH!=='undefined'&&REBIRTH)?REBIRTH:{count:0,stones:0,tp:0,ascended:0,essence:0,talents:{all:0,exp:0,absorb:0,gold:0,crit:0,lifesteal:0,true:0,ignore:0,fdr:0},relic:{eye:0,codex:0,amulet:0,realm:0,banner:0,end:0}}; }
 function reincMult(){ var r=_rb(); var other=(r.relic.eye||0)+(r.relic.codex||0)+(r.relic.amulet||0)+(r.relic.realm||0)+(r.relic.banner||0); return 1+r.count*0.30+r.talents.all*0.05+r.relic.eye*0.10+(r.ascended?(10.1):0)+(r.relic.end||0)*0.02+other*0.01+(r.sealBoon||0)*0.01; }   /* 超脱大礼包+1000%·称号+10%·太初本源+2%/级·按其他法器总等级+1%·秘印炼化+1%/次(独立永久战力) */
 var RB_T_KPT=1000;   /* 御伤（固定伤害吸收）每级消耗的轮回天赋点（用户指定：1000 点一次） */
+var RB_CLICK_LV=100;   /* 用户指定：轮回天赋「+」与轮回法器炼化，每次点击升 100 级；资源不够 100 级时按实际可升级数升，一级都不够则拒绝（不凭空） */
 function reincExpMult(){ var r=_rb(); return 1+r.count*0.50+r.relic.codex*0.20; }   /* 用户指定：删除原「悟道 talents.exp*0.25」经验加成，该项已改为固定伤害吸收 */
 function reincAbsorb(){ var r=_rb(); return (r.talents.absorb||0)*100000000; }   /* 御伤：固定伤害吸收 +1亿/级，无上限（用户指定）；注入 TR.absorb 走 calcHit 的 total-abs 归零通道，与专注宝石同源 */
 function reincGoldMult(){ var r=_rb(); return 1+r.talents.gold*0.20+r.relic.banner*0.15; }
@@ -11720,10 +11721,11 @@ function ascend(){
 function rbGoClick(){ if(REBIRTH.ascended) return; if(REBIRTH.count>=99){ ascend(); } else { doReincarnate(); } }
 function rbUpEnd(){
   if(!REBIRTH.ascended){ toast('需超脱后解锁太初本源'); return; }
-  var lv=REBIRTH.relic.end||0, ce=(lv+1)*3, cs=(lv+1)*100;
-  if(REBIRTH.essence<ce||REBIRTH.stones<cs){ toast('本源结晶或魂石不足'); return; }
-  REBIRTH.essence-=ce; REBIRTH.stones-=cs; REBIRTH.relic.end=lv+1; RB_LAST_RELIC='end'; recalcCharacter(); renderRebirth(); saveGame();
-  toast('太初本源 升至 Lv.'+(lv+1));
+  var lv=REBIRTH.relic.end||0, n=0, se=0, ss=0;
+  while(n<RB_CLICK_LV){ var ce=(lv+n+1)*3, cs=(lv+n+1)*100; if((REBIRTH.essence-se)<ce||(REBIRTH.stones-ss)<cs) break; se+=ce; ss+=cs; n++; }   /* 每次点击最多 100 级，双资源任一不够则升到能升的级数 */
+  if(n<1){ toast('本源结晶或魂石不足'); return; }
+  REBIRTH.essence-=se; REBIRTH.stones-=ss; REBIRTH.relic.end=lv+n; RB_LAST_RELIC='end'; recalcCharacter(); renderRebirth(); saveGame();
+  toast('太初本源 升至 Lv.'+(lv+n)+(n>1?('（+'+n+'）'):''));
 }
 function doReincarnate(){
   if(REBIRTH.ascended){ toast('已超脱轮回，无需再转生'); return; }
@@ -11760,9 +11762,11 @@ function rbAddTalent(k){
   /* 用户指定：所有轮回天赋取消升级上限，可无限升级（原 true25 / ignore10 / fdr10 三档硬上限已移除） */
   var tcost=(it.k==='absorb')?RB_T_KPT:1;   /* 御伤 1000 点/级，其余 1 点/级 */
   if(typeof REBIRTH.talents[k]!=='number') REBIRTH.talents[k]=0;   /* 旧存档缺该字段时补 0，防 undefined++ 变 NaN */
-  if(REBIRTH.tp<tcost){ toast((it.k==='absorb')?('轮回点不足：升「'+it.n+'」需 '+tcost+' 点，当前 '+REBIRTH.tp+' 点'):'天赋点不足（每轮回 +1 点）'); return; }
-  REBIRTH.tp-=tcost; REBIRTH.talents[k]++; RB_LAST_TALENT=k; recalcCharacter(); renderRebirth(); saveGame();
-  toast('已点「'+it.n+'」'+(tcost>1?('（消耗 '+tcost+' 点）'):''));
+  var tp0=Math.floor(REBIRTH.tp||0);
+  var n=Math.min(RB_CLICK_LV, Math.floor(tp0/tcost));   /* 每次点击最多 100 级；点数只够 n 级时按实际升，不凭空发级 */
+  if(n<1){ toast((it.k==='absorb')?('轮回点不足：升「'+it.n+'」需 '+tcost+' 点，当前 '+tp0+' 点'):'天赋点不足（每轮回 +1 点）'); return; }
+  REBIRTH.tp-=tcost*n; REBIRTH.talents[k]+=n; RB_LAST_TALENT=k; recalcCharacter(); renderRebirth(); saveGame();
+  toast('已点「'+it.n+'」×'+n+(tcost>1?('（消耗 '+(tcost*n)+' 点）'):''));
 }
 function rbWash(){
   confirmDialog('重洗全部天赋并返还天赋点？<br>花费 100 魂石', function(ok){
@@ -11779,10 +11783,11 @@ function rbUpRelic(k){
   var it=null; for(var i=0;i<RB_RELICS.length;i++) if(RB_RELICS[i].k===k){ it=RB_RELICS[i]; break; }
   if(!it) return;
   if(REBIRTH.count<it.req){ toast('需轮回 '+it.req+' 次解锁'); return; }
-  var lv=REBIRTH.relic[k], cost=(lv+1)*100;
-  if(REBIRTH.stones<cost){ toast('魂石不足 '+cost); return; }
-  REBIRTH.stones-=cost; REBIRTH.relic[k]=lv+1; RB_LAST_RELIC=k; recalcCharacter(); renderRebirth(); saveGame();
-  toast(it.n+' 升至 Lv.'+(lv+1));
+  var lv=REBIRTH.relic[k]||0, n=0, spent=0;
+  while(n<RB_CLICK_LV){ var cost=(lv+n+1)*100; if((REBIRTH.stones-spent)<cost) break; spent+=cost; n++; }   /* 每次点击最多 100 级，魂石不够则升到能升的级数 */
+  if(n<1){ toast('魂石不足 '+((lv+1)*100)); return; }
+  REBIRTH.stones-=spent; REBIRTH.relic[k]=lv+n; RB_LAST_RELIC=k; recalcCharacter(); renderRebirth(); saveGame();
+  toast(it.n+' 升至 Lv.'+(lv+n)+(n>1?('（+'+n+'）'):''));
 }
 function renderRebirth(){
   var ready=rebirthReady();
